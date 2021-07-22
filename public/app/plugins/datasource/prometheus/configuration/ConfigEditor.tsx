@@ -18,11 +18,13 @@ export const ConfigEditor = (props: Props) => {
         sigV4AuthToggleEnabled={config.sigV4AuthEnabled}
       />
 
-      <AlertingSettings<PromOptions>
-        sigV4AuthEnabled={config.sigV4AuthEnabled}
-        options={options}
-        onOptionsChange={onOptionsChange}
-      />
+      {config.featureToggles.ngalert && (
+        <AlertingSettings<PromOptions>
+          sigV4AuthEnabled={config.sigV4AuthEnabled}
+          options={options}
+          onOptionsChange={onOptionsChange}
+        />
+      )}
 
       <PromSettings options={options} onOptionsChange={onOptionsChange} />
     </>
