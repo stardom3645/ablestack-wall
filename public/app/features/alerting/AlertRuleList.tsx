@@ -99,7 +99,7 @@ export class AlertRuleListUnconnected extends PureComponent<Props> {
         <Page.Contents isLoading={isLoading}>
           <div className="page-action-bar">
             <div className="gf-form gf-form--grow">
-              <FilterInput placeholder="Search alerts" value={search} onChange={this.onSearchQueryChange} />
+              <FilterInput placeholder="경고 검색" value={search} onChange={this.onSearchQueryChange} />
             </div>
             <div className="gf-form">
               <label className="gf-form-label">States</label>
@@ -119,7 +119,7 @@ export class AlertRuleListUnconnected extends PureComponent<Props> {
               </LinkButton>
             )}
             <Button variant="secondary" onClick={this.onOpenHowTo}>
-              How to add an alert
+              경고를 추가하는 방법
             </Button>
           </div>
           <VerticalGroup spacing="none">

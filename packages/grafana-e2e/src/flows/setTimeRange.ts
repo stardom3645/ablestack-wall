@@ -11,7 +11,7 @@ export const setTimeRange = ({ from, to, zone }: TimeRangeConfig) => {
   e2e().get('[aria-label="TimePicker Open Button"]').click();
 
   if (zone) {
-    e2e().contains('button', 'Change time zone').click();
+    e2e().contains('button', '시간대 변경').click();
 
     selectOption({
       clickToOpen: false,

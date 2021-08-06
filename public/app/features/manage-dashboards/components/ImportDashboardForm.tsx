@@ -54,18 +54,18 @@ export const ImportDashboardForm: FC<Props> = ({
 
   return (
     <>
-      <Legend>Options</Legend>
-      <Field label="Name" invalid={!!errors.title} error={errors.title && errors.title.message}>
+      <Legend>옵션</Legend>
+      <Field label="이름" invalid={!!errors.title} error={errors.title && errors.title.message}>
         <Input
           {...register('title', {
-            required: 'Name is required',
+            required: '이름은 필수입니다.',
             validate: async (v: string) => await validateTitle(v, getValues().folder.id),
           })}
           type="text"
           data-testid={selectors.components.ImportDashboardForm.name}
         />
       </Field>
-      <Field label="Folder">
+      <Field label="폴더">
         <InputControl
           render={({ field: { ref, ...field } }) => (
             <FolderPicker {...field} enableCreateNew initialFolderId={initialFolderId} />
@@ -75,10 +75,9 @@ export const ImportDashboardForm: FC<Props> = ({
         />
       </Field>
       <Field
-        label="Unique identifier (UID)"
-        description="The unique identifier (UID) of a dashboard can be used for uniquely identify a dashboard between multiple Grafana installs.
-                The UID allows having consistent URLs for accessing dashboards so changing the title of a dashboard will not break any
-                bookmarked links to that dashboard."
+        label="고유 식별자 (UID)"
+        description="대시보드의 고유 식별자(UID)는 여러 모니터링 대시보드를 고유하게 식별하는 데 사용할 수 있습니다.
+          UID를 사용하면 대시보드에 액세스하기 위한 일관된 URL을 사용할 수 있으므로 대시보드 제목을 변경해도 해당 대시보드에 대한 책갈피 링크가 손상되지 않습니다."
         invalid={!!errors.uid}
         error={errors.uid && errors.uid.message}
       >
@@ -87,7 +86,7 @@ export const ImportDashboardForm: FC<Props> = ({
             <Input
               disabled
               {...register('uid', { validate: async (v: string) => await validateUid(v) })}
-              addonAfter={!uidReset && <Button onClick={onUidReset}>Change uid</Button>}
+              addonAfter={!uidReset && <Button onClick={onUidReset}>UID 변경</Button>}
             />
           ) : (
             <Input {...register('uid', { required: true, validate: async (v: string) => await validateUid(v) })} />
@@ -103,7 +102,7 @@ export const ImportDashboardForm: FC<Props> = ({
               label={input.label}
               key={dataSourceOption}
               invalid={errors.dataSources && !!errors.dataSources[index]}
-              error={errors.dataSources && errors.dataSources[index] && 'A data source is required'}
+              error={errors.dataSources && errors.dataSources[index] && '데이터 소스가 필요합니다'}
             >
               <InputControl
                 name={dataSourceOption as any}
@@ -148,7 +147,7 @@ export const ImportDashboardForm: FC<Props> = ({
           {getButtonText(errors)}
         </Button>
         <Button type="reset" variant="secondary" onClick={onCancel}>
-          Cancel
+          취소
         </Button>
       </HorizontalGroup>
     </>
@@ -160,5 +159,5 @@ function getButtonVariant(errors: FormFieldErrors<ImportDashboardDTO>) {
 }
 
 function getButtonText(errors: FormFieldErrors<ImportDashboardDTO>) {
-  return errors && (errors.title || errors.uid) ? 'Import (Overwrite)' : 'Import';
+  return errors && (errors.title || errors.uid) ? 'Import (Overwrite)' : '임포트';
 }

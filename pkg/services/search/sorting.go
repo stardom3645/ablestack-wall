@@ -9,8 +9,8 @@ import (
 var (
 	SortAlphaAsc = SortOption{
 		Name:        "alpha-asc",
-		DisplayName: "Alphabetically (A–Z)",
-		Description: "Sort results in an alphabetically ascending order",
+		DisplayName: "알파벳 순으로 (A–Z)",
+		Description: "결과를 오름차순으로 정렬합니다.",
 		Index:       0,
 		Filter: []SortOptionFilter{
 			searchstore.TitleSorter{},
@@ -18,8 +18,8 @@ var (
 	}
 	SortAlphaDesc = SortOption{
 		Name:        "alpha-desc",
-		DisplayName: "Alphabetically (Z–A)",
-		Description: "Sort results in an alphabetically descending order",
+		DisplayName: "알파벳 순으로 (Z–A)",
+		Description: "결과를 내림차순으로 정렬합니다.",
 		Index:       0,
 		Filter: []SortOptionFilter{
 			searchstore.TitleSorter{Descending: true},

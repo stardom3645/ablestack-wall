@@ -41,28 +41,27 @@ export const NewOrgPage: FC<PropsWithState> = ({ navModel }) => {
   return (
     <Page navModel={navModel}>
       <Page.Contents>
-        <h3 className="page-sub-heading">New organization</h3>
+        <h3 className="page-sub-heading">새 조직</h3>
 
         <p className="playlist-description">
-          Each organization contains their own dashboards, data sources, and configuration, which cannot be shared
-          shared between organizations. While users might belong to more than one organization, multiple organizations
-          are most frequently used in multi-tenant deployments.{' '}
+          각 조직에는 조직 간에 공유할 수 없는 자체 대시보드, 데이터 원본 및 구성이 포함되어 있습니다. 사용자는 둘
+          이상의 조직에 속할 수 있지만 다중 테넌트 배포에서는 여러 조직이 가장 자주 사용됩니다.{' '}
         </p>
 
         <Form<CreateOrgFormDTO> onSubmit={createOrg}>
           {({ register, errors }) => {
             return (
               <>
-                <Field label="Organization name" invalid={!!errors.name} error={errors.name && errors.name.message}>
+                <Field label="조직 이름" invalid={!!errors.name} error={errors.name && errors.name.message}>
                   <Input
-                    placeholder="Org name"
+                    placeholder="조직 이름"
                     {...register('name', {
-                      required: 'Organization name is required',
+                      required: '조직 이름은 필수입니다.',
                       validate: async (orgName) => await validateOrg(orgName),
                     })}
                   />
                 </Field>
-                <Button type="submit">Create</Button>
+                <Button type="submit">생성</Button>
               </>
             );
           }}

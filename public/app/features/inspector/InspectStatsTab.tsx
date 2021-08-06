@@ -24,13 +24,13 @@ export const InspectStatsTab: React.FC<InspectStatsTabProps> = ({ data, timeZone
   }
 
   if (requestTime > 0) {
-    stats.push({ displayName: 'Total request time', value: requestTime, unit: 'ms' });
+    stats.push({ displayName: '전체 요청 시간', value: requestTime, unit: 'ms' });
   }
   if (processingTime > 0) {
-    stats.push({ displayName: 'Data processing time', value: processingTime, unit: 'ms' });
+    stats.push({ displayName: '데이터 처리 시간', value: processingTime, unit: 'ms' });
   }
-  stats.push({ displayName: 'Number of queries', value: data.request.targets.length });
-  stats.push({ displayName: 'Total number rows', value: dataRows });
+  stats.push({ displayName: '쿼리 수', value: data.request.targets.length });
+  stats.push({ displayName: '전체 행 수', value: dataRows });
 
   let dataStats: QueryResultMetaStat[] = [];
 
@@ -42,8 +42,8 @@ export const InspectStatsTab: React.FC<InspectStatsTabProps> = ({ data, timeZone
 
   return (
     <div aria-label={selectors.components.PanelInspector.Stats.content}>
-      <InspectStatsTable timeZone={timeZone} name={'Stats'} stats={stats} />
-      <InspectStatsTable timeZone={timeZone} name={'Data source stats'} stats={dataStats} />
+      <InspectStatsTable timeZone={timeZone} name={'통계'} stats={stats} />
+      <InspectStatsTable timeZone={timeZone} name={'데이터 소스 통계'} stats={dataStats} />
     </div>
   );
 };

@@ -124,8 +124,8 @@ export class SharedPreferences extends PureComponent<Props, State> {
       <Form onSubmit={this.onSubmitForm}>
         {() => {
           return (
-            <FieldSet label="Preferences">
-              <Field label="UI Theme">
+            <FieldSet label="기본 설정">
+              <Field label="UI 테마">
                 <RadioButtonGroup
                   options={themes}
                   value={themes.find((item) => item.value === theme)?.value}
@@ -136,8 +136,8 @@ export class SharedPreferences extends PureComponent<Props, State> {
               <Field
                 label={
                   <Label>
-                    <span className={styles.labelText}>Home Dashboard</span>
-                    <Tooltip content="Not finding dashboard you want? Star it first, then it should appear in this select box.">
+                    <span className={styles.labelText}>홈 대시보드</span>
+                    <Tooltip content="원하는 대시보드를 찾지 못하셨습니까? 먼저 별표 표시를 하면 이 선택 상자에 표시됩니다.">
                       <Icon name="info-circle" />
                     </Tooltip>
                   </Label>
@@ -156,12 +156,12 @@ export class SharedPreferences extends PureComponent<Props, State> {
                 />
               </Field>
 
-              <Field label="Timezone" aria-label={selectors.components.TimeZonePicker.container}>
+              <Field label="시간대" aria-label={selectors.components.TimeZonePicker.container}>
                 <TimeZonePicker includeInternal={true} value={timezone} onChange={this.onTimeZoneChanged} />
               </Field>
               <div className="gf-form-button-row">
                 <Button variant="primary" aria-label="User preferences save button">
-                  Save
+                  저장
                 </Button>
               </div>
             </FieldSet>

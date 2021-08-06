@@ -32,15 +32,15 @@ export class CreateTeam extends PureComponent<Props> {
         <Page.Contents>
           <Form onSubmit={this.create}>
             {({ register }) => (
-              <FieldSet label="New Team">
-                <Field label="Name">
+              <FieldSet label="새 팀">
+                <Field label="이름">
                   <Input {...register('name', { required: true })} width={60} />
                 </Field>
                 <Field
                   label={
                     <Label>
-                      <span>Email</span>
-                      <Tooltip content="This is optional and is primarily used for allowing custom team avatars.">
+                      <span>이메일</span>
+                      <Tooltip content="이것은 선택 사항이며 주로 사용자 지정 팀 아바타를 허용하는 데 사용됩니다.">
                         <Icon name="info-circle" style={{ marginLeft: 6 }} />
                       </Tooltip>
                     </Label>
@@ -50,7 +50,7 @@ export class CreateTeam extends PureComponent<Props> {
                 </Field>
                 <div className="gf-form-button-row">
                   <Button type="submit" variant="primary">
-                    Create
+                    생성
                   </Button>
                 </div>
               </FieldSet>

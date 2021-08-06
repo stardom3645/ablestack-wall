@@ -55,13 +55,13 @@ export class UserPermissions extends PureComponent<Props, State> {
 
     return (
       <>
-        <h3 className="page-heading">Permissions</h3>
+        <h3 className="page-heading">권한</h3>
         <div className="gf-form-group">
           <div className="gf-form">
             <table className="filter-table form-inline">
               <tbody>
                 <tr>
-                  <td className="width-16">Grafana Admin</td>
+                  <td className="width-16">Wall Admin</td>
                   {isEditing ? (
                     <td colSpan={2}>
                       <RadioButtonGroup
@@ -89,9 +89,9 @@ export class UserPermissions extends PureComponent<Props, State> {
                           onClick={this.onChangeClick}
                           onConfirm={this.onGrafanaAdminChange}
                           onCancel={this.onCancelClick}
-                          confirmText="Change"
+                          confirmText="변경"
                         >
-                          Change
+                          변경
                         </ConfirmButton>
                       )}
                     </div>

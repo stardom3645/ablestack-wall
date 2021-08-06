@@ -89,22 +89,22 @@ export class TeamMembers extends PureComponent<Props, State> {
       <div>
         <div className="page-action-bar">
           <div className="gf-form gf-form--grow">
-            <FilterInput placeholder="Search members" value={searchMemberQuery} onChange={this.onSearchQueryChange} />
+            <FilterInput placeholder="회원 검색" value={searchMemberQuery} onChange={this.onSearchQueryChange} />
           </div>
           <Button className="pull-right" onClick={this.onToggleAdding} disabled={isAdding || !isTeamAdmin}>
-            Add member
+            맴버 추가
           </Button>
         </div>
 
         <SlideDown in={isAdding}>
           <div className="cta-form">
             <CloseButton onClick={this.onToggleAdding} />
-            <h5>Add team member</h5>
+            <h5>팀원 추가</h5>
             <div className="gf-form-inline">
               <UserPicker onSelected={this.onUserSelected} className="min-width-30" />
               {this.state.newTeamMember && (
                 <Button type="submit" onClick={this.onAddUserToTeam}>
-                  Add to team
+                  팀에 추가
                 </Button>
               )}
             </div>
@@ -116,11 +116,11 @@ export class TeamMembers extends PureComponent<Props, State> {
             <thead>
               <tr>
                 <th />
-                <th>Login</th>
-                <th>Email</th>
-                <th>Name</th>
+                <th>사용자 이름</th>
+                <th>이메일</th>
+                <th>이름</th>
                 <WithFeatureToggle featureToggle={editorsCanAdmin}>
-                  <th>Permission</th>
+                  <th>권한</th>
                 </WithFeatureToggle>
                 {syncEnabled && <th />}
                 <th style={{ width: '1%' }} />

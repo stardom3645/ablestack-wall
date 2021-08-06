@@ -46,10 +46,10 @@ export const SearchResultsFilter: FC<Props> = ({
       {showActions ? (
         <HorizontalGroup spacing="md">
           <Button disabled={!canMove} onClick={moveTo} icon="exchange-alt" variant="secondary">
-            Move
+            이동
           </Button>
           <Button disabled={!canDelete} onClick={deleteItem} icon="trash-alt" variant="destructive">
-            Delete
+            삭제
           </Button>
         </HorizontalGroup>
       ) : (

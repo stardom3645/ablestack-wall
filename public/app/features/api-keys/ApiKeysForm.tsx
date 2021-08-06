@@ -34,7 +34,7 @@ const timeRangeValidationEvents: ValidationEvents = {
 };
 
 const tooltipText =
-  'The API key life duration. For example, 1d if your key is going to last for one day. Supported units are: s,m,h,d,w,M,y';
+  'API 키 수명 기간입니다. 예를 들어 키가 하루 동안 지속되는 경우 1d입니다. 지원되는 단위: s,m,h,d,w,M,y';
 
 export const ApiKeysForm: FC<Props> = ({ show, onClose, onKeyAdded }) => {
   const [name, setName] = useState<string>('');
@@ -68,14 +68,14 @@ export const ApiKeysForm: FC<Props> = ({ show, onClose, onKeyAdded }) => {
       <div className="gf-form-inline cta-form">
         <CloseButton onClick={onClose} />
         <form className="gf-form-group" onSubmit={onSubmit}>
-          <h5>Add API Key</h5>
+          <h5>API 키 추가</h5>
           <div className="gf-form-inline">
             <div className="gf-form max-width-21">
-              <span className="gf-form-label">Key name</span>
+              <span className="gf-form-label">Key 이름</span>
               <Input type="text" className="gf-form-input" value={name} placeholder="Name" onChange={onNameChange} />
             </div>
             <div className="gf-form">
-              <span className="gf-form-label">Role</span>
+              <span className="gf-form-label">권한</span>
               <span className="gf-form-select-wrapper">
                 <select className="gf-form-input gf-size-auto" value={role} onChange={onRoleChange}>
                   {Object.keys(OrgRole).map((role) => {
@@ -89,7 +89,7 @@ export const ApiKeysForm: FC<Props> = ({ show, onClose, onKeyAdded }) => {
               </span>
             </div>
             <div className="gf-form max-width-21">
-              <InlineFormLabel tooltip={tooltipText}>Time to live</InlineFormLabel>
+              <InlineFormLabel tooltip={tooltipText}>API 키 수명</InlineFormLabel>
               <Input
                 type="text"
                 className="gf-form-input"
@@ -100,7 +100,7 @@ export const ApiKeysForm: FC<Props> = ({ show, onClose, onKeyAdded }) => {
               />
             </div>
             <div className="gf-form">
-              <Button>Add</Button>
+              <Button>추가</Button>
             </div>
           </div>
         </form>

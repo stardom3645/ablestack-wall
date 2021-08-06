@@ -47,22 +47,22 @@ export const AddLibraryPanelContents = ({ panel, initialFolderId, onDismiss }: A
   return (
     <>
       <Field
-        label="Library panel name"
+        label="라이브러리 패널 이름"
         invalid={invalidInput}
-        error={invalidInput ? 'Library panel with this name already exists' : ''}
+        error={invalidInput ? '이 이름의 라이브러리 패널이 이미 있습니다.' : ''}
       >
         <Input name="name" value={panelTitle} onChange={(e) => setPanelTitle(e.currentTarget.value)} />
       </Field>
-      <Field label="Save in folder" description="Library panel permissions are derived from the folder permissions">
+      <Field label="폴더에 저장" description="라이브러리 패널 권한은 폴더 권한에서 파생됩니다.">
         <FolderPicker onChange={({ id }) => setFolderId(id)} initialFolderId={initialFolderId} />
       </Field>
 
       <Modal.ButtonRow>
         <Button variant="secondary" onClick={onDismiss} fill="outline">
-          Cancel
+          취소
         </Button>
         <Button onClick={onCreate} disabled={invalidInput}>
-          Create library panel
+          라이브러리 패널 만들기
         </Button>
       </Modal.ButtonRow>
     </>
@@ -75,7 +75,7 @@ interface Props extends AddLibraryPanelContentsProps {
 
 export const AddLibraryPanelModal: React.FC<Props> = ({ isOpen = false, panel, initialFolderId, ...props }) => {
   return (
-    <Modal title="Create library panel" isOpen={isOpen} onDismiss={props.onDismiss}>
+    <Modal title="라이브러리 패널 생성" isOpen={isOpen} onDismiss={props.onDismiss}>
       <AddLibraryPanelContents panel={panel} initialFolderId={initialFolderId} onDismiss={props.onDismiss} />
     </Modal>
   );

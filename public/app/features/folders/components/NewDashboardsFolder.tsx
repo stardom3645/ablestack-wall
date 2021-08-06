@@ -47,23 +47,23 @@ export class NewDashboardsFolder extends PureComponent<Props> {
     return (
       <Page navModel={this.props.navModel}>
         <Page.Contents>
-          <h3>New dashboard folder</h3>
+          <h3>새 대시보드 폴더</h3>
           <Form defaultValues={initialFormModel} onSubmit={this.onSubmit}>
             {({ register, errors }) => (
               <>
                 <Field
-                  label="Folder name"
+                  label="폴더 명"
                   invalid={!!errors.folderName}
                   error={errors.folderName && errors.folderName.message}
                 >
                   <Input
                     {...register('folderName', {
-                      required: 'Folder name is required.',
+                      required: '폴더 명은 필수입니다.',
                       validate: async (v) => await this.validateFolderName(v),
                     })}
                   />
                 </Field>
-                <Button type="submit">Create</Button>
+                <Button type="submit">생성</Button>
               </>
             )}
           </Form>

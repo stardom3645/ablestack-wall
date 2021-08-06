@@ -20,15 +20,15 @@ export class UserSessions extends PureComponent<Props> {
       <div>
         {sessions.length > 0 && (
           <>
-            <h3 className="page-sub-heading">Sessions</h3>
+            <h3 className="page-sub-heading">세션</h3>
             <div className="gf-form-group">
               <table className="filter-table form-inline" aria-label="User sessions table">
                 <thead>
                   <tr>
-                    <th>Last seen</th>
-                    <th>Logged on</th>
-                    <th>IP address</th>
-                    <th>Browser &amp; OS</th>
+                    <th>마지막으로 로그인 시간</th>
+                    <th>로그인 날짜</th>
+                    <th>IP 주소</th>
+                    <th>브라우저 &amp; OS</th>
                     <th></th>
                   </tr>
                 </thead>

@@ -75,10 +75,10 @@ export class ShareEmbed extends PureComponent<Props, State> {
 
     return (
       <>
-        <p className="share-modal-info-text">Generate HTML for embedding an iframe with this panel.</p>
+        <p className="share-modal-info-text">이 패널을 사용하여 iframe을 포함하기 위한 HTML을 생성합니다.</p>
         <Field
-          label="Current time range"
-          description={isRelativeTime ? 'Transforms the current relative time range to an absolute time range' : ''}
+          label="현재 시간 범위"
+          description={isRelativeTime ? '현재 상대 시간 범위를 절대 시간 범위로 변환합니다.' : ''}
         >
           <Switch
             id="share-current-time-range"
@@ -86,19 +86,18 @@ export class ShareEmbed extends PureComponent<Props, State> {
             onChange={this.onUseCurrentTimeRangeChange}
           />
         </Field>
-        <Field label="Theme">
+        <Field label="테마">
           <RadioButtonGroup options={themeOptions} value={selectedTheme} onChange={this.onThemeChange} />
         </Field>
         <Field
-          label="Embed HTML"
-          description="The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, 
-                the user viewing that page need to be signed into Grafana for the graph to load."
+          label="HTML 끼워넣기"
+          description="아래 HTML 코드를 붙여넣고 다른 웹 페이지에 포함할 수 있습니다. 익명 액세스가 활성화되지 않은 경우 해당 페이지를 보는 사용자는 그래프를 로드하려면 Wall에 로그인해야 합니다."
         >
           <TextArea rows={5} value={iframeHtml} onChange={this.onIframeHtmlChange}></TextArea>
         </Field>
         <Modal.ButtonRow>
           <ClipboardButton variant="primary" getText={this.getIframeHtml} onClipboardCopy={this.onIframeHtmlCopy}>
-            Copy to clipboard
+            클립 보드에 복사
           </ClipboardButton>
         </Modal.ButtonRow>
       </>

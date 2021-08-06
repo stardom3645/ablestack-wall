@@ -30,14 +30,14 @@ export const PlaylistPage: FC<Props> = ({ navModel }) => {
 
   let content = (
     <EmptyListCTA
-      title="There are no playlists created yet"
+      title="아직 생성된 재생목록이 없습니다"
       buttonIcon="plus"
       buttonLink="playlists/new"
-      buttonTitle="Create Playlist"
-      proTip="You can use playlists to cycle dashboards on TVs without user control"
-      proTipLink="http://docs.grafana.org/reference/playlist/"
-      proTipLinkTitle="Learn more"
-      proTipTarget="_blank"
+      buttonTitle="플레이리스트 생성"
+      proTip="플레이리스트를 사용하여 사용자 제어 없이 TV에서 대시보드를 순환할 수 있습니다."
+      //proTipLink="http://docs.grafana.org/reference/playlist/"
+      //proTipLinkTitle="Learn more"
+      //proTipTarget="_blank"
     />
   );
 
@@ -48,11 +48,11 @@ export const PlaylistPage: FC<Props> = ({ navModel }) => {
           <Card heading={playlist.name} key={playlist.id.toString()}>
             <Card.Actions>
               <Button variant="secondary" icon="play" onClick={() => setStartPlaylist(playlist)}>
-                Start playlist
+                플레이리스트 시작
               </Button>
               {contextSrv.isEditor && (
                 <LinkButton key="edit" variant="secondary" href={`/playlists/edit/${playlist.id}`} icon="cog">
-                  Edit playlist
+                  플레이리스트 편집
                 </LinkButton>
               )}
             </Card.Actions>
@@ -68,7 +68,7 @@ export const PlaylistPage: FC<Props> = ({ navModel }) => {
         {hasPlaylists && (
           <PageActionBar
             searchQuery={searchQuery}
-            linkButton={{ title: 'New playlist', href: '/playlists/new' }}
+            linkButton={{ title: '새 플레이리스트', href: '/playlists/new' }}
             setSearchQuery={setSearchQuery}
           />
         )}
@@ -112,14 +112,14 @@ export const StartModal: FC<StartModalProps> = ({ playlist, onDismiss }) => {
   };
 
   return (
-    <Modal isOpen={true} icon="play" title="Start playlist" onDismiss={onDismiss}>
+    <Modal isOpen={true} icon="play" title="플레이리스트 시작" onDismiss={onDismiss}>
       <VerticalGroup>
-        <Field label="Mode">
+        <Field label="모드">
           <RadioButtonGroup value={mode} options={modes} onChange={setMode} />
         </Field>
         <Checkbox
-          label="Autofit"
-          description="Panel heights will be adjusted to fit screen size"
+          label="자동 맞춤"
+          description="패널 높이가 화면 크기에 맞게 조정됩니다."
           name="autofix"
           value={autoFit}
           onChange={(e) => setAutofit(e.currentTarget.checked)}
@@ -127,7 +127,7 @@ export const StartModal: FC<StartModalProps> = ({ playlist, onDismiss }) => {
       </VerticalGroup>
       <Modal.ButtonRow>
         <Button variant="primary" onClick={onStart}>
-          Start {playlist.name}
+          {playlist.name} 시작
         </Button>
       </Modal.ButtonRow>
     </Modal>

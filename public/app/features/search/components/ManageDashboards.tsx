@@ -79,13 +79,13 @@ export const ManageDashboards: FC<Props> = memo(({ folder }) => {
   if (noFolders && !hasFilters) {
     return (
       <EmptyListCTA
-        title="This folder doesn't have any dashboards yet"
+        title="이 폴더에는 아직 대시보드가 없습니다"
         buttonIcon="plus"
-        buttonTitle="Create Dashboard"
+        buttonTitle="대시보드 생성"
         buttonLink={`dashboard/new?folderId=${folderId}`}
-        proTip="Add/move dashboards to your folder at ->"
+        proTip="폴더에 대시보드 추가/이동 ->"
         proTipLink="dashboards"
-        proTipLinkTitle="Manage dashboards"
+        proTipLinkTitle="대시보드 관리"
         proTipTarget=""
       />
     );
@@ -95,7 +95,7 @@ export const ManageDashboards: FC<Props> = memo(({ folder }) => {
     <div className={styles.container}>
       <div className="page-action-bar">
         <div className="gf-form gf-form--grow m-r-2">
-          <FilterInput value={query.query} onChange={onQueryChange} placeholder={'Search dashboards by name'} />
+          <FilterInput value={query.query} onChange={onQueryChange} placeholder={'이름으로 대시보드 검색'} />
         </div>
         <DashboardActions isEditor={isEditor} canEdit={hasEditPermissionInFolders || canSave} folderId={folderId} />
       </div>

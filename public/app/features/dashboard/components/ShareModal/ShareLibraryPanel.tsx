@@ -15,7 +15,7 @@ export const ShareLibraryPanel = ({ panel, initialFolderId, onDismiss }: Props) 
 
   return (
     <>
-      <p className="share-modal-info-text">Create library panel.</p>
+      <p className="share-modal-info-text">라이브러리 패널을 만듭니다.</p>
       <AddLibraryPanelContents panel={panel} initialFolderId={initialFolderId} onDismiss={onDismiss!} />
     </>
   );

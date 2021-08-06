@@ -42,8 +42,7 @@ export class AdminSettings extends React.PureComponent<Props, State> {
       <Page navModel={navModel}>
         <Page.Contents isLoading={isLoading}>
           <div className="grafana-info-box span8" style={{ margin: '20px 0 25px 0' }}>
-            These system settings are defined in grafana.ini or custom.ini (or overridden in ENV variables). To change
-            these you currently need to restart Grafana.
+            이러한 시스템 설정은 defaultsini에 정의되어 있습니다. 이를 변경하려면 Wall 서비스를 다시 시작해야 합니다.
           </div>
 
           <table className="filter-table">

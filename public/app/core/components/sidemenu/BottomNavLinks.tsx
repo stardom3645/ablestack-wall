@@ -42,7 +42,7 @@ export default class BottomNavLinks extends PureComponent<Props, State> {
 
     let children = link.children || [];
 
-    if (link.id === 'help') {
+    if (link.id === 'help' || false) {
       children = getFooterLinks();
     }
 
@@ -64,12 +64,12 @@ export default class BottomNavLinks extends PureComponent<Props, State> {
             <li className="sidemenu-org-switcher">
               <a onClick={this.toggleSwitcherModal}>
                 <div>
-                  <div className="sidemenu-org-switcher__org-current">Current Org.:</div>
+                  <div className="sidemenu-org-switcher__org-current">현재 조직.:</div>
                   <div className="sidemenu-org-switcher__org-name">{user.orgName}</div>
                 </div>
                 <div className="sidemenu-org-switcher__switch">
                   <Icon name="arrow-random" className={subMenuIconClassName} />
-                  Switch
+                  스위치
                 </div>
               </a>
             </li>
@@ -91,7 +91,7 @@ export default class BottomNavLinks extends PureComponent<Props, State> {
           {link.id === 'help' && (
             <li key="keyboard-shortcuts">
               <a onClick={() => this.onOpenShortcuts()}>
-                <Icon name="keyboard" className={subMenuIconClassName} /> Keyboard shortcuts
+                <Icon name="keyboard" className={subMenuIconClassName} /> 키보드 단축키
               </a>
             </li>
           )}

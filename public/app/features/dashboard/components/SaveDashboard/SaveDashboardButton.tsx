@@ -25,7 +25,7 @@ export const SaveDashboardButton: React.FC<SaveDashboardButtonProps> = ({ dashbo
             }}
             aria-label={selectors.pages.Dashboard.Settings.General.saveDashBoard}
           >
-            Save dashboard
+            대시보드 저장
           </Button>
         );
       }}

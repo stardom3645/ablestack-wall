@@ -54,7 +54,7 @@ export const PageToolbar: FC<Props> = React.memo(
           <div className={styles.pageIcon}>
             <IconButton
               name="arrow-left"
-              tooltip="Go back (Esc)"
+              tooltip="돌아 가기 (Esc)"
               tooltipPlacement="bottom"
               size="xxl"
               surface="dashboard"

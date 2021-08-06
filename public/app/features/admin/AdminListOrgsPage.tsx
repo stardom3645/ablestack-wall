@@ -32,7 +32,7 @@ export const AdminListOrgsPages: FC = () => {
           <div className="page-action-bar">
             <div className="page-action-bar__spacer" />
             <LinkButton icon="plus" href="org/new">
-              New org
+              새 조직
             </LinkButton>
           </div>
           {state.loading && 'Fetching organizations'}

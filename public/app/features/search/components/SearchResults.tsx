@@ -82,7 +82,7 @@ export const SearchResults: FC<Props> = memo(
     if (loading) {
       return <Spinner className={styles.spinner} />;
     } else if (!results || !results.length) {
-      return <div className={styles.noResults}>No dashboards matching your query were found.</div>;
+      return <div className={styles.noResults}>검색어와 일치하는 대시보드를 찾을 수 없습니다.</div>;
     }
 
     return (

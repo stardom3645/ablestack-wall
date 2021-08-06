@@ -45,10 +45,10 @@ export const SnapshotListTable: FC = () => {
         <thead>
           <tr>
             <th>
-              <strong>Name</strong>
+              <strong>이름</strong>
             </th>
             <th>
-              <strong>Snapshot url</strong>
+              <strong>스냅샷 url</strong>
             </th>
             <th style={{ width: '70px' }}></th>
             <th style={{ width: '30px' }}></th>

@@ -35,32 +35,32 @@ const UserCreatePage: React.FC<UserCreatePageProps> = ({ navModel }) => {
   return (
     <Page navModel={navModel}>
       <Page.Contents>
-        <h1>Add new user</h1>
+        <h1>새 사용자 추가</h1>
         <Form onSubmit={onSubmit} validateOn="onBlur">
           {({ register, errors }) => {
             return (
               <>
                 <Field
-                  label="Name"
+                  label="이름"
                   required
                   invalid={!!errors.name}
-                  error={errors.name ? 'Name is required' : undefined}
+                  error={errors.name ? '이름은 필수입니다.' : undefined}
                 >
                   <Input {...register('name', { required: true })} />
                 </Field>
 
-                <Field label="Email">
+                <Field label="이메일">
                   <Input {...register('email')} />
                 </Field>
 
-                <Field label="Username">
+                <Field label="사용자명">
                   <Input {...register('login')} />
                 </Field>
                 <Field
-                  label="Password"
+                  label="비밀번호"
                   required
                   invalid={!!errors.password}
-                  error={errors.password ? 'Password is required and must contain at least 4 characters' : undefined}
+                  error={errors.password ? '비밀번호는 필수이며 4자 이상이어야 합니다.' : undefined}
                 >
                   <Input
                     {...register('password', {
@@ -69,7 +69,7 @@ const UserCreatePage: React.FC<UserCreatePageProps> = ({ navModel }) => {
                     type="password"
                   />
                 </Field>
-                <Button type="submit">Create user</Button>
+                <Button type="submit">사용자 생성</Button>
               </>
             );
           }}

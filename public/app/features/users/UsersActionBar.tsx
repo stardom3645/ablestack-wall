@@ -42,7 +42,7 @@ export class UsersActionBar extends PureComponent<Props> {
           <FilterInput
             value={searchQuery}
             onChange={setUsersSearchQuery}
-            placeholder="Search user by login, email or name"
+            placeholder="이메일과 이름으로 사용자 검색 "
           />
         </div>
         {pendingInvitesCount > 0 && (
@@ -50,7 +50,7 @@ export class UsersActionBar extends PureComponent<Props> {
             <RadioButtonGroup value={showInvites ? 'invites' : 'users'} options={options} onChange={onShowInvites} />
           </div>
         )}
-        {canInvite && canAddToOrg && <LinkButton href="org/users/invite">Invite</LinkButton>}
+        {canInvite && canAddToOrg && <LinkButton href="org/users/invite">초대</LinkButton>}
         {externalUserMngLinkUrl && (
           <LinkButton href={externalUserMngLinkUrl} target="_blank" rel="noopener">
             {externalUserMngLinkName}

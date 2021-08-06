@@ -46,28 +46,19 @@ export const MoveToFolderModal: FC<Props> = ({ results, onMoveItems, isOpen, onD
   };
 
   return isOpen ? (
-    <Modal
-      className={styles.modal}
-      title="Choose Dashboard Folder"
-      icon="folder-plus"
-      isOpen={isOpen}
-      onDismiss={onDismiss}
-    >
+    <Modal className={styles.modal} title="대시보드 폴더 선택" icon="folder-plus" isOpen={isOpen} onDismiss={onDismiss}>
       <>
         <div className={styles.content}>
-          <p>
-            Move the {selectedDashboards.length} selected dashboard{selectedDashboards.length === 1 ? '' : 's'} to the
-            following folder:
-          </p>
+          <p>선택한 {selectedDashboards.length}개의 대시보드를 다음 폴더로 이동합니다.</p>
           <FolderPicker onChange={(f) => setFolder(f as FolderInfo)} />
         </div>
 
         <HorizontalGroup justify="center">
           <Button variant="primary" onClick={moveTo}>
-            Move
+            이동
           </Button>
           <Button variant="secondary" onClick={onDismiss}>
-            Cancel
+            취소
           </Button>
         </HorizontalGroup>
       </>

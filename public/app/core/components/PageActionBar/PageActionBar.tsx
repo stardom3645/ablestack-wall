@@ -12,7 +12,7 @@ export interface Props {
 
 export default class PageActionBar extends PureComponent<Props> {
   render() {
-    const { searchQuery, linkButton, setSearchQuery, target, placeholder = 'Search by name or type' } = this.props;
+    const { searchQuery, linkButton, setSearchQuery, target, placeholder = '이름과 유형으로 검색' } = this.props;
     const linkProps = { href: linkButton?.href };
 
     if (target) {

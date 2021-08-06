@@ -32,10 +32,10 @@ export const ForgottenPassword: FC = () => {
   if (emailSent) {
     return (
       <div>
-        <p>An email with a reset link has been sent to the email address. You should receive it shortly.</p>
+        <p>설정하신 이메일로 메일을 새로운 비밀번호를 발송하였습니다.</p>
         <Container margin="md" />
         <LinkButton variant="primary" href={loginHref}>
-          Back to login
+          돌아가기
         </LinkButton>
       </div>
     );
@@ -44,27 +44,27 @@ export const ForgottenPassword: FC = () => {
     <Form onSubmit={sendEmail}>
       {({ register, errors }) => (
         <>
-          <Legend>Reset password</Legend>
+          <Legend>새 비밀번호</Legend>
           <Field
-            label="User"
-            description="Enter your information to get a reset link sent to you"
+            label="사용자"
+            description="새로운 비밀번호를 받을 이메일 또는 사용자 이름 정보를 입력해주세요."
             invalid={!!errors.userOrEmail}
             error={errors?.userOrEmail?.message}
           >
             <Input
               id="user-input"
-              placeholder="Email or username"
-              {...register('userOrEmail', { required: 'Email or username is required' })}
+              placeholder="이메일 또는 사용자 이름"
+              {...register('userOrEmail', { required: '이메일 또는 사용자 이름은 필수입니다.' })}
             />
           </Field>
           <HorizontalGroup>
-            <Button>Send reset email</Button>
+            <Button>이메일 보내기</Button>
             <LinkButton fill="text" href={loginHref}>
-              Back to login
+              돌아가기
             </LinkButton>
           </HorizontalGroup>
 
-          <p className={styles}>Did you forget your username or email? Contact your Grafana administrator.</p>
+          <p className={styles}>이메일 또는 사용자 이름을 잃어버렸다면, ABLESTACK Wall 관리자에게 문의하기 바랍니다.</p>
         </>
       )}
     </Form>

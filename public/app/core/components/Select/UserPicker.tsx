@@ -71,8 +71,8 @@ export class UserPicker extends Component<Props, State> {
           defaultOptions={true}
           loadOptions={this.debouncedSearch}
           onChange={onSelected}
-          placeholder="Start typing to search for user"
-          noOptionsMessage="No users found"
+          placeholder="입력하여 사용자 검색"
+          noOptionsMessage="사용자를 찾을 수 없음"
         />
       </div>
     );
