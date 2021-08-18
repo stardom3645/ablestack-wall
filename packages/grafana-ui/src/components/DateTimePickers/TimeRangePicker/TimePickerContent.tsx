@@ -228,7 +228,7 @@ const NarrowScreenForm: React.FC<FormProps> = (props) => {
           }
         }}
       >
-        <TimePickerTitle>Absolute time range</TimePickerTitle>
+        <TimePickerTitle>절대 시간 범위</TimePickerTitle>
         {!hideQuickRanges && <Icon name={!collapsed ? 'angle-up' : 'angle-down'} />}
       </div>
       {!collapsed && (
@@ -238,7 +238,7 @@ const NarrowScreenForm: React.FC<FormProps> = (props) => {
           </div>
           {showHistory && (
             <TimeRangeList
-              title="Recently used absolute ranges"
+              title="최근에 사용한 절대 범위"
               options={historyOptions}
               onChange={onChangeTimeOption}
               placeholderEmpty={null}
@@ -262,7 +262,7 @@ const FullScreenForm: React.FC<FormProps> = (props) => {
     <>
       <div className={styles.container}>
         <div aria-label="TimePicker absolute time range" className={styles.title}>
-          <TimePickerTitle>Absolute time range</TimePickerTitle>
+          <TimePickerTitle>절대 시간 범위</TimePickerTitle>
         </div>
         <TimeRangeForm
           value={props.value}
@@ -275,7 +275,7 @@ const FullScreenForm: React.FC<FormProps> = (props) => {
       {props.showHistory && (
         <div className={styles.recent}>
           <TimeRangeList
-            title="Recently used absolute ranges"
+            title="최근에 사용한 절대 범위"
             options={props.historyOptions || []}
             onChange={onChangeTimeOption}
             placeholderEmpty={<EmptyRecentList />}
@@ -294,19 +294,10 @@ const EmptyRecentList = memo(() => {
     <div className={styles.container}>
       <div>
         <span>
-          It looks like you haven&apos;t used this time picker before. As soon as you enter some time intervals,
-          recently used intervals will appear here.
+          이 시간 선택기를 사용한 적이 없는 것 같습니다. 시간 간격을 입력하자마자 최근에 사용한 간격이 여기에
+          나타납니다. 사용자 지정 시간 범위를 입력하는 방법에 대해 자세히 알아보십시오. 다음 시간 단위가 지원됩니다. : s
+          (초), m (분), h (시), d (일), w (주), M (달), y (년)
         </span>
-      </div>
-      <div>
-        <a
-          className={styles.link}
-          href="https://grafana.com/docs/grafana/latest/dashboards/time-range-controls"
-          target="_new"
-        >
-          Read the documentation
-        </a>
-        <span> to find out more about how to enter custom time ranges.</span>
       </div>
     </div>
   );

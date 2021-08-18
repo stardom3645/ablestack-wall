@@ -17,7 +17,7 @@ export const SignIn: FC<any> = () => {
       <a href={forcedLoginUrl} target="_self">
         <ul className="dropdown-menu dropdown-menu--sidemenu" role="menu">
           <li className="side-menu-header">
-            <span className="sidemenu-item-text">Sign In</span>
+            <span className="sidemenu-item-text">로그인</span>
           </li>
         </ul>
       </a>

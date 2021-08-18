@@ -21,17 +21,17 @@ export const UserProfileEditForm: FC<Props> = ({ user, isSavingUser, updateProfi
     <Form onSubmit={onSubmitProfileUpdate} validateOn="onBlur">
       {({ register, errors }) => {
         return (
-          <FieldSet label="Edit profile">
-            <Field label="Name" invalid={!!errors.name} error="Name is required" disabled={disableLoginForm}>
+          <FieldSet label="프로필 편집">
+            <Field label="이름" invalid={!!errors.name} error="이름은 필수입니다." disabled={disableLoginForm}>
               <Input
                 {...register('name', { required: true })}
                 id="edit-user-profile-name"
-                placeholder="Name"
+                placeholder="이름"
                 defaultValue={user?.name ?? ''}
                 suffix={<InputSuffix />}
               />
             </Field>
-            <Field label="Email" invalid={!!errors.email} error="Email is required" disabled={disableLoginForm}>
+            <Field label="이메일" invalid={!!errors.email} error="이메일은 필수입니다." disabled={disableLoginForm}>
               <Input
                 {...register('email', { required: true })}
                 id="edit-user-profile-email"
@@ -40,18 +40,18 @@ export const UserProfileEditForm: FC<Props> = ({ user, isSavingUser, updateProfi
                 suffix={<InputSuffix />}
               />
             </Field>
-            <Field label="Username" disabled={disableLoginForm}>
+            <Field label="사용자 이름" disabled={disableLoginForm}>
               <Input
                 {...register('login')}
                 id="edit-user-profile-username"
                 defaultValue={user?.login ?? ''}
-                placeholder="Username"
+                placeholder="사용자 이름"
                 suffix={<InputSuffix />}
               />
             </Field>
             <div className="gf-form-button-row">
               <Button variant="primary" disabled={isSavingUser} aria-label="Edit user profile save button">
-                Save
+                저장
               </Button>
             </div>
           </FieldSet>

@@ -8,7 +8,7 @@ interface Props extends NotificationSettingsProps {
 
 export const NotificationSettings: FC<Props> = ({ currentFormValues, imageRendererAvailable, register }) => {
   return (
-    <CollapsableSection label="Notification settings" isOpen={false}>
+    <CollapsableSection label="알림 설정" isOpen={false}>
       <Field>
         <Checkbox {...register('isDefault')} label="Default" description="Use this notification for all alerts" />
       </Field>

@@ -58,8 +58,8 @@ export class Branding {
   static LoginBackground = LoginBackground;
   static MenuLogo = MenuLogo;
   static LoginBoxBackground = LoginBoxBackground;
-  static AppTitle = 'Grafana';
-  static LoginTitle = 'Welcome to Grafana';
+  static AppTitle = 'ABLESTACK';
+  static LoginTitle = 'Wall에 오신 걸 환영합니다.';
   static GetLoginSubTitle = (): null | string => {
     return null;
   };

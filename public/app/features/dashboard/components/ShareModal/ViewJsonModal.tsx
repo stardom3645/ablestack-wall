@@ -23,7 +23,7 @@ export function ViewJsonModal({ json, onDismiss }: ViewJsonModalProps): JSX.Elem
       </AutoSizer>
       <Modal.ButtonRow>
         <ClipboardButton getText={getClipboardText} onClipboardCopy={onClipboardCopy}>
-          Copy to Clipboard
+          클립 보드에 복사
         </ClipboardButton>
       </Modal.ButtonRow>
     </Modal>

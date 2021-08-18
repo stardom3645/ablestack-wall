@@ -134,8 +134,8 @@ export class ShareExport extends PureComponent<Props, State> {
 
     return (
       <>
-        <p className="share-modal-info-text">Export this dashboard.</p>
-        <Field label="Export for sharing externally">
+        <p className="share-modal-info-text">이 대시보드를 내보냅니다.</p>
+        <Field label="외부 공유를 위해 내보내기">
           <Switch value={shareExternally} onChange={this.onShareExternallyChange} />
         </Field>
         {config.featureToggles.trimDefaults && (
@@ -145,13 +145,13 @@ export class ShareExport extends PureComponent<Props, State> {
         )}
         <Modal.ButtonRow>
           <Button variant="secondary" onClick={onDismiss} fill="outline">
-            Cancel
+            취소
           </Button>
           <Button variant="secondary" onClick={this.onViewJson}>
-            View JSON
+            JSON 보기
           </Button>
           <Button variant="primary" onClick={this.onSaveAsFile}>
-            Save to file
+            파일로 저장
           </Button>
         </Modal.ButtonRow>
       </>

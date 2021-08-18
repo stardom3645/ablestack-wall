@@ -108,7 +108,7 @@ const getDataSourceOptions = (input: { pluginId: string; pluginName: string }, i
   const sources = getDataSourceSrv().getList({ pluginId: input.pluginId });
 
   if (sources.length === 0) {
-    inputModel.info = 'No data sources of type ' + input.pluginName + ' found';
+    inputModel.info = input.pluginName + ' 유형의 데이터 소스를 찾을 수 없습니다.';
   } else if (!inputModel.info) {
     inputModel.info = 'Select a ' + input.pluginName + ' data source';
   }

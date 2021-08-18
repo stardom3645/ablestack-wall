@@ -86,12 +86,12 @@ export class FolderSettingsPage extends PureComponent<Props, State> {
     return (
       <Page navModel={navModel}>
         <Page.Contents isLoading={this.state.isLoading}>
-          <h3 className="page-sub-heading">Folder settings</h3>
+          <h3 className="page-sub-heading">폴더 설정</h3>
 
           <div className="section gf-form-group">
             <form name="folderSettingsForm" onSubmit={this.onSave}>
               <div className="gf-form">
-                <label className="gf-form-label width-7">Name</label>
+                <label className="gf-form-label width-7">이름</label>
                 <Input
                   type="text"
                   className="gf-form-input width-30"
@@ -101,10 +101,10 @@ export class FolderSettingsPage extends PureComponent<Props, State> {
               </div>
               <div className="gf-form-button-row">
                 <Button type="submit" disabled={!folder.canSave || !folder.hasChanged}>
-                  Save
+                  저장
                 </Button>
                 <Button variant="destructive" onClick={this.onDelete} disabled={!folder.canSave}>
-                  Delete
+                  삭제
                 </Button>
               </div>
             </form>

@@ -65,26 +65,26 @@ export const InspectDataOptions: FC<Props> = ({
     const parts: string[] = [];
 
     if (selectedDataFrame === DataTransformerID.seriesToColumns) {
-      parts.push('Series joined by time');
+      parts.push('시간으로 연결된 시리즈');
     } else if (data.length > 1) {
       parts.push(getFrameDisplayName(data[selectedDataFrame as number]));
     }
 
     if (options.withTransforms || options.withFieldConfig) {
       if (options.withTransforms) {
-        parts.push('Panel transforms');
+        parts.push('패널 변환');
       }
 
       if (options.withTransforms && options.withFieldConfig) {
       }
 
       if (options.withFieldConfig) {
-        parts.push('Formatted data');
+        parts.push('포맷된 데이터');
       }
     }
 
     if (downloadForExcel) {
-      parts.push('Excel header');
+      parts.push('엑셀 헤더');
     }
 
     return parts.join(', ');
@@ -95,14 +95,14 @@ export const InspectDataOptions: FC<Props> = ({
       <QueryOperationRow
         id="Data options"
         index={0}
-        title="Data options"
+        title="포맷된 데이터"
         headerElement={<DetailText>{getActiveString()}</DetailText>}
         isOpen={false}
       >
         <div className={styles.options} data-testid="dataOptions">
           <VerticalGroup spacing="none">
             {data!.length > 1 && (
-              <Field label="Show data frame">
+              <Field label="데이터 프레임 표시">
                 <Select
                   options={selectableOptions}
                   value={selectedDataFrame}
@@ -116,8 +116,8 @@ export const InspectDataOptions: FC<Props> = ({
             <HorizontalGroup>
               {showPanelTransformationsOption && onOptionsChange && (
                 <Field
-                  label="Apply panel transformations"
-                  description="Table data is displayed with transformations defined in the panel Transform tab."
+                  label="패널 변형 적용"
+                  description="테이블 데이터는 패널 변환 탭에 정의된 변환과 함께 표시됩니다."
                 >
                   <Switch
                     value={!!options.withTransforms}
@@ -127,8 +127,8 @@ export const InspectDataOptions: FC<Props> = ({
               )}
               {showFieldConfigsOption && onOptionsChange && (
                 <Field
-                  label="Formatted data"
-                  description="Table data is formatted with options defined in the Field and Override tabs."
+                  label="포맷된 데이터"
+                  description="테이블 데이터는 필드 및 재정의 탭에 정의된 옵션으로 형식이 지정됩니다."
                 >
                   <Switch
                     value={!!options.withFieldConfig}
@@ -136,7 +136,7 @@ export const InspectDataOptions: FC<Props> = ({
                   />
                 </Field>
               )}
-              <Field label="Download for Excel" description="Adds header to CSV for use with Excel">
+              <Field label="엑셀용 다운로드" description="Excel에서 사용하기 위해 CSV에 헤더 추가">
                 <Switch value={downloadForExcel} onChange={toggleDownloadForExcel} />
               </Field>
             </HorizontalGroup>

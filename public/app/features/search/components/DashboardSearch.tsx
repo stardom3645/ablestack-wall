@@ -24,7 +24,7 @@ export const DashboardSearch: FC<Props> = memo(({ onCloseSearch }) => {
         <div className={styles.searchField}>
           <SearchField query={query} onChange={onQueryChange} onKeyDown={onKeyDown} autoFocus clearable />
           <div className={styles.closeBtn}>
-            <IconButton name="times" surface="panel" onClick={onCloseSearch} size="xxl" tooltip="Close search" />
+            <IconButton name="times" surface="panel" onClick={onCloseSearch} size="xxl" tooltip="검색 닫기" />
           </div>
         </div>
         <div className={styles.search}>

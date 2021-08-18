@@ -43,7 +43,7 @@ export const PluginListPage: React.FC<Props> = ({
   let actionTarget: string | undefined = '_blank';
   const linkButton = {
     href: 'https://grafana.com/plugins?utm_source=grafana_plugin_list',
-    title: 'Find more plugins on Grafana.com',
+    title: 'Grafana.com에서 더 많은 플러그인 찾기',
   };
 
   return (
@@ -54,7 +54,7 @@ export const PluginListPage: React.FC<Props> = ({
             searchQuery={searchQuery}
             setSearchQuery={(query) => setPluginsSearchQuery(query)}
             linkButton={linkButton}
-            placeholder="Search by name, author, description or type"
+            placeholder="이름, 작성자, 설명 또는 유형으로 검색"
             target={actionTarget}
           />
           <PluginsErrorsInfo />

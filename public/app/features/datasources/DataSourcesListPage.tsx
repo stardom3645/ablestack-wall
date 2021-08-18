@@ -72,7 +72,7 @@ export class DataSourcesListPage extends PureComponent<Props> {
 
     const linkButton = {
       href: 'datasources/new',
-      title: 'Add data source',
+      title: '데이터 소스 추가',
     };
 
     return (

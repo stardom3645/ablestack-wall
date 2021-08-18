@@ -28,9 +28,9 @@ const NotificationsListPage: FC = () => {
   const deleteNotification = (id: number) => {
     appEvents.publish(
       new ShowConfirmModalEvent({
-        title: 'Delete',
-        text: 'Do you want to delete this notification channel?',
-        text2: `Deleting this notification channel will not delete from alerts any references to it`,
+        title: '삭제',
+        text: '이 알림 채널을 삭제하시겠습니까?',
+        text2: `이 알림 채널을 삭제해도 알림에서 해당 채널에 대한 참조는 삭제되지 않습니다.`,
         icon: 'trash-alt',
         confirmText: 'Delete',
         yesText: 'Delete',
@@ -56,16 +56,16 @@ const NotificationsListPage: FC = () => {
             <div className="page-action-bar">
               <div className="page-action-bar__spacer" />
               <LinkButton icon="channel-add" href="alerting/notification/new">
-                New channel
+                새 채널
               </LinkButton>
             </div>
             <table className="filter-table filter-table--hover">
               <thead>
                 <tr>
                   <th style={{ minWidth: '200px' }}>
-                    <strong>Name</strong>
+                    <strong>이름</strong>
                   </th>
-                  <th style={{ minWidth: '100px' }}>Type</th>
+                  <th style={{ minWidth: '100px' }}>타입</th>
                   <th style={{ width: '1%' }}></th>
                 </tr>
               </thead>
@@ -104,14 +104,14 @@ const NotificationsListPage: FC = () => {
 
         {!(notifications.length || state.loading) && (
           <EmptyListCTA
-            title="There are no notification channels defined yet"
+            title="아직 정의된 알림 채널이 없습니다"
             buttonIcon="channel-add"
             buttonLink="alerting/notification/new"
-            buttonTitle="Add channel"
-            proTip="You can include images in your alert notifications."
-            proTipLink="http://docs.grafana.org/alerting/notifications/"
-            proTipLinkTitle="Learn more"
-            proTipTarget="_blank"
+            buttonTitle="채널 추가"
+            proTip="경고 알림에 이미지를 포함할 수 있습니다."
+            //proTipLink="http://docs.grafana.org/alerting/notifications/"
+            //proTipLinkTitle="Learn more"
+            //proTipTarget="_blank"
           />
         )}
       </Page.Contents>

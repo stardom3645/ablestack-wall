@@ -116,7 +116,7 @@ class DashNav extends PureComponent<Props> {
     }
 
     if (canStar) {
-      let desc = isStarred ? 'Unmark as favorite' : 'Mark as favorite';
+      let desc = isStarred ? '즐겨찾기 해제' : '즐겨찾기';
       buttons.push(
         <DashNavButton
           tooltip={desc}
@@ -130,7 +130,7 @@ class DashNav extends PureComponent<Props> {
     }
 
     if (canShare) {
-      let desc = 'Share dashboard or panel';
+      let desc = '대시보드 또는 패널 공유';
       buttons.push(
         <ModalsController key="button-share">
           {({ showModal, hideModal }) => (
@@ -183,7 +183,7 @@ class DashNav extends PureComponent<Props> {
     const snapshotUrl = snapshot && snapshot.originalUrl;
     const buttons: ReactNode[] = [];
     const tvButton = (
-      <ToolbarButton tooltip="Cycle view mode" icon="monitor" onClick={this.onToggleTVMode} key="tv-button" />
+      <ToolbarButton tooltip="사이클 보기 모드" icon="monitor" onClick={this.onToggleTVMode} key="tv-button" />
     );
 
     if (this.isPlaylistRunning()) {
@@ -195,12 +195,12 @@ class DashNav extends PureComponent<Props> {
     }
 
     if (canEdit && !isFullscreen) {
-      buttons.push(<ToolbarButton tooltip="Add panel" icon="panel-add" onClick={onAddPanel} key="button-panel-add" />);
+      buttons.push(<ToolbarButton tooltip="패널 추가" icon="panel-add" onClick={onAddPanel} key="button-panel-add" />);
       buttons.push(
         <ModalsController key="button-save">
           {({ showModal, hideModal }) => (
             <ToolbarButton
-              tooltip="Save dashboard"
+              tooltip="대시보드 저장"
               icon="save"
               onClick={() => {
                 showModal(SaveDashboardModalProxy, {
@@ -227,7 +227,7 @@ class DashNav extends PureComponent<Props> {
 
     if (showSettings) {
       buttons.push(
-        <ToolbarButton tooltip="Dashboard settings" icon="cog" onClick={this.onOpenSettings} key="button-settings" />
+        <ToolbarButton tooltip="대시보드 설정" icon="cog" onClick={this.onOpenSettings} key="button-settings" />
       );
     }
 

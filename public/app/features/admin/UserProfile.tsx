@@ -95,34 +95,34 @@ export class UserProfile extends PureComponent<Props, State> {
 
     return (
       <>
-        <h3 className="page-heading">User information</h3>
+        <h3 className="page-heading">사용자 정보</h3>
         <div className="gf-form-group">
           <div className="gf-form">
             <table className="filter-table form-inline">
               <tbody>
                 <UserProfileRow
-                  label="Name"
+                  label="이름"
                   value={user.name}
                   locked={editLocked}
                   lockMessage={lockMessage}
                   onChange={this.onUserNameChange}
                 />
                 <UserProfileRow
-                  label="Email"
+                  label="이메일"
                   value={user.email}
                   locked={editLocked}
                   lockMessage={lockMessage}
                   onChange={this.onUserEmailChange}
                 />
                 <UserProfileRow
-                  label="Username"
+                  label="사용자 이름"
                   value={user.login}
                   locked={editLocked}
                   lockMessage={lockMessage}
                   onChange={this.onUserLoginChange}
                 />
                 <UserProfileRow
-                  label="Password"
+                  label="비밀번호"
                   value="********"
                   inputType="password"
                   locked={passwordChangeLocked}
@@ -136,13 +136,13 @@ export class UserProfile extends PureComponent<Props, State> {
             {canDelete && (
               <>
                 <Button variant="destructive" onClick={this.showDeleteUserModal(true)}>
-                  Delete user
+                  사용자 삭제
                 </Button>
                 <ConfirmModal
                   isOpen={showDeleteModal}
-                  title="Delete user"
-                  body="Are you sure you want to delete this user?"
-                  confirmText="Delete user"
+                  title="사용자 삭제"
+                  body="이 사용자를 삭제하시겠습니까?"
+                  confirmText="사용자 삭제"
                   onConfirm={this.onUserDelete}
                   onDismiss={this.showDeleteUserModal(false)}
                 />
@@ -150,19 +150,19 @@ export class UserProfile extends PureComponent<Props, State> {
             )}
             {user.isDisabled && canEnable && (
               <Button variant="secondary" onClick={this.onUserEnable}>
-                Enable user
+                사용자 활성화
               </Button>
             )}
             {!user.isDisabled && canDisable && (
               <>
                 <Button variant="secondary" onClick={this.showDisableUserModal(true)}>
-                  Disable user
+                  사용자 비활성화
                 </Button>
                 <ConfirmModal
                   isOpen={showDisableModal}
-                  title="Disable user"
-                  body="Are you sure you want to disable this user?"
-                  confirmText="Disable user"
+                  title="사용자 비활성화"
+                  body="이 사용자를 비활성화하시겠습니까?"
+                  confirmText="사용자 비활성화"
                   onConfirm={this.onUserDisable}
                   onDismiss={this.showDisableUserModal(false)}
                 />
@@ -295,12 +295,12 @@ export class UserProfileRow extends PureComponent<UserProfileRowProps, UserProfi
         <td>
           <div className={editButtonContainerClass}>
             <ConfirmButton
-              confirmText="Save"
+              confirmText="저장"
               onClick={this.onEditClick}
               onConfirm={this.onSave}
               onCancel={this.onCancelClick}
             >
-              Edit
+              편집
             </ConfirmButton>
           </div>
         </td>

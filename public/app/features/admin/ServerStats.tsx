@@ -43,8 +43,8 @@ export class ServerStats extends PureComponent<Props, State> {
           <table className="filter-table form-inline">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Value</th>
+                <th>이름</th>
+                <th>값</th>
               </tr>
             </thead>
             <tbody>{stats.map(StatItem)}</tbody>

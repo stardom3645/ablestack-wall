@@ -267,10 +267,10 @@ export class QueryInspector extends PureComponent<Props, State> {
     return (
       <>
         <div aria-label={selectors.components.PanelInspector.Query.content}>
-          <h3 className="section-heading">Query inspector</h3>
+          <h3 className="section-heading">쿼리 검사기</h3>
           <p className="small muted">
-            Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a
-            new query. Click refresh button below to trigger a new query.
+            쿼리 검사기를 사용하면 원시 요청 및 응답을 볼 수 있습니다. 이 데이터를 수집하려면 Wall에서 새 쿼리를
+            발행해야 합니다. 새 쿼리를 실행하려면 아래 새로고침 버튼을 클릭하세요.
           </p>
         </div>
         {this.renderExecutedQueries(executedQueries)}
@@ -280,17 +280,17 @@ export class QueryInspector extends PureComponent<Props, State> {
             onClick={onRefreshQuery}
             aria-label={selectors.components.PanelInspector.Query.refreshButton}
           >
-            Refresh
+            새로고침
           </Button>
 
           {haveData && allNodesExpanded && (
             <Button icon="minus" variant="secondary" className={styles.toolbarItem} onClick={this.onToggleExpand}>
-              Collapse all
+              모든 항목 축소
             </Button>
           )}
           {haveData && !allNodesExpanded && (
             <Button icon="plus" variant="secondary" className={styles.toolbarItem} onClick={this.onToggleExpand}>
-              Expand all
+              모든 항목 확장
             </Button>
           )}
 
@@ -302,7 +302,7 @@ export class QueryInspector extends PureComponent<Props, State> {
               className={styles.toolbarItem}
             >
               <Button icon="copy" variant="secondary">
-                Copy to clipboard
+                클립 보드에 복사
               </Button>
             </CopyToClipboard>
           )}
@@ -314,7 +314,7 @@ export class QueryInspector extends PureComponent<Props, State> {
             <JSONFormatter json={response} open={openNodes} onDidRender={this.setFormattedJson} />
           )}
           {!isLoading && !haveData && (
-            <p className="muted">No request and response collected yet. Hit refresh button</p>
+            <p className="muted">아직 수집된 요청 및 응답이 없습니다. 새로고침 버튼 누르기</p>
           )}
         </div>
       </>

@@ -109,9 +109,9 @@ export class UtilSrv {
       noText,
       text,
       text2htmlBind,
-      yesText = 'Yes',
+      yesText = '예',
       icon,
-      title = 'Confirm',
+      title = '확인',
     } = payload;
     const props: ConfirmModalProps = {
       confirmText: yesText,

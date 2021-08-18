@@ -53,5 +53,5 @@ function formatStats(data: PanelData) {
   const requestTime = request.endTime ? request.endTime - request.startTime : 0;
   const formatted = formattedValueToString(getValueFormat('ms')(requestTime));
 
-  return `${queryCount} queries with total query time of ${formatted}`;
+  return `총 ${queryCount}개의 query에 소요된 시안은 시간이 ${formatted} 입니다.`;
 }

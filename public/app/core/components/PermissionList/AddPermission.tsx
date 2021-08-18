@@ -95,7 +95,7 @@ class AddPermissions extends Component<Props, NewDashboardAclItem> {
     return (
       <div className="cta-form">
         <CloseButton onClick={onCancel} />
-        <h5>Add Permission For</h5>
+        <h5>권한 추가 방법</h5>
         <Form maxWidth="none" onSubmit={this.onSubmit}>
           {() => (
             <HorizontalGroup>

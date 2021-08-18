@@ -76,11 +76,11 @@ export class TeamList extends PureComponent<Props, any> {
   renderEmptyList() {
     return (
       <EmptyListCTA
-        title="You haven't created any teams yet."
+        title="아직 팀을 만들지 않았습니다."
         buttonIcon="users-alt"
         buttonLink="org/teams/new"
-        buttonTitle=" New team"
-        proTip="Assign folder and dashboard permissions to teams instead of users to ease administration."
+        buttonTitle=" 새 팀"
+        proTip="관리를 쉽게 하기 위해 사용자 대신 팀에 폴더 및 대시보드 권한을 할당합니다."
         proTipLink=""
         proTipLinkTitle=""
         proTipTarget="_blank"
@@ -98,11 +98,11 @@ export class TeamList extends PureComponent<Props, any> {
       <>
         <div className="page-action-bar">
           <div className="gf-form gf-form--grow">
-            <FilterInput placeholder="Search teams" value={searchQuery} onChange={this.onSearchQueryChange} />
+            <FilterInput placeholder="팀 검색" value={searchQuery} onChange={this.onSearchQueryChange} />
           </div>
 
           <LinkButton className={disabledClass} href={newTeamHref}>
-            New Team
+            새 팀
           </LinkButton>
         </div>
 
@@ -111,9 +111,9 @@ export class TeamList extends PureComponent<Props, any> {
             <thead>
               <tr>
                 <th />
-                <th>Name</th>
-                <th>Email</th>
-                <th>Members</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>회원수</th>
                 <th style={{ width: '1%' }} />
               </tr>
             </thead>

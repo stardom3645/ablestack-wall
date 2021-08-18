@@ -47,7 +47,7 @@ const UserListAdminPageUnConnected: React.FC<Props> = (props) => {
           <div className="page-action-bar">
             <div className="gf-form gf-form--grow">
               <FilterInput
-                placeholder="Search user by login, email, or name."
+                placeholder="이메일과 이름으로 사용자 검색"
                 autoFocus={true}
                 value={query}
                 onChange={(value) => changeQuery(value)}
@@ -55,7 +55,7 @@ const UserListAdminPageUnConnected: React.FC<Props> = (props) => {
             </div>
             {contextSrv.hasPermission(AccessControlAction.UsersCreate) && (
               <LinkButton href="admin/users/create" variant="primary">
-                New user
+                새 사용자
               </LinkButton>
             )}
           </div>
@@ -64,12 +64,12 @@ const UserListAdminPageUnConnected: React.FC<Props> = (props) => {
               <thead>
                 <tr>
                   <th></th>
-                  <th>Login</th>
-                  <th>Email</th>
-                  <th>Name</th>
+                  <th>사용자 이름</th>
+                  <th>이메일</th>
+                  <th>이름</th>
                   <th>
-                    Seen&nbsp;
-                    <Tooltip placement="top" content="Time since user was seen using Grafana">
+                    최근 로그인 시간&nbsp;
+                    <Tooltip placement="top" content="사용자가 Wal에 최근 로그인 시간">
                       <Icon name="question-circle" />
                     </Tooltip>
                   </th>
@@ -116,7 +116,7 @@ const renderUser = (user: UserDTO) => {
       <td className="link-td">
         {user.isAdmin && (
           <a href={editUrl}>
-            <Tooltip placement="top" content="Grafana Admin">
+            <Tooltip placement="top" content="Wall Admin">
               <Icon name="shield" />
             </Tooltip>
           </a>

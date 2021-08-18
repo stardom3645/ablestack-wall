@@ -23,7 +23,7 @@ export const SaveDashboardModal: React.FC<SaveDashboardModalProps> = ({ dashboar
       {!state.error && (
         <Modal
           isOpen={true}
-          title="Save dashboard"
+          title="대시보드 저장"
           icon="copy"
           onDismiss={onDismiss}
           className={css`

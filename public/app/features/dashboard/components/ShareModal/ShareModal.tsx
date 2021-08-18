@@ -32,21 +32,21 @@ function getInitialState(props: Props): State {
 function getTabs(props: Props) {
   const { panel } = props;
 
-  const tabs: ShareModalTabModel[] = [{ label: 'Link', value: 'link', component: ShareLink }];
+  const tabs: ShareModalTabModel[] = [{ label: '링크', value: 'link', component: ShareLink }];
 
   if (contextSrv.isSignedIn) {
-    tabs.push({ label: 'Snapshot', value: 'snapshot', component: ShareSnapshot });
+    tabs.push({ label: '스냅샷', value: 'snapshot', component: ShareSnapshot });
   }
 
   if (panel) {
-    tabs.push({ label: 'Embed', value: 'embed', component: ShareEmbed });
+    tabs.push({ label: '끼워넣기', value: 'embed', component: ShareEmbed });
 
     if (!isPanelModelLibraryPanel(panel)) {
-      tabs.push({ label: 'Library panel', value: 'library_panel', component: ShareLibraryPanel });
+      tabs.push({ label: '라이브러리 패널', value: 'library_panel', component: ShareLibraryPanel });
     }
     tabs.push(...customPanelTabs);
   } else {
-    tabs.push({ label: 'Export', value: 'export', component: ShareExport });
+    tabs.push({ label: '내보내기', value: 'export', component: ShareExport });
     tabs.push(...customDashboardTabs);
   }
 
@@ -92,7 +92,7 @@ export class ShareModal extends React.Component<Props, State> {
   renderTitle() {
     const { panel } = this.props;
     const { activeTab } = this.state;
-    const title = panel ? 'Share Panel' : 'Share';
+    const title = panel ? '공유 패널' : '공유';
     const tabs = this.getTabs();
 
     return (

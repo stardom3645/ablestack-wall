@@ -47,7 +47,7 @@ export class UserSessions extends PureComponent<Props, State> {
 
     return (
       <>
-        <h3 className="page-heading">Sessions</h3>
+        <h3 className="page-heading">세션</h3>
         <div className="gf-form-group">
           <div className="gf-form">
             <table className="filter-table form-inline">
@@ -88,14 +88,14 @@ export class UserSessions extends PureComponent<Props, State> {
           <div className={logoutFromAllDevicesClass}>
             {canLogout && sessions.length > 0 && (
               <Button variant="secondary" onClick={this.showLogoutConfirmationModal(true)}>
-                Force logout from all devices
+                모든 장치에서 강제 로그아웃
               </Button>
             )}
             <ConfirmModal
               isOpen={showLogoutModal}
-              title="Force logout from all devices"
-              body="Are you sure you want to force logout from all devices?"
-              confirmText="Force logout"
+              title="모든 장치에서 강제 로그아웃"
+              body="모든 장치에서 강제로 로그아웃하시겠습니까?"
+              confirmText="강제 로그아웃"
               onConfirm={this.onAllSessionsRevoke}
               onDismiss={this.showLogoutConfirmationModal(false)}
             />

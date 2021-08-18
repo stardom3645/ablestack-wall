@@ -115,11 +115,11 @@ AlternativeAction.parameters = {
 };
 
 AlternativeAction.args = {
-  title: 'Delete row',
-  body: 'Are you sure you want to remove this row and all its panels?',
-  alternativeText: 'Delete row only',
-  confirmText: 'Yes',
-  dismissText: 'Cancel',
+  title: '행 삭제',
+  body: '이 행과 모든 패널을 삭제하시겠습니까?',
+  alternativeText: '행만 삭제',
+  confirmText: '예',
+  dismissText: '취소',
   icon: 'trash-alt',
   isOpen: true,
 };

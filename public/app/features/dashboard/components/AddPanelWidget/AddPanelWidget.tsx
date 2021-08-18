@@ -139,7 +139,7 @@ export const AddPanelWidgetUnconnected: React.FC<Props> = ({ panel, dashboard })
     <div className={styles.wrapper}>
       <div className={cx('panel-container', styles.callToAction)}>
         <AddPanelWidgetHandle onCancel={onCancelAddPanel} onBack={addPanelView ? onBack : undefined} styles={styles}>
-          {addPanelView ? 'Add panel from panel library' : 'Add panel'}
+          {addPanelView ? '패널 라이브러리에서 패널 추가' : '패널 추가'}
         </AddPanelWidgetHandle>
         {addPanelView ? (
           <LibraryPanelsSearch onClick={onAddLibraryPanel} variant={LibraryPanelsSearchVariant.Tight} showPanelFilter />
@@ -148,47 +148,45 @@ export const AddPanelWidgetUnconnected: React.FC<Props> = ({ panel, dashboard })
             <div className={cx(styles.actionsRow, styles.columnGap)}>
               <div
                 onClick={() => {
-                  reportInteraction('Create new panel');
+                  reportInteraction('새 패널 만들기');
                   onCreateNewPanel();
                 }}
                 aria-label={selectors.pages.AddDashboard.addNewPanel}
               >
-                <Icon name="file-blank" size="xl" />
-                Add an empty panel
+                <Icon name="file-blank" size="xl" />빈 패널 추가
               </div>
               <div
                 className={styles.rowGap}
                 onClick={() => {
-                  reportInteraction('Create new row');
+                  reportInteraction('새 행 만들기');
                   onCreateNewRow();
                 }}
                 aria-label={selectors.pages.AddDashboard.addNewRow}
               >
-                <Icon name="wrap-text" size="xl" />
-                Add a new row
+                <Icon name="wrap-text" size="xl" />새 행 추가
               </div>
             </div>
             <div className={styles.actionsRow}>
               <div
                 onClick={() => {
-                  reportInteraction('Add a panel from the panel library');
+                  reportInteraction('패널 라이브러리에서 패널 추가');
                   setAddPanelView(true);
                 }}
                 aria-label={selectors.pages.AddDashboard.addNewPanelLibrary}
               >
                 <Icon name="book-open" size="xl" />
-                Add a panel from the panel library
+                패널 라이브러리에서 패널 추가
               </div>
               {copiedPanelPlugins.length === 1 && (
                 <div
                   className={styles.rowGap}
                   onClick={() => {
-                    reportInteraction('Paste panel from clipboard');
+                    reportInteraction('클립보드에서 패널 붙여넣기');
                     onPasteCopiedPanel(copiedPanelPlugins[0]);
                   }}
                 >
                   <Icon name="clipboard-alt" size="xl" />
-                  Paste panel from clipboard
+                  클립보드에서 패널 붙여넣기
                 </div>
               )}
             </div>

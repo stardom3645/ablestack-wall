@@ -35,11 +35,11 @@ export const PlaylistEditPage: FC<Props> = ({ navModel, match }) => {
   return (
     <Page navModel={navModel}>
       <Page.Contents isLoading={loading}>
-        <h3 className={styles.subHeading}>Edit playlist</h3>
+        <h3 className={styles.subHeading}>플레이리스트 편집</h3>
 
         <p className={styles.description}>
-          A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build
-          situational awareness, or just show off your metrics to your team or visitors.
+          재생 목록은 미리 선택된 대시보드 목록을 순환합니다. 재생 목록은 상황 인식을 구축하거나 팀이나 방문자에게
+          지표를 과시하는 좋은 방법이 될 수 있습니다.
         </p>
 
         <PlaylistForm onSubmit={onSubmit} playlist={playlist} />

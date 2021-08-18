@@ -6,16 +6,16 @@ export function buildNavModel(folder: FolderDTO): NavModelItem {
   const model = {
     icon: 'folder',
     id: 'manage-folder',
-    subTitle: 'Manage folder dashboards and permissions',
+    subTitle: '폴더 대시보드 및 권한 관리',
     url: '',
     text: folder.title,
-    breadcrumbs: [{ title: 'Dashboards', url: 'dashboards' }],
+    breadcrumbs: [{ title: '대시보드', url: 'dashboards' }],
     children: [
       {
         active: false,
         icon: 'apps',
         id: `folder-dashboards-${folder.uid}`,
-        text: 'Dashboards',
+        text: '대시보드',
         url: folder.url,
       },
     ],
@@ -25,7 +25,7 @@ export function buildNavModel(folder: FolderDTO): NavModelItem {
     active: false,
     icon: 'library-panel',
     id: `folder-library-panels-${folder.uid}`,
-    text: 'Panels',
+    text: '패널',
     url: `${folder.url}/library-panels`,
   });
 
@@ -34,7 +34,7 @@ export function buildNavModel(folder: FolderDTO): NavModelItem {
       active: false,
       icon: 'lock',
       id: `folder-permissions-${folder.uid}`,
-      text: 'Permissions',
+      text: '권한',
       url: `${folder.url}/permissions`,
     });
   }
@@ -44,7 +44,7 @@ export function buildNavModel(folder: FolderDTO): NavModelItem {
       active: false,
       icon: 'cog',
       id: `folder-settings-${folder.uid}`,
-      text: 'Settings',
+      text: '설정',
       url: `${folder.url}/settings`,
     });
   }

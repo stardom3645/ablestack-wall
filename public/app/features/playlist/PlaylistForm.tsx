@@ -27,19 +27,19 @@ export const PlaylistForm: FC<PlaylistFormProps> = ({ onSubmit, playlist }) => {
           const isDisabled = items.length === 0 || Object.keys(errors).length > 0;
           return (
             <>
-              <Field label="Name" invalid={!!errors.name} error={errors?.name?.message}>
+              <Field label="이름" invalid={!!errors.name} error={errors?.name?.message}>
                 <Input
                   type="text"
-                  {...register('name', { required: 'Name is required' })}
-                  placeholder="Name"
+                  {...register('name', { required: '이름은 필수입니다.' })}
+                  placeholder="이름"
                   defaultValue={name}
                   aria-label={selectors.pages.PlaylistForm.name}
                 />
               </Field>
-              <Field label="Interval" invalid={!!errors.interval} error={errors?.interval?.message}>
+              <Field label="인터벌" invalid={!!errors.interval} error={errors?.interval?.message}>
                 <Input
                   type="text"
-                  {...register('interval', { required: 'Interval is required' })}
+                  {...register('interval', { required: '인터벌은 필수입니다.' })}
                   placeholder="5m"
                   defaultValue={interval ?? '5m'}
                   aria-label={selectors.pages.PlaylistForm.interval}
@@ -49,13 +49,13 @@ export const PlaylistForm: FC<PlaylistFormProps> = ({ onSubmit, playlist }) => {
               <PlaylistTable items={items} onMoveUp={moveUp} onMoveDown={moveDown} onDelete={deleteItem} />
 
               <div className="gf-form-group">
-                <h3 className="page-headering">Add dashboards</h3>
+                <h3 className="page-headering">대시보드 추가</h3>
 
-                <Field label="Add by title">
+                <Field label="이름으로 추가">
                   <DashboardPicker onChange={addById} isClearable />
                 </Field>
 
-                <Field label="Add by tag">
+                <Field label="태그로 추가">
                   <TagFilter
                     isClearable
                     tags={[]}
@@ -69,10 +69,10 @@ export const PlaylistForm: FC<PlaylistFormProps> = ({ onSubmit, playlist }) => {
 
               <HorizontalGroup>
                 <Button variant="primary" disabled={isDisabled}>
-                  Save
+                  저장
                 </Button>
                 <LinkButton variant="secondary" href={`${config.appSubUrl}/playlists`}>
-                  Cancel
+                  취소
                 </LinkButton>
               </HorizontalGroup>
             </>

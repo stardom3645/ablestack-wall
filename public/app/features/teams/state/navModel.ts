@@ -6,23 +6,23 @@ export function buildNavModel(team: Team): NavModelItem {
   const navModel = {
     img: team.avatarUrl,
     id: 'team-' + team.id,
-    subTitle: 'Manage members and settings',
+    subTitle: '회원 및 설정 관리',
     url: '',
     text: team.name,
-    breadcrumbs: [{ title: 'Teams', url: 'org/teams' }],
+    breadcrumbs: [{ title: '팀', url: 'org/teams' }],
     children: [
       {
         active: false,
         icon: 'users-alt',
         id: `team-members-${team.id}`,
-        text: 'Members',
+        text: '회원',
         url: `org/teams/edit/${team.id}/members`,
       },
       {
         active: false,
         icon: 'sliders-v-alt',
         id: `team-settings-${team.id}`,
-        text: 'Settings',
+        text: '설정',
         url: `org/teams/edit/${team.id}/settings`,
       },
     ],
