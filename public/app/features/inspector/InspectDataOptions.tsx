@@ -104,6 +104,7 @@ export const InspectDataOptions: FC<Props> = ({
             {data!.length > 1 && (
               <Field label="데이터 프레임 표시">
                 <Select
+                  menuShouldPortal
                   options={selectableOptions}
                   value={selectedDataFrame}
                   onChange={onDataFrameChange}

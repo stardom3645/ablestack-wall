@@ -16,18 +16,18 @@ enum ShowContent {
 
 const options: Array<SelectableValue<ShowContent>> = [
   {
-    label: '패널 JSON',
-    description: '모든 것이 작동하는 방식을 구성하는 대시보드 JSON에 저장된 모델입니다.',
+    label: 'Panel JSON',
+    description: 'The model saved in the dashboard JSON that configures how everything works.',
     value: ShowContent.PanelJSON,
   },
   {
-    label: '데이터',
-    description: '패널 시각화에 전달된 원시 모델',
+    label: 'Data',
+    description: 'The raw model passed to the panel visualization',
     value: ShowContent.DataJSON,
   },
   {
-    label: '데이터 프레임 구조',
-    description: '값이 없는 응답 정보',
+    label: 'DataFrame structure',
+    description: 'Response info without any values',
     value: ShowContent.DataStructure,
   },
 ];
@@ -131,12 +131,12 @@ export class InspectJSONTab extends PureComponent<Props, State> {
     return (
       <>
         <div className={styles.toolbar} aria-label={selectors.components.PanelInspector.Json.content}>
-          <Field label="소스 선택" className="flex-grow-1">
-            <Select options={jsonOptions} value={selected} onChange={this.onSelectChanged} />
+          <Field label="Select source" className="flex-grow-1">
+            <Select menuShouldPortal options={jsonOptions} value={selected} onChange={this.onSelectChanged} />
           </Field>
           {this.hasPanelJSON && isPanelJSON && canEdit && (
             <Button className={styles.toolbarItem} onClick={this.onApplyPanelModel}>
-              적용
+              Apply
             </Button>
           )}
         </div>

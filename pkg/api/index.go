@@ -28,13 +28,13 @@ func (hs *HTTPServer) getProfileNode(c *models.ReqContext) *dtos.NavLink {
 
 	children := []*dtos.NavLink{
 		{
-			Text: "기본 설정", Id: "profile-settings", Url: hs.Cfg.AppSubURL + "/profile", Icon: "sliders-v-alt",
+			Text: "Preferences", Id: "profile-settings", Url: hs.Cfg.AppSubURL + "/profile", Icon: "sliders-v-alt",
 		},
 	}
 
 	if setting.AddChangePasswordLink() {
 		children = append(children, &dtos.NavLink{
-			Text: "비밀번호 변경", Id: "change-password", Url: hs.Cfg.AppSubURL + "/profile/password",
+			Text: "Change password", Id: "change-password", Url: hs.Cfg.AppSubURL + "/profile/password",
 			Icon: "lock", HideFromMenu: true,
 		})
 	}
@@ -42,7 +42,7 @@ func (hs *HTTPServer) getProfileNode(c *models.ReqContext) *dtos.NavLink {
 	if !setting.DisableSignoutMenu {
 		// add sign out first
 		children = append(children, &dtos.NavLink{
-			Text:         "로그아웃",
+			Text:         "Sign out",
 			Id:           "sign-out",
 			Url:          hs.Cfg.AppSubURL + "/logout",
 			Icon:         "arrow-from-right",
@@ -131,20 +131,20 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if hasEditPerm {
 		children := []*dtos.NavLink{
-			{Text: "대시보드", Icon: "apps", Url: hs.Cfg.AppSubURL + "/dashboard/new"},
+			{Text: "Dashboard", Icon: "apps", Url: hs.Cfg.AppSubURL + "/dashboard/new"},
 		}
 		if c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR {
 			children = append(children, &dtos.NavLink{
-				Text: "폴더", SubTitle: "대시보드를 구성할 새 폴더 만들기", Id: "folder",
+				Text: "Folder", SubTitle: "Create a new folder to organize your dashboards", Id: "folder",
 				Icon: "folder-plus", Url: hs.Cfg.AppSubURL + "/dashboards/folder/new",
 			})
 		}
 		children = append(children, &dtos.NavLink{
-			Text: "임포트", SubTitle: "대시보드 가져오기", Id: "import", Icon: "import",
+			Text: "Import", SubTitle: "Import dashboard from file or Grafana.com", Id: "import", Icon: "import",
 			Url: hs.Cfg.AppSubURL + "/dashboard/import",
 		})
 		navTree = append(navTree, &dtos.NavLink{
-			Text:       "생성",
+			Text:       "Create",
 			Id:         "create",
 			Icon:       "plus",
 			Url:        hs.Cfg.AppSubURL + "/dashboard/new",
@@ -154,22 +154,22 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 	}
 
 	dashboardChildNavs := []*dtos.NavLink{
-		{Text: "홈", Id: "home", Url: hs.Cfg.AppSubURL + "/", Icon: "home-alt", HideFromTabs: true},
+		{Text: "Home", Id: "home", Url: hs.Cfg.AppSubURL + "/", Icon: "home-alt", HideFromTabs: true},
 		{Text: "Divider", Divider: true, Id: "divider", HideFromTabs: true},
-		{Text: "관리", Id: "manage-dashboards", Url: hs.Cfg.AppSubURL + "/dashboards", Icon: "sitemap"},
-		{Text: "플레이리스트", Id: "playlists", Url: hs.Cfg.AppSubURL + "/playlists", Icon: "presentation-play"},
+		{Text: "Manage", Id: "manage-dashboards", Url: hs.Cfg.AppSubURL + "/dashboards", Icon: "sitemap"},
+		{Text: "Playlists", Id: "playlists", Url: hs.Cfg.AppSubURL + "/playlists", Icon: "presentation-play"},
 	}
 
 	if c.IsSignedIn {
 		dashboardChildNavs = append(dashboardChildNavs, &dtos.NavLink{
-			Text: "스냅샷",
+			Text: "Snapshots",
 			Id:   "snapshots",
 			Url:  hs.Cfg.AppSubURL + "/dashboard/snapshots",
 			Icon: "camera",
 		})
 
 		dashboardChildNavs = append(dashboardChildNavs, &dtos.NavLink{
-			Text: "라이브러리 패널",
+			Text: "Library panels",
 			Id:   "library-panels",
 			Url:  hs.Cfg.AppSubURL + "/library-panels",
 			Icon: "library-panel",
@@ -177,9 +177,9 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 	}
 
 	navTree = append(navTree, &dtos.NavLink{
-		Text:       "대시보드",
+		Text:       "Dashboards",
 		Id:         "dashboards",
-		SubTitle:   "대시보드와 폴더를 관리합니다.",
+		SubTitle:   "Manage dashboards and folders",
 		Icon:       "apps",
 		Url:        hs.Cfg.AppSubURL + "/",
 		SortWeight: dtos.WeightDashboard,
@@ -190,11 +190,11 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 		return c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR || setting.ViewersCanEdit
 	}
 
-	if setting.ExploreEnabled && hasAccess(canExplore, ac.ActionDatasourcesExplore) {
+	if setting.ExploreEnabled && hasAccess(canExplore, ac.EvalPermission(ac.ActionDatasourcesExplore)) {
 		navTree = append(navTree, &dtos.NavLink{
-			Text:       "탐색",
+			Text:       "Explore",
 			Id:         "explore",
-			SubTitle:   "데이터를 탐색하다.",
+			SubTitle:   "Explore your data",
 			Icon:       "compass",
 			SortWeight: dtos.WeightExplore,
 			Url:        hs.Cfg.AppSubURL + "/explore",
@@ -207,10 +207,10 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if setting.AlertingEnabled {
 		alertChildNavs := []*dtos.NavLink{
-			{Text: "경고 규칙", Id: "alert-list", Url: hs.Cfg.AppSubURL + "/alerting/list", Icon: "list-ul"},
+			{Text: "Alert rules", Id: "alert-list", Url: hs.Cfg.AppSubURL + "/alerting/list", Icon: "list-ul"},
 		}
 		if hs.Cfg.IsNgAlertEnabled() {
-			alertChildNavs = append(alertChildNavs, &dtos.NavLink{Text: "Notifications", Id: "notifications", Url: hs.Cfg.AppSubURL + "/alerting/alertmanager", Icon: "layer-group"})
+			alertChildNavs = append(alertChildNavs, &dtos.NavLink{Text: "Alert groups", Id: "groups", Url: hs.Cfg.AppSubURL + "/alerting/groups", Icon: "layer-group"})
 			alertChildNavs = append(alertChildNavs, &dtos.NavLink{Text: "Silences", Id: "silences", Url: hs.Cfg.AppSubURL + "/alerting/silences", Icon: "bell-slash"})
 		}
 		if c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR {
@@ -222,21 +222,21 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 				alertChildNavs = append(alertChildNavs, &dtos.NavLink{Text: "Notification policies", Id: "am-routes", Url: hs.Cfg.AppSubURL + "/alerting/routes", Icon: "sitemap"})
 			} else {
 				alertChildNavs = append(alertChildNavs, &dtos.NavLink{
-					Text: "알림 채널", Id: "channels", Url: hs.Cfg.AppSubURL + "/alerting/notifications",
+					Text: "Notification channels", Id: "channels", Url: hs.Cfg.AppSubURL + "/alerting/notifications",
 					Icon: "comment-alt-share",
 				})
 			}
 		}
 		if c.OrgRole == models.ROLE_ADMIN && hs.Cfg.IsNgAlertEnabled() {
 			alertChildNavs = append(alertChildNavs, &dtos.NavLink{
-				Text: "관리자", Id: "alerting-admin", Url: hs.Cfg.AppSubURL + "/alerting/admin",
+				Text: "Admin", Id: "alerting-admin", Url: hs.Cfg.AppSubURL + "/alerting/admin",
 				Icon: "cog",
 			})
 		}
 
 		navTree = append(navTree, &dtos.NavLink{
-			Text:       "경고",
-			SubTitle:   "경고 규칙 및 알림",
+			Text:       "Alerting",
+			SubTitle:   "Alert rules and notifications",
 			Id:         "alerting",
 			Icon:       "bell",
 			Url:        hs.Cfg.AppSubURL + "/alerting/list",
@@ -255,19 +255,19 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if c.OrgRole == models.ROLE_ADMIN {
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "데이터 소스",
+			Text:        "Data sources",
 			Icon:        "database",
-			Description: "데이터 소스 추가 및 구성",
+			Description: "Add and configure data sources",
 			Id:          "datasources",
 			Url:         hs.Cfg.AppSubURL + "/datasources",
 		})
 	}
 
-	if hasAccess(ac.ReqOrgAdmin, ac.ActionOrgUsersRead, ac.ScopeUsersAll) {
+	if hasAccess(ac.ReqOrgAdmin, ac.EvalPermission(ac.ActionOrgUsersRead, ac.ScopeUsersAll)) {
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "사용자",
+			Text:        "Users",
 			Id:          "users",
-			Description: "조직 구성원 관리",
+			Description: "Manage org members",
 			Icon:        "user",
 			Url:         hs.Cfg.AppSubURL + "/org/users",
 		})
@@ -275,9 +275,9 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if c.OrgRole == models.ROLE_ADMIN || (hs.Cfg.EditorsCanAdmin && c.OrgRole == models.ROLE_EDITOR) {
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "팀",
+			Text:        "Teams",
 			Id:          "teams",
-			Description: "조직 그룹 관리",
+			Description: "Manage org groups",
 			Icon:        "users-alt",
 			Url:         hs.Cfg.AppSubURL + "/org/teams",
 		})
@@ -285,24 +285,24 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if c.OrgRole == models.ROLE_ADMIN {
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "플러그인",
+			Text:        "Plugins",
 			Id:          "plugins",
-			Description: "플러그인 보기 및 구성",
+			Description: "View and configure plugins",
 			Icon:        "plug",
 			Url:         hs.Cfg.AppSubURL + "/plugins",
 		})
 
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "기본 설정",
+			Text:        "Preferences",
 			Id:          "org-settings",
-			Description: "조직 기본 설정",
+			Description: "Organization preferences",
 			Icon:        "sliders-v-alt",
 			Url:         hs.Cfg.AppSubURL + "/org",
 		})
 		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "API 키",
+			Text:        "API keys",
 			Id:          "apikeys",
-			Description: "API 키 생성 및 관리",
+			Description: "Create & manage API keys",
 			Icon:        "key-skeleton-alt",
 			Url:         hs.Cfg.AppSubURL + "/org/apikeys",
 		})
@@ -311,8 +311,8 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 	if len(configNodes) > 0 {
 		navTree = append(navTree, &dtos.NavLink{
 			Id:         dtos.NavIDCfg,
-			Text:       "환경 설정",
-			SubTitle:   "조직 : " + c.OrgName,
+			Text:       "Configuration",
+			SubTitle:   "Organization: " + c.OrgName,
 			Icon:       "cog",
 			Url:        configNodes[0].Url,
 			SortWeight: dtos.WeightConfig,
@@ -324,8 +324,8 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 
 	if len(adminNavLinks) > 0 {
 		navTree = append(navTree, &dtos.NavLink{
-			Text:         "서버 관리자",
-			SubTitle:     "모든 사용자 및 조직 관리",
+			Text:         "Server Admin",
+			SubTitle:     "Manage all users and orgs",
 			HideFromTabs: true,
 			Id:           "admin",
 			Icon:         "shield",
@@ -341,7 +341,7 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool) ([]*dto
 	}
 
 	navTree = append(navTree, &dtos.NavLink{
-		Text:         "도움",
+		Text:         "Help",
 		SubTitle:     helpVersion,
 		Id:           "help",
 		Url:          "#",
@@ -358,33 +358,33 @@ func (hs *HTTPServer) buildAdminNavLinks(c *models.ReqContext) []*dtos.NavLink {
 	hasAccess := ac.HasAccess(hs.AccessControl, c)
 	adminNavLinks := []*dtos.NavLink{}
 
-	if hasAccess(ac.ReqGrafanaAdmin, ac.ActionUsersRead, ac.ScopeGlobalUsersAll) {
+	if hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionUsersRead, ac.ScopeGlobalUsersAll)) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
-			Text: "사용자", Id: "global-users", Url: hs.Cfg.AppSubURL + "/admin/users", Icon: "user",
+			Text: "Users", Id: "global-users", Url: hs.Cfg.AppSubURL + "/admin/users", Icon: "user",
 		})
 	}
 
 	if c.IsGrafanaAdmin {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
-			Text: "조직", Id: "global-orgs", Url: hs.Cfg.AppSubURL + "/admin/orgs", Icon: "building",
+			Text: "Orgs", Id: "global-orgs", Url: hs.Cfg.AppSubURL + "/admin/orgs", Icon: "building",
 		})
 	}
 
-	if hasAccess(ac.ReqGrafanaAdmin, ac.ActionSettingsRead) {
+	if hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionSettingsRead)) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
-			Text: "설정", Id: "server-settings", Url: hs.Cfg.AppSubURL + "/admin/settings", Icon: "sliders-v-alt",
+			Text: "Settings", Id: "server-settings", Url: hs.Cfg.AppSubURL + "/admin/settings", Icon: "sliders-v-alt",
 		})
 	}
 
-	if hasAccess(ac.ReqGrafanaAdmin, ac.ActionServerStatsRead) {
-		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
-			Text: "통계", Id: "server-stats", Url: hs.Cfg.AppSubURL + "/admin/stats", Icon: "graph-bar",
-		})
-	}
-
-	if hs.Cfg.LDAPEnabled && hasAccess(ac.ReqGrafanaAdmin, ac.ActionLDAPStatusRead) {
+	if hs.Cfg.LDAPEnabled && hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionLDAPStatusRead)) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
 			Text: "LDAP", Id: "ldap", Url: hs.Cfg.AppSubURL + "/admin/ldap", Icon: "book",
+		})
+	}
+
+	if hs.Cfg.PluginAdminEnabled && hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionPluginsManage)) {
+		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
+			Text: "Plugins", Id: "admin-plugins", Url: hs.Cfg.AppSubURL + "/admin/plugins", Icon: "plug",
 		})
 	}
 
@@ -468,7 +468,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		AppNameBodyClass:        getAppNameBodyClass(hs.License.HasValidLicense()),
 		FavIcon:                 "public/img/fav32.png",
 		AppleTouchIcon:          "public/img/apple-touch-icon.png",
-		AppTitle:                "ABLESTACK",
+		AppTitle:                "Grafana",
 		NavTree:                 navTree,
 		Sentry:                  &hs.Cfg.Sentry,
 		Nonce:                   c.RequestNonce,

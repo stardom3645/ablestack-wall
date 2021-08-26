@@ -213,31 +213,38 @@ export class ShareSnapshot extends PureComponent<Props, State> {
       <>
         <div>
           <p className="share-modal-info-text">
-            스냅샷은 대화형 대시보드를 공개적으로 공유하는 즉각적인 방법입니다. 생성 시 쿼리(메트릭, 템플릿 및 주석) 및
-            패널 링크와 같은 민감한 데이터를 제거하고 대시보드에 포함된 가시적인 메트릭 데이터 및 시리즈 이름만
-            남깁니다.
+            A snapshot is an instant way to share an interactive dashboard publicly. When created, we strip sensitive
+            data like queries (metric, template, and annotation) and panel links, leaving only the visible metric data
+            and series names embedded in your dashboard.
           </p>
           <p className="share-modal-info-text">
-            귀하의 스냅샷은 링크가 있고 URL에 액세스할 수 있는 <em>모든 사람이 볼</em> 수 있습니다. 현명하게
-            공유하십시오.
+            Keep in mind, your snapshot <em>can be viewed by anyone</em> that has the link and can access the URL. Share
+            wisely.
           </p>
         </div>
-        <Field label="스냅샷 이름">
+        <Field label="Snapshot name">
           <Input width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
         </Field>
-        <Field label="만료">
-          <Select width={30} options={expireOptions} value={selectedExpireOption} onChange={this.onExpireChange} />
+        <Field label="Expire">
+          <Select
+            menuShouldPortal
+            width={30}
+            options={expireOptions}
+            value={selectedExpireOption}
+            onChange={this.onExpireChange}
+          />
         </Field>
         <Field
-          label="시간 초과(초)"
-          description="대시보드 메트릭을 수집하는 데 시간이 오래 걸리는 경우 시간 초과 값을 구성해야 할 수 있습니다."
+          label="Timeout (seconds)"
+          description="You might need to configure the timeout value if it takes a long time to collect your dashboard
+            metrics."
         >
           <Input type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
         </Field>
 
         <Modal.ButtonRow>
           <Button variant="secondary" onClick={onDismiss} fill="outline">
-            취소
+            Cancel
           </Button>
           {externalEnabled && (
             <Button variant="secondary" disabled={isLoading} onClick={this.createSnapshot(true)}>
@@ -245,7 +252,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             </Button>
           )}
           <Button variant="primary" disabled={isLoading} onClick={this.createSnapshot()}>
-            로컬 스냅샷
+            Local Snapshot
           </Button>
         </Modal.ButtonRow>
       </>
@@ -264,15 +271,15 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             </a>
             <br />
             <ClipboardButton variant="secondary" getText={this.getSnapshotUrl} onClipboardCopy={this.onSnapshotUrlCopy}>
-              링크 복사
+              Copy Link
             </ClipboardButton>
           </div>
         </div>
 
         <div className="pull-right" style={{ padding: '5px' }}>
-          실수로 만드셨습니까?{' '}
+          Did you make a mistake?{' '}
           <LinkButton fill="text" target="_blank" onClick={this.deleteSnapshot}>
-            스냅샷 삭제.
+            Delete snapshot.
           </LinkButton>
         </div>
       </>
@@ -283,8 +290,8 @@ export class ShareSnapshot extends PureComponent<Props, State> {
     return (
       <div className="share-modal-header">
         <p className="share-modal-info-text">
-          스냅샷이 삭제되었습니다. 이미 한 번 액세스한 경우 브라우저 캐시 또는 CDN 캐시에서 제거되기까지 최대 1시간이
-          소요될 수 있습니다.
+          The snapshot has been deleted. If you have already accessed it once, then it might take up to an hour before
+          before it is removed from browser caches or CDN caches.
         </p>
       </div>
     );

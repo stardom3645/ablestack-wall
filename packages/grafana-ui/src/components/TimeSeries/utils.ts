@@ -17,20 +17,20 @@ import { UPlotConfigBuilder, UPlotConfigPrepFn } from '../uPlot/config/UPlotConf
 import { FIXED_UNIT } from '../GraphNG/GraphNG';
 import {
   AxisPlacement,
-  DrawStyle,
+  GraphDrawStyle,
   GraphFieldConfig,
   GraphTresholdsStyleMode,
   PointVisibility,
   ScaleDirection,
   ScaleOrientation,
-} from '../uPlot/config';
-import { collectStackingGroups } from '../uPlot/utils';
+} from '@grafana/schema';
+import { collectStackingGroups, preparePlotData } from '../uPlot/utils';
 import uPlot from 'uplot';
 
 const defaultFormatter = (v: any) => (v == null ? '-' : v.toFixed(1));
 
 const defaultConfig: GraphFieldConfig = {
-  drawStyle: DrawStyle.Line,
+  drawStyle: GraphDrawStyle.Line,
   showPoints: PointVisibility.Auto,
   axisPlacement: AxisPlacement.Auto,
 };
@@ -45,6 +45,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
   allFrames,
 }) => {
   const builder = new UPlotConfigBuilder(timeZone);
+
+  builder.setPrepData(preparePlotData);
 
   // X is the first field in the aligned frame
   const xField = frame.fields[0];
@@ -148,7 +150,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
       });
     }
 
-    const showPoints = customConfig.drawStyle === DrawStyle.Points ? PointVisibility.Always : customConfig.showPoints;
+    const showPoints =
+      customConfig.drawStyle === GraphDrawStyle.Points ? PointVisibility.Always : customConfig.showPoints;
 
     let pointsFilter: uPlot.Series.Points.Filter = () => null;
 
@@ -327,7 +330,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
       key: '__global_',
       filters: {
         pub: (type: string, src: uPlot, x: number, y: number, w: number, h: number, dataIdx: number) => {
-          payload.columnIndex = dataIdx;
+          payload.rowIndex = dataIdx;
           if (x < 0 && y < 0) {
             payload.point[xScaleUnit] = null;
             payload.point[yScaleKey] = null;

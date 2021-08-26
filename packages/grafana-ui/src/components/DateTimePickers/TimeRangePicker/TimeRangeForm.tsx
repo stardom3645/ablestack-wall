@@ -32,7 +32,7 @@ interface InputState {
 }
 
 const ERROR_MESSAGES = {
-  default: '과거 날짜 또는 "now"을 입력하세요.',
+  default: 'Please enter a past date or "now"',
   range: '"From" can\'t be after "To"',
 };
 
@@ -96,8 +96,8 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
   const icon = isFullscreen ? null : <Button icon="calendar-alt" variant="secondary" onClick={onOpen} />;
 
   return (
-    <>
-      <Field label="부터" invalid={from.invalid} error={from.errorMessage}>
+    <div aria-label="Absolute time ranges">
+      <Field label="From" invalid={from.invalid} error={from.errorMessage}>
         <Input
           onClick={(event) => event.stopPropagation()}
           onFocus={onFocus}
@@ -107,7 +107,7 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
           value={from.value}
         />
       </Field>
-      <Field label="까지" invalid={to.invalid} error={to.errorMessage}>
+      <Field label="To" invalid={to.invalid} error={to.errorMessage}>
         <Input
           onClick={(event) => event.stopPropagation()}
           onFocus={onFocus}
@@ -117,8 +117,8 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
           value={to.value}
         />
       </Field>
-      <Button aria-label={selectors.components.TimePicker.applyTimeRange} onClick={onApply}>
-        시간 범위 적용
+      <Button data-testid={selectors.components.TimePicker.applyTimeRange} onClick={onApply}>
+        Apply time range
       </Button>
 
       <TimePickerCalendar
@@ -132,7 +132,7 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
         timeZone={timeZone}
         isReversed={isReversed}
       />
-    </>
+    </div>
   );
 };
 

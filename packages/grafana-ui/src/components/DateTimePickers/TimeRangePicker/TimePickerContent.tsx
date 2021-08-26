@@ -10,6 +10,8 @@ import { TimePickerTitle } from './TimePickerTitle';
 import { TimeRangeForm } from './TimeRangeForm';
 import { TimeRangeList } from './TimeRangeList';
 import { TimePickerFooter } from './TimePickerFooter';
+import { getFocusStyles } from '../../../themes/mixins';
+import { selectors } from '@grafana/e2e-selectors';
 
 const getStyles = stylesFactory((theme: GrafanaTheme2, isReversed, hideQuickRanges, isContainerTall) => {
   return {
@@ -30,6 +32,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme2, isReversed, hideQuickRang
     `,
     body: css`
       display: flex;
+      flex-direction: row-reverse;
       height: ${isContainerTall ? '381px' : '217px'};
     `,
     leftSide: css`
@@ -63,6 +66,16 @@ const getNarrowScreenStyles = stylesFactory((theme: GrafanaTheme2) => {
       align-items: center;
       border-bottom: 1px solid ${theme.colors.border.weak};
       padding: 7px 9px 7px 9px;
+    `,
+    expandButton: css`
+      background-color: transparent;
+      border: none;
+      display: flex;
+      width: 100%;
+
+      &:focus-visible {
+        ${getFocusStyles(theme)}
+      }
     `,
     body: css`
       border-bottom: 1px solid ${theme.colors.border.weak};
@@ -163,13 +176,8 @@ export const TimePickerContentWithScreenSize: React.FC<PropsWithScreenSize> = (p
   };
 
   return (
-    <div className={cx(styles.container, className)}>
+    <div id="TimePickerContent" className={cx(styles.container, className)}>
       <div className={styles.body}>
-        {isFullscreen && (
-          <div className={styles.leftSide}>
-            <FullScreenForm {...props} historyOptions={historyOptions} />
-          </div>
-        )}
         {(!isFullscreen || !hideQuickRanges) && (
           <CustomScrollbar className={styles.rightSide}>
             {!isFullscreen && <NarrowScreenForm {...props} historyOptions={historyOptions} />}
@@ -191,6 +199,11 @@ export const TimePickerContentWithScreenSize: React.FC<PropsWithScreenSize> = (p
               </>
             )}
           </CustomScrollbar>
+        )}
+        {isFullscreen && (
+          <div className={styles.leftSide}>
+            <FullScreenForm {...props} historyOptions={historyOptions} />
+          </div>
         )}
       </div>
       {!hideTimeZone && isFullscreen && <TimePickerFooter timeZone={timeZone} onChangeTimeZone={onChangeTimeZone} />}
@@ -218,27 +231,31 @@ const NarrowScreenForm: React.FC<FormProps> = (props) => {
   };
 
   return (
-    <>
-      <div
-        aria-label="TimePicker absolute time range"
-        className={styles.header}
-        onClick={() => {
-          if (!hideQuickRanges) {
-            setCollapsedFlag(!collapsed);
-          }
-        }}
-      >
-        <TimePickerTitle>절대 시간 범위</TimePickerTitle>
-        {!hideQuickRanges && <Icon name={!collapsed ? 'angle-up' : 'angle-down'} />}
+    <fieldset>
+      <div className={styles.header}>
+        <button
+          className={styles.expandButton}
+          onClick={() => {
+            if (!hideQuickRanges) {
+              setCollapsedFlag(!collapsed);
+            }
+          }}
+          data-testid={selectors.components.TimePicker.absoluteTimeRangeTitle}
+          aria-expanded={!collapsed}
+          aria-controls="expanded-timerange"
+        >
+          <TimePickerTitle>Absolute time range</TimePickerTitle>
+          {!hideQuickRanges && <Icon name={!collapsed ? 'angle-up' : 'angle-down'} />}
+        </button>
       </div>
       {!collapsed && (
-        <div className={styles.body}>
+        <div className={styles.body} id="expanded-timerange">
           <div className={styles.form}>
             <TimeRangeForm value={value} onApply={onChange} timeZone={timeZone} isFullscreen={false} />
           </div>
           {showHistory && (
             <TimeRangeList
-              title="최근에 사용한 절대 범위"
+              title="Recently used absolute ranges"
               options={historyOptions}
               onChange={onChangeTimeOption}
               placeholderEmpty={null}
@@ -246,7 +263,7 @@ const NarrowScreenForm: React.FC<FormProps> = (props) => {
           )}
         </div>
       )}
-    </>
+    </fieldset>
   );
 };
 
@@ -261,8 +278,8 @@ const FullScreenForm: React.FC<FormProps> = (props) => {
   return (
     <>
       <div className={styles.container}>
-        <div aria-label="TimePicker absolute time range" className={styles.title}>
-          <TimePickerTitle>절대 시간 범위</TimePickerTitle>
+        <div className={styles.title} data-testid={selectors.components.TimePicker.absoluteTimeRangeTitle}>
+          <TimePickerTitle>Absolute time range</TimePickerTitle>
         </div>
         <TimeRangeForm
           value={props.value}
@@ -275,7 +292,7 @@ const FullScreenForm: React.FC<FormProps> = (props) => {
       {props.showHistory && (
         <div className={styles.recent}>
           <TimeRangeList
-            title="최근에 사용한 절대 범위"
+            title="Recently used absolute ranges"
             options={props.historyOptions || []}
             onChange={onChangeTimeOption}
             placeholderEmpty={<EmptyRecentList />}
@@ -294,10 +311,19 @@ const EmptyRecentList = memo(() => {
     <div className={styles.container}>
       <div>
         <span>
-          이 시간 선택기를 사용한 적이 없는 것 같습니다. 시간 간격을 입력하자마자 최근에 사용한 간격이 여기에
-          나타납니다. 사용자 지정 시간 범위를 입력하는 방법에 대해 자세히 알아보십시오. 다음 시간 단위가 지원됩니다. : s
-          (초), m (분), h (시), d (일), w (주), M (달), y (년)
+          It looks like you haven&apos;t used this time picker before. As soon as you enter some time intervals,
+          recently used intervals will appear here.
         </span>
+      </div>
+      <div>
+        <a
+          className={styles.link}
+          href="https://grafana.com/docs/grafana/latest/dashboards/time-range-controls"
+          target="_new"
+        >
+          Read the documentation
+        </a>
+        <span> to find out more about how to enter custom time ranges.</span>
       </div>
     </div>
   );
