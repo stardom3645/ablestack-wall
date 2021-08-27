@@ -59,7 +59,7 @@ export class Branding {
   static MenuLogo = MenuLogo;
   static LoginBoxBackground = LoginBoxBackground;
   static AppTitle = 'ABLESTACK';
-  static LoginTitle = 'Wall에 오신 걸 환영합니다.';
+  static LoginTitle = 'ABLESTACK Wall';
   static GetLoginSubTitle = (): null | string => {
     return null;
   };

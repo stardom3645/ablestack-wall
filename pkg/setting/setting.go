@@ -44,7 +44,7 @@ const (
 	Dev              = "development"
 	Prod             = "production"
 	Test             = "test"
-	ApplicationName  = "Grafana"
+	ApplicationName  = "Wall"
 )
 
 // This constant corresponds to the default value for ldap_sync_ttl in .ini files

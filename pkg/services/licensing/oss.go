@@ -55,7 +55,7 @@ func ProvideService(cfg *setting.Cfg, hooksService *hooks.HooksService) *OSSLice
 	}
 	l.HooksService.AddIndexDataHook(func(indexData *dtos.IndexViewData, req *models.ReqContext) {
 		for _, node := range indexData.NavTree {
-			if node.Id == "admin" || false {
+			if node.Id == "admin" && false {
 				node.Children = append(node.Children, &dtos.NavLink{
 					Text: "Stats and license",
 					Id:   "upgrading",
