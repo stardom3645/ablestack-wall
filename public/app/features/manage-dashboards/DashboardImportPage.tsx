@@ -90,36 +90,36 @@ class UnthemedDashboardImport extends PureComponent<Props> {
       <>
         <div className={styles.option}>
           <FileUpload accept="application/json" onFileUpload={this.onFileUpload}>
-            Upload JSON file
+            JSON 파일 업로드
           </FileUpload>
         </div>
         <div className={styles.option}>
-          <Legend>Import via grafana.com</Legend>
+          <Legend>grafana.com을 통해 가져오기</Legend>
           <Form onSubmit={this.getGcomDashboard} defaultValues={{ gcomDashboard: '' }}>
             {({ register, errors }) => (
               <Field invalid={!!errors.gcomDashboard} error={errors.gcomDashboard && errors.gcomDashboard.message}>
                 <Input
-                  placeholder="Grafana.com dashboard URL or ID"
+                  placeholder="Grafana.com 대시보드 URL 또는 ID"
                   type="text"
                   {...register('gcomDashboard', {
-                    required: 'A Grafana dashboard URL or ID is required',
+                    required: 'Grafana 대시보드 URL 또는 ID가 필요합니다.',
                     validate: validateGcomDashboard,
                   })}
-                  addonAfter={<Button type="submit">Load</Button>}
+                  addonAfter={<Button type="submit">불러오기</Button>}
                 />
               </Field>
             )}
           </Form>
         </div>
         <div className={styles.option}>
-          <Legend>Import via panel json</Legend>
+          <Legend>패널 json을 통해 가져오기</Legend>
           <Form onSubmit={this.getDashboardFromJson} defaultValues={{ dashboardJson: '' }}>
             {({ register, errors }) => (
               <>
                 <Field invalid={!!errors.dashboardJson} error={errors.dashboardJson && errors.dashboardJson.message}>
                   <TextArea
                     {...register('dashboardJson', {
-                      required: 'Need a dashboard JSON model',
+                      required: '대시보드 JSON 모델이 필요합니다',
                       validate: validateDashboardJson,
                     })}
                     data-testid={selectors.components.DashboardImportPage.textarea}
@@ -127,7 +127,7 @@ class UnthemedDashboardImport extends PureComponent<Props> {
                   />
                 </Field>
                 <Button type="submit" data-testid={selectors.components.DashboardImportPage.submit}>
-                  Load
+                  불러오기
                 </Button>
               </>
             )}

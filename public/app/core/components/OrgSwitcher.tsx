@@ -51,7 +51,7 @@ export class OrgSwitcher extends React.PureComponent<Props, State> {
 
     return (
       <Modal
-        title="Switch Organization"
+        title="조직 스위치"
         icon="arrow-random"
         onDismiss={onDismiss}
         isOpen={true}
@@ -61,8 +61,8 @@ export class OrgSwitcher extends React.PureComponent<Props, State> {
           <table className="filter-table form-inline">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Role</th>
+                <th>이름</th>
+                <th>권한</th>
                 <th />
               </tr>
             </thead>
@@ -73,10 +73,10 @@ export class OrgSwitcher extends React.PureComponent<Props, State> {
                   <td>{org.role}</td>
                   <td className="text-right">
                     {org.orgId === currentOrgId ? (
-                      <Button size="sm">Current</Button>
+                      <Button size="sm">현재</Button>
                     ) : (
                       <Button variant="secondary" size="sm" onClick={() => this.setCurrentOrg(org)}>
-                        Switch to
+                        변경
                       </Button>
                     )}
                   </td>

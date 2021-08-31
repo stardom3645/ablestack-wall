@@ -42,7 +42,7 @@ export const ConfirmModal = ({
   description,
   confirmText,
   confirmationText,
-  dismissText = 'Cancel',
+  dismissText = '취소',
   alternativeText,
   icon = 'exclamation-triangle',
   onConfirm,
@@ -63,7 +63,7 @@ export const ConfirmModal = ({
         {confirmationText ? (
           <div className={styles.modalConfirmationInput}>
             <HorizontalGroup>
-              <Input placeholder={`Type ${confirmationText} to confirm`} onChange={onConfirmationTextChange} />
+              <Input placeholder={`확인을 위해 ${confirmationText} 입력하세요`} onChange={onConfirmationTextChange} />
             </HorizontalGroup>
           </div>
         ) : null}

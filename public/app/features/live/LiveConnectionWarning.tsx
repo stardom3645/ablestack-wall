@@ -51,7 +51,7 @@ export class LiveConnectionWarning extends PureComponent<Props, State> {
 
       return (
         <div className={this.styles.foot}>
-          <Alert severity={'warning'} className={this.styles.warn} title="connection to server is lost..." />
+          <Alert severity={'warning'} className={this.styles.warn} title="서버에 대한 연결이 끊어졌습니다..." />
         </div>
       );
     }

@@ -13,10 +13,10 @@ export const ApiKeysActionBar: FC<Props> = ({ searchQuery, disabled, onAddClick,
   return (
     <div className="page-action-bar">
       <div className="gf-form gf-form--grow">
-        <FilterInput placeholder="Search keys" value={searchQuery} onChange={onSearchChange} />
+        <FilterInput placeholder="키 검색" value={searchQuery} onChange={onSearchChange} />
       </div>
       <Button className="pull-right" onClick={onAddClick} disabled={disabled}>
-        Add API key
+        API 키 추가
       </Button>
     </div>
   );

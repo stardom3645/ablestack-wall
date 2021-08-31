@@ -34,44 +34,44 @@ export const ChangePasswordForm: FC<Props> = ({ user, onChangePassword, isSaving
         {({ register, errors, getValues }) => {
           return (
             <>
-              <Field label="Old password" invalid={!!errors.oldPassword} error={errors?.oldPassword?.message}>
+              <Field label="기존 비밀번호" invalid={!!errors.oldPassword} error={errors?.oldPassword?.message}>
                 <PasswordField
                   id="current-password"
                   autoComplete="current-password"
-                  {...register('oldPassword', { required: 'Old password is required' })}
+                  {...register('oldPassword', { required: '기존 비밀번호는 필수입니다.' })}
                 />
               </Field>
 
-              <Field label="New password" invalid={!!errors.newPassword} error={errors?.newPassword?.message}>
+              <Field label="새 비밀번호" invalid={!!errors.newPassword} error={errors?.newPassword?.message}>
                 <PasswordField
                   id="new-password"
                   autoComplete="new-password"
                   {...register('newPassword', {
-                    required: 'New password is required',
+                    required: '새 비밀번호는 필수입니다.',
                     validate: {
-                      confirm: (v) => v === getValues().confirmNew || 'Passwords must match',
-                      old: (v) => v !== getValues().oldPassword || `New password can't be the same as the old one.`,
+                      confirm: (v) => v === getValues().confirmNew || '비밀번호가 일치해야합니다.',
+                      old: (v) => v !== getValues().oldPassword || `새 비밀번호는 이전 비밀번호와 같을 수 없습니다.`,
                     },
                   })}
                 />
               </Field>
 
-              <Field label="Confirm password" invalid={!!errors.confirmNew} error={errors?.confirmNew?.message}>
+              <Field label="비밀번호 확인" invalid={!!errors.confirmNew} error={errors?.confirmNew?.message}>
                 <PasswordField
                   id="confirm-new-password"
                   autoComplete="new-password"
                   {...register('confirmNew', {
-                    required: 'New password confirmation is required',
-                    validate: (v) => v === getValues().newPassword || 'Passwords must match',
+                    required: '새 비밀번호 확인이 필요합니다.',
+                    validate: (v) => v === getValues().newPassword || '비밀번호가 일치해야합니다.',
                   })}
                 />
               </Field>
               <HorizontalGroup>
                 <Button variant="primary" disabled={isSaving}>
-                  Change Password
+                  비밀번호 변경
                 </Button>
                 <LinkButton variant="secondary" href={`${config.appSubUrl}/profile`} fill="outline">
-                  Cancel
+                  취소
                 </LinkButton>
               </HorizontalGroup>
             </>

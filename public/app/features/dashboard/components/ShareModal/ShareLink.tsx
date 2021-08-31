@@ -92,12 +92,12 @@ export class ShareLink extends PureComponent<Props, State> {
     return (
       <>
         <p className="share-modal-info-text">
-          Create a direct link to this dashboard or panel, customized with the options below.
+          아래 옵션으로 사용자 정의된 이 대시보드 또는 패널에 대한 직접 링크를 만드십시오.
         </p>
         <FieldSet>
           <Field
-            label="Lock time range"
-            description={isRelativeTime ? 'Transforms the current relative time range to an absolute time range' : ''}
+            label="잠금 시간 범위"
+            description={isRelativeTime ? '현재 상대 시간 범위를 절대 시간 범위로 변환합니다.' : ''}
           >
             <Switch
               id="share-current-time-range"
@@ -105,20 +105,20 @@ export class ShareLink extends PureComponent<Props, State> {
               onChange={this.onUseCurrentTimeRangeChange}
             />
           </Field>
-          <Field label="Theme">
+          <Field label="테마">
             <RadioButtonGroup options={themeOptions} value={selectedTheme} onChange={this.onThemeChange} />
           </Field>
-          <Field label="Shorten URL">
+          <Field label="단축 URL">
             <Switch id="share-shorten-url" value={useShortUrl} onChange={this.onUrlShorten} />
           </Field>
 
-          <Field label="Link URL">
+          <Field label="링크 URL">
             <Input
               value={shareUrl}
               readOnly
               addonAfter={
                 <ClipboardButton variant="primary" getText={this.getShareUrl} onClipboardCopy={this.onShareUrlCopy}>
-                  <Icon name="copy" /> Copy
+                  <Icon name="copy" /> 복사
                 </ClipboardButton>
               }
             />
@@ -132,17 +132,17 @@ export class ShareLink extends PureComponent<Props, State> {
           </div>
         )}
         {panel && !config.rendererAvailable && (
-          <Alert severity="info" title="Image renderer plugin not installed" bottomSpacing={0}>
-            <>To render a panel image, you must install the </>
+          <Alert severity="info" title="이미지 렌더러 플러그인이 설치되지 않았습니다." bottomSpacing={0}>
+            <>패널 이미지를 렌더링하려면 다음을 설치해야 합니다. </>
             <a
               href="https://grafana.com/grafana/plugins/grafana-image-renderer"
               target="_blank"
               rel="noopener noreferrer"
               className="external-link"
             >
-              Grafana image renderer plugin
+              Wall 이미지 렌더러 플러그인
             </a>
-            . Please contact your Grafana administrator to install the plugin.
+            . 플러그인을 설치하려면 Wall 관리자에게 문의하십시오.
           </Alert>
         )}
       </>

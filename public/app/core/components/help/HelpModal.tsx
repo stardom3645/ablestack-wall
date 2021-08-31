@@ -50,7 +50,7 @@ export interface HelpModalProps {
 export const HelpModal = ({ onDismiss }: HelpModalProps): JSX.Element => {
   const styles = useStyles2(getStyles);
   return (
-    <Modal title="Shortcuts" isOpen onDismiss={onDismiss} onClickBackdrop={onDismiss}>
+    <Modal title="단축키" isOpen onDismiss={onDismiss} onClickBackdrop={onDismiss}>
       <div className={styles.titleDescription}>
         <span className={styles.shortcutTableKey}>mod</span> =<span> CTRL on windows or linux and CMD key on Mac</span>
       </div>

@@ -12,16 +12,16 @@ export interface Props {
 export function ApiKeysAddedModal({ onDismiss, apiKey, rootPath }: Props): JSX.Element {
   const styles = useStyles2(getStyles);
   return (
-    <Modal title="API Key Created" onDismiss={onDismiss} onClickBackdrop={onDismiss} isOpen>
-      <Field label="Key">
+    <Modal title="API 키 생성" onDismiss={onDismiss} onClickBackdrop={onDismiss} isOpen>
+      <Field label="키">
         <span className={styles.label}>{apiKey}</span>
       </Field>
 
-      <Alert severity="info" title="You will only be able to view this key here once!">
-        It is not stored in this form, so be sure to copy it now.
+      <Alert severity="info" title="이 키는 여기에서 한 번만 볼 수 있습니다!">
+        이 형식으로 저장되지 않으므로 지금 복사해야 합니다.
       </Alert>
 
-      <p className="text-muted">You can authenticate a request using the Authorization HTTP header, example:</p>
+      <p className="text-muted">Authorization HTTP 헤더를 사용하여 요청을 인증할 수 있습니다. 예 :</p>
       <pre className={styles.small}>
         curl -H &quot;Authorization: Bearer {apiKey}&quot; {rootPath}/api/dashboards/home
       </pre>

@@ -99,7 +99,7 @@ export class DashNavTimeControls extends Component<Props> {
           onRefresh={this.onRefresh}
           value={dashboard.refresh}
           intervals={intervals}
-          tooltip="Refresh dashboard"
+          tooltip="대시보드 새로고침"
           noIntervalPicker={hideIntervalPicker}
         />
       </ToolbarButtonRow>

@@ -38,7 +38,7 @@ export class UserOrgs extends PureComponent<Props, State> {
 
     return (
       <>
-        <h3 className="page-heading">Organizations</h3>
+        <h3 className="page-heading">조직</h3>
         <div className="gf-form-group">
           <div className="gf-form">
             <table className="filter-table form-inline">
@@ -57,7 +57,7 @@ export class UserOrgs extends PureComponent<Props, State> {
           <div className={addToOrgContainerClass}>
             {canAddToOrg && (
               <Button variant="secondary" onClick={this.showOrgAddModal(true)}>
-                Add user to organization
+                조직에 사용자 추가
               </Button>
             )}
           </div>
@@ -142,12 +142,12 @@ class UnThemedOrgRow extends PureComponent<OrgRowProps, OrgRowState> {
           <div className="pull-right">
             {canChangeRole && (
               <ConfirmButton
-                confirmText="Save"
+                confirmText="저장"
                 onClick={this.onChangeRoleClick}
                 onCancel={this.onCancelClick}
                 onConfirm={this.onOrgRoleSave}
               >
-                Change role
+                권한 변경
               </ConfirmButton>
             )}
           </div>
@@ -156,12 +156,12 @@ class UnThemedOrgRow extends PureComponent<OrgRowProps, OrgRowState> {
           <div className="pull-right">
             {canRemoveFromOrg && (
               <ConfirmButton
-                confirmText="Confirm removal"
+                confirmText="제거 확인"
                 confirmVariant="destructive"
                 onCancel={this.onCancelClick}
                 onConfirm={this.onOrgRemove}
               >
-                Remove from organization
+                조직에서 제거
               </ConfirmButton>
             )}
           </div>
@@ -231,23 +231,23 @@ export class AddToOrgModal extends PureComponent<AddToOrgModalProps, AddToOrgMod
       <Modal
         className={styles.modal}
         contentClassName={styles.modalContent}
-        title="Add to an organization"
+        title="조직에 추가"
         isOpen={isOpen}
         onDismiss={this.onCancel}
       >
-        <Field label="Organization">
+        <Field label="조직">
           <OrgPicker onSelected={this.onOrgSelect} />
         </Field>
-        <Field label="Role">
+        <Field label="권한">
           <OrgRolePicker value={role} onChange={this.onOrgRoleChange} />
         </Field>
         <Modal.ButtonRow>
           <HorizontalGroup spacing="md" justify="center">
             <Button variant="secondary" fill="outline" onClick={this.onCancel}>
-              Cancel
+              취소
             </Button>
             <Button variant="primary" onClick={this.onAddUserToOrg}>
-              Add to organization
+              조직에 추가
             </Button>
           </HorizontalGroup>
         </Modal.ButtonRow>

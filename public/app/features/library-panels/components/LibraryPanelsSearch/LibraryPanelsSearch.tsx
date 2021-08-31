@@ -64,7 +64,7 @@ export const LibraryPanelsSearch = ({
           <FilterInput
             value={searchQuery}
             onChange={onFilterChange}
-            placeholder={'Search by name or description'}
+            placeholder={'이름 또는 설명으로 검색'}
             width={0}
           />
           <HorizontalGroup

@@ -15,7 +15,7 @@ export const PlaylistTableRows: FC<PlaylistTableRowsProps> = ({ items, onMoveUp,
     return (
       <tr>
         <td>
-          <em>Playlist is empty. Add dashboards below.</em>
+          <em>플레이리스트가 비어 있습니다. 아래에 대시보드를 추가하세요.</em>
         </td>
       </tr>
     );

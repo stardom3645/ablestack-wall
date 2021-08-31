@@ -157,7 +157,7 @@ export class DataSourcePicker extends PureComponent<DataSourcePickerProps, DataS
           openMenuOnFocus={openMenuOnFocus}
           maxMenuHeight={500}
           placeholder={placeholder}
-          noOptionsMessage="No datasources found"
+          noOptionsMessage="데이터 소스를 찾을 수 없습니다."
           value={value ?? null}
           invalid={!!error}
           getOptionLabel={(o) => {

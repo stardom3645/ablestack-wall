@@ -23,19 +23,20 @@ export const ConfirmDeleteModal: FC<Props> = ({ results, onDeleteItems, isOpen, 
   const folderCount = folders.length;
   const dashCount = dashboards.length;
 
-  let text = 'Do you want to delete the ';
+  let text = '';
   let subtitle;
-  const dashEnding = dashCount === 1 ? '' : 's';
-  const folderEnding = folderCount === 1 ? '' : 's';
+  //const dashEnding = dashCount === 1 ? '' : 's';
+  //const folderEnding = folderCount === 1 ? '' : 's';
 
   if (folderCount > 0 && dashCount > 0) {
-    text += `selected folder${folderEnding} and dashboard${dashEnding}?\n`;
-    subtitle = `All dashboards and alerts of the selected folder${folderEnding} will also be deleted`;
+    text += `선택한 폴더와 대시보드를`;
+    subtitle = `선택한 폴더의 모든 대시보드 및 알림도 삭제됩니다.`;
   } else if (folderCount > 0) {
-    text += `selected folder${folderEnding} and all their dashboards and alerts?`;
+    text += `선택한 폴더와 모든 대시보드와 경고를`;
   } else {
-    text += `selected dashboard${dashEnding}?`;
+    text += `선택한 대시보드를`;
   }
+  text += ' 삭제하시겠습니까?';
 
   const deleteItems = () => {
     deleteFoldersAndDashboards(folders, dashboards).then(() => {
@@ -49,13 +50,13 @@ export const ConfirmDeleteModal: FC<Props> = ({ results, onDeleteItems, isOpen, 
   return isOpen ? (
     <ConfirmModal
       isOpen={isOpen}
-      title="Delete"
+      title="삭제"
       body={
         <>
           {text} {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         </>
       }
-      confirmText="Delete"
+      confirmText="삭제"
       onConfirm={deleteItems}
       onDismiss={onDismiss}
     />

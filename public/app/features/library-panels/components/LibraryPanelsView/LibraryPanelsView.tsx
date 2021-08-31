@@ -66,9 +66,9 @@ export const LibraryPanelsView: React.FC<LibraryPanelViewProps> = ({
     <div className={cx(styles.container, className)}>
       <div className={styles.libraryPanelList}>
         {loadingState === LoadingState.Loading ? (
-          <p>Loading library panels...</p>
+          <p>라이브러리 패널을 불러오는 중...</p>
         ) : libraryPanels.length < 1 ? (
-          <p className={styles.noPanelsFound}>No library panels found.</p>
+          <p className={styles.noPanelsFound}>라이브러리 패널을 찾을 수 없습니다.</p>
         ) : (
           libraryPanels?.map((item, i) => (
             <LibraryPanelCard

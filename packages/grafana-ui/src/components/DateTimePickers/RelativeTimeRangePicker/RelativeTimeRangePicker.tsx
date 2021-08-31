@@ -141,7 +141,7 @@ export function RelativeTimeRangePicker(props: RelativeTimeRangePickerProps): Re
                   />
                 </Field>
                 <Button aria-label="TimePicker submit button" onClick={onApply}>
-                  Apply time range
+                  시간 범위 적용
                 </Button>
               </div>
             </div>

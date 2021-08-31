@@ -20,7 +20,7 @@ export type Props = ConnectedProps<typeof connector> & OwnProps;
 export const TeamSettings: FC<Props> = ({ team, updateTeam }) => {
   return (
     <VerticalGroup>
-      <FieldSet label="Team settings">
+      <FieldSet label="팀 설정">
         <Form
           defaultValues={{ ...team }}
           onSubmit={(formTeam: Team) => {
@@ -29,17 +29,17 @@ export const TeamSettings: FC<Props> = ({ team, updateTeam }) => {
         >
           {({ register }) => (
             <>
-              <Field label="Name">
+              <Field label="이름">
                 <Input {...register('name', { required: true })} />
               </Field>
 
               <Field
-                label="Email"
-                description="This is optional and is primarily used to set the team profile avatar (via gravatar service)."
+                label="이메일"
+                description="이것은 선택 사항이며 주로 팀 프로필 아바타를 설정하는 데 사용됩니다(gravatar 서비스를 통해)."
               >
                 <Input {...register('email')} placeholder="team@email.com" type="email" />
               </Field>
-              <Button type="submit">Update</Button>
+              <Button type="submit">수정</Button>
             </>
           )}
         </Form>

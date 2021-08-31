@@ -32,7 +32,7 @@ interface InputState {
 }
 
 const ERROR_MESSAGES = {
-  default: 'Please enter a past date or "now"',
+  default: '과거 날짜 또는 "now"을 입력하세요.',
   range: '"From" can\'t be after "To"',
 };
 
@@ -97,7 +97,7 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
 
   return (
     <div aria-label="Absolute time ranges">
-      <Field label="From" invalid={from.invalid} error={from.errorMessage}>
+      <Field label="부터" invalid={from.invalid} error={from.errorMessage}>
         <Input
           onClick={(event) => event.stopPropagation()}
           onFocus={onFocus}
@@ -107,7 +107,7 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
           value={from.value}
         />
       </Field>
-      <Field label="To" invalid={to.invalid} error={to.errorMessage}>
+      <Field label="까지" invalid={to.invalid} error={to.errorMessage}>
         <Input
           onClick={(event) => event.stopPropagation()}
           onFocus={onFocus}
@@ -118,7 +118,7 @@ export const TimeRangeForm: React.FC<Props> = (props) => {
         />
       </Field>
       <Button data-testid={selectors.components.TimePicker.applyTimeRange} onClick={onApply}>
-        Apply time range
+        시간 범위 적용
       </Button>
 
       <TimePickerCalendar

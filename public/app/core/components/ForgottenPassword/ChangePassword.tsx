@@ -21,32 +21,32 @@ export const ChangePassword: FC<Props> = ({ onSubmit, onSkip }) => {
     <Form onSubmit={submit}>
       {({ errors, register, getValues }) => (
         <>
-          <Field label="New password" invalid={!!errors.newPassword} error={errors?.newPassword?.message}>
+          <Field label="새 비밀번호" invalid={!!errors.newPassword} error={errors?.newPassword?.message}>
             <PasswordField
               id="new-password"
               autoFocus
               autoComplete="new-password"
-              {...register('newPassword', { required: 'New Password is required' })}
+              {...register('newPassword', { required: '새 비밀번호는 필수입니다.' })}
             />
           </Field>
-          <Field label="Confirm new password" invalid={!!errors.confirmNew} error={errors?.confirmNew?.message}>
+          <Field label="새 비밀번호 확인" invalid={!!errors.confirmNew} error={errors?.confirmNew?.message}>
             <PasswordField
               id="confirm-new-password"
               autoComplete="new-password"
               {...register('confirmNew', {
-                required: 'Confirmed Password is required',
-                validate: (v: string) => v === getValues().newPassword || 'Passwords must match!',
+                required: '새 비밀번호 확인은 필수입니다.',
+                validate: (v: string) => v === getValues().newPassword || '패스워드가 일치하지 않습니다.',
               })}
             />
           </Field>
           <VerticalGroup>
             <Button type="submit" className={submitButton}>
-              Submit
+              승인
             </Button>
 
             {onSkip && (
               <Tooltip
-                content="If you skip you will be prompted to change password next time you log in."
+                content="건너뛰면, 다음에 로그인할 때 비밀번호를 변경하라는 메시지가 표시됩니다."
                 placement="bottom"
               >
                 <Button fill="text" onClick={onSkip} type="button" aria-label={selectors.pages.Login.skip}>

@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import config from 'app/core/config';
-import { Icon, IconName } from '@grafana/ui';
 
 export interface FooterLink {
   text: string;
@@ -12,21 +11,15 @@ export interface FooterLink {
 export let getFooterLinks = (): FooterLink[] => {
   return [
     {
-      text: 'Documentation',
+      text: '문서',
       icon: 'document-info',
-      url: 'https://grafana.com/docs/grafana/latest/?utm_source=grafana_footer',
+      url: 'https://docs.ablecloud.io/',
       target: '_blank',
     },
     {
-      text: 'Support',
+      text: '지원',
       icon: 'question-circle',
-      url: 'https://grafana.com/products/enterprise/?utm_source=grafana_footer',
-      target: '_blank',
-    },
-    {
-      text: 'Community',
-      icon: 'comments-alt',
-      url: 'https://community.grafana.com/?utm_source=grafana_footer',
+      url: 'https://github.com/ablecloud-team/ablestack-cloud/issues/new',
       target: '_blank',
     },
   ];
@@ -66,20 +59,10 @@ export function setVersionLinkFn(fn: typeof getFooterLinks) {
 }
 
 export const Footer: FC = React.memo(() => {
-  const links = getFooterLinks().concat(getVersionLinks());
-
   return (
     <footer className="footer">
       <div className="text-center">
-        <ul>
-          {links.map((link) => (
-            <li key={link.text}>
-              <a href={link.url} target={link.target} rel="noopener">
-                {link.icon && <Icon name={link.icon as IconName} />} {link.text}
-              </a>
-            </li>
-          ))}
-        </ul>
+        Copyright (c) 2021, ABLECLOUD.Co.Ltd<br></br>ABLESTACK Bronto - Powered By Apache CloudStack
       </div>
     </footer>
   );

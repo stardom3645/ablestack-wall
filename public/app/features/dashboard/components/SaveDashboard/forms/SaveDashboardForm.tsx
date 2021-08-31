@@ -40,28 +40,28 @@ export const SaveDashboardForm: React.FC<SaveDashboardFormProps> = ({ dashboard,
             {hasTimeChanged && (
               <Checkbox
                 {...register('saveTimerange')}
-                label="Save current time range as dashboard default"
+                label="현재 시간 범위를 대시보드 기본값으로 저장"
                 aria-label={selectors.pages.SaveDashboardModal.saveTimerange}
               />
             )}
             {hasVariableChanged && (
               <Checkbox
                 {...register('saveVariables')}
-                label="Save current variable values as dashboard default"
+                label="현재 변수 값을 대시보드 기본값으로 저장"
                 aria-label={selectors.pages.SaveDashboardModal.saveVariables}
               />
             )}
             {(hasVariableChanged || hasTimeChanged) && <div className="gf-form-group" />}
 
-            <TextArea {...register('message')} placeholder="Add a note to describe your changes." autoFocus />
+            <TextArea {...register('message')} placeholder="변경 사항을 설명하는 메모를 추가합니다." autoFocus />
           </div>
 
           <Modal.ButtonRow>
             <Button variant="secondary" onClick={onCancel} fill="outline">
-              Cancel
+              취소
             </Button>
             <Button type="submit" aria-label={selectors.pages.SaveDashboardModal.save}>
-              Save
+              저장
             </Button>
           </Modal.ButtonRow>
         </>

@@ -100,13 +100,13 @@ export class FolderPermissions extends PureComponent<Props, State> {
       <Page navModel={navModel}>
         <Page.Contents>
           <div className="page-action-bar">
-            <h3 className="page-sub-heading">Folder Permissions</h3>
+            <h3 className="page-sub-heading">폴더 권한</h3>
             <Tooltip placement="auto" content={<PermissionsInfo />}>
               <Icon className="icon--has-hover page-sub-heading-icon" name="question-circle" />
             </Tooltip>
             <div className="page-action-bar__spacer" />
             <Button className="pull-right" onClick={this.onOpenAddPermissions} disabled={isAdding}>
-              Add Permission
+              권한 추가
             </Button>
           </div>
           <SlideDown in={isAdding}>

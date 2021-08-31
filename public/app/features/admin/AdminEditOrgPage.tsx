@@ -56,7 +56,7 @@ export const AdminEditOrgPage: FC<Props> = ({ match }) => {
     <Page navModel={navModel}>
       <Page.Contents>
         <>
-          <Legend>Edit organization</Legend>
+          <Legend>조직 편집</Legend>
 
           {orgState.value && (
             <Form
@@ -65,10 +65,10 @@ export const AdminEditOrgPage: FC<Props> = ({ match }) => {
             >
               {({ register, errors }) => (
                 <>
-                  <Field label="Name" invalid={!!errors.orgName} error="Name is required">
+                  <Field label="이름" invalid={!!errors.orgName} error="이름은 필수입니다.">
                     <Input {...register('orgName', { required: true })} />
                   </Field>
-                  <Button>Update</Button>
+                  <Button>수정</Button>
                 </>
               )}
             </Form>

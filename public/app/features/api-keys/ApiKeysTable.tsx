@@ -15,9 +15,9 @@ export const ApiKeysTable: FC<Props> = ({ apiKeys, timeZone, onDelete }) => {
     <table className="filter-table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Expires</th>
+          <th>이름</th>
+          <th>권한</th>
+          <th>만료일</th>
           <th style={{ width: '34px' }} />
         </tr>
       </thead>
@@ -43,7 +43,7 @@ export const ApiKeysTable: FC<Props> = ({ apiKeys, timeZone, onDelete }) => {
 
 function formatDate(expiration: string | undefined, timeZone: TimeZone): string {
   if (!expiration) {
-    return 'No expiration date';
+    return '만료일 없음';
   }
   return dateTimeFormat(expiration, { timeZone });
 }

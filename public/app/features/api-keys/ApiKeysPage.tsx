@@ -133,11 +133,11 @@ export class ApiKeysPageUnconnected extends PureComponent<Props, State> {
                 <>
                   {showCTA ? (
                     <EmptyListCTA
-                      title="You haven't added any API keys yet."
+                      title="아직 API 키를 추가하지 않았습니다."
                       buttonIcon="key-skeleton-alt"
                       onClick={toggleIsAdding}
-                      buttonTitle="New API key"
-                      proTip="Remember, you can provide view-only API access to other applications."
+                      buttonTitle="새 API 키"
+                      proTip="다른 애플리케이션에 대한 보기 전용 API 액세스를 제공할 수 있음을 기억하십시오."
                     />
                   ) : null}
                   {showTable ? (
@@ -151,7 +151,7 @@ export class ApiKeysPageUnconnected extends PureComponent<Props, State> {
                   <ApiKeysForm show={isAdding} onClose={toggleIsAdding} onKeyAdded={this.onAddApiKey} />
                   {showTable ? (
                     <VerticalGroup>
-                      <InlineField label="Show expired">
+                      <InlineField label="만료된 키 보기">
                         <InlineSwitch id="showExpired" value={includeExpired} onChange={this.onIncludeExpiredChange} />
                       </InlineField>
                       <ApiKeysTable apiKeys={apiKeys} timeZone={timeZone} onDelete={this.onDeleteApiKey} />

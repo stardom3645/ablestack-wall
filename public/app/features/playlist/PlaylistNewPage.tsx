@@ -31,11 +31,11 @@ export const PlaylistNewPage: FC<Props> = ({ navModel }) => {
   return (
     <Page navModel={navModel}>
       <Page.Contents isLoading={loading}>
-        <h3 className={styles.subHeading}>New Playlist</h3>
+        <h3 className={styles.subHeading}>새 플레이리스트</h3>
 
         <p className={styles.description}>
-          A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build
-          situational awareness, or just show off your metrics to your team or visitors.
+          플레이리스트는 선택한 대시보드의 목록을 순환하며 보여줍니다. 플레이리스트는 시스템의 현재 상황 모니터링을
+          구성하거나 사용자에게 다양한 지표를 보여줄 수 있습니다.
         </p>
 
         <PlaylistForm onSubmit={onSubmit} playlist={playlist} />

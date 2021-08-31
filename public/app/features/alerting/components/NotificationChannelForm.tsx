@@ -100,13 +100,13 @@ export const NotificationChannelForm: FC<Props> = ({
       </div>
       <div className={styles.formButtons}>
         <HorizontalGroup>
-          <Button type="submit">Save</Button>
+          <Button type="submit">저장</Button>
           <Button type="button" variant="secondary" onClick={() => onTestChannel(getValues())}>
-            Test
+            테스트
           </Button>
           <a href={`${config.appSubUrl}/alerting/notifications`}>
             <Button type="button" variant="secondary">
-              Back
+              돌아가기
             </Button>
           </a>
         </HorizontalGroup>

@@ -22,11 +22,11 @@ const UsersTable: FC<Props> = (props) => {
       <thead>
         <tr>
           <th />
-          <th>Login</th>
-          <th>Email</th>
-          <th>Name</th>
-          <th>Seen</th>
-          <th>Role</th>
+          <th>사용자 이름</th>
+          <th>이메일</th>
+          <th>이름</th>
+          <th>최근 로그인 시간</th>
+          <th>권한</th>
           <th style={{ width: '34px' }} />
         </tr>
       </thead>
@@ -67,9 +67,9 @@ const UsersTable: FC<Props> = (props) => {
                 <td>
                   <Button size="sm" variant="destructive" onClick={() => setShowRemoveModal(user.login)} icon="times" />
                   <ConfirmModal
-                    body={`Are you sure you want to delete user ${user.login}?`}
-                    confirmText="Delete"
-                    title="Delete"
+                    body={`${user.login} 사용자를 삭제하시겠습니까?`}
+                    confirmText="삭제"
+                    title="삭제"
                     onDismiss={() => setShowRemoveModal(false)}
                     isOpen={user.login === showRemoveModal}
                     onConfirm={() => {

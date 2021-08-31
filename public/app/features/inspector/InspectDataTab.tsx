@@ -204,7 +204,7 @@ export class InspectDataTab extends PureComponent<Props, State> {
               margin-bottom: 10px;
             `}
           >
-            Download CSV
+            다운로드 CSV
           </Button>
           {hasLogs && (
             <Button

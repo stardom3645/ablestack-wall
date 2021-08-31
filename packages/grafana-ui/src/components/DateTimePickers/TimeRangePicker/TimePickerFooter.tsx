@@ -76,7 +76,7 @@ export const TimePickerFooter: FC<Props> = (props) => {
       </div>
       <div className={style.spacer} />
       <Button variant="secondary" onClick={onToggleChangeTz} size="sm">
-        Change time zone
+        시간대 변경
       </Button>
     </section>
   );

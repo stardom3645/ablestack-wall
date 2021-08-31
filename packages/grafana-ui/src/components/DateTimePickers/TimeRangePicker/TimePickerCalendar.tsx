@@ -282,10 +282,10 @@ const Footer = memo<Props>(({ onClose, onApply }) => {
   return (
     <div className={styles.container}>
       <Button className={styles.apply} onClick={onApply}>
-        Apply time range
+        시간 범위 적용
       </Button>
       <Button variant="secondary" onClick={onClose}>
-        Cancel
+        취소
       </Button>
     </div>
   );
