@@ -52,7 +52,7 @@ export const PlotLegend: React.FC<PlotLegendProps> = ({
       const seriesColor = scaleColor.color;
 
       return {
-        disabled: !seriesConfig.show ?? false,
+        disabled: !(seriesConfig.show ?? true),
         fieldIndex,
         color: seriesColor,
         label,
@@ -85,7 +85,13 @@ export const PlotLegend: React.FC<PlotLegendProps> = ({
 
   return (
     <VizLayout.Legend placement={placement} {...vizLayoutLegendProps}>
-      <VizLegend placement={placement} items={legendItems} displayMode={displayMode} />
+      <VizLegend
+        placement={placement}
+        items={legendItems}
+        displayMode={displayMode}
+        sortBy={vizLayoutLegendProps.sortBy}
+        sortDesc={vizLayoutLegendProps.sortDesc}
+      />
     </VizLayout.Legend>
   );
 };

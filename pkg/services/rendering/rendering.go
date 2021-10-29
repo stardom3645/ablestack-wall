@@ -10,6 +10,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/grafana/grafana/pkg/infra/metrics"
@@ -41,7 +42,7 @@ type RenderingService struct {
 	renderAction    renderFunc
 	renderCSVAction renderCSVFunc
 	domain          string
-	inProgressCount int
+	inProgressCount int32
 	version         string
 
 	Cfg                *setting.Cfg
@@ -158,9 +159,13 @@ func (rs *RenderingService) Version() string {
 
 func (rs *RenderingService) RenderErrorImage(err error) (*RenderResult, error) {
 	imgUrl := "public/img/rendering_error.png"
+	imgPath := filepath.Join(setting.HomePath, imgUrl)
+	if _, err := os.Stat(imgPath); errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
 
 	return &RenderResult{
-		FilePath: filepath.Join(setting.HomePath, imgUrl),
+		FilePath: imgPath,
 	}, nil
 }
 
@@ -183,7 +188,7 @@ func (rs *RenderingService) Render(ctx context.Context, opts Opts) (*RenderResul
 }
 
 func (rs *RenderingService) render(ctx context.Context, opts Opts) (*RenderResult, error) {
-	if rs.inProgressCount > opts.ConcurrentLimit {
+	if int(atomic.LoadInt32(&rs.inProgressCount)) > opts.ConcurrentLimit {
 		return &RenderResult{
 			FilePath: filepath.Join(setting.HomePath, "public/img/rendering_limit.png"),
 		}, nil
@@ -208,12 +213,10 @@ func (rs *RenderingService) render(ctx context.Context, opts Opts) (*RenderResul
 	defer rs.deleteRenderKey(renderKey)
 
 	defer func() {
-		rs.inProgressCount--
-		metrics.MRenderingQueue.Set(float64(rs.inProgressCount))
+		metrics.MRenderingQueue.Set(float64(atomic.AddInt32(&rs.inProgressCount, -1)))
 	}()
 
-	rs.inProgressCount++
-	metrics.MRenderingQueue.Set(float64(rs.inProgressCount))
+	metrics.MRenderingQueue.Set(float64(atomic.AddInt32(&rs.inProgressCount, 1)))
 	return rs.renderAction(ctx, renderKey, opts)
 }
 
@@ -228,7 +231,7 @@ func (rs *RenderingService) RenderCSV(ctx context.Context, opts CSVOpts) (*Rende
 }
 
 func (rs *RenderingService) renderCSV(ctx context.Context, opts CSVOpts) (*RenderCSVResult, error) {
-	if rs.inProgressCount > opts.ConcurrentLimit {
+	if int(atomic.LoadInt32(&rs.inProgressCount)) > opts.ConcurrentLimit {
 		return nil, ErrConcurrentLimitReached
 	}
 
@@ -245,12 +248,10 @@ func (rs *RenderingService) renderCSV(ctx context.Context, opts CSVOpts) (*Rende
 	defer rs.deleteRenderKey(renderKey)
 
 	defer func() {
-		rs.inProgressCount--
-		metrics.MRenderingQueue.Set(float64(rs.inProgressCount))
+		metrics.MRenderingQueue.Set(float64(atomic.AddInt32(&rs.inProgressCount, -1)))
 	}()
 
-	rs.inProgressCount++
-	metrics.MRenderingQueue.Set(float64(rs.inProgressCount))
+	metrics.MRenderingQueue.Set(float64(atomic.AddInt32(&rs.inProgressCount, 1)))
 	return rs.renderCSVAction(ctx, renderKey, opts)
 }
 

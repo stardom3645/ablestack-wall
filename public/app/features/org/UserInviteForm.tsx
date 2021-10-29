@@ -72,7 +72,7 @@ export const UserInviteForm: FC<Props> = ({}) => {
               />
             </Field>
             <Field label="초대 메일 발송">
-              <Switch {...register('sendEmail')} />
+              <Switch id="send-email-switch" {...register('sendEmail')} />
             </Field>
             <HorizontalGroup>
               <Button type="submit">제출</Button>

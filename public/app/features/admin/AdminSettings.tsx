@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { hot } from 'react-hot-loader';
-
 import { getBackendSrv } from '@grafana/runtime';
 import { NavModel } from '@grafana/data';
 
@@ -73,4 +71,4 @@ const mapStateToProps = (state: StoreState) => ({
   navModel: getNavModel(state.navIndex, 'server-settings'),
 });
 
-export default hot(module)(connect(mapStateToProps)(AdminSettings));
+export default connect(mapStateToProps)(AdminSettings);

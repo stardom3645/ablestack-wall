@@ -4,14 +4,16 @@ exports[`Render should render component 1`] = `
 <div
   className="gf-form-button-row"
 >
-  <LinkButton
+  <Button
     fill="solid"
-    href="/datasources"
+    onClick={[Function]}
+    type="button"
     variant="secondary"
   >
     Back
-  </LinkButton>
+  </Button>
   <LinkButton
+    disabled={false}
     fill="solid"
     href="/explore"
     variant="secondary"
@@ -41,14 +43,16 @@ exports[`Render should render with buttons enabled 1`] = `
 <div
   className="gf-form-button-row"
 >
-  <LinkButton
+  <Button
     fill="solid"
-    href="/datasources"
+    onClick={[Function]}
+    type="button"
     variant="secondary"
   >
     Back
-  </LinkButton>
+  </Button>
   <LinkButton
+    disabled={false}
     fill="solid"
     href="/explore"
     variant="secondary"

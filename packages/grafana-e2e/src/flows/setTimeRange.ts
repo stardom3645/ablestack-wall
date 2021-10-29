@@ -14,7 +14,7 @@ export const setTimeRange = ({ from, to, zone }: TimeRangeConfig) => {
     e2e().contains('button', '시간대 변경').click();
 
     selectOption({
-      clickToOpen: false,
+      clickToOpen: true,
       container: e2e.components.TimeZonePicker.container(),
       optionText: zone,
     });

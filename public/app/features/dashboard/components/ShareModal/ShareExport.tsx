@@ -2,18 +2,14 @@ import React, { PureComponent } from 'react';
 import { saveAs } from 'file-saver';
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Button, Field, Modal, Switch } from '@grafana/ui';
-import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { DashboardExporter } from 'app/features/dashboard/components/DashExportModal';
 import { appEvents } from 'app/core/core';
 import { ShowModalReactEvent } from 'app/types/events';
 import { ViewJsonModal } from './ViewJsonModal';
 import { config } from '@grafana/runtime';
+import { ShareModalTabProps } from './types';
 
-interface Props {
-  dashboard: DashboardModel;
-  panel?: PanelModel;
-  onDismiss(): void;
-}
+interface Props extends ShareModalTabProps {}
 
 interface State {
   shareExternally: boolean;
@@ -124,7 +120,7 @@ export class ShareExport extends PureComponent<Props, State> {
       })
     );
 
-    this.props.onDismiss();
+    this.props.onDismiss?.();
   };
 
   render() {
@@ -135,12 +131,12 @@ export class ShareExport extends PureComponent<Props, State> {
     return (
       <>
         <p className="share-modal-info-text">이 대시보드를 내보냅니다.</p>
-        <Field label="외부 공유를 위해 내보내기">
-          <Switch value={shareExternally} onChange={this.onShareExternallyChange} />
+        <Field label="Export for sharing externally">
+          <Switch id="share-externally-toggle" value={shareExternally} onChange={this.onShareExternallyChange} />
         </Field>
         {config.featureToggles.trimDefaults && (
           <Field label="Export with default values removed">
-            <Switch value={trimDefaults} onChange={this.onTrimDefaultsChange} />
+            <Switch id="trim-defaults-toggle" value={trimDefaults} onChange={this.onTrimDefaultsChange} />
           </Field>
         )}
         <Modal.ButtonRow>

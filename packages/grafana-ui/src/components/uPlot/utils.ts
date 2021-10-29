@@ -1,8 +1,9 @@
-import { DataFrame, dateTime, Field, FieldType } from '@grafana/data';
-import { StackingMode } from '@grafana/schema';
-import { createLogger } from '../../utils/logger';
-import { attachDebugger } from '../../utils';
+import { DataFrame, ensureTimeField, Field, FieldType } from '@grafana/data';
+import { StackingMode, VizLegendOptions } from '@grafana/schema';
+import { orderBy } from 'lodash';
 import { AlignedData, Options, PaddingSide } from 'uplot';
+import { attachDebugger } from '../../utils';
+import { createLogger } from '../../utils/logger';
 
 const ALLOWED_FORMAT_STRINGS_REGEX = /\b(YYYY|YY|MMMM|MMM|MM|M|DD|D|WWWW|WWW|HH|H|h|AA|aa|a|mm|m|ss|s|fff)\b/g;
 
@@ -39,7 +40,12 @@ interface StackMeta {
 }
 
 /** @internal */
-export function preparePlotData(frame: DataFrame, onStackMeta?: (meta: StackMeta) => void): AlignedData {
+export function preparePlotData(
+  frames: DataFrame[],
+  onStackMeta?: (meta: StackMeta) => void,
+  legend?: VizLegendOptions
+): AlignedData {
+  const frame = frames[0];
   const result: any[] = [];
   const stackingGroups: Map<string, number[]> = new Map();
   let seriesIndex = 0;
@@ -48,16 +54,7 @@ export function preparePlotData(frame: DataFrame, onStackMeta?: (meta: StackMeta
     const f = frame.fields[i];
 
     if (f.type === FieldType.time) {
-      if (f.values.length > 0 && typeof f.values.get(0) === 'string') {
-        const timestamps = [];
-        for (let i = 0; i < f.values.length; i++) {
-          timestamps.push(dateTime(f.values.get(i)).valueOf());
-        }
-        result.push(timestamps);
-        seriesIndex++;
-        continue;
-      }
-      result.push(f.values.toArray());
+      result.push(ensureTimeField(f).values.toArray());
       seriesIndex++;
       continue;
     }
@@ -75,7 +72,9 @@ export function preparePlotData(frame: DataFrame, onStackMeta?: (meta: StackMeta
     alignedTotals[0] = null;
 
     // array or stacking groups
-    for (const [_, seriesIdxs] of stackingGroups.entries()) {
+    for (const [_, seriesIds] of stackingGroups.entries()) {
+      const seriesIdxs = orderIdsByCalcs({ ids: seriesIds, legend, frame });
+
       const groupTotals = byPct ? Array(dataLength).fill(0) : null;
 
       if (byPct) {
@@ -192,3 +191,23 @@ export const pluginLogger = createLogger('uPlot');
 export const pluginLog = pluginLogger.logger;
 // pluginLogger.enable();
 attachDebugger('graphng', undefined, pluginLogger);
+
+type OrderIdsByCalcsOptions = {
+  legend?: VizLegendOptions;
+  ids: number[];
+  frame: DataFrame;
+};
+export function orderIdsByCalcs({ legend, ids, frame }: OrderIdsByCalcsOptions) {
+  if (!legend?.sortBy || legend.sortDesc == null) {
+    return ids;
+  }
+  const orderedIds = orderBy<number>(
+    ids,
+    (id) => {
+      return frame.fields[id].state?.calcs?.[legend.sortBy!.toLowerCase()];
+    },
+    legend.sortDesc ? 'desc' : 'asc'
+  );
+
+  return orderedIds;
+}

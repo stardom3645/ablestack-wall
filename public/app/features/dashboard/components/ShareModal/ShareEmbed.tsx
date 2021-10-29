@@ -1,9 +1,9 @@
 import React, { FormEvent, PureComponent } from 'react';
-import { RadioButtonGroup, Switch, Field, TextArea, ClipboardButton, Modal } from '@grafana/ui';
-import { SelectableValue, AppEvents } from '@grafana/data';
-import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
+import { ClipboardButton, Field, Modal, RadioButtonGroup, Switch, TextArea } from '@grafana/ui';
+import { AppEvents, SelectableValue } from '@grafana/data';
 import { appEvents } from 'app/core/core';
 import { buildIframeHtml } from './utils';
+import { ShareModalTabProps } from './types';
 
 const themeOptions: Array<SelectableValue<string>> = [
   { label: 'Current', value: 'current' },
@@ -11,10 +11,7 @@ const themeOptions: Array<SelectableValue<string>> = [
   { label: 'Light', value: 'light' },
 ];
 
-interface Props {
-  dashboard: DashboardModel;
-  panel?: PanelModel;
-}
+interface Props extends ShareModalTabProps {}
 
 interface State {
   useCurrentTimeRange: boolean;
@@ -93,7 +90,12 @@ export class ShareEmbed extends PureComponent<Props, State> {
           label="HTML 끼워넣기"
           description="아래 HTML 코드를 붙여넣고 다른 웹 페이지에 포함할 수 있습니다. 익명 액세스가 활성화되지 않은 경우 해당 페이지를 보는 사용자는 그래프를 로드하려면 Wall에 로그인해야 합니다."
         >
-          <TextArea rows={5} value={iframeHtml} onChange={this.onIframeHtmlChange}></TextArea>
+          <TextArea
+            id="share-panel-embed-embed-html-textarea"
+            rows={5}
+            value={iframeHtml}
+            onChange={this.onIframeHtmlChange}
+          />
         </Field>
         <Modal.ButtonRow>
           <ClipboardButton variant="primary" getText={this.getIframeHtml} onClipboardCopy={this.onIframeHtmlCopy}>

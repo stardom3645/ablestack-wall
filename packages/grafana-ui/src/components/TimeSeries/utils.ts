@@ -20,22 +20,23 @@ import {
   GraphDrawStyle,
   GraphFieldConfig,
   GraphTresholdsStyleMode,
-  PointVisibility,
+  VisibilityMode,
   ScaleDirection,
   ScaleOrientation,
+  VizLegendOptions,
 } from '@grafana/schema';
-import { collectStackingGroups, preparePlotData } from '../uPlot/utils';
+import { collectStackingGroups, orderIdsByCalcs, preparePlotData } from '../uPlot/utils';
 import uPlot from 'uplot';
 
 const defaultFormatter = (v: any) => (v == null ? '-' : v.toFixed(1));
 
 const defaultConfig: GraphFieldConfig = {
   drawStyle: GraphDrawStyle.Line,
-  showPoints: PointVisibility.Auto,
+  showPoints: VisibilityMode.Auto,
   axisPlacement: AxisPlacement.Auto,
 };
 
-export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursorSync }> = ({
+export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursorSync; legend?: VizLegendOptions }> = ({
   frame,
   theme,
   timeZone,
@@ -43,10 +44,11 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
   eventBus,
   sync,
   allFrames,
+  legend,
 }) => {
   const builder = new UPlotConfigBuilder(timeZone);
 
-  builder.setPrepData(preparePlotData);
+  builder.setPrepData((prepData) => preparePlotData(prepData, undefined, legend));
 
   // X is the first field in the aligned frame
   const xField = frame.fields[0];
@@ -79,6 +81,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
       placement: AxisPlacement.Bottom,
       timeZone,
       theme,
+      grid: { show: xField.config.custom?.axisGridShow },
     });
   } else {
     // Not time!
@@ -96,6 +99,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
       scaleKey: xScaleKey,
       placement: AxisPlacement.Bottom,
       theme,
+      grid: { show: xField.config.custom?.axisGridShow },
     });
   }
 
@@ -147,11 +151,12 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
         placement: customConfig.axisPlacement ?? AxisPlacement.Auto,
         formatValue: (v) => formattedValueToString(fmt(v)),
         theme,
+        grid: { show: customConfig.axisGridShow },
       });
     }
 
     const showPoints =
-      customConfig.drawStyle === GraphDrawStyle.Points ? PointVisibility.Always : customConfig.showPoints;
+      customConfig.drawStyle === GraphDrawStyle.Points ? VisibilityMode.Always : customConfig.showPoints;
 
     let pointsFilter: uPlot.Series.Points.Filter = () => null;
 
@@ -233,6 +238,10 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
       show: !customConfig.hideFrom?.viz,
       gradientMode: customConfig.gradientMode,
       thresholds: config.thresholds,
+      hardMin: field.config.min,
+      hardMax: field.config.max,
+      softMin: customConfig.axisSoftMin,
+      softMax: customConfig.axisSoftMax,
       // The following properties are not used in the uPlot config, but are utilized as transport for legend config
       dataFrameFieldIndex: field.state?.origin,
     });
@@ -246,6 +255,10 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
           thresholds: config.thresholds,
           scaleKey,
           theme,
+          hardMin: field.config.min,
+          hardMax: field.config.max,
+          softMin: customConfig.axisSoftMin,
+          softMax: customConfig.axisSoftMax,
         });
       }
     }
@@ -254,7 +267,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
 
   if (stackingGroups.size !== 0) {
     builder.setStacking(true);
-    for (const [_, seriesIdxs] of stackingGroups.entries()) {
+    for (const [_, seriesIds] of stackingGroups.entries()) {
+      const seriesIdxs = orderIdsByCalcs({ ids: seriesIds, legend, frame });
       for (let j = seriesIdxs.length - 1; j > 0; j--) {
         builder.addBand({
           series: [seriesIdxs[j], seriesIdxs[j - 1]],
@@ -334,7 +348,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{ sync: DashboardCursor
           if (x < 0 && y < 0) {
             payload.point[xScaleUnit] = null;
             payload.point[yScaleKey] = null;
-            eventBus.publish(new DataHoverClearEvent(payload));
+            eventBus.publish(new DataHoverClearEvent());
           } else {
             // convert the points
             payload.point[xScaleUnit] = src.posToVal(x, xScaleKey);

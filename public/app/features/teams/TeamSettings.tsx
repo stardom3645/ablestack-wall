@@ -30,14 +30,14 @@ export const TeamSettings: FC<Props> = ({ team, updateTeam }) => {
           {({ register }) => (
             <>
               <Field label="이름">
-                <Input {...register('name', { required: true })} />
+                <Input {...register('name', { required: true })} id="name-input" />
               </Field>
 
               <Field
                 label="이메일"
                 description="이것은 선택 사항이며 주로 팀 프로필 아바타를 설정하는 데 사용됩니다(gravatar 서비스를 통해)."
               >
-                <Input {...register('email')} placeholder="team@email.com" type="email" />
+                <Input {...register('email')} placeholder="team@email.com" type="email" id="email-input" />
               </Field>
               <Button type="submit">수정</Button>
             </>

@@ -15,6 +15,7 @@ import { SelectableValue } from '@grafana/data';
 export interface Props {
   onSelected: (user: SelectableValue<OrgUser['userId']>) => void;
   className?: string;
+  inputId?: string;
 }
 
 export interface State {
@@ -59,7 +60,7 @@ export class UserPicker extends Component<Props, State> {
   }
 
   render() {
-    const { className, onSelected } = this.props;
+    const { className, onSelected, inputId } = this.props;
     const { isLoading } = this.state;
 
     return (
@@ -68,12 +69,14 @@ export class UserPicker extends Component<Props, State> {
           menuShouldPortal
           isClearable
           className={className}
+          inputId={inputId}
           isLoading={isLoading}
           defaultOptions={true}
           loadOptions={this.debouncedSearch}
           onChange={onSelected}
           placeholder="입력하여 사용자 검색"
           noOptionsMessage="사용자를 찾을 수 없음"
+          aria-label="사용자 찾기"
         />
       </div>
     );

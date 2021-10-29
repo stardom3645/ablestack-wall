@@ -1,34 +1,61 @@
 import React, { FC, useState } from 'react';
 import { connect, MapStateToProps } from 'react-redux';
-import { NavModel, SelectableValue, urlUtil } from '@grafana/data';
+import { NavModel } from '@grafana/data';
 import Page from 'app/core/components/Page/Page';
 import { StoreState } from 'app/types';
 import { GrafanaRouteComponentProps } from '../../core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { useAsync } from 'react-use';
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import { useDebounce } from 'react-use';
 import { PlaylistDTO } from './types';
-import { Button, Card, Checkbox, Field, LinkButton, Modal, RadioButtonGroup, VerticalGroup } from '@grafana/ui';
-import { contextSrv } from 'app/core/core';
+import { ConfirmModal } from '@grafana/ui';
 import PageActionBar from 'app/core/components/PageActionBar/PageActionBar';
 import EmptyListCTA from '../../core/components/EmptyListCTA/EmptyListCTA';
+import { deletePlaylist, getAllPlaylist } from './api';
+import { StartModal } from './StartModal';
+import { PlaylistPageList } from './PlaylistPageList';
+import { EmptyQueryListBanner } from './EmptyQueryListBanner';
 
 interface ConnectedProps {
   navModel: NavModel;
 }
+export interface PlaylistPageProps extends ConnectedProps, GrafanaRouteComponentProps {}
 
-interface Props extends ConnectedProps, GrafanaRouteComponentProps {}
-
-export const PlaylistPage: FC<Props> = ({ navModel }) => {
+export const PlaylistPage: FC<PlaylistPageProps> = ({ navModel }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [hasFetched, setHasFetched] = useState(false);
   const [startPlaylist, setStartPlaylist] = useState<PlaylistDTO | undefined>();
+  const [playlistToDelete, setPlaylistToDelete] = useState<PlaylistDTO | undefined>();
+  const [forcePlaylistsFetch, setForcePlaylistsFetch] = useState(0);
 
-  const { value: playlists, loading } = useAsync(async () => {
-    return getBackendSrv().get('/api/playlists', { query: searchQuery }) as Promise<PlaylistDTO[]>;
-  });
+  const [playlists, setPlaylists] = useState<PlaylistDTO[]>([]);
+
+  useDebounce(
+    async () => {
+      const playlists = await getAllPlaylist(searchQuery);
+      if (!hasFetched) {
+        setHasFetched(true);
+      }
+      setPlaylists(playlists);
+      setDebouncedSearchQuery(searchQuery);
+    },
+    350,
+    [forcePlaylistsFetch, searchQuery]
+  );
+
   const hasPlaylists = playlists && playlists.length > 0;
+  const onDismissDelete = () => setPlaylistToDelete(undefined);
+  const onDeletePlaylist = () => {
+    if (!playlistToDelete) {
+      return;
+    }
+    deletePlaylist(playlistToDelete.id).finally(() => {
+      setForcePlaylistsFetch(forcePlaylistsFetch + 1);
+      setPlaylistToDelete(undefined);
+    });
+  };
 
-  let content = (
+  const emptyListBanner = (
     <EmptyListCTA
       title="아직 생성된 재생목록이 없습니다"
       buttonIcon="plus"
@@ -61,18 +88,39 @@ export const PlaylistPage: FC<Props> = ({ navModel }) => {
       </>
     );
   }
+  const showSearch = playlists.length > 0 || searchQuery.length > 0 || debouncedSearchQuery.length > 0;
 
   return (
     <Page navModel={navModel}>
-      <Page.Contents isLoading={loading}>
-        {hasPlaylists && (
+      <Page.Contents isLoading={!hasFetched}>
+        {showSearch && (
           <PageActionBar
             searchQuery={searchQuery}
             linkButton={{ title: '새 플레이리스트', href: '/playlists/new' }}
             setSearchQuery={setSearchQuery}
           />
         )}
-        {content}
+
+        {!hasPlaylists && searchQuery ? (
+          <EmptyQueryListBanner />
+        ) : (
+          <PlaylistPageList
+            playlists={playlists}
+            setStartPlaylist={setStartPlaylist}
+            setPlaylistToDelete={setPlaylistToDelete}
+          />
+        )}
+        {!showSearch && emptyListBanner}
+        {playlistToDelete && (
+          <ConfirmModal
+            title={playlistToDelete.name}
+            confirmText="Delete"
+            body={`Are you sure you want to delete '${playlistToDelete.name}' playlist?`}
+            onConfirm={onDeletePlaylist}
+            isOpen={Boolean(playlistToDelete)}
+            onDismiss={onDismissDelete}
+          />
+        )}
         {startPlaylist && <StartModal playlist={startPlaylist} onDismiss={() => setStartPlaylist(undefined)} />}
       </Page.Contents>
     </Page>

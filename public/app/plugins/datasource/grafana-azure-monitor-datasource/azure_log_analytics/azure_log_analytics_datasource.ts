@@ -20,7 +20,7 @@ import { Observable, from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { getAuthType, getAzureCloud, getAzurePortalUrl } from '../credentials';
 import { isGUIDish } from '../components/ResourcePicker/utils';
-import { routeNames } from '../utils/common';
+import { interpolateVariable, routeNames } from '../utils/common';
 
 interface AdhocQuery {
   datasourceId: number;
@@ -57,6 +57,10 @@ export default class AzureLogAnalyticsDatasource extends DataSourceWithBackend<
   isConfigured(): boolean {
     // If validation didn't return any error then the data source is properly configured
     return !this.validateDatasource();
+  }
+
+  filterQuery(item: AzureMonitorQuery): boolean {
+    return item.hide !== true && !!item.azureLogAnalytics?.query && !!item.azureLogAnalytics.resource;
   }
 
   async getSubscriptions(): Promise<Array<{ text: string; value: string }>> {
@@ -118,7 +122,7 @@ export default class AzureLogAnalyticsDatasource extends DataSourceWithBackend<
       workspace = this.firstWorkspace;
     }
 
-    const query = templateSrv.replace(item.query, scopedVars, this.interpolateVariable);
+    const query = templateSrv.replace(item.query, scopedVars, interpolateVariable);
 
     return {
       refId: target.refId,
@@ -272,7 +276,7 @@ export default class AzureLogAnalyticsDatasource extends DataSourceWithBackend<
 
   private buildQuery(query: string, options: any, workspace: string): AdhocQuery[] {
     const querystringBuilder = new LogAnalyticsQuerystringBuilder(
-      getTemplateSrv().replace(query, {}, this.interpolateVariable),
+      getTemplateSrv().replace(query, {}, interpolateVariable),
       options,
       'TimeGenerated'
     );
@@ -291,29 +295,6 @@ export default class AzureLogAnalyticsDatasource extends DataSourceWithBackend<
     ];
 
     return queries;
-  }
-
-  interpolateVariable(value: string, variable: { multi: any; includeAll: any }) {
-    if (typeof value === 'string') {
-      if (variable.multi || variable.includeAll) {
-        return "'" + value + "'";
-      } else {
-        return value;
-      }
-    }
-
-    if (typeof value === 'number') {
-      return value;
-    }
-
-    const quotedValues = map(value, (val) => {
-      if (typeof value === 'number') {
-        return value;
-      }
-
-      return "'" + val + "'";
-    });
-    return quotedValues.join(',');
   }
 
   async getDefaultOrFirstSubscription(): Promise<string | undefined> {

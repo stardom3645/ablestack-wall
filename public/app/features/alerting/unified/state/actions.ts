@@ -29,16 +29,23 @@ import {
   deleteAlertManagerConfig,
   testReceivers,
 } from '../api/alertmanager';
-import { fetchRules } from '../api/prometheus';
+import { FetchPromRulesFilter, fetchRules } from '../api/prometheus';
 import {
+  deleteNamespace,
   deleteRulerRulesGroup,
   fetchRulerRules,
   fetchRulerRulesGroup,
   fetchRulerRulesNamespace,
+  FetchRulerRulesFilter,
   setRulerRuleGroup,
 } from '../api/ruler';
 import { RuleFormType, RuleFormValues } from '../types/rule-form';
-import { getAllRulesSourceNames, GRAFANA_RULES_SOURCE_NAME, isGrafanaRulesSource } from '../utils/datasource';
+import {
+  getAllRulesSourceNames,
+  GRAFANA_RULES_SOURCE_NAME,
+  isGrafanaRulesSource,
+  isVanillaPrometheusAlertManagerDataSource,
+} from '../utils/datasource';
 import { makeAMLink, retryWhile } from '../utils/misc';
 import { isFetchError, withAppEvents, withSerializedError } from '../utils/redux';
 import { formValuesToRulerRuleDTO, formValuesToRulerGrafanaRuleDTO } from '../utils/rule-form';
@@ -58,40 +65,57 @@ const FETCH_CONFIG_RETRY_TIMEOUT = 30 * 1000;
 
 export const fetchPromRulesAction = createAsyncThunk(
   'unifiedalerting/fetchPromRules',
-  (rulesSourceName: string): Promise<RuleNamespace[]> => withSerializedError(fetchRules(rulesSourceName))
+  ({ rulesSourceName, filter }: { rulesSourceName: string; filter?: FetchPromRulesFilter }): Promise<RuleNamespace[]> =>
+    withSerializedError(fetchRules(rulesSourceName, filter))
 );
 
 export const fetchAlertManagerConfigAction = createAsyncThunk(
   'unifiedalerting/fetchAmConfig',
   (alertManagerSourceName: string): Promise<AlertManagerCortexConfig> =>
     withSerializedError(
-      retryWhile(
-        () => fetchAlertManagerConfig(alertManagerSourceName),
-        // if config has been recently deleted, it takes a while for cortex start returning the default one.
-        // retry for a short while instead of failing
-        (e) => !!messageFromError(e)?.includes('alertmanager storage object not found'),
-        FETCH_CONFIG_RETRY_TIMEOUT
-      ).then((result) => {
-        // if user config is empty for cortex alertmanager, try to get config from status endpoint
-        if (
-          isEmpty(result.alertmanager_config) &&
-          isEmpty(result.template_files) &&
-          alertManagerSourceName !== GRAFANA_RULES_SOURCE_NAME
-        ) {
+      (async () => {
+        // for vanilla prometheus, there is no config endpoint. Only fetch config from status
+        if (isVanillaPrometheusAlertManagerDataSource(alertManagerSourceName)) {
           return fetchStatus(alertManagerSourceName).then((status) => ({
             alertmanager_config: status.config,
             template_files: {},
           }));
         }
-        return result;
-      })
+
+        return retryWhile(
+          () => fetchAlertManagerConfig(alertManagerSourceName),
+          // if config has been recently deleted, it takes a while for cortex start returning the default one.
+          // retry for a short while instead of failing
+          (e) => !!messageFromError(e)?.includes('alertmanager storage object not found'),
+          FETCH_CONFIG_RETRY_TIMEOUT
+        ).then((result) => {
+          // if user config is empty for cortex alertmanager, try to get config from status endpoint
+          if (
+            isEmpty(result.alertmanager_config) &&
+            isEmpty(result.template_files) &&
+            alertManagerSourceName !== GRAFANA_RULES_SOURCE_NAME
+          ) {
+            return fetchStatus(alertManagerSourceName).then((status) => ({
+              alertmanager_config: status.config,
+              template_files: {},
+            }));
+          }
+          return result;
+        });
+      })()
     )
 );
 
 export const fetchRulerRulesAction = createAsyncThunk(
   'unifiedalerting/fetchRulerRules',
-  (rulesSourceName: string): Promise<RulerRulesConfigDTO | null> => {
-    return withSerializedError(fetchRulerRules(rulesSourceName));
+  ({
+    rulesSourceName,
+    filter,
+  }: {
+    rulesSourceName: string;
+    filter?: FetchRulerRulesFilter;
+  }): Promise<RulerRulesConfigDTO | null> => {
+    return withSerializedError(fetchRulerRules(rulesSourceName, filter));
   }
 );
 
@@ -103,12 +127,12 @@ export const fetchSilencesAction = createAsyncThunk(
 );
 
 // this will only trigger ruler rules fetch if rules are not loaded yet and request is not in flight
-export function fetchRulerRulesIfNotFetchedYet(dataSourceName: string): ThunkResult<void> {
+export function fetchRulerRulesIfNotFetchedYet(rulesSourceName: string): ThunkResult<void> {
   return (dispatch, getStore) => {
     const { rulerRules } = getStore().unifiedAlerting;
-    const resp = rulerRules[dataSourceName];
+    const resp = rulerRules[rulesSourceName];
     if (!resp?.result && !(resp && isRulerNotSupportedResponse(resp)) && !resp?.loading) {
-      dispatch(fetchRulerRulesAction(dataSourceName));
+      dispatch(fetchRulerRulesAction({ rulesSourceName }));
     }
   };
 }
@@ -116,12 +140,12 @@ export function fetchRulerRulesIfNotFetchedYet(dataSourceName: string): ThunkRes
 export function fetchAllPromAndRulerRulesAction(force = false): ThunkResult<void> {
   return (dispatch, getStore) => {
     const { promRules, rulerRules } = getStore().unifiedAlerting;
-    getAllRulesSourceNames().map((name) => {
-      if (force || !promRules[name]?.loading) {
-        dispatch(fetchPromRulesAction(name));
+    getAllRulesSourceNames().map((rulesSourceName) => {
+      if (force || !promRules[rulesSourceName]?.loading) {
+        dispatch(fetchPromRulesAction({ rulesSourceName }));
       }
-      if (force || !rulerRules[name]?.loading) {
-        dispatch(fetchRulerRulesAction(name));
+      if (force || !rulerRules[rulesSourceName]?.loading) {
+        dispatch(fetchRulerRulesAction({ rulesSourceName }));
       }
     });
   };
@@ -130,9 +154,9 @@ export function fetchAllPromAndRulerRulesAction(force = false): ThunkResult<void
 export function fetchAllPromRulesAction(force = false): ThunkResult<void> {
   return (dispatch, getStore) => {
     const { promRules } = getStore().unifiedAlerting;
-    getAllRulesSourceNames().map((name) => {
-      if (force || !promRules[name]?.loading) {
-        dispatch(fetchPromRulesAction(name));
+    getAllRulesSourceNames().map((rulesSourceName) => {
+      if (force || !promRules[rulesSourceName]?.loading) {
+        dispatch(fetchPromRulesAction({ rulesSourceName }));
       }
     });
   };
@@ -234,8 +258,8 @@ export function deleteRuleAction(
         }
         await deleteRule(ruleWithLocation);
         // refetch rules for this rules source
-        dispatch(fetchRulerRulesAction(ruleWithLocation.ruleSourceName));
-        dispatch(fetchPromRulesAction(ruleWithLocation.ruleSourceName));
+        dispatch(fetchRulerRulesAction({ rulesSourceName: ruleWithLocation.ruleSourceName }));
+        dispatch(fetchPromRulesAction({ rulesSourceName: ruleWithLocation.ruleSourceName }));
 
         if (options.navigateTo) {
           locationService.replace(options.navigateTo);
@@ -562,7 +586,7 @@ export const fetchAlertGroupsAction = createAsyncThunk(
   }
 );
 
-export const checkIfLotexSupportsEditingRulesAction = createAsyncThunk(
+export const checkIfLotexSupportsEditingRulesAction = createAsyncThunk<boolean, string>(
   'unifiedalerting/checkIfLotexRuleEditingSupported',
   async (rulesSourceName: string): Promise<boolean> =>
     withAppEvents(
@@ -618,5 +642,91 @@ export const testReceiversAction = createAsyncThunk(
       errorMessage: 'Failed to send test alert.',
       successMessage: 'Test alert sent.',
     });
+  }
+);
+
+interface UpdateNamespaceAndGroupOptions {
+  rulesSourceName: string;
+  namespaceName: string;
+  groupName: string;
+  newNamespaceName: string;
+  newGroupName: string;
+  groupInterval?: string;
+}
+
+// allows renaming namespace, renaming group and changing group interval, all in one go
+export const updateLotexNamespaceAndGroupAction = createAsyncThunk(
+  'unifiedalerting/updateLotexNamespaceAndGroup',
+  async (options: UpdateNamespaceAndGroupOptions, thunkAPI): Promise<void> => {
+    return withAppEvents(
+      withSerializedError(
+        (async () => {
+          const { rulesSourceName, namespaceName, groupName, newNamespaceName, newGroupName, groupInterval } = options;
+          if (options.rulesSourceName === GRAFANA_RULES_SOURCE_NAME) {
+            throw new Error(`this action does not support Grafana rules`);
+          }
+          // fetch rules and perform sanity checks
+          const rulesResult = await fetchRulerRules(rulesSourceName);
+          if (!rulesResult[namespaceName]) {
+            throw new Error(`Namespace "${namespaceName}" not found.`);
+          }
+          const existingGroup = rulesResult[namespaceName].find((group) => group.name === groupName);
+          if (!existingGroup) {
+            throw new Error(`Group "${groupName}" not found.`);
+          }
+          if (newGroupName !== groupName && !!rulesResult[namespaceName].find((group) => group.name === newGroupName)) {
+            throw new Error(`Group "${newGroupName}" already exists.`);
+          }
+          if (newNamespaceName !== namespaceName && !!rulesResult[newNamespaceName]) {
+            throw new Error(`Namespace "${newNamespaceName}" already exists.`);
+          }
+          if (
+            newNamespaceName === namespaceName &&
+            groupName === newGroupName &&
+            groupInterval === existingGroup.interval
+          ) {
+            throw new Error('Nothing changed.');
+          }
+
+          // if renaming namespace - make new copies of all groups, then delete old namespace
+          if (newNamespaceName !== namespaceName) {
+            for (const group of rulesResult[namespaceName]) {
+              await setRulerRuleGroup(
+                rulesSourceName,
+                newNamespaceName,
+                group.name === groupName
+                  ? {
+                      ...group,
+                      name: newGroupName,
+                      interval: groupInterval,
+                    }
+                  : group
+              );
+            }
+            await deleteNamespace(rulesSourceName, namespaceName);
+
+            // if only modifying group...
+          } else {
+            // save updated group
+            await setRulerRuleGroup(rulesSourceName, namespaceName, {
+              ...existingGroup,
+              name: newGroupName,
+              interval: groupInterval,
+            });
+            // if group name was changed, delete old group
+            if (newGroupName !== groupName) {
+              await deleteRulerRulesGroup(rulesSourceName, namespaceName, groupName);
+            }
+          }
+
+          // refetch all rules
+          await thunkAPI.dispatch(fetchRulerRulesAction({ rulesSourceName }));
+        })()
+      ),
+      {
+        errorMessage: 'Failed to update namespace / group',
+        successMessage: 'Update successful',
+      }
+    );
   }
 );

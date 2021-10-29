@@ -1,3 +1,4 @@
+//go:build wireinject && oss
 // +build wireinject,oss
 
 package server
@@ -11,10 +12,14 @@ import (
 	"github.com/grafana/grafana/pkg/services/accesscontrol/ossaccesscontrol"
 	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/datasources"
+	"github.com/grafana/grafana/pkg/services/encryption"
+	"github.com/grafana/grafana/pkg/services/encryption/ossencryption"
 	"github.com/grafana/grafana/pkg/services/licensing"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/login/authinfoservice"
 	"github.com/grafana/grafana/pkg/services/provisioning"
+	"github.com/grafana/grafana/pkg/services/searchusers"
+	"github.com/grafana/grafana/pkg/services/searchusers/filters"
 	"github.com/grafana/grafana/pkg/services/sqlstore/migrations"
 	"github.com/grafana/grafana/pkg/services/validations"
 	"github.com/grafana/grafana/pkg/setting"
@@ -43,6 +48,12 @@ var wireExtsBasicSet = wire.NewSet(
 	wire.Bind(new(registry.DatabaseMigrator), new(*migrations.OSSMigrations)),
 	authinfoservice.ProvideOSSUserProtectionService,
 	wire.Bind(new(login.UserProtectionService), new(*authinfoservice.OSSUserProtectionImpl)),
+	ossencryption.ProvideService,
+	wire.Bind(new(encryption.Service), new(*ossencryption.Service)),
+	filters.ProvideOSSSearchUserFilter,
+	wire.Bind(new(models.SearchUserFilter), new(*filters.OSSSearchUserFilter)),
+	searchusers.ProvideUsersService,
+	wire.Bind(new(searchusers.Service), new(*searchusers.OSSService)),
 )
 
 var wireExtsSet = wire.NewSet(

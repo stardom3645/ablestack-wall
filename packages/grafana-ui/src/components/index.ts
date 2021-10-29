@@ -24,11 +24,13 @@ export { RefreshPicker, defaultIntervals } from './RefreshPicker/RefreshPicker';
 export { TimeRangePicker, TimeRangePickerProps } from './DateTimePickers/TimeRangePicker';
 export { TimeOfDayPicker } from './DateTimePickers/TimeOfDayPicker';
 export { TimeZonePicker } from './DateTimePickers/TimeZonePicker';
+export { WeekStartPicker } from './DateTimePickers/WeekStartPicker';
 export { DatePicker, DatePickerProps } from './DateTimePickers/DatePicker/DatePicker';
 export {
   DatePickerWithInput,
   DatePickerWithInputProps,
 } from './DateTimePickers/DatePickerWithInput/DatePickerWithInput';
+export { DateTimePicker } from './DateTimePickers/DateTimePicker/DateTimePicker';
 export { List } from './List/List';
 export { TagsInput } from './TagsInput/TagsInput';
 export { Pagination } from './Pagination/Pagination';
@@ -40,8 +42,18 @@ export { ConfirmModal, ConfirmModalProps } from './ConfirmModal/ConfirmModal';
 export { QueryField } from './QueryField/QueryField';
 
 // Code editor
-export { CodeEditor } from './Monaco/CodeEditorLazy';
-export { Monaco, MonacoEditor, CodeEditorSuggestionItem, CodeEditorSuggestionItemKind } from './Monaco/types';
+export { CodeEditor } from './Monaco/CodeEditor';
+
+export { ReactMonacoEditorLazy as ReactMonacoEditor } from './Monaco/ReactMonacoEditorLazy';
+
+export {
+  Monaco,
+  monacoTypes,
+  MonacoEditor,
+  MonacoOptions as CodeEditorMonacoOptions,
+  CodeEditorSuggestionItem,
+  CodeEditorSuggestionItemKind,
+} from './Monaco/types';
 export { variableSuggestionToCodeEditorSuggestion } from './Monaco/utils';
 
 // TODO: namespace
@@ -191,6 +203,7 @@ export { Badge, BadgeColor, BadgeProps } from './Badge/Badge';
 export { RadioButtonGroup } from './Forms/RadioButtonGroup/RadioButtonGroup';
 
 export { Input } from './Input/Input';
+export { FilterInput } from './FilterInput/FilterInput';
 export { FormInputSize } from './Forms/types';
 
 export { Switch, InlineSwitch } from './Switch/Switch';
@@ -237,13 +250,14 @@ export { LegacyForms, LegacyInputStatus };
 
 // WIP, need renames and exports cleanup
 export * from './uPlot/config';
-export { UPlotConfigBuilder, UPlotConfigPrepFn } from './uPlot/config/UPlotConfigBuilder';
+export { ScaleDistribution } from '@grafana/schema';
+export { UPlotConfigBuilder } from './uPlot/config/UPlotConfigBuilder';
 export { UPlotChart } from './uPlot/Plot';
 export { PlotLegend } from './uPlot/PlotLegend';
 export * from './uPlot/geometries';
 export * from './uPlot/plugins';
-export { usePlotContext } from './uPlot/context';
 export { PlotTooltipInterpolator, PlotSelection } from './uPlot/types';
+export { UPlotConfigPrepFn } from './uPlot/config/UPlotConfigBuilder';
 export { GraphNG, GraphNGProps, FIXED_UNIT } from './GraphNG/GraphNG';
 export { TimeSeries } from './TimeSeries/TimeSeries';
 export { useGraphNGContext } from './GraphNG/hooks';

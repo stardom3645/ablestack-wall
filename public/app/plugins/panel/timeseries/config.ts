@@ -13,7 +13,7 @@ import {
   GraphGradientMode,
   LineInterpolation,
   LineStyle,
-  PointVisibility,
+  VisibilityMode,
   StackingMode,
   GraphTresholdsStyleMode,
 } from '@grafana/schema';
@@ -36,6 +36,7 @@ export const defaultGraphConfig: GraphFieldConfig = {
     mode: StackingMode.None,
     group: 'A',
   },
+  axisGridShow: true,
 };
 
 const categoryStyles = ['Graph styles'];
@@ -94,6 +95,7 @@ export function getGraphFieldConfig(cfg: GraphFieldConfig): SetFieldConfigOption
             min: 0,
             max: 10,
             step: 1,
+            ariaLabelForHandle: 'Line width',
           },
           showIf: (c) => c.drawStyle !== GraphDrawStyle.Points,
         })
@@ -106,6 +108,7 @@ export function getGraphFieldConfig(cfg: GraphFieldConfig): SetFieldConfigOption
             min: 0,
             max: 100,
             step: 1,
+            ariaLabelForHandle: 'Fill opacity',
           },
           showIf: (c) => c.drawStyle !== GraphDrawStyle.Points,
         })
@@ -172,8 +175,9 @@ export function getGraphFieldConfig(cfg: GraphFieldConfig): SetFieldConfigOption
             min: 1,
             max: 40,
             step: 1,
+            ariaLabelForHandle: 'Point size',
           },
-          showIf: (c) => c.showPoints !== PointVisibility.Never || c.drawStyle === GraphDrawStyle.Points,
+          showIf: (c) => c.showPoints !== VisibilityMode.Never || c.drawStyle === GraphDrawStyle.Points,
         });
 
       commonOptionsBuilder.addStackingConfig(builder, cfg.stacking, categoryStyles);
