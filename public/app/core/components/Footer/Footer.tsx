@@ -62,7 +62,7 @@ export const Footer: FC = React.memo(() => {
   return (
     <footer className="footer">
       <div className="text-center">
-        Copyright (c) 2021, ABLECLOUD.Co.Ltd<br></br>ABLESTACK Bronto - Powered By Apache CloudStack
+        Copyright (c) 2021, ABLECLOUD.Co.Ltd<br></br>ABLESTACK VERSION_INFO - Powered By Apache CloudStack
       </div>
     </footer>
   );
