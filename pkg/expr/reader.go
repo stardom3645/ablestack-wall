@@ -124,10 +124,6 @@ func (h *ExpressionQueryReader) ReadQuery(
 		}
 
 	case QueryTypeSQL:
-		enabled := enableSqlExpressions(h)
-		if !enabled {
-			return eq, fmt.Errorf("sqlExpressions is not implemented")
-		}
 		q := &SQLExpression{}
 		err = iter.ReadVal(q)
 		if err == nil {
@@ -187,12 +183,4 @@ func getReferenceVar(exp string, refId string) (string, error) {
 		return "", fmt.Errorf("no variable specified to reference for refId %v", refId)
 	}
 	return exp, nil
-}
-
-func enableSqlExpressions(h *ExpressionQueryReader) bool {
-	enabled := !h.features.IsEnabledGlobally(featuremgmt.FlagSqlExpressions)
-	if enabled {
-		return false
-	}
-	return false
 }
