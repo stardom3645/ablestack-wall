@@ -3,7 +3,16 @@ import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { OrgRole } from '@grafana/data';
-import { ConfirmModal, FilterInput, LinkButton, RadioButtonGroup, InlineField, EmptyState, Box } from '@grafana/ui';
+import {
+  ConfirmModal,
+  FilterInput,
+  LinkButton,
+  RadioButtonGroup,
+  InlineField,
+  EmptyState,
+  Box,
+  Button
+} from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/core';
@@ -22,6 +31,7 @@ import {
   changeStateFilter,
   createServiceAccountToken,
 } from './state/actions';
+import * as React from "react";
 
 interface OwnProps {}
 
@@ -172,8 +182,11 @@ export const ServiceAccountsListPageUnconnected = ({
   );
   const subTitle = (
     <span>
-      Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our{' '}
-      {docsLink}
+      <Trans
+        i18nKey="ablestack-wall.administration.service-accounts-tokens"
+        defaults="Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our {{ docsLink }}"
+        components={[docsLink]}
+      />
     </span>
   );
 

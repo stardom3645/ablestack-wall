@@ -2,6 +2,9 @@ import { Input, Field, FieldSet, Button } from '@grafana/ui';
 import { Form } from 'app/core/components/Form/Form';
 import { contextSrv } from 'app/core/core';
 import { AccessControlAction } from 'app/types';
+import {selectors} from "@grafana/e2e-selectors";
+import {Trans} from "../../core/internationalization";
+import * as React from "react";
 
 export interface Props {
   orgName: string;
@@ -18,12 +21,14 @@ const OrgProfile = ({ onSubmit, orgName }: Props) => {
   return (
     <Form defaultValues={{ orgName }} onSubmit={({ orgName }: FormDTO) => onSubmit(orgName)}>
       {({ register }) => (
-        <FieldSet label="Organization profile" disabled={!canWriteOrg}>
-          <Field label="Organization name">
+        <FieldSet label={<Trans i18nKey="shared-preferences.fields.organization-profile-label">Organization profile</Trans>} disabled={!canWriteOrg}>
+          <Field label={<Trans i18nKey="shared-preferences.fields.organization-name-label">Organization name</Trans>}>
             <Input id="org-name-input" type="text" {...register('orgName', { required: true })} />
           </Field>
 
-          <Button type="submit">Update organization name</Button>
+          <Button type="submit" variant="primary">
+            <Trans i18nKey="shared-preferences.fields.update-organization-name-button">Update organization name</Trans>
+          </Button>
         </FieldSet>
       )}
     </Form>

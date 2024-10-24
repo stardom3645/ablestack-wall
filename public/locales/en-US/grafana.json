@@ -2541,6 +2541,9 @@
   },
   "shared-preferences": {
     "fields": {
+      "organization-profile-label": "Organization profile",
+      "organization-name-label": "Organization name",
+      "update-organization-name-button": "Update organization name",
       "home-dashboard-label": "Home Dashboard",
       "home-dashboard-placeholder": "Default dashboard",
       "locale-label": "Language",
@@ -2768,6 +2771,13 @@
       "info-box-content": "Variables enable more interactive and dynamic dashboards. Instead of hard-coding things like server or sensor names in your metric queries you can use variables in their place. Variables are shown as list boxes at the top of the dashboard. These drop-down lists make it easy to change the data being displayed in your dashboard.",
       "info-box-content-2": "Check out the <2>Templates and variables documentation</2> for more information.",
       "title": "There are no variables added yet"
+    },
+    "ablestack-wall": {
+      "administration": {
+        "datasource-new-home": "Data sources have a new home! You can discover new data sources or manage existing ones in the Connections page, accessible from the main menu.",
+        "go-to-connections": "Go to connections",
+        "service-accounts-tokens": "Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our <0>documentation</0>."
+      }
     }
   }
 }
