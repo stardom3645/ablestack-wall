@@ -2792,7 +2792,7 @@
         "manage-org-edit-organization": "Edit organization",
         "manage-org-organization-users": "Organization users",
         "manage-org-edit-name": "Name",
-        "setting-alert": "These system settings are defined in grafana.ini or custom.ini (or overridden in ENV variables). To change these you currently need to restart Wall.",
+        "setting-alert": "These system settings are defined in grafana.ini or custom.ini (or overridden in ENV variables). To change these you currently need to restart Wall."
       },
       "plugins": {
         "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to"
