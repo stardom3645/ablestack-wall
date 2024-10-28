@@ -8,6 +8,7 @@ import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
 import { fetchRoleOptions, updateUserRoles } from 'app/core/components/RolePicker/api';
 import { contextSrv } from 'app/core/core';
 import { AccessControlAction, OrgRole, Role, ServiceAccountCreateApiResponse, ServiceAccountDTO } from 'app/types';
+import { Trans, t } from 'app/core/internationalization';
 
 import { OrgRolePicker } from '../admin/OrgRolePicker';
 
@@ -99,7 +100,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="serviceaccounts" pageNav={{ text: 'Create service account' }}>
+    <Page navId="serviceaccounts" pageNav={{ text: <Trans i18nKey="ablestack-wall.administration.service-and-access.create-service-account">Create service account</Trans> }}>
       <Page.Contents>
         <Form onSubmit={onSubmit} validateOn="onSubmit">
           {({ register, errors }) => {

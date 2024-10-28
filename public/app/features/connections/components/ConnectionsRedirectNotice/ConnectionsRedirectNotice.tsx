@@ -35,7 +35,7 @@ export function ConnectionsRedirectNotice() {
     <Alert severity="info" title="" onRemove={() => setShowNotice(false)}>
       <div className={styles.alertContent}>
         <p className={styles.alertParagraph}>
-          <Trans i18nKey="ablestack-wall.administration.datasource-new-home">Data sources have a new home! You can discover new data sources or manage existing ones in the Connections
+          <Trans i18nKey="ablestack-wall.administration.general.datasource-new-home">Data sources have a new home! You can discover new data sources or manage existing ones in the Connections
             page, accessible from the main menu.</Trans>
         </p>
         <LinkButton aria-label="Link to Connections" icon="arrow-right" href={ROUTES.DataSources} fill="text">

@@ -7,7 +7,7 @@ import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
 import { LinkButton, RadioButtonGroup, useStyles2, FilterInput, EmptyState } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/core';
-import { t } from 'app/core/internationalization';
+import {t, Trans} from 'app/core/internationalization';
 
 import { AccessControlAction, StoreState, UserFilter } from '../../types';
 
@@ -82,8 +82,8 @@ const UserListAdminPageUnConnected = ({
           />
           <RadioButtonGroup
             options={[
-              { label: 'All users', value: false },
-              { label: 'Active last 30 days', value: true },
+              { label: <Trans i18nKey="ablestack-wall.administration.service-and-access.all-user">All users</Trans>, value: false },
+              { label: <Trans i18nKey="ablestack-wall.administration.service-and-access.active-last-30-days">Active last 30 days</Trans>, value: true },
             ]}
             onChange={(value) => changeFilter({ name: 'activeLast30Days', value })}
             value={filters.find((f) => f.name === 'activeLast30Days')?.value}
@@ -94,7 +94,7 @@ const UserListAdminPageUnConnected = ({
           ))}
           {contextSrv.hasPermission(AccessControlAction.UsersCreate) && (
             <LinkButton href="admin/users/create" variant="primary">
-              New user
+              <Trans i18nKey="ablestack-wall.administration.service-and-access.create-user">New User</Trans>
             </LinkButton>
           )}
         </div>

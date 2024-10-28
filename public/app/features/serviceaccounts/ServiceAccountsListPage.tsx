@@ -183,7 +183,7 @@ export const ServiceAccountsListPageUnconnected = ({
   const subTitle = (
     <span>
       <Trans
-        i18nKey="ablestack-wall.administration.service-accounts-tokens"
+        i18nKey="ablestack-wall.administration.service-and-access.service-accounts-tokens"
         defaults="Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our {{ docsLink }}"
         components={[docsLink]}
       />

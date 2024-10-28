@@ -79,7 +79,7 @@ export default function Browse() {
 
   const subTitle = (
     <div>
-      Extend the Grafana experience with panel plugins and apps. To find more data sources go to{' '}
+      <Trans i18nKey="ablestack-wall.administration.plugins.connections">Extend the Grafana experience with panel plugins and apps. To find more data sources go to</Trans>{' '}
       <a className="external-link" href={`${CONNECTIONS_ROUTES.AddNewConnection}?cat=data-source`}>
         Connections
       </a>

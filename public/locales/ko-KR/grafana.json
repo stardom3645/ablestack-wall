@@ -456,25 +456,25 @@
     }
   },
   "correlations": {
-    "add-new": "Add new",
+    "add-new": "새로 추가",
     "alert": {
-      "error-message": "An unknown error occurred while fetching correlation data. Please try again.",
-      "title": "Error fetching correlation data"
+      "error-message": "상관관계 데이터를 가져오는 동안 알 수 없는 오류가 발생했습니다. 다시 시도하십시오.",
+      "title": "상관 관계 데이터를 가져오는 동안 오류 발생"
     },
     "basic-info-form": {
-      "description-description": "Optional description with more information about the link",
+      "description-description": "링크에 대한 자세한 정보가 포함된 설명(선택 사항)",
       "description-label": "Description",
-      "label-description": "This name will be used as the label for the correlation. This will show as button text, a menu item, or hover text on a link.",
+      "label-description": "이 이름은 상관 관계의 레이블로 사용됩니다. 이 이름은 버튼 텍스트, 메뉴 항목 또는 링크의 호버 텍스트로 표시됩니다.",
       "label-label": "Label",
       "label-placeholder": "e.g. Tempo traces",
       "label-required": "This field is required.",
-      "sub-text": "<0>Define text that will describe the correlation.</0>",
-      "title": "Define correlation label (Step 1 of 3)"
+      "sub-text": "<0>상관관계를 설명할 텍스트 정의.</0>",
+      "title": "상관 관계 레이블 정의 (Step 1 of 3)"
     },
     "empty-state": {
-      "button-title": "Add correlation",
-      "pro-tip": "You can also define correlations via datasource provisioning",
-      "title": "You haven't defined any correlations yet"
+      "button-title": "상관관계 추가",
+      "pro-tip": "데이터 소스 프로비저닝을 통해 상관관계를 정의할 수도 있습니다",
+      "title": "아직 상관관계를 정의하지 않았습니다"
     },
     "list": {
       "delete": "delete correlation",
@@ -485,10 +485,10 @@
       "target": "Target"
     },
     "navigation-form": {
-      "add-button": "Add",
-      "back-button": "Back",
-      "next-button": "Next",
-      "save-button": "Save"
+      "add-button": "추가",
+      "back-button": "뒤로",
+      "next-button": "다음",
+      "save-button": "저장"
     },
     "page-content": "To enable Correlations, add it in the Grafana config:",
     "page-heading": "Correlations are disabled",
@@ -511,23 +511,23 @@
       "external-title": "Configure the data source that will use the URL (Step 3 of 3)",
       "heading-external": "Variables used in the target URL",
       "heading-query": "Variables used in the target query",
-      "query-title": "Configure the data source that will link to {{dataSourceName}} (Step 3 of 3)",
-      "results-description": "The link will be shown next to the value of this field",
+      "query-title": "{{dataSourceName}}에 연결할 데이터 소스 구성 (Step 3 of 3)",
+      "results-description": "이 필드에 링크가 표시됩니다.",
       "results-label": "Results field",
       "results-required": "This field is required.",
-      "source-description": "Results from selected source data source have links displayed in the panel",
+      "source-description": "선택한 소스 데이터 소스의 결과가 패널에 링크가 표시됩니다",
       "source-label": "Source",
-      "sub-text": "<0>Define what data source will display the correlation, and what data will replace previously defined variables.</0>"
+      "sub-text": "<0>데이터 소스가 상관 관계를 표시하고 이전에 정의된 변수를 대체한 변수들을 대체하는 방법을 정의합니다.</0>"
     },
-    "sub-title": "Define how data living in different data sources relates to each other. Read more in the <2>documentation<1></1></2>",
+    "sub-title": "서로 다른 데이터 소스에 존재하는 데이터가 서로 어떻게 연관되는지 정의합니다. 다음 문서를 참조하세요. <2>documentation<1></1></2>",
     "target-form": {
       "control-rules": "This field is required.",
-      "sub-text": "<0>Define what the correlation will link to. With the query type, a query will run when the correlation is clicked. With the external type, clicking the correlation will open a URL.</0>",
-      "target-description-external": "Specify the URL that will open when the link is clicked",
-      "target-description-query": "Specify which data source is queried when the link is clicked",
+      "sub-text": "<0>상관 관계가 무엇인지 정의합니다.쿼리 유형을 사용하여 상관관계가 클릭되면 쿼리가 실행됩니다.외부 유형으로 상관 관계를 클릭하면 URL을 엽니다.</0>",
+      "target-description-external": "링크를 클릭할 때 열릴 URL 지정",
+      "target-description-query": "링크를 클릭할 때 쿼리할 데이터 소스 지정",
       "target-label": "Target",
-      "target-type-description": "Specify the type of correlation",
-      "title": "Setup the target for the correlation (Step 2 of 3)",
+      "target-type-description": "상관 관계 유형 지정",
+      "title": "상관관계 대상 설정 (Step 2 of 3)",
       "type-label": "Type"
     },
     "trans-details": {
@@ -539,9 +539,9 @@
       "regex-map-values": "Defines the name of the variable if the capture group is not named."
     },
     "transform": {
-      "add-button": "Add transformation",
-      "heading": "Transformations",
-      "no-transform": "No transformations defined."
+      "add-button": "변환 추가",
+      "heading": "변환",
+      "no-transform": "변환이 정의되지 않음."
     },
     "transform-row": {
       "expression-label": "Expression",
@@ -1527,7 +1527,7 @@
   },
   "nav": {
     "add-new-connections": {
-      "title": "Add new connection"
+      "title": "새 연결 추가"
     },
     "admin": {
       "subtitle": "Manage server-wide settings and access to resources such as organizations, users, and licenses",
@@ -1593,7 +1593,7 @@
       "title": "More apps"
     },
     "authentication": {
-      "title": "Authentication"
+      "title": "인증"
     },
     "bookmarks": {
       "title": "Bookmarks"
@@ -1623,15 +1623,15 @@
       "title": "Connect data"
     },
     "connections": {
-      "subtitle": "Browse and create new connections",
+      "subtitle": "탐색 및 새 연결 만들기",
       "title": "Connections"
     },
     "correlations": {
-      "subtitle": "Add and configure correlations",
-      "title": "Correlations"
+      "subtitle": "상관관계 추가 및 구성",
+      "title": "상관관계"
     },
     "create": {
-      "title": "Create"
+      "title": "생성"
     },
     "create-alert": {
       "title": "New alert rule"
@@ -1671,12 +1671,12 @@
       "title": "Frontend"
     },
     "global-orgs": {
-      "subtitle": "Isolated instances of Grafana running on the same server",
-      "title": "Organizations"
+      "subtitle": "동일한 서버에 실행 중인 그룹 격리된 인스턴스",
+      "title": "조직"
     },
     "global-users": {
-      "subtitle": "Manage users in Grafana",
-      "title": "Users"
+      "subtitle": "Grafana에서 사용자 관리",
+      "title": "사용자"
     },
     "grafana-quaderno": {
       "title": "Grafana Quaderno"
@@ -1753,7 +1753,7 @@
     },
     "plugins": {
       "subtitle": "Extend the Grafana experience with plugins",
-      "title": "Plugins"
+      "title": "플러그인"
     },
     "private-data-source-connections": {
       "subtitle": "Query data that lives within a secured network without opening the network to inbound traffic from Grafana Cloud. Learn more in our docs.",
@@ -1794,12 +1794,12 @@
       "title": "Search dashboards"
     },
     "server-settings": {
-      "subtitle": "View the settings defined in your Grafana config",
-      "title": "Settings"
+      "subtitle": "Wall 구성에 정의된 설정 보기",
+      "title": "설정"
     },
     "service-accounts": {
-      "subtitle": "Use service accounts to run automated workloads in Grafana",
-      "title": "Service accounts"
+      "subtitle": "서비스 계정을 사용하여 Grafana에서 자동화된 워크로드 실행",
+      "title": "서비스 계정"
     },
     "setup-guide": {
       "title": "Setup guide"
@@ -1839,8 +1839,8 @@
       "title": "Synthetics"
     },
     "teams": {
-      "subtitle": "Groups of users that have common dashboard and permission needs",
-      "title": "Teams"
+      "subtitle": "공통 대시보드와 권한 요구 사항을 가진 사용자 그룹",
+      "title": "팀"
     },
     "testing-and-synthetics": {
       "subtitle": "Optimize performance with k6 and Synthetic Monitoring insights",
@@ -2379,10 +2379,10 @@
   },
   "service-accounts": {
     "empty-state": {
-      "button-title": "Add service account",
-      "message": "No services accounts found",
-      "more-info": "Remember, you can provide specific permissions for API access to other applications",
-      "title": "You haven't created any service accounts yet"
+      "button-title": "서비스 계정 추가",
+      "message": "서비스 계정을 찾을 수 없습니다",
+      "more-info": "다른 애플리케이션에 대한 API 접근 권한을 특정할 수 있습니다",
+      "title": "서비스 계정을 아직 생성하지 않았습니다"
     }
   },
   "share-dashboard": {
@@ -2614,10 +2614,10 @@
   },
   "teams": {
     "empty-state": {
-      "button-title": "New team",
-      "message": "No teams found",
-      "pro-tip": "Assign folder and dashboard permissions to teams instead of users to ease administration. <2>Learn more</2>",
-      "title": "You haven't created any teams yet"
+      "button-title": "새로운 팀",
+      "message": "팀을 찾을 수 없습니다",
+      "pro-tip": "폴더와 대시보드 권한을 사용자 대신 팀에 할당하여 관리를 용이하게 하세요. <2>Learn more</2>",
+      "title": "팀을 아직 생성하지 않았습니다"
     }
   },
   "time-picker": {
@@ -2773,11 +2773,41 @@
       "title": "There are no variables added yet"
     }
   },
+
   "ablestack-wall": {
+    "common": {
+      "Update": "업데이트"
+    },
     "administration": {
-      "datasource-new-home": "데이터 소스가 새로운 위치로 이동했습니다! 새로운 데이터 소스를 발견하거나 기존의 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
-      "go-to-connections": "연결로 이동",
-      "service-accounts-tokens": "서비스 계정과 해당 토큰은 그라파나 API에 대한 인증에 사용할 수 있습니다. 자세한 내용은 <0>documentation</0>에서 확인하세요."
+      "general": {
+        "datasource-new-home": "데이터 소스가 새로운 위치로 이동했습니다! 새로운 데이터 소스를 발견하거나 기존의 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
+        "go-to-connections": "연결로 이동",
+        "new-org": "새 조직",
+        "new-org-button": "새 조직",
+        "new-organization": "새 조직",
+        "new-organization-description": "각 조직에는 자체 대시보드, 데이터 소스 및 구성이 포함되어 있어 조직 간에 공유할 수 없습니다. 사용자는 두 개 이상의 조직에 속할 수 있지만 다중 테넌트 배포에서는 여러 조직이 가장 자주 사용됩니다.",
+        "new-organization-name": "조직 이름",
+        "new-organization-name-create": "생성",
+        "manage-org-settings": "이 특정 조직에 대한 설정을 관리합니다.",
+        "manage-org-edit-organization": "조직 이름 수정",
+        "manage-org-organization-users": "조직 사용자",
+        "manage-org-edit-name": "이름",
+        "setting-alert": "이 시스템 설정은 `grafana.ini` 또는 `custom.ini` 파일에 정의되어 있으며, 환경 변수(ENV variables)로 재정의할 수 있습니다. 이러한 설정을 변경하려면 현재 Wall 서비스를 재시작해야 합니다."
+      },
+      "plugins": {
+        "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요."
+      },
+      "service-and-access": {
+        "service-accounts-tokens": "서비스 계정과 해당 토큰은 그라파나 API에 대한 인증에 사용할 수 있습니다. 자세한 내용은 <0>documentation</0>에서 확인하세요.",
+        "create-service-account": "서비스 계정 생성",
+        "create-user": "사용자 생성",
+        "all-user": "모든 사용자",
+        "active-last-30-days": "최근 30일 동안 활동한 사용자",
+        "new-user": "새로운 사용자",
+        "new-user-description": "새로운 사용자를 추가합니다.",
+        "new-user-button": "사용자 생성"
+      },
+      "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."
     }
   }
 }
