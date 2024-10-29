@@ -2776,12 +2776,21 @@
 
   "ablestack-wall": {
     "common": {
-      "update": "Update"
+      "update": "Update",
+      "edit-configuration": "Edit configuration",
+      "disable": "Disable",
+      "enable": "Enable"
+    },
+    "alert": {
+      "built-in-alertmanager": "Built-in Alertmanager",
+      "other-alertmanagers": "Other Alertmanagers",
+      "add-alertmanager": "Other Alertmanagers",
+      "edit-alertmanager-configuration": "Edit the Alertmanager configuration"
     },
     "connections": {
       "add-datasource": "Add data source",
       "add-datasource-description": "Choose a data source type",
-
+      "add-datasource-search-bar": "Filter by name or type"
     },
     "administration": {
       "general": {

@@ -7,8 +7,8 @@ import { Page } from 'app/core/components/Page/Page';
 import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
 import { fetchRoleOptions, updateUserRoles } from 'app/core/components/RolePicker/api';
 import { contextSrv } from 'app/core/core';
-import { AccessControlAction, OrgRole, Role, ServiceAccountCreateApiResponse, ServiceAccountDTO } from 'app/types';
 import { Trans, t } from 'app/core/internationalization';
+import { AccessControlAction, OrgRole, Role, ServiceAccountCreateApiResponse, ServiceAccountDTO } from 'app/types';
 
 import { OrgRolePicker } from '../admin/OrgRolePicker';
 

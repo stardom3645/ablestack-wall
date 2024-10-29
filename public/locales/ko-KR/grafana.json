@@ -452,7 +452,7 @@
       "roadmap": "View roadmap"
     },
     "search": {
-      "placeholder": "Search all"
+      "placeholder": "전체 검색"
     }
   },
   "correlations": {
@@ -1537,23 +1537,23 @@
       "title": "Alert rules"
     },
     "alerting": {
-      "subtitle": "Learn about problems in your systems moments after they occur",
-      "title": "Alerting"
+      "subtitle": "시스템에서 문제가 발생한 직후에 문제에 대해 알아보기",
+      "title": "경고"
     },
     "alerting-admin": {
-      "subtitle": "Manage Alertmanager configurations",
-      "title": "Settings"
+      "subtitle": "경고 관리자 구성 관리",
+      "title": "설정"
     },
     "alerting-am-routes": {
-      "subtitle": "Determine how alerts are routed to contact points",
-      "title": "Notification policies"
+      "subtitle": "접점으로 경고를 라우팅하는 방법 결정",
+      "title": "알림 정책"
     },
     "alerting-channels": {
       "title": "Notification channels"
     },
     "alerting-groups": {
-      "subtitle": "See grouped alerts with active notifications",
-      "title": "Active notifications"
+      "subtitle": "활성화된 알림이 있는 그룹화된 경고 확인",
+      "title": "알림 활성"
     },
     "alerting-home": {
       "title": "Home"
@@ -1562,16 +1562,16 @@
       "title": "Alerting (legacy)"
     },
     "alerting-list": {
-      "subtitle": "Rules that determine whether an alert will fire",
-      "title": "Alert rules"
+      "subtitle": "경고 발생 여부를 결정하는 규칙",
+      "title": "경고 규칙"
     },
     "alerting-receivers": {
-      "subtitle": "Choose how to notify your contact points when an alert instance fires",
-      "title": "Contact points"
+      "subtitle": "알림 인스턴스가 시작될 때 접점에 알림을 보내는 방법 선택",
+      "title": "접점"
     },
     "alerting-silences": {
-      "subtitle": "Stop notifications from one or more alerting rules",
-      "title": "Silences"
+      "subtitle": "하나 이상의 경고 규칙에서 알림 중지",
+      "title": "알림 중지"
     },
     "alerting-upgrade": {
       "subtitle": "Upgrade your existing legacy alerts and notification channels to the new Grafana Alerting",
@@ -1623,8 +1623,8 @@
       "title": "Connect data"
     },
     "connections": {
-      "subtitle": "탐색 및 새 연결 만들기",
-      "title": "Connections"
+      "subtitle": "탐색 및 새 연결 추가",
+      "title": "연결"
     },
     "correlations": {
       "subtitle": "상관관계 추가 및 구성",
@@ -1655,7 +1655,7 @@
     },
     "datasources": {
       "subtitle": "Add and configure data sources",
-      "title": "Data sources"
+      "title": "데이터 소스"
     },
     "detect": {
       "title": "Detect"
@@ -2558,8 +2558,8 @@
   },
   "silences": {
     "empty-state": {
-      "button-title": "Create silence",
-      "title": "You haven't created any silences yet"
+      "button-title": "알림 무음 설정",
+      "title": "아직 알림 무음 설정을 하지 않았습니다"
     },
     "table": {
       "add-silence-button": "Add Silence",
@@ -2776,11 +2776,25 @@
 
   "ablestack-wall": {
     "common": {
-      "update": "업데이트"
+      "update": "업데이트",
+      "edit-configuration": "Edit configuration",
+      "disable": "Disable",
+      "enable": "Enable"
+    },
+    "alert": {
+      "built-in-alertmanager": "내장 경고 관리자",
+      "other-alertmanagers": "기타 경고 관리자",
+      "add-alertmanager": "경고 관리자 추가",
+      "edit-alertmanager-configuration": "경고 관리자 구성 편집"
+    },
+    "connections": {
+      "add-datasource": "데이터 소스 추가",
+      "add-datasource-description": "데이터 소스 종류 선택",
+      "add-datasource-search-bar": "이름 또는 유형별 필터링"
     },
     "administration": {
       "general": {
-        "instance-statistics": "Instance statistics",
+        "instance-statistics": "인스턴스 통계",
         "datasource-new-home": "데이터 소스가 새로운 위치로 이동했습니다! 새로운 데이터 소스를 발견하거나 기존의 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
         "go-to-connections": "연결로 이동",
         "new-org": "새 조직",
