@@ -770,9 +770,9 @@
   },
   "data-source-list": {
     "empty-state": {
-      "button-title": "Add data source",
-      "pro-tip": "You can also define data sources through configuration files. <2>Learn more</2>",
-      "title": "No data sources defined"
+      "button-title": "데이터 소스 추가",
+      "pro-tip": "구성 파일을 통해 데이터 소스를 정의할 수도 있습니다. <2>Learn more</2>",
+      "title": "정의된 데이터 소스 없음"
     }
   },
   "data-source-picker": {
@@ -1650,8 +1650,8 @@
       "title": "Dashboards"
     },
     "data-sources": {
-      "subtitle": "View and manage your connected data source connections",
-      "title": "Data sources"
+      "subtitle": "연결된 데이터 소스 보기 및 관리",
+      "title": "데이터 소스"
     },
     "datasources": {
       "subtitle": "Add and configure data sources",
@@ -1788,7 +1788,7 @@
       "title": "Scenes"
     },
     "search": {
-      "placeholderCommandPalette": "Search or jump to..."
+      "placeholderCommandPalette": "검색 또는 이동..."
     },
     "search-dashboards": {
       "title": "Search dashboards"
@@ -1847,7 +1847,7 @@
       "title": "Testing & synthetics"
     },
     "upgrading": {
-      "title": "Stats and license"
+      "title": "통계"
     },
     "users": {
       "subtitle": "Invite and assign roles to users",
@@ -2776,10 +2776,11 @@
 
   "ablestack-wall": {
     "common": {
-      "Update": "업데이트"
+      "update": "업데이트"
     },
     "administration": {
       "general": {
+        "instance-statistics": "Instance statistics",
         "datasource-new-home": "데이터 소스가 새로운 위치로 이동했습니다! 새로운 데이터 소스를 발견하거나 기존의 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
         "go-to-connections": "연결로 이동",
         "new-org": "새 조직",

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { config, GrafanaBootConfig } from '@grafana/runtime';
 import { LinkButton, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 import { AccessControlAction } from 'app/types';
 
 import { contextSrv } from '../../core/services/context_srv';
@@ -34,7 +35,7 @@ export const ServerStats = () => {
 
   return (
     <>
-      <h2 className={styles.title}>Instance statistics</h2>
+      <h2 className={styles.title}><Trans i18nKey="ablestack-wall.general.instance-statistics">Instance statistics</Trans></h2>
       {!isLoading && !stats ? (
         <p className={styles.notFound}>No stats found.</p>
       ) : (

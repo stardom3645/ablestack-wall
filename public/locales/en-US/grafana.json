@@ -1847,7 +1847,7 @@
       "title": "Testing & synthetics"
     },
     "upgrading": {
-      "title": "Stats and license"
+      "title": "Stats"
     },
     "users": {
       "subtitle": "Invite and assign roles to users",
@@ -2776,10 +2776,16 @@
 
   "ablestack-wall": {
     "common": {
-      "Update": "Update"
+      "update": "Update"
+    },
+    "connections": {
+      "add-datasource": "Add data source",
+      "add-datasource-description": "Choose a data source type",
+
     },
     "administration": {
       "general": {
+        "instance-statistics": "Instance statistics",
         "datasource-new-home": "Data sources have a new home! You can discover new data sources or manage existing ones in the Connections page, accessible from the main menu.",
         "go-to-connections": "Go to connections",
         "new-org": "New org",

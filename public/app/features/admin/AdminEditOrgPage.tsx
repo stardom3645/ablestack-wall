@@ -102,7 +102,7 @@ const AdminEditOrgPage = () => {
                 />
               </Field>
               <Button type="submit" disabled={!canWriteOrg}>
-                <Trans i18nKey="ablestack-wall.common.Update">Update</Trans>
+                <Trans i18nKey="ablestack-wall.common.update">Update</Trans>
               </Button>
             </form>
           )}
