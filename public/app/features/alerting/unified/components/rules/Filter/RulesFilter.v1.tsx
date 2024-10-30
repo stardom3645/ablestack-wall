@@ -167,7 +167,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
             label={
               <Label htmlFor="data-source-picker">
                 <Stack gap={0.5} alignItems="center">
-                  <span>Search by data sources</span>
+                  <span><Trans i18nKey="ablestack-wall.alert.search-by-data-sources">Search by data sources</Trans></span>
                   <Tooltip
                     content={
                       <div>
@@ -206,7 +206,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
 
           <Field
             className={styles.dashboardPickerContainer}
-            label={<Label htmlFor="filters-dashboard-picker">Dashboard</Label>}
+            label={<Label htmlFor="filters-dashboard-picker"><Trans i18nKey="nav.dashboards.title"><Trans i18nKey="ablestack-wall.common.dashboard">Dashboard</Trans></Trans></Label>}
           >
             {/* The key prop is to clear the picker value */}
             {/* DashboardPicker doesn't do that itself when value is undefined */}
@@ -221,7 +221,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
           </Field>
 
           <div>
-            <Label>State</Label>
+            <Label><Trans i18nKey="ablestack-wall.common.state">State</Trans></Label>
             <RadioButtonGroup
               options={RuleStateOptions}
               value={filterState.ruleState}
@@ -229,11 +229,11 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
             />
           </div>
           <div>
-            <Label>Rule type</Label>
+            <Label><Trans i18nKey="ablestack-wall.common.rule-type">Rule type</Trans></Label>
             <RadioButtonGroup options={RuleTypeOptions} value={filterState.ruleType} onChange={handleRuleTypeChange} />
           </div>
           <div>
-            <Label>Health</Label>
+            <Label><Trans i18nKey="ablestack-wall.common.health">Health</Trans></Label>
             <RadioButtonGroup
               options={RuleHealthOptions}
               value={filterState.ruleHealth}
@@ -294,7 +294,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
                 label={
                   <Label htmlFor="rulesSearchInput">
                     <Stack gap={0.5} alignItems="center">
-                      <span>Search</span>
+                      <span><Trans i18nKey="ablestack-wall.common.search">Search</Trans></span>
                       <PopupCard content={<SearchQueryHelp />}>
                         <Icon name="info-circle" size="sm" tabIndex={0} title="Search help" />
                       </PopupCard>
@@ -318,7 +318,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
               <input type="submit" hidden />
             </form>
             <div>
-              <Label>View as</Label>
+              <Label><Trans i18nKey="ablestack-wall.common.view-as">View as</Trans></Label>
               <RadioButtonGroup
                 options={ViewOptions}
                 value={queryParams.get('view') ?? ViewOptions[0].value}
@@ -329,7 +329,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
           {hasActiveFilters && (
             <div>
               <Button fullWidth={false} icon="times" variant="secondary" onClick={handleClearFiltersClick}>
-                Clear filters
+                <Trans i18nKey="ablestack-wall.common.clear-filters">Clear filters</Trans>
               </Button>
             </div>
           )}

@@ -103,16 +103,16 @@
       }
     },
     "common": {
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "edit": "Edit",
-      "export": "Export",
-      "export-all": "Export all",
+      "cancel": "취소",
+      "delete": "삭제",
+      "edit": "편집",
+      "export": "내보내기",
+      "export-all": "모두 내보내기",
       "view": "View"
     },
-    "contact-point": "Contact Point",
+    "contact-point": "컨택 포인트",
     "contact-points": {
-      "create": "Create contact point",
+      "create": "컨택 포인트 생성",
       "delete-reasons": {
         "heading": "Contact point cannot be deleted for the following reasons:",
         "no-permissions": "You do not have the required permission to delete this contact point",
@@ -139,7 +139,7 @@
       "used-by-rules_other": "Used by {{ count }} alert rules"
     },
     "contactPointFilter": {
-      "label": "Contact point"
+      "label": "컨택트 포인트"
     },
     "list-view": {
       "empty": {
@@ -268,14 +268,14 @@
     },
     "search": {
       "property": {
-        "data-source": "Data source",
+        "data-source": "데이터 소스",
         "evaluation-group": "Evaluation group",
         "labels": "Labels",
         "namespace": "Folder / Namespace",
         "rule-health": "Health",
         "rule-name": "Alerting rule name",
-        "rule-type": "Type",
-        "state": "State"
+        "rule-type": "유형",
+        "state": "상태"
       },
       "save-query": "Save current search"
     },
@@ -794,7 +794,7 @@
   },
   "data-sources": {
     "datasource-add-button": {
-      "label": "Add new data source"
+      "label": "데이터 소스 추가"
     },
     "empty-state": {
       "message": "No data sources found"
@@ -1102,10 +1102,10 @@
   },
   "inspector": {
     "query": {
-      "collapse-all": "Collapse all",
+      "collapse-all": "모두 축소",
       "copy-to-clipboard": "Copy to clipboard",
       "description": "Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a new query. Click refresh button below to trigger a new query.",
-      "expand-all": "Expand all",
+      "expand-all": "모두 확장",
       "no-data": "No request and response collected yet. Hit refresh button",
       "refresh": "Refresh"
     }
@@ -1537,7 +1537,7 @@
       "title": "Alert rules"
     },
     "alerting": {
-      "subtitle": "시스템에서 문제가 발생한 직후에 문제에 대해 알아보기",
+      "subtitle": "시스템에서 문제가 발생한 직후 문제에 대해 알아보기",
       "title": "경고"
     },
     "alerting-admin": {
@@ -1545,7 +1545,7 @@
       "title": "설정"
     },
     "alerting-am-routes": {
-      "subtitle": "접점으로 경고를 라우팅하는 방법 결정",
+      "subtitle": "컨택트 포인트로 경고를 라우팅하는 방법 결정",
       "title": "알림 정책"
     },
     "alerting-channels": {
@@ -1566,12 +1566,12 @@
       "title": "경고 규칙"
     },
     "alerting-receivers": {
-      "subtitle": "알림 인스턴스가 시작될 때 접점에 알림을 보내는 방법 선택",
-      "title": "접점"
+      "subtitle": "알림 인스턴스가 시작될 때 컨택트 포인트에 알림을 보내는 방법 선택",
+      "title": "컨택트 포인트"
     },
     "alerting-silences": {
-      "subtitle": "하나 이상의 경고 규칙에서 알림 중지",
-      "title": "알림 중지"
+      "subtitle": "하나 이상의 경고 규칙에서 알림 중지 설정",
+      "title": "사일런스"
     },
     "alerting-upgrade": {
       "subtitle": "Upgrade your existing legacy alerts and notification channels to the new Grafana Alerting",
@@ -1634,7 +1634,7 @@
       "title": "생성"
     },
     "create-alert": {
-      "title": "New alert rule"
+      "title": "새 경고 규칙"
     },
     "create-dashboard": {
       "title": "Dashboard"
@@ -1647,7 +1647,7 @@
     },
     "dashboards": {
       "subtitle": "Create and manage dashboards to visualize your data",
-      "title": "Dashboards"
+      "title": "대시보드"
     },
     "data-sources": {
       "subtitle": "연결된 데이터 소스 보기 및 관리",
@@ -1661,7 +1661,7 @@
       "title": "Detect"
     },
     "explore": {
-      "title": "Explore"
+      "title": "탐색"
     },
     "frontend": {
       "subtitle": "Gain real user monitoring insights",
@@ -1914,7 +1914,7 @@
       "inspect-data": "Data",
       "inspect-json": "Panel JSON",
       "more": "More...",
-      "new-alert-rule": "New alert rule",
+      "new-alert-rule": "새 경고 규칙",
       "query": "Query",
       "remove": "Remove",
       "replace-library-panel": "Replace library panel",
@@ -2558,11 +2558,11 @@
   },
   "silences": {
     "empty-state": {
-      "button-title": "알림 무음 설정",
-      "title": "아직 알림 무음 설정을 하지 않았습니다"
+      "button-title": "사일런스 설정",
+      "title": "아직 사일런스 설정을 하지 않았습니다"
     },
     "table": {
-      "add-silence-button": "Add Silence",
+      "add-silence-button": "사일런스 추가",
       "edit-button": "Edit",
       "expired-silences": "Expired silences are automatically deleted after 5 days.",
       "no-matching-silences": "No matching silences found;",
@@ -2777,11 +2777,43 @@
   "ablestack-wall": {
     "common": {
       "update": "업데이트",
-      "edit-configuration": "Edit configuration",
-      "disable": "Disable",
-      "enable": "Enable"
+      "edit-configuration": "구성 편집",
+      "disable": "비활성",
+      "enable": "활성",
+      "dashboard": "대시보드",
+      "state": "상태",
+      "rule-type": "규칙 유형",
+      "health": "건강 상태",
+      "view-as": "다음과 같은 방식으로 보기",
+      "search": "검색",
+      "clear-filters": "필터 초기화",
+      "name": "이름"
     },
     "alert": {
+      "alert-rule": "경고 규칙",
+      "alert-rule-description": "경고 규칙 사전 조건을 정의",
+      "alert-rule-hrefText": "경고 규칙 관리",
+      "alert-rule-enter-name": "{{entityName}} 이름 입력",
+      "alert-rule-enter-name-description": "{{entityName}}을 식별할 이름 입력.",
+      "contact-points": "컨택트 포인트",
+      "contact-points-description": "알림을 받는 사람과 전송 방법 구성",
+      "contact-points-hrefText": "컨택트 포인트 관리",
+      "mute-timings": "음소거 타이밍",
+      "mute-timings-description": "알림을 보내지 않을 구체적인 시간 간격을 입력하거나 특정 기간 동안 알림을 동결합니다.",
+      "mute-timings-empty": "아직 음소거 타이밍을 생성하지 않았습니다.",
+      "mute-timings-add": "음소거 타이밍 추가",
+      "mute-timings-add-subtitle": "음소거 타이밍 고유 이름",
+      "notification-policies": "알림 정책",
+      "notification-policies-description": "경고 인스턴스가 컨택트 포인트로 라우팅되는 방식 구성",
+      "notification-policies-hrefText": "알림 정책 관리",
+      "notification-templates": "알림 템플릿",
+      "notification-templates-add": "알림 템플릿 추가",
+      "notification-templates-description": "알림 템플릿을 만들어 알림을 사용자 정의합니다.",
+      "insight-tab": "인사이트",
+      "insight-tab-description": "시스템 상태를 모니터링합니다.",
+      "search-by-data-sources": "데이터 소스로 검색",
+      "new-alert-rule": "새 경고 규칙",
+      "plugin-rules": "플러그인 규칙",
       "built-in-alertmanager": "내장 경고 관리자",
       "other-alertmanagers": "기타 경고 관리자",
       "add-alertmanager": "경고 관리자 추가",

@@ -10,8 +10,7 @@ import {
   RadioButtonGroup,
   InlineField,
   EmptyState,
-  Box,
-  Button
+  Box
 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
@@ -31,7 +30,6 @@ import {
   changeStateFilter,
   createServiceAccountToken,
 } from './state/actions';
-import * as React from "react";
 
 interface OwnProps {}
 

@@ -82,8 +82,8 @@ const UserListAdminPageUnConnected = ({
           />
           <RadioButtonGroup
             options={[
-              { label: <Trans i18nKey="ablestack-wall.administration.service-and-access.all-user">All users</Trans>, value: false },
-              { label: <Trans i18nKey="ablestack-wall.administration.service-and-access.active-last-30-days">Active last 30 days</Trans>, value: true },
+              { label: t("ablestack-wall.administration.service-and-access.all-user", "All users"), value: false },
+              { label: t("ablestack-wall.administration.service-and-access.active-last-30-days", "Active last 30 days"), value: true },
             ]}
             onChange={(value) => changeFilter({ name: 'activeLast30Days', value })}
             value={filters.find((f) => f.name === 'activeLast30Days')?.value}
