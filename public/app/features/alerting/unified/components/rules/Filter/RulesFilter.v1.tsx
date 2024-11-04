@@ -7,7 +7,7 @@ import { config } from '@grafana/runtime';
 import { Button, Field, Icon, Input, Label, RadioButtonGroup, Stack, Tooltip, useStyles2 } from '@grafana/ui';
 import { DashboardPicker } from 'app/core/components/Select/DashboardPicker';
 import { contextSrv } from 'app/core/core';
-import { Trans } from 'app/core/internationalization';
+import { Trans, t } from 'app/core/internationalization';
 import { ContactPointSelector } from 'app/features/alerting/unified/components/notification-policies/ContactPointSelector';
 import { AccessControlAction } from 'app/types';
 import { PromAlertingRuleState, PromRuleType } from 'app/types/unified-alerting-dto';
@@ -311,7 +311,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
                     searchQueryRef.current = e;
                   }}
                   {...rest}
-                  placeholder="Search"
+                  placeholder={t("ablestack-wall.common.search", "Search")}
                   data-testid="search-query-input"
                 />
               </Field>

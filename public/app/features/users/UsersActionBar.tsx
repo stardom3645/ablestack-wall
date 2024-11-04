@@ -9,6 +9,7 @@ import { selectTotal } from '../invites/state/selectors';
 
 import { changeSearchQuery } from './state/actions';
 import { getUsersSearchQuery } from './state/selectors';
+import {t} from "../../core/internationalization";
 
 export interface OwnProps {
   showInvites: boolean;
@@ -57,7 +58,7 @@ export const UsersActionBarUnconnected = ({
         <FilterInput
           value={searchQuery}
           onChange={changeSearchQuery}
-          placeholder="Search user by login, email or name"
+          placeholder={t("ablestack-wall.administration.service-and-access.search-bar-user-by-login-email-name", "Search user by login, email or name")}
         />
       </InlineField>
       {pendingInvitesCount > 0 && (

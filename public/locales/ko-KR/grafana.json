@@ -133,10 +133,10 @@
         "parse-mode-warning-body": "If you use a <1>parse_mode</1> option other than <3>None</3>, truncation may result in an invalid message, causing the notification to fail. For longer messages, we recommend using an alternative contact method.",
         "parse-mode-warning-title": "Telegram messages are limited to 4096 UTF-8 characters."
       },
-      "used-by_one": "Used by {{ count }} notification policy",
-      "used-by_other": "Used by {{ count }} notification policies",
-      "used-by-rules_one": "Used by {{ count }} alert rule",
-      "used-by-rules_other": "Used by {{ count }} alert rules"
+      "used-by_one": "{{ count }} 개의 알림 정책에서 사용됨",
+      "used-by_other": "{{ count }} 개의 알림 정책에서 사용됨",
+      "used-by-rules_one": "{{ count }}개의 경고 규칙에서 사용됨",
+      "used-by-rules_other": "{{ count }}개의 경고 규칙에서 사용됨{{ count }}개의 경고 규칙에서 사용됨"
     },
     "contactPointFilter": {
       "label": "컨택트 포인트"
@@ -301,8 +301,8 @@
   },
   "bookmarks-page": {
     "empty": {
-      "message": "It looks like you haven’t created any bookmarks yet",
-      "tip": "Hover over any item in the nav menu and click on the bookmark icon to add it here."
+      "message": "아직 북마크를 만들지 않았습니다.",
+      "tip": "탐색 메뉴의 항목 위에 마우스를 올려놓고 북마크 아이콘을 클릭하여 추가합니다."
     }
   },
   "bouncing-loader": {
@@ -353,9 +353,9 @@
       "tags-column": "Tags"
     },
     "empty-state": {
-      "button-title": "Create dashboard",
+      "button-title": "대시보드 생성",
       "pro-tip": "Add/move dashboards to your folder at <2>Browse dashboards</2>",
-      "title": "You haven't created any dashboards yet",
+      "title": "아직 대시보드가 생성되지 않았습니다",
       "title-folder": "This folder doesn't have any dashboards yet"
     },
     "folder-actions-button": {
@@ -387,8 +387,8 @@
       "name-label": "Folder name"
     },
     "no-results": {
-      "clear": "Clear search and filters",
-      "text": "No results found for your query"
+      "clear": "검색 및 필터 지우기",
+      "text": "쿼리에 대한 결과가 없습니다"
     },
     "soft-delete": {
       "success": "Dashboard {{name}} moved to Recently deleted"
@@ -437,7 +437,7 @@
       "default": "Default"
     },
     "save": "저장",
-    "search": "Search"
+    "search": "검색"
   },
   "configuration-tracker": {
     "config-card": {
@@ -561,29 +561,29 @@
   },
   "dashboard": {
     "add-menu": {
-      "import": "Import from library",
-      "paste-panel": "Paste panel",
-      "row": "Row",
-      "visualization": "Visualization",
-      "widget": "Widget"
+      "import": "라이브러리에서 가져오기",
+      "paste-panel": "패널 붙여넣기",
+      "row": "행",
+      "visualization": "시각화",
+      "widget": "위젯"
     },
     "alert-rules-drawer": {
       "redirect-link": "List in Grafana Alerting",
       "subtitle": "Alert rules related to this dashboard"
     },
     "empty": {
-      "add-library-panel-body": "Add visualizations that are shared with other dashboards.",
-      "add-library-panel-button": "Add library panel",
-      "add-library-panel-header": "Import panel",
-      "add-visualization-body": "Select a data source and then query and visualize your data with charts, stats and tables or create lists, markdowns and other widgets.",
-      "add-visualization-button": "Add visualization",
-      "add-visualization-header": "Start your new dashboard by adding a visualization",
+      "add-library-panel-body": "다른 대시보드와 공유된 시각화를 추가",
+      "add-library-panel-button": "라이브러리 패널 추가하기",
+      "add-library-panel-header": "패널 가져오기",
+      "add-visualization-body": "데이터 소스를 선택한 후, 차트, 통계, 테이블을 사용해 데이터를 쿼리하고 시각화하거나, 목록, 마크다운 및 기타 위젯을 생성하세요.",
+      "add-visualization-button": "시각화 추가",
+      "add-visualization-header": "새로운 대시보드 시작을 위해 시각화를 추가",
       "add-widget-body": "Create lists, markdowns and other widgets",
-      "add-widget-button": "Add widget",
-      "add-widget-header": "Add a widget",
-      "import-a-dashboard-body": "Import dashboards from files or <1>grafana.com</1>.",
-      "import-a-dashboard-header": "Import a dashboard",
-      "import-dashboard-button": "Import dashboard"
+      "add-widget-button": "위젯 추가",
+      "add-widget-header": "위젯 추가",
+      "import-a-dashboard-body": "파일에서 대시보드 또는 <1>grafana.com</1> 에서 가져오기.",
+      "import-a-dashboard-header": "대시보드 가져오기",
+      "import-dashboard-button": "대시보드 가져오기"
     },
     "inspect": {
       "data-tab": "Data",
@@ -638,19 +638,19 @@
       "table-title": "Stats"
     },
     "toolbar": {
-      "add": "Add",
+      "add": "추가",
       "alert-rules": "Alert rules",
-      "mark-favorite": "Mark as favorite",
+      "mark-favorite": "즐겨찾기로 표시",
       "open-original": "Open original dashboard",
       "playlist-next": "Go to next dashboard",
       "playlist-previous": "Go to previous dashboard",
       "playlist-stop": "Stop playlist",
-      "refresh": "Refresh dashboard",
-      "save": "Save dashboard",
-      "settings": "Dashboard settings",
-      "share": "Share dashboard",
-      "share-button": "Share",
-      "unmark-favorite": "Unmark as favorite"
+      "refresh": "대시보드 새로고침",
+      "save": "대시보드 저장",
+      "settings": "대시보드 설정",
+      "share": "대시보드 공유",
+      "share-button": "공유",
+      "unmark-favorite": "즐겨찾기 해제"
     },
     "validation": {
       "invalid-dashboard-id": "Could not find a valid Grafana.com ID",
@@ -734,7 +734,7 @@
       "title": "Cannot delete provisioned dashboard"
     },
     "settings": {
-      "title": "Settings"
+      "title": "설정"
     },
     "time-picker": {
       "hide-time-picker": "Hide time picker",
@@ -776,7 +776,7 @@
     }
   },
   "data-source-picker": {
-    "add-new-data-source": "Configure a new data source",
+    "add-new-data-source": "새 데이터 소스 구성",
     "built-in-list": {
       "description-dashboard": "Reuse query results from other visualizations",
       "description-grafana": "Discover visualizations using mock data",
@@ -786,9 +786,9 @@
       "no-data-source-message": "No data sources found"
     },
     "modal": {
-      "configure-new-data-source": "Open a new tab and configure a data source",
-      "input-placeholder": "Select data source",
-      "title": "Select data source"
+      "configure-new-data-source": "새 탭을 열고 데이터 소스 구성",
+      "input-placeholder": "데이터 소스 선택",
+      "title": "데이터 소스 선택"
     },
     "open-advanced-button": "Open advanced data source picker"
   },
@@ -1034,7 +1034,7 @@
     },
     "select": {
       "no-options-label": "No options found",
-      "placeholder": "Choose"
+      "placeholder": "선택"
     },
     "spinner": {
       "aria-label": "Loading"
@@ -1078,7 +1078,7 @@
       "paste-time-range": "Paste time range",
       "refresh-all-panels": "Refresh all panels",
       "remove-panel": "Remove Panel",
-      "save-dashboard": "Save dashboard",
+      "save-dashboard": "대시보드 저장",
       "show-all-shortcuts": "Show all keyboard shortcuts",
       "toggle-active-mode": "Toggle in-active / view mode",
       "toggle-all-panel-legends": "Toggle all panel legends",
@@ -1255,11 +1255,11 @@
       "name": "Library panel name"
     },
     "add-widget": {
-      "title": "Add panel from panel library"
+      "title": "패널 라이브러리에서 패널 추가"
     },
     "empty-state": {
-      "message": "You haven't created any library panels yet",
-      "more-info": "Create a library panel from any existing dashboard panel through the panel context menu. <2>Learn more</2>"
+      "message": "아직 패널 라이브러리가 생성되지 않았습니다.",
+      "more-info": "패널 컨텍스트 메뉴를 통해 기존 대시보드 패널에서 라이브러리 패널을 생성하세요. <2>Learn more</2>"
     }
   },
   "library-panels": {
@@ -1321,7 +1321,7 @@
       "sing-in-with-prefix": "Sign in with {{serviceName}}"
     },
     "signup": {
-      "button-label": "Sign up",
+      "button-label": "로그인",
       "new-to-question": "New to Grafana?"
     }
   },
@@ -1596,10 +1596,10 @@
       "title": "인증"
     },
     "bookmarks": {
-      "title": "Bookmarks"
+      "title": "북마크"
     },
     "bookmarks-empty": {
-      "title": "Bookmark pages for them to appear here"
+      "title": "페이지를 북마크하여 여기에 표시"
     },
     "collector": {
       "title": "Collector"
@@ -1643,10 +1643,10 @@
       "title": "Folder"
     },
     "create-import": {
-      "title": "Import dashboard"
+      "title": "대시보드 가져오기"
     },
     "dashboards": {
-      "subtitle": "Create and manage dashboards to visualize your data",
+      "subtitle": "데이터를 시각화할 대시보드를 생성하고 관리합니다",
       "title": "대시보드"
     },
     "data-sources": {
@@ -1675,7 +1675,7 @@
       "title": "조직"
     },
     "global-users": {
-      "subtitle": "Grafana에서 사용자 관리",
+      "subtitle": "Grafana 사용자 관리",
       "title": "사용자"
     },
     "grafana-quaderno": {
@@ -1729,13 +1729,13 @@
       "title": "Observability"
     },
     "new": {
-      "title": "New"
+      "title": "생성"
     },
     "new-dashboard": {
-      "title": "New dashboard"
+      "title": "새 대시보드"
     },
     "new-folder": {
-      "title": "New folder"
+      "title": "새 폴더"
     },
     "observability": {
       "title": "Observability"
@@ -1752,7 +1752,7 @@
       "title": "Playlists"
     },
     "plugins": {
-      "subtitle": "Extend the Grafana experience with plugins",
+      "subtitle": "플러그인을 통해 Grafana 기능 확장",
       "title": "플러그인"
     },
     "private-data-source-connections": {
@@ -1760,13 +1760,13 @@
       "title": "Private data source connect"
     },
     "profile/notifications": {
-      "title": "Notification history"
+      "title": "알림 기록"
     },
     "profile/password": {
-      "title": "Change password"
+      "title": "비밀번호 변경"
     },
     "profile/settings": {
-      "title": "Profile"
+      "title": "프로필"
     },
     "profiles": {
       "title": "Profiles"
@@ -1809,7 +1809,7 @@
       "title": "Shared dashboards"
     },
     "sign-out": {
-      "title": "Sign out"
+      "title": "로그아웃"
     },
     "slo": {
       "title": "SLO"
@@ -1819,10 +1819,10 @@
       "title": "Snapshots"
     },
     "starred": {
-      "title": "Starred"
+      "title": "즐겨찾기"
     },
     "starred-empty": {
-      "title": "Your starred dashboards will appear here"
+      "title": "즐겨찾기(별표)된 대시보드가 여기에 나타납니다"
     },
     "statistics-and-licensing": {
       "title": "Statistics and licensing"
@@ -1903,25 +1903,25 @@
   },
   "panel": {
     "header-menu": {
-      "copy": "Copy",
-      "create-library-panel": "Create library panel",
-      "duplicate": "Duplicate",
-      "edit": "Edit",
-      "explore": "Explore",
+      "copy": "복사",
+      "create-library-panel": "라이브러리 패널 생성",
+      "duplicate": "복제",
+      "edit": "편집",
+      "explore": "탐색",
       "get-help": "Get help",
       "hide-legend": "Hide legend",
-      "inspect": "Inspect",
+      "inspect": "검사",
       "inspect-data": "Data",
       "inspect-json": "Panel JSON",
-      "more": "More...",
+      "more": "더보기...",
       "new-alert-rule": "새 경고 규칙",
-      "query": "Query",
-      "remove": "Remove",
+      "query": "쿼리",
+      "remove": "삭제",
       "replace-library-panel": "Replace library panel",
-      "share": "Share",
+      "share": "공유",
       "show-legend": "Show legend",
       "unlink-library-panel": "Unlink library panel",
-      "view": "View"
+      "view": "보기"
     }
   },
   "panel-search": {
@@ -2081,7 +2081,7 @@
       "cancel-button": "Cancel",
       "input-invalid-email-text": "Invalid email",
       "input-required-email-text": "Email is required",
-      "invite-button": "Invite",
+      "invite-button": "초대",
       "invite-field-desc": "Invite people by email",
       "invite-field-label": "Invite",
       "learn-more-button": "Learn more",
@@ -2351,10 +2351,10 @@
       "view-as-list": "View as list"
     },
     "dashboard-actions": {
-      "import": "Import",
-      "new": "New",
-      "new-dashboard": "New dashboard",
-      "new-folder": "New folder"
+      "import": "가져오기",
+      "new": "생성",
+      "new-dashboard": "새 대시보드",
+      "new-folder": "새 폴더"
     },
     "results-table": {
       "datasource-header": "Data source",
@@ -2368,8 +2368,8 @@
       "type-header": "Type"
     },
     "search-input": {
-      "include-panels-placeholder": "Search for dashboards, folders, and panels",
-      "placeholder": "Search for dashboards and folders"
+      "include-panels-placeholder": "대시보드, 폴더, 패널 검색",
+      "placeholder": "대시보드와 폴더 검색"
     }
   },
   "select": {
@@ -2392,8 +2392,8 @@
       "share-internally-title": "Share internally",
       "share-snapshot-title": "Share snapshot"
     },
-    "share-button": "Share",
-    "share-button-tooltip": "Copy link"
+    "share-button": "공유",
+    "share-button-tooltip": "링크 복사"
   },
   "share-drawer": {
     "confirm-action": {
@@ -2521,7 +2521,7 @@
       "revoke-title": "Revoke access"
     },
     "fields": {
-      "timezone-label": "Timezone"
+      "timezone-label": "시간대"
     }
   },
   "shared-dashboard-list": {
@@ -2709,30 +2709,30 @@
     }
   },
   "user-orgs": {
-    "current-org-button": "Current",
-    "name-column": "Name",
-    "role-column": "Role",
-    "select-org-button": "Select organisation",
-    "title": "Organizations"
+    "current-org-button": "현재",
+    "name-column": "이름",
+    "role-column": "권한",
+    "select-org-button": "조직 선택",
+    "title": "조직"
   },
   "user-profile": {
     "fields": {
       "email-error": "Email is required",
-      "email-label": "Email",
+      "email-label": "이메일",
       "name-error": "Name is required",
-      "name-label": "Name",
-      "username-label": "Username"
+      "name-label": "이름",
+      "username-label": "사용자 이름"
     },
     "tabs": {
       "general": "General"
     }
   },
   "user-session": {
-    "browser-column": "Browser & OS",
-    "created-at-column": "Logged on",
-    "ip-column": "IP address",
-    "revoke": "Revoke user session",
-    "seen-at-column": "Last seen"
+    "browser-column": "브라우저 & OS",
+    "created-at-column": "로그인 날짜",
+    "ip-column": "IP 주소",
+    "revoke": "사용자 세션 취소",
+    "seen-at-column": "마지막으로 로그인 시간"
   },
   "user-sessions": {
     "loading": "Loading sessions..."
@@ -2778,8 +2778,9 @@
     "common": {
       "update": "업데이트",
       "edit-configuration": "구성 편집",
-      "disable": "비활성",
-      "enable": "활성",
+      "disable": "비활성화",
+      "disabled": "비활성화됨",
+      "enable": "활성화",
       "dashboard": "대시보드",
       "state": "상태",
       "rule-type": "규칙 유형",
@@ -2787,7 +2788,54 @@
       "view-as": "다음과 같은 방식으로 보기",
       "search": "검색",
       "clear-filters": "필터 초기화",
-      "name": "이름"
+      "name": "이름",
+      "share": "공유",
+      "edit": "편집",
+      "enter-edit-mod": "편집 모드로 들어가기",
+      "settings": "설정",
+      "exit-edit": "편집 종료",
+      "save-dashboard": "대시보드 저장",
+      "save": "저장",
+      "save-as-copy": "사본으로 저장",
+      "back-to-dashboard": "대시보드로 돌아가기",
+      "switch-dashboard": "이전 대시보드 페이지로 전환",
+      "share-dashboard": "대시보드 공유",
+      "edit-dashboard": "대시보드 편집",
+      "dashboard-setting": "대시보드 설정",
+      "exit-edit-tooltip": "편집 모드를 종료하고 저장되지 않은 변경 사항을 삭제",
+      "save-change": "변경 사항 저장",
+      "sessions": "세션",
+      "message": "메시지",
+      "cancel": "취소",
+      "save-and-overwrite": "저장 및 덮어쓰기",
+      "saving": "저장 중...",
+      "login": "로그인",
+      "email": "이메일",
+      "last-active": "최근 로그인 시간",
+      "origin": "출처",
+      "role": "권한",
+      "all": "모두",
+      "account": "계정",
+      "id": "ID",
+      "roles": "권한",
+      "tokens": "토큰",
+      "display-name": "이름 표시",
+      "create": "생성",
+      "choose": "선택",
+      "clear": "초기화",
+      "template": "템플릿",
+      "actions": "동작",
+      "description": "설명"
+    },
+    "dashboard": {
+      "search-by-name-or-description": "이름이나 설명으로 검색",
+      "update-default-variable": "기본 변수 값을 업데이트",
+      "update-default-variable-description": "현재 값을 새로운 기본값으로 설정",
+      "save-message-placeholder": "변경 사항을 설명하는 메모를 추가 (선택 사항).",
+      "save-no-changes": "저장할 변경 사항이 없음",
+      "save-dashboard": "대시보드 저장",
+      "save-dashboard-copy": "대시보드 복사본 저장",
+      "save-Provisioned-dashboard": "프로비저닝된 대시보드"
     },
     "alert": {
       "alert-rule": "경고 규칙",
@@ -2817,7 +2865,11 @@
       "built-in-alertmanager": "내장 경고 관리자",
       "other-alertmanagers": "기타 경고 관리자",
       "add-alertmanager": "경고 관리자 추가",
-      "edit-alertmanager-configuration": "경고 관리자 구성 편집"
+      "edit-alertmanager-configuration": "경고 관리자 구성 편집",
+      "search-by-name-or-type": "이름 또는 유형으로 검색",
+      "search-by-matchers": "매치되는 문자열로 검색",
+      "search-by-contact-point": "컨텍트 포인트로 검색",
+      "no-templates-defined": "정의된 템플릿이 없습니다."
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
@@ -2849,10 +2901,16 @@
         "create-service-account": "서비스 계정 생성",
         "create-user": "사용자 생성",
         "all-user": "모든 사용자",
+        "organization-users": "조직 사용자",
         "active-last-30-days": "최근 30일 동안 활동한 사용자",
         "new-user": "새로운 사용자",
         "new-user-description": "새로운 사용자를 추가합니다.",
-        "new-user-button": "사용자 생성"
+        "new-user-button": "사용자 생성",
+        "search-bar-user-by-login-email-name": "로그인, 이메일 또는 이름으로 사용자 검색",
+        "search-bar-service-account-by-name": "이름으로 서비스 계정 검색",
+        "add-service-account": "서비스 계정 추가",
+        "with-expired-tokens": "만료된 토큰 사용",
+        "add-token": "토큰 추가"
       },
       "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."
     }

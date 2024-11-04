@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react';
 import { logError } from '@grafana/runtime';
 import { ConfirmModal, useStyles2 } from '@grafana/ui';
 import { useAppNotification } from 'app/core/copy/appNotification';
+import { t } from 'app/core/internationalization';
 
 import { Authorize } from '../../components/Authorize';
 import { AlertmanagerAction } from '../../hooks/useAbilities';
@@ -59,7 +60,7 @@ export const TemplatesTable = ({ alertManagerName, templates }: Props) => {
         <thead>
           <tr>
             <th></th>
-            <th>Template</th>
+            <th>{t("ablestack-wall.common.template", "Template")}</th>
             <Authorize
               actions={[
                 AlertmanagerAction.CreateNotificationTemplate,
@@ -67,14 +68,14 @@ export const TemplatesTable = ({ alertManagerName, templates }: Props) => {
                 AlertmanagerAction.DeleteNotificationTemplate,
               ]}
             >
-              <th>Actions</th>
+              <th>{t("ablestack-wall.common.actions", "Actions")}</th>
             </Authorize>
           </tr>
         </thead>
         <tbody>
           {!templates.length && (
             <tr className={tableStyles.evenRow}>
-              <td colSpan={3}>No templates defined.</td>
+              <td colSpan={3}>{t("ablestack-wall.alert.no-templates-defined", "No templates defined.")}</td>
             </tr>
           )}
           {templates.map((notificationTemplate, idx) => (
@@ -169,7 +170,7 @@ function TemplateRow({ notificationTemplate, idx, alertManagerName, onDeleteClic
         <tr className={idx % 2 === 0 ? tableStyles.evenRow : undefined}>
           <td></td>
           <td colSpan={2}>
-            <DetailsField label="Description" horizontal={true}>
+            <DetailsField label={t("ablestack-wall.common.description", "Description")} horizontal={true}>
               <TemplateEditor
                 width={'auto'}
                 height={'auto'}

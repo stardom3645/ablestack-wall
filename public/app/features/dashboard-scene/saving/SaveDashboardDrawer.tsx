@@ -1,5 +1,6 @@
 import { SceneComponentProps, SceneObjectBase, SceneObjectState, SceneObjectRef } from '@grafana/scenes';
 import { Drawer, Tab, TabsBar } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { SaveDashboardDiff } from 'app/features/dashboard/components/SaveDashboard/SaveDashboardDiff';
 
 import { DashboardScene } from '../scene/DashboardScene';
@@ -64,11 +65,11 @@ export class SaveDashboardDrawer extends SceneObjectBase<SaveDashboardDrawerStat
       </TabsBar>
     );
 
-    let title = 'Save dashboard';
+    let title = t("ablestack-wall.dashboard.save-dashboard", "Save dashboard");
     if (saveAsCopy) {
-      title = 'Save dashboard copy';
+      title = t("ablestack-wall.dashboard.save-dashboard-copy", "Save dashboard copy");
     } else if (isProvisioned) {
-      title = 'Provisioned dashboard';
+      title = t("ablestack-wall.dashboard.save-Provisioned-dashboard", "Provisioned dashboard");
     }
 
     const renderBody = () => {

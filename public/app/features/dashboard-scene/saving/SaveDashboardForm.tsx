@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { Button, Checkbox, TextArea, Stack, Alert, Box, Field } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { SaveDashboardOptions } from 'app/features/dashboard/components/SaveDashboard/types';
 
 import { DashboardScene } from '../scene/DashboardScene';
@@ -41,7 +42,7 @@ export function SaveDashboardForm({ dashboard, drawer, changeInfo }: Props) {
 
   const cancelButton = (
     <Button variant="secondary" onClick={() => dashboard.closeModal()} fill="outline">
-      Cancel
+      {t("ablestack-wall.common.cancel", "Cancel")}
     </Button>
   );
 
@@ -94,7 +95,7 @@ export function SaveDashboardForm({ dashboard, drawer, changeInfo }: Props) {
         <Stack alignItems="center">
           {cancelButton}
           {saveButton(false)}
-          {!hasChanges && <div>No changes to save</div>}
+          {!hasChanges && <div>{t("ablestack-wall.dashboard.save-no-changes", "No changes to save")}</div>}
         </Stack>
       </>
     );
@@ -103,7 +104,7 @@ export function SaveDashboardForm({ dashboard, drawer, changeInfo }: Props) {
   return (
     <Stack gap={2} direction="column">
       <SaveDashboardFormCommonOptions drawer={drawer} changeInfo={changeInfo} />
-      <Field label="Message">
+      <Field label={t("ablestack-wall.common.message", "Message")}>
         <TextArea
           aria-label="message"
           value={options.message ?? ''}
@@ -113,7 +114,7 @@ export function SaveDashboardForm({ dashboard, drawer, changeInfo }: Props) {
               message: e.currentTarget.value,
             });
           }}
-          placeholder="Add a note to describe your changes (optional)."
+          placeholder={t("ablestack-wall.dashboard.save-message-placeholder", "Message")}
           autoFocus
           rows={5}
         />
@@ -157,8 +158,8 @@ export function SaveDashboardFormCommonOptions({ drawer, changeInfo }: SaveDashb
       {hasVariableValueChanges && (
         <Checkbox
           id="save-variables"
-          label="Update default variable values"
-          description="Will make the current values the new default"
+          label={t("ablestack-wall.dashboard.update-default-variable", "Update default variable values")}
+          description={t("ablestack-wall.dashboard.update-default-variable-description", "Will make the current values the new default")}
           checked={saveVariables}
           onChange={drawer.onToggleSaveVariables}
           data-testid={selectors.pages.SaveDashboardModal.saveVariables}

@@ -4,6 +4,7 @@ import { useDebounce } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Field, Icon, Input, Label, Stack, Tooltip, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 import { logInfo, LogMessages } from '../../Analytics';
 import { parsePromQLStyleMatcherLoose } from '../../utils/matchers';
@@ -70,7 +71,7 @@ export const MatcherFilter = ({ onFilterChange, defaultQueryString }: Props) => 
       }
     >
       <Input
-        placeholder="Search"
+        placeholder={t("ablestack-wall.common.search", "Search")}
         value={filterQuery}
         onChange={(e) => setFilterQuery(e.currentTarget.value)}
         data-testid="search-query-input"

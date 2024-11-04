@@ -75,7 +75,7 @@ const UserListAdminPageUnConnected = ({
       <div className={styles.actionBar} data-testid={selectors.container}>
         <div className={styles.row}>
           <FilterInput
-            placeholder="Search user by login, email, or name."
+            placeholder={t("ablestack-wall.administration.service-and-access.search-bar-user-by-login-email-name", "Search user by login, email or name")}
             autoFocus={true}
             value={query}
             onChange={changeQuery}
