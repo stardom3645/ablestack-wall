@@ -581,7 +581,7 @@
       "add-widget-body": "Create lists, markdowns and other widgets",
       "add-widget-button": "위젯 추가",
       "add-widget-header": "위젯 추가",
-      "import-a-dashboard-body": "파일에서 대시보드 또는 <1>grafana.com</1> 에서 가져오기.",
+      "import-a-dashboard-body": "파일에서 또는 <1>grafana.com</1> 에서 대시보드 가져오기.",
       "import-a-dashboard-header": "대시보드 가져오기",
       "import-dashboard-button": "대시보드 가져오기"
     },
@@ -1102,10 +1102,10 @@
   },
   "inspector": {
     "query": {
-      "collapse-all": "모두 축소",
+      "collapse-all": "Collapse all",
       "copy-to-clipboard": "Copy to clipboard",
       "description": "Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a new query. Click refresh button below to trigger a new query.",
-      "expand-all": "모두 확장",
+      "expand-all": "Expand all",
       "no-data": "No request and response collected yet. Hit refresh button",
       "refresh": "Refresh"
     }
@@ -2787,7 +2787,7 @@
       "health": "건강 상태",
       "view-as": "다음과 같은 방식으로 보기",
       "search": "검색",
-      "clear-filters": "필터 초기화",
+      "clear-filters": "Clear filters",
       "name": "이름",
       "share": "공유",
       "edit": "편집",
@@ -2825,7 +2825,8 @@
       "clear": "초기화",
       "template": "템플릿",
       "actions": "동작",
-      "description": "설명"
+      "description": "설명",
+      "duration": "지속 시간"
     },
     "dashboard": {
       "search-by-name-or-description": "이름이나 설명으로 검색",
@@ -2869,7 +2870,19 @@
       "search-by-name-or-type": "이름 또는 유형으로 검색",
       "search-by-matchers": "매치되는 문자열로 검색",
       "search-by-contact-point": "컨텍트 포인트로 검색",
-      "no-templates-defined": "정의된 템플릿이 없습니다."
+      "no-templates-defined": "정의된 템플릿이 없습니다.",
+      "silence-alert-rule": "사일런스 경고 규칙",
+      "silence-alert-rule-subtitle": "특정 경고 규칙의 알림을 중지하기 위해 사일런스를 구성합니다.",
+      "silence-start-and-end": "사일런스 시작 및 종료",
+      "refine-affected-alerts": "영향받는 경고에 대해 세부 조정",
+      "affected-alert-rule-instances": "영향을 받은 경고 규칙 인스턴스",
+      "add-valid-matcher": "영향을 받은 경고를 확인하려면 유효한 매처를 추가하세요",
+      "no-firing-alert-instances": "발생 중인 경고 인스턴스가 없습니다",
+      "error-occurred-generating-preview-affected-alerts": "영향을 받은 경고의 미리보기를 생성하는 중 오류가 발생했습니다. 매처가 유효한지 확인하세요.",
+      "search-by-label": "라벨로 검색",
+      "custom-group-by": "사용자 지정 그룹 기준",
+      "group-by": "그룹 기준",
+      "notification-state": "알림 상태"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",

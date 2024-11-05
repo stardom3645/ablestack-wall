@@ -36,7 +36,7 @@ export const LANGUAGES: LanguageDefinition[] = [
 
   {
     code: KOREAN_KOREA,
-    name: 'Korean',
+    name: '한글',
     loader: {
       grafana: () => import('../../../locales/ko-KR/grafana.json'),
     },

@@ -48,7 +48,7 @@ export const MatcherFilter = ({ onFilterChange, defaultQueryString }: Props) => 
       label={
         <Label>
           <Stack gap={0.5} alignItems="center">
-            <span>Search by label</span>
+            <span>{t("ablestack-wall.alert.search-by-label", "Search by label")}</span>
             <Tooltip
               content={
                 <div>

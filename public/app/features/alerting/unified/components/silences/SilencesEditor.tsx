@@ -26,6 +26,7 @@ import {
   TextArea,
   useStyles2,
 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { alertSilencesApi, SilenceCreatedResponse } from 'app/features/alerting/unified/api/alertSilencesApi';
 import { MATCHER_ALERT_RULE_UID } from 'app/features/alerting/unified/utils/constants';
 import { getDatasourceAPIUid, GRAFANA_RULES_SOURCE_NAME } from 'app/features/alerting/unified/utils/datasource';
@@ -195,7 +196,7 @@ export const SilencesEditor = ({
           <div className={styles.silencePeriod}>
             <SilencePeriod />
             <Field
-              label="Duration"
+              label={t("ablestack-wall.common.duration", "Duration")}
               invalid={!!formState.errors.duration}
               error={
                 formState.errors.duration &&

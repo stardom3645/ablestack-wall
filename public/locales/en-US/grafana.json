@@ -2825,7 +2825,8 @@
       "clear": "Clear",
       "template": "Template",
       "actions": "Actions",
-      "description": "description"
+      "description": "description",
+      "duration": "Duration"
     },
     "dashboard": {
       "search-by-name-or-description": "Search by name or description",
@@ -2869,7 +2870,19 @@
       "search-by-name-or-type": "Search by name or type",
       "search-by-matchers": "Search by matchers",
       "search-by-contact-point": "Search by contact point",
-      "no-templates-defined": "No templates defined."
+      "no-templates-defined": "No templates defined.",
+      "silence-alert-rule": "Silence alert rule",
+      "silence-alert-rule-subtitle": "Configure silences to stop notifications from a particular alert rule.",
+      "silence-start-and-end": "Silence start and end",
+      "refine-affected-alerts": "Refine affected alerts",
+      "affected-alert-rule-instances": "Affected alert rule instances",
+      "add-valid-matcher": "Add a valid matcher to see affected alerts",
+      "no-firing-alert-instances": "No firing alert instances found",
+      "error-occurred-generating-preview-affected-alerts": "Error occurred when generating preview of affected alerts. Are your matchers valid?",
+      "search-by-label": "Search by label",
+      "custom-group-by": "Custom group by",
+      "group-by": "Group by",
+      "notification-state": "Notification state"
     },
     "connections": {
       "add-datasource": "Add data source",
