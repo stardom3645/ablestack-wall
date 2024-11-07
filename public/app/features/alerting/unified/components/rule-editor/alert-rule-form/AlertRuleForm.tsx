@@ -10,6 +10,7 @@ import { AppChromeUpdate } from 'app/core/components/AppChrome/AppChromeUpdate';
 import { usePageToolbar } from 'app/core/components/Page/Page';
 import { useAppNotification } from 'app/core/copy/appNotification';
 import { contextSrv } from 'app/core/core';
+import { t } from 'app/core/internationalization';
 import InfoPausedRule from 'app/features/alerting/unified/components/InfoPausedRule';
 import {
   getRuleGroupLocationFromFormValues,
@@ -241,7 +242,7 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
             disabled={isSubmitting}
           >
             {isSubmitting && <Spinner className={styles.buttonSpinner} inline={true} />}
-            Save rule
+            {t("ablestack-wall.alert.save-rule", "Save rule")}
           </Button>
         )}
         <Button
@@ -252,14 +253,14 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
           disabled={isSubmitting}
         >
           {isSubmitting && <Spinner className={styles.buttonSpinner} inline={true} />}
-          Save rule and exit
+          {t("ablestack-wall.alert.save-rule-and-exit", "Save rule and exit")}
         </Button>
         <Button variant="secondary" disabled={isSubmitting} type="button" onClick={cancelRuleCreation} size="sm">
-          Cancel
+          {t("ablestack-wall.common.cancel", "Cancel")}
         </Button>
         {existing ? (
           <Button fill="outline" variant="destructive" type="button" onClick={() => setShowDeleteModal(true)} size="sm">
-            Delete
+            {t("ablestack-wall.common.delete", "Delete")}
           </Button>
         ) : null}
         {existing && isCortexLokiOrRecordingRule(watch) && (

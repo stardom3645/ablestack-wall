@@ -1,3 +1,5 @@
+import { t } from 'app/core/internationalization';
+
 import { RuleFormType } from '../../../types/rule-form';
 
 type FormDescriptions = {
@@ -9,8 +11,8 @@ type FormDescriptions = {
 
 export const DESCRIPTIONS: Record<RuleFormType, FormDescriptions> = {
   [RuleFormType.cloudRecording]: {
-    sectionTitle: 'Define recording rule',
-    helpLabel: 'Define your recording rule',
+    sectionTitle: t("ablestack-wall.alert.define-recording-rule", "Define recording rule"),
+    helpLabel: t("ablestack-wall.alert.define-recording-rule", "Define recording your rule"),
     helpContent:
       'Pre-compute frequently needed or computationally expensive expressions and save their result as a new set of time series.',
     helpLink: '',

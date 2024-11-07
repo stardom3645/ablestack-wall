@@ -14,7 +14,6 @@ import {
   SceneVariableSet,
   VariableValueSelectors,
 } from '@grafana/scenes';
-
 import { t } from 'app/core/internationalization';
 
 import { config } from '../../../../core/config';

@@ -1,5 +1,6 @@
 import { PureComponent } from 'react';
 import { ConnectedProps, connect } from 'react-redux';
+import { t } from 'app/core/internationalization';
 
 import { Stack } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
@@ -29,10 +30,11 @@ export class OrgDetailsPage extends PureComponent<Props> {
     return new Promise<boolean>((resolve) => {
       appEvents.publish(
         new ShowConfirmModalEvent({
-          title: 'Confirm preferences update',
-          text: 'This will update the preferences for the whole organization. Are you sure you want to update the preferences?',
-          yesText: 'Save',
+          title: t("ablestack-wall.administration.general.confirm-preferences-update", "Confirm preferences update"),
+          text: t("ablestack-wall.administration.general.confirm-preferences-update-text", "This will update the preferences for the whole organization. Are you sure you want to update the preferences?"),
+          yesText: t("ablestack-wall.common.save", "Save"),
           yesButtonVariant: 'primary',
+          noText: t("ablestack-wall.common.cancel", "Cancel"),
           onConfirm: async () => resolve(true),
           onDismiss: async () => resolve(false),
         })

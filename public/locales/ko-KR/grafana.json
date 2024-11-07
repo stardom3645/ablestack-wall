@@ -143,8 +143,8 @@
     },
     "list-view": {
       "empty": {
-        "new-alert-rule": "New alert rule",
-        "new-recording-rule": "New recording rule",
+        "new-alert-rule": "새 경고 규칙",
+        "new-recording-rule": "새 기록 규칙",
         "provisioning": "You can also define rules through file provisioning or Terraform. <2>Learn more</2>"
       },
       "section": {
@@ -154,7 +154,7 @@
         "grafanaManaged": {
           "export-rules": "Export rules",
           "loading": "Loading...",
-          "new-recording-rule": "New recording rule",
+          "new-recording-rule": "새 기록 규칙",
           "title": "Grafana-managed"
         }
       }
@@ -347,10 +347,10 @@
     "dashboards-tree": {
       "collapse-folder-button": "Collapse folder {{title}}",
       "expand-folder-button": "Expand folder {{title}}",
-      "name-column": "Name",
+      "name-column": "이름",
       "select-all-header-checkbox": "Select all",
       "select-checkbox": "Select",
-      "tags-column": "Tags"
+      "tags-column": "태그"
     },
     "empty-state": {
       "button-title": "대시보드 생성",
@@ -446,10 +446,10 @@
   },
   "connections": {
     "connect-data": {
-      "category-header-label": "Data sources",
-      "empty-message": "No results matching your query were found",
-      "request-data-source": "Request a new data source",
-      "roadmap": "View roadmap"
+      "category-header-label": "데이터 소스",
+      "empty-message": "쿼리와 일치하는 결과가 없습니다",
+      "request-data-source": "새 데이터 소스 요청",
+      "roadmap": "로드맵 보기"
     },
     "search": {
       "placeholder": "전체 검색"
@@ -2360,12 +2360,12 @@
       "datasource-header": "Data source",
       "deleted-less-than-1-min": "< 1 min",
       "deleted-remaining-header": "Time remaining",
-      "location-header": "Location",
-      "name-header": "Name",
-      "tags-header": "Tags",
-      "type-dashboard": "Dashboard",
-      "type-folder": "Folder",
-      "type-header": "Type"
+      "location-header": "위치",
+      "name-header": "이름",
+      "tags-header": "태그",
+      "type-dashboard": "대시보드",
+      "type-folder": "폴더",
+      "type-header": "유형"
     },
     "search-input": {
       "include-panels-placeholder": "대시보드, 폴더, 패널 검색",
@@ -2565,7 +2565,7 @@
       "add-silence-button": "사일런스 추가",
       "edit-button": "Edit",
       "expired-silences": "Expired silences are automatically deleted after 5 days.",
-      "no-matching-silences": "No matching silences found;",
+      "no-matching-silences": "일치하는 사일런스 항목을 찾을 수 없습니다.",
       "noConfig": "Create a new contact point to create a configuration using the default values or contact your administrator to set up the Alertmanager.",
       "recreate-button": "Recreate",
       "unsilence-button": "Unsilence"
@@ -2610,7 +2610,7 @@
   "tag-filter": {
     "loading": "Loading...",
     "no-tags": "No tags found",
-    "placeholder": "Filter by tag"
+    "placeholder": "태그 필터링"
   },
   "teams": {
     "empty-state": {
@@ -2826,7 +2826,11 @@
       "template": "템플릿",
       "actions": "동작",
       "description": "설명",
-      "duration": "지속 시간"
+      "duration": "지속 시간",
+      "delete": "삭제",
+      "namespace": "네임스페이스",
+      "group": "그룹",
+      "schedule": "일정"
     },
     "dashboard": {
       "search-by-name-or-description": "이름이나 설명으로 검색",
@@ -2879,10 +2883,30 @@
       "add-valid-matcher": "영향을 받은 경고를 확인하려면 유효한 매처를 추가하세요",
       "no-firing-alert-instances": "발생 중인 경고 인스턴스가 없습니다",
       "error-occurred-generating-preview-affected-alerts": "영향을 받은 경고의 미리보기를 생성하는 중 오류가 발생했습니다. 매처가 유효한지 확인하세요.",
-      "search-by-label": "라벨로 검색",
+      "search-by-label": "레이블로 검색",
       "custom-group-by": "사용자 지정 그룹 기준",
       "group-by": "그룹 기준",
-      "notification-state": "알림 상태"
+      "notification-state": "알림 상태",
+      "no-result": "결과 없음.",
+      "no-rules-found": "규칙을 찾을 수 없습니다.",
+      "give-a-name": "{{namePlaceholder}}에 이름을 지정하세요",
+      "define-recording-rule": "기록 규칙 정의",
+      "define-recording-your-rule": "기록 규칙을 정의하세요",
+      "select-data-source": "데이터 소스 선택",
+      "add-namespace-and-group": "네임스페이스와 그룹 추가",
+      "add-namespace-and-group-description": "기록 규칙을 위한 네임스페이스와 그룹을 선택하세요.",
+      "add-labels": "레이블 추가",
+      "edit-labels": "레이블 편집",
+      "configure-labels-and-notifications": "레이블과 알림을 구성하세요",
+      "add-labels-help-you": "기록 규칙을 더 잘 관리할 수 있도록 레이블을 추가하세요.",
+      "select-who-receive-notification": "경고 규칙이 발동되면 알림을 받을 대상자를 선택하세요.",
+      "ablestack-wall.alert.add-labels-to-notification-policy": "검색, 차단(사일런스) 또는 알림 정책으로 라우팅하기 위해 규칙에 레이블을 추가하세요.",
+      "no-labels-selected": "선택된 레이블이 없습니다",
+      "save-rule-and-exit": "규칙 저장하고 종료",
+      "save-rule": "규칙 저장",
+      "alert-rule-targeted": "경고 규칙 대상",
+      "matching-labels": "일치하는 레이블",
+      "alerts-silenced": "사일런스 상태 경고"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
@@ -2892,19 +2916,37 @@
     "administration": {
       "general": {
         "instance-statistics": "인스턴스 통계",
-        "datasource-new-home": "데이터 소스가 새로운 위치로 이동했습니다! 새로운 데이터 소스를 발견하거나 기존의 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
-        "go-to-connections": "연결로 이동",
+        "dashboards-starred": "대시보드 (즐겨찾기)",
+        "tags": "태그",
+        "playlists": "재생목록",
+        "snapshots": "스냅샷",
+        "manage-dashboards": "대시보드 관리",
+        "data-sources": "데이터 소스",
+        "manage-data-sources": "데이터 소스 관리",
+        "alerts": "경고",
+        "manage-alerts": "경고 관리",
+        "organisations": "조직",
+        "users-total": "총 사용자 수",
+        "active-sessions": "활성 세션",
+        "active-users-in-last-30-days": "최근 30일간 활성 사용자",
+        "manage-users": "사용자 관리",
+        "datasource-new-home": "데이터 소스가 새로 단장했습니다! 새로운 데이터 소스를 발견하거나 기존 데이터 소스를 관리하려면 메인 메뉴에서 접근할 수 있는 연결 페이지를 이용하세요.",
+        "go-to-connections": "연결 페이지로 이동",
         "new-org": "새 조직",
         "new-org-button": "새 조직",
         "new-organization": "새 조직",
-        "new-organization-description": "각 조직에는 자체 대시보드, 데이터 소스 및 구성이 포함되어 있어 조직 간에 공유할 수 없습니다. 사용자는 두 개 이상의 조직에 속할 수 있지만 다중 테넌트 배포에서는 여러 조직이 가장 자주 사용됩니다.",
+        "new-organization-description": "각 조직에는 고유한 대시보드, 데이터 소스 및 구성을 포함하며, 조직 간에 공유할 수 없습니다. 사용자는 두 개 이상의 조직에 속할 수 있지만, 다중 조직은 주로 다중 테넌트 배포 환경에서 사용됩니다.",
         "new-organization-name": "조직 이름",
         "new-organization-name-create": "생성",
         "manage-org-settings": "이 특정 조직에 대한 설정을 관리합니다.",
         "manage-org-edit-organization": "조직 이름 수정",
         "manage-org-organization-users": "조직 사용자",
         "manage-org-edit-name": "이름",
-        "setting-alert": "이 시스템 설정은 grafana.ini 또는 custom.ini 파일에 정의되어 있으며, 환경 변수(ENV variables)로 재정의할 수 있습니다. 이러한 설정을 변경하려면 현재 Wall 서비스를 재시작해야 합니다."
+        "setting-alert": "이 시스템 설정은 grafana.ini 또는 custom.ini 파일에 정의되어 있으며, 환경 변수(ENV variables)로 재정의할 수 있습니다. 이러한 설정을 변경하려면 현재 Wall 서비스를 재시작해야 합니다.",
+        "confirm-preferences-update": "환경 설정 업데이트 확인",
+        "confirm-preferences-update-text": "이 작업은 전체 조직의 환경 설정을 업데이트합니다. 정말로 환경 설정을 업데이트하시겠습니까?",
+        "confirm-delete-org": "{{orgName}} 조직을 정말로 삭제하시겠습니까?",
+        "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!"
       },
       "plugins": {
         "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요."

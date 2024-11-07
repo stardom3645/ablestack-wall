@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css';
 import { useEffect, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
-
+import { t } from 'app/core/internationalization';
 import { GrafanaTheme2 } from '@grafana/data';
 import { useStyles2, Tooltip, Pagination } from '@grafana/ui';
 import { CombinedRule } from 'app/types/unified-alerting';
@@ -53,7 +53,7 @@ export const RulesTable = ({
   rules,
   className,
   showGuidelines = false,
-  emptyMessage = 'No rules found.',
+  emptyMessage = t("ablestack-wall.administration.alert.no-rules-found", "No rules found."),
   showGroupColumn = false,
   showSummaryColumn = false,
   showNextEvaluationColumn = false,

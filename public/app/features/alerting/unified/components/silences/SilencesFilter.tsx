@@ -49,7 +49,7 @@ export const SilencesFilter = () => {
         label={
           <Label>
             <Stack gap={0.5}>
-              <span>Search by matchers</span>
+              <span>{t("ablestack-wall.alert.search-by-matchers", "Search by matchers")}</span>
               <Tooltip
                 content={
                   <div>

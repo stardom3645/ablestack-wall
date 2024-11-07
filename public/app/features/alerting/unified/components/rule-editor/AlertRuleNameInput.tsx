@@ -48,7 +48,7 @@ export const AlertRuleNameAndMetric = () => {
       }
     >
       <Stack direction="column">
-        <Field label="Name" error={errors?.name?.message} invalid={!!errors.name?.message}>
+        <Field label={t("ablestack-wall.common.name", "Name")} error={errors?.name?.message} invalid={!!errors.name?.message}>
           <Input
             data-testid={selectors.components.AlertRules.ruleNameField}
             id="name"
@@ -60,7 +60,7 @@ export const AlertRuleNameAndMetric = () => {
                 : undefined,
             })}
             aria-label="name"
-            placeholder={`Give your ${namePlaceholder} a name`}
+            placeholder={t("ablestack-wall.alert.give-a-name", "Give your {{namePlaceholder}} a name", {namePlaceholder: namePlaceholder})}
           />
         </Field>
         {isGrafanaRecordingRule && (

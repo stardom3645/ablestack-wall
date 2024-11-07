@@ -2,8 +2,10 @@ import { css, cx } from '@emotion/css';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 
+
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { Button, Field, InlineLabel, Input, LoadingPlaceholder, Space, Stack, Text, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 import { labelsApi } from '../../../api/labelsApi';
 import { usePluginBridge } from '../../../hooks/usePluginBridge';
@@ -81,7 +83,7 @@ export function LabelsSubForm({ dataSourceName, onClose, initialLabels }: Labels
     <FormProvider {...formAPI}>
       <form onSubmit={formAPI.handleSubmit(onSave)}>
         <Stack direction="column" gap={4}>
-          <Text>Add labels to your rule for searching, silencing, or routing to a notification policy.</Text>
+          <Text>{t("ablestack-wall.alert.add-labels-to-notification-policy", "Add labels to your rule for searching, silencing, or routing to a notification policy.")}</Text>
           <Stack direction="column" gap={1}>
             <LabelsWithSuggestions dataSourceName={dataSourceName} />
             <Space v={2} />
@@ -399,7 +401,7 @@ function LabelsField() {
         <Text element="h5">Labels</Text>
         <Stack direction={'row'} gap={1}>
           <Text variant="bodySmall" color="secondary">
-            Add labels to your rule for searching, silencing, or routing to a notification policy.
+            {t("ablestack-wall.alert.add-labels-to-notification-policy", "Add labels to your rule for searching, silencing, or routing to a notification policy.")}
           </Text>
           <NeedHelpInfo
             contentText="The dropdown only displays labels that you have previously used for alerts.
