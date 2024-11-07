@@ -5,10 +5,9 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { Alert, LinkButton, useStyles2 } from '@grafana/ui';
 
 import { contextSrv } from '../../../../core/core';
+import {Trans} from "../../../../core/internationalization";
 import { AccessControlAction } from '../../../../types';
 import { ROUTES } from '../../constants';
-import {Trans} from "../../../../core/internationalization";
-import * as React from "react";
 
 const getStyles = (theme: GrafanaTheme2) => ({
   alertContent: css`

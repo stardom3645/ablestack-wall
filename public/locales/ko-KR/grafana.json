@@ -463,10 +463,10 @@
     },
     "basic-info-form": {
       "description-description": "링크에 대한 자세한 정보가 포함된 설명(선택 사항)",
-      "description-label": "Description",
+      "description-label": "설명",
       "label-description": "이 이름은 상관 관계의 레이블로 사용됩니다. 이 이름은 버튼 텍스트, 메뉴 항목 또는 링크의 호버 텍스트로 표시됩니다.",
-      "label-label": "Label",
-      "label-placeholder": "e.g. Tempo traces",
+      "label-label": "레이블",
+      "label-placeholder": "예: Tempo 추적",
       "label-required": "This field is required.",
       "sub-text": "<0>상관관계를 설명할 텍스트 정의.</0>",
       "title": "상관 관계 레이블 정의 (Step 1 of 3)"
@@ -478,11 +478,11 @@
     },
     "list": {
       "delete": "delete correlation",
-      "label": "Label",
+      "label": "레이블",
       "loading": "loading...",
       "read-only": "Read only",
-      "source": "Source",
-      "target": "Target"
+      "source": "소스",
+      "target": "대상"
     },
     "navigation-form": {
       "add-button": "추가",
@@ -499,7 +499,7 @@
       "error-text": "The selected data source could not be loaded.",
       "error-title": "Error loading data source",
       "loading": "Loading query editor...",
-      "query-description": "Define the query that is run when the link is clicked. You can use <2>variables</2> to access specific field values.",
+      "query-description": "링크를 클릭할 때 실행되는 쿼리를 정의하세요. 특정 필드 값을 액세스하려면 <2>variables</2>를 사용할 수 있습니다.",
       "query-editor-title": "Data source does not export a query editor.",
       "query-label": "Query"
     },
@@ -513,10 +513,10 @@
       "heading-query": "Variables used in the target query",
       "query-title": "{{dataSourceName}}에 연결할 데이터 소스 구성 (Step 3 of 3)",
       "results-description": "이 필드에 링크가 표시됩니다.",
-      "results-label": "Results field",
+      "results-label": "결과 필드",
       "results-required": "This field is required.",
       "source-description": "선택한 소스 데이터 소스의 결과가 패널에 링크가 표시됩니다",
-      "source-label": "Source",
+      "source-label": "소스",
       "sub-text": "<0>데이터 소스가 상관 관계를 표시하고 이전에 정의된 변수를 대체한 변수들을 대체하는 방법을 정의합니다.</0>"
     },
     "sub-title": "서로 다른 데이터 소스에 존재하는 데이터가 서로 어떻게 연관되는지 정의합니다. 다음 문서를 참조하세요. <2>documentation<1></1></2>",
@@ -525,10 +525,10 @@
       "sub-text": "<0>상관 관계가 무엇인지 정의합니다.쿼리 유형을 사용하여 상관관계가 클릭되면 쿼리가 실행됩니다.외부 유형으로 상관 관계를 클릭하면 URL을 엽니다.</0>",
       "target-description-external": "링크를 클릭할 때 열릴 URL 지정",
       "target-description-query": "링크를 클릭할 때 쿼리할 데이터 소스 지정",
-      "target-label": "Target",
+      "target-label": "대상",
       "target-type-description": "상관 관계 유형 지정",
       "title": "상관관계 대상 설정 (Step 2 of 3)",
-      "type-label": "Type"
+      "type-label": "유형"
     },
     "trans-details": {
       "logfmt-description": "Parse provided field with logfmt to get variables",
@@ -1593,7 +1593,8 @@
       "title": "More apps"
     },
     "authentication": {
-      "title": "인증"
+      "title": "인증",
+      "subtitle": "인증 설정을 관리하고 단일 로그인을 구성합니다."
     },
     "bookmarks": {
       "title": "북마크"
@@ -2563,11 +2564,11 @@
     },
     "table": {
       "add-silence-button": "사일런스 추가",
-      "edit-button": "Edit",
-      "expired-silences": "Expired silences are automatically deleted after 5 days.",
+      "edit-button": "편집",
+      "expired-silences": "만료된 사일런스 항목은 5일 후 자동으로 삭제됩니다.",
       "no-matching-silences": "일치하는 사일런스 항목을 찾을 수 없습니다.",
-      "noConfig": "Create a new contact point to create a configuration using the default values or contact your administrator to set up the Alertmanager.",
-      "recreate-button": "Recreate",
+      "noConfig": "새로운 컨택트 포인트를 만들어 기본 값을 사용하여 구성을 생성하거나, Alertmanager 설정을 위해 관리자에게 문의하세요.",
+      "recreate-button": "다시 생성",
       "unsilence-button": "Unsilence"
     }
   },
@@ -2830,7 +2831,16 @@
       "delete": "삭제",
       "namespace": "네임스페이스",
       "group": "그룹",
-      "schedule": "일정"
+      "schedule": "일정",
+      "comment": "코멘트",
+      "created-by": "작성자",
+      "label": "레이블",
+      "operator": "연산자",
+      "value": "값",
+      "organization": "조직",
+      "operations": "운영",
+      "settings": "설정",
+      "members": "구성원"
     },
     "dashboard": {
       "search-by-name-or-description": "이름이나 설명으로 검색",
@@ -2906,7 +2916,9 @@
       "save-rule": "규칙 저장",
       "alert-rule-targeted": "경고 규칙 대상",
       "matching-labels": "일치하는 레이블",
-      "alerts-silenced": "사일런스 상태 경고"
+      "alerts-silenced": "사일런스 상태 경고",
+      "affected-alerts": "영향을 받은 경고",
+      "add-matcher": "매처 추가"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
@@ -2949,7 +2961,8 @@
         "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!"
       },
       "plugins": {
-        "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요."
+        "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요.",
+        "search-grafana-plugins": "그라파나 플러그인 검색"
       },
       "service-and-access": {
         "service-accounts-tokens": "서비스 계정과 해당 토큰은 그라파나 API에 대한 인증에 사용할 수 있습니다. 자세한 내용은 <0>documentation</0>에서 확인하세요.",
@@ -2965,9 +2978,15 @@
         "search-bar-service-account-by-name": "이름으로 서비스 계정 검색",
         "add-service-account": "서비스 계정 추가",
         "with-expired-tokens": "만료된 토큰 사용",
-        "add-token": "토큰 추가"
+        "add-token": "토큰 추가",
+        "new-team": "새 팀",
+        "new-team-subtitle": "새 팀을 생성하세요. 팀을 사용하면 사용자 그룹에 권한을 부여할 수 있습니다.",
+        "team-email-description": "이 항목은 선택 사항이며, 주로 사용자 정의 팀 아바타를 허용하는 데 사용됩니다.",
+        "manage-members-and-settings": "구성원 및 설정 관리",
+        "team-details": "팀 세부사항"
       },
-      "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."
+      "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다.",
+      "manage-auth-findout": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."
     }
   }
 }

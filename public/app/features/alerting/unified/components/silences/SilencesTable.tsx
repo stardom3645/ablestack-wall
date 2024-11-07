@@ -1,7 +1,6 @@
 import { css } from '@emotion/css';
 import { useMemo } from 'react';
 
-import { t } from 'app/core/internationalization';
 import { GrafanaTheme2, dateMath } from '@grafana/data';
 import {
   Alert,
@@ -15,7 +14,7 @@ import {
   useStyles2,
 } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
-import { Trans } from 'app/core/internationalization';
+import { Trans, t } from 'app/core/internationalization';
 import { alertSilencesApi } from 'app/features/alerting/unified/api/alertSilencesApi';
 import { featureDiscoveryApi } from 'app/features/alerting/unified/api/featureDiscoveryApi';
 import { MATCHER_ALERT_RULE_UID, SILENCES_POLL_INTERVAL_MS } from 'app/features/alerting/unified/utils/constants';
@@ -312,7 +311,7 @@ function useColumns(alertManagerSourceName: string) {
         renderCell: function renderSilencedAlerts({ data: { silencedAlerts } }) {
           return <span data-testid="alerts">{Array.isArray(silencedAlerts) ? silencedAlerts.length : '-'}</span>;
         },
-        size: 2,
+        size: 4,
       },
       {
         id: 'schedule',

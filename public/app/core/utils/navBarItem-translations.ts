@@ -308,6 +308,8 @@ export function getNavSubTitle(navId: string | undefined) {
       return t('nav.connections.subtitle', 'Browse and create new connections');
     case 'connections-datasources':
       return t('nav.data-sources.subtitle', 'View and manage your connected data source connections');
+    case 'authentication':
+      return t('nav.authentication.subtitle', 'Manage your auth settings and configure single sign-on');
     case 'connections-private-data-source-connections':
       return t(
         'nav.private-data-source-connections.subtitle',

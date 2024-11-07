@@ -501,7 +501,7 @@
       "loading": "Loading query editor...",
       "query-description": "Define the query that is run when the link is clicked. You can use <2>variables</2> to access specific field values.",
       "query-editor-title": "Data source does not export a query editor.",
-      "query-label": "Query"
+      "query-label": "쿼리"
     },
     "source-form": {
       "control-required": "This field is required.",
@@ -1593,7 +1593,8 @@
       "title": "More apps"
     },
     "authentication": {
-      "title": "Authentication"
+      "title": "Authentication",
+      "subtitle": "Manage your auth settings and configure single sign-on"
     },
     "bookmarks": {
       "title": "Bookmarks"
@@ -2830,7 +2831,16 @@
       "delete": "Delete",
       "namespace": "Namespace",
       "group": "Group",
-      "schedule": "Schedule"
+      "schedule": "Schedule",
+      "comment": "Comment",
+      "created-by": "Created by",
+      "label": "Label",
+      "operator": "Operator",
+      "value": "Value",
+      "organization": "Organization",
+      "operations": "Operations",
+      "settings": "Settings",
+      "members": "Members"
     },
     "dashboard": {
       "search-by-name-or-description": "Search by name or description",
@@ -2906,7 +2916,9 @@
       "save-rule": "Save rule",
       "alert-rule-targeted": "alert-rule-targeted",
       "matching-labels": "Matching labels",
-      "alerts-silenced": "Alerts silenced"
+      "alerts-silenced": "Alerts silenced",
+      "affected-alerts": "Affected alerts",
+      "add-matcher": "Add matcher"
     },
     "connections": {
       "add-datasource": "Add data source",
@@ -2949,7 +2961,8 @@
         "confirm-sub-delete-org": "All dashboards for this organization will be removed!"
       },
       "plugins": {
-        "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to"
+        "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to",
+        "search-grafana-plugins": "Search Grafana plugins"
       },
       "service-and-access": {
         "service-accounts-tokens": "Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our <0>documentation</0>.",
@@ -2965,9 +2978,16 @@
         "search-bar-service-account-by-name": "Search service account by name",
         "add-service-account": "Add service account",
         "with-expired-tokens": "With expired tokens",
-        "add-token": "Add token"
+        "add-token": "Add token",
+        "new-team": "New team",
+        "new-team-subtitle": "Create a new team. Teams let you grant permissions to a group of users.",
+        "team-email-description": "This is optional and is primarily used for allowing custom team avatars.",
+        "manage-members-and-settings": "Manage members and settings",
+        "team-details": "Team details",
+        "team-email-description-gravatar": "This is optional and is primarily used to set the team profile avatar (via gravatar service)."
       },
-      "manage-auth": "Manage your auth settings and configure single sign-on. Find out more in our"
+      "manage-auth": "Manage your auth settings and configure single sign-on.",
+      "manage-auth-findout": "Manage your auth settings and configure single sign-on. Find out more in our"
     }
   }
 }

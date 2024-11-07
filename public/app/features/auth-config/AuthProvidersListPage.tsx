@@ -15,7 +15,7 @@ import { loadSettings } from './state/actions';
 
 import { getRegisteredAuthProviders } from './index';
 
-import { Trans, t } from 'app/core/internationalization';
+import { Trans } from 'app/core/internationalization';
 
 interface OwnProps {}
 
@@ -84,7 +84,7 @@ export const AuthConfigPageUnconnected = ({
       navId="authentication"
       subTitle={
         <>
-          <Trans i18nKey="ablestack-wall.administration.manage-auth">Manage your auth settings and configure single sign-on. Find out more in our</Trans>{' '}
+          <Trans i18nKey="ablestack-wall.administration.manage-auth-findout">Manage your auth settings and configure single sign-on. Find out more in our</Trans>{' '}
           <TextLink
             external={true}
             href="https://grafana.com/docs/grafana/next/setup-grafana/configure-security/configure-authentication"

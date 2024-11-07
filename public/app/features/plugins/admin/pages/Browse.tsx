@@ -6,7 +6,7 @@ import { SelectableValue, GrafanaTheme2, PluginType } from '@grafana/data';
 import { locationSearchToObject } from '@grafana/runtime';
 import { Select, RadioButtonGroup, useStyles2, Tooltip, Field, Button } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
-import { Trans } from 'app/core/internationalization';
+import { Trans, t } from 'app/core/internationalization';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { ROUTES as CONNECTIONS_ROUTES } from 'app/features/connections/constants';
 import { useSelector } from 'app/types';
@@ -97,7 +97,7 @@ export default function Browse() {
     <Page navModel={navModel} actions={updateAll} subTitle={subTitle}>
       <Page.Contents>
         <HorizontalGroup wrap>
-          <Field label="Search">
+          <Field label={t("ablestack-wall.common.search", "Search")}>
             <SearchField value={keyword} onSearch={onSearch} />
           </Field>
           <HorizontalGroup wrap className={styles.actionBar}>

@@ -2,9 +2,8 @@ import { Input, Field, FieldSet, Button } from '@grafana/ui';
 import { Form } from 'app/core/components/Form/Form';
 import { contextSrv } from 'app/core/core';
 import { AccessControlAction } from 'app/types';
-import {selectors} from "@grafana/e2e-selectors";
+
 import {Trans} from "../../core/internationalization";
-import * as React from "react";
 
 export interface Props {
   orgName: string;
