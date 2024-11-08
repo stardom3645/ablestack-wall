@@ -2840,7 +2840,23 @@
       "organization": "Organization",
       "operations": "Operations",
       "settings": "Settings",
-      "members": "Members"
+      "members": "Members",
+      "user": "User",
+      "submit": "Submit",
+      "skip": "Skip"
+    },
+    "login": {
+      "reset-password": "Reset password",
+      "reset-password-description": "Enter your information to get a reset link sent to you",
+      "email-or-username": "Email or username",
+      "send-reset-email": "Send reset email",
+      "back-to-login": "Back to login",
+      "contact-administrator": "Did you forget your username or email? Contact your ABLESTACK Wall administrator.",
+      "update-your-password": "Update your password",
+      "continuing-password-exposes": "Continuing to use the default password exposes you to security risks.",
+      "new-password": "New password",
+      "confirm-new-password": "Confirm new password",
+      "if-you-skip": "If you skip you will be prompted to change password next time you log in."
     },
     "dashboard": {
       "search-by-name-or-description": "Search by name or description",

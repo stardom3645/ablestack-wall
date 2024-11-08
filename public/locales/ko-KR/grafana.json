@@ -1301,21 +1301,21 @@
   },
   "login": {
     "error": {
-      "blocked": "You have exceeded the number of login attempts for this user. Please try again later.",
-      "invalid-user-or-password": "Invalid username or password",
-      "title": "Login failed",
-      "unknown": "Unknown error occurred"
+      "blocked": "이 사용자의 로그인 시도 횟수를 초과했습니다. 다음에 다시 시도하세요.",
+      "invalid-user-or-password": "잘못된 사용자 이름 또는 비밀번호입니다",
+      "title": "로그인 실패",
+      "unknown": "알 수 없는 오류가 발생했습니다"
     },
-    "forgot-password": "Forgot your password?",
+    "forgot-password": "비밀번호 찾기",
     "form": {
-      "password-label": "Password",
-      "password-placeholder": "password",
-      "password-required": "Password is required",
-      "submit-label": "Log in",
-      "submit-loading-label": "Logging in...",
-      "username-label": "Email or username",
-      "username-placeholder": "email or username",
-      "username-required": "Email or username is required"
+      "password-label": "비밀번호",
+      "password-placeholder": "비밀번호",
+      "password-required": "비밀번호가 필요합니다",
+      "submit-label": "로그인",
+      "submit-loading-label": "로그인 중...",
+      "username-label": "이메일 또는 사용자 이름",
+      "username-placeholder": "이메일 또는 사용자 이름",
+      "username-required": "이메일 또는 사용자 이름이 필요합니다"
     },
     "services": {
       "sing-in-with-prefix": "Sign in with {{serviceName}}"
@@ -1689,9 +1689,9 @@
       "title": "Help"
     },
     "help/community": "Community",
-    "help/documentation": "Documentation",
+    "help/documentation": "문서",
     "help/keyboard-shortcuts": "Keyboard shortcuts",
-    "help/support": "Support",
+    "help/support": "지원",
     "home": {
       "title": "홈"
     },
@@ -2019,11 +2019,11 @@
     "change-password": {
       "cancel-button": "Cancel",
       "cannot-change-password-message": "Password cannot be changed here.",
-      "change-password-button": "Change Password",
-      "confirm-password-label": "Confirm password",
+      "change-password-button": "비밀번호 변경",
+      "confirm-password-label": "비밀번호 확인",
       "confirm-password-required": "New password confirmation is required",
       "ldap-auth-proxy-message": "You cannot change password when signed in with LDAP or auth proxy.",
-      "new-password-label": "New password",
+      "new-password-label": "새로운 비밀번호",
       "new-password-required": "New password is required",
       "new-password-same-as-old": "New password can't be the same as the old one.",
       "old-password-label": "Old password",
@@ -2840,7 +2840,23 @@
       "organization": "조직",
       "operations": "운영",
       "settings": "설정",
-      "members": "구성원"
+      "members": "구성원",
+      "user": "사용자",
+      "submit": "제출",
+      "skip": "건너뛰기"
+    },
+    "login": {
+      "reset-password": "비밀번호 초기화",
+      "reset-password-description": "새로운 비밀번호를 받을 이메일 또는 사용자 이름 정보를 입력해주세요.",
+      "email-or-username": "이메일 또는 사용자 이름",
+      "send-reset-email": "이메일 보내기",
+      "back-to-login": "돌아가기",
+      "contact-administrator": "이메일 또는 사용자 이름을 잃어버렸다면, ABLESTACK Wall 관리자에게 문의하기 바랍니다.",
+      "update-your-password": "비밀번호 업데이트",
+      "continuing-password-exposes": "기본 비밀번호를 계속 사용하면 보안 위험에 노출될 수 있습니다.",
+      "new-password": "새 비밀번호",
+      "confirm-new-password": "새 비밀번호 확인",
+      "if-you-skip": "건너뛰면, 다음에 로그인할 때 비밀번호를 변경하라는 메시지가 표시됩니다."
     },
     "dashboard": {
       "search-by-name-or-description": "이름이나 설명으로 검색",
