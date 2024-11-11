@@ -180,6 +180,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.collector.title', 'Collector');
     case 'connections-datasources':
       return t('nav.data-sources.title', 'Data sources');
+    case 'authentication':
+      return t('nav.authentication.subtitle', 'Manage your auth settings and configure single sign-on');
     case 'standalone-plugin-page-/connections/infrastructure':
       return t('nav.integrations.title', 'Integrations');
     case 'standalone-plugin-page-/connections/connect-data':
