@@ -210,7 +210,7 @@ export const TeamList = ({
       actions={
         !noTeams ? (
           <LinkButton href={canCreate ? 'org/teams/new' : '#'} disabled={!canCreate}>
-            New Team
+            {t("ablestack-wall.administration.service-and-access.new-team", "New team")}
           </LinkButton>
         ) : undefined
       }

@@ -102,7 +102,7 @@ export default function Browse() {
           </Field>
           <HorizontalGroup wrap className={styles.actionBar}>
             {/* Filter by type */}
-            <Field label="Type">
+            <Field label={t("ablestack-wall.common.type", "Type")}>
               <Select
                 aria-label="Plugin type filter"
                 value={filterByType}
@@ -128,7 +128,7 @@ export default function Browse() {
                 placement="top"
               >
                 <div>
-                  <Field label="State">
+                  <Field label={t("ablestack-wall.common.state", "State")}>
                     <RadioButtonGroup
                       disabled={true}
                       value={filterBy}
@@ -141,7 +141,7 @@ export default function Browse() {
             )}
 
             {/* Sorting */}
-            <Field label="Sort">
+            <Field label={t("ablestack-wall.common.sort", "Sort")}>
               <Select
                 aria-label="Sort Plugins List"
                 width={24}

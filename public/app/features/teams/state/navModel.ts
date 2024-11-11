@@ -24,7 +24,7 @@ export function buildNavModel(team: Team): NavModelItem {
   const navModel: NavModelItem = {
     img: team.avatarUrl,
     id: 'team-' + team.uid,
-    subTitle: t("ablestack-wall.alert.manage-members-and-settings", "Manage members and settings"),
+    subTitle: t("ablestack-wall.administration.service-and-access.manage-members-and-settings", "Manage members and settings"),
     url: `org/teams/edit/${team.uid}`,
     text: team.name,
     children: [

@@ -2843,7 +2843,9 @@
       "members": "Members",
       "user": "User",
       "submit": "Submit",
-      "skip": "Skip"
+      "skip": "Skip",
+      "type": "Type",
+      "sort": "Sort"
     },
     "login": {
       "reset-password": "Reset password",
@@ -3000,7 +3002,9 @@
         "team-email-description": "This is optional and is primarily used for allowing custom team avatars.",
         "manage-members-and-settings": "Manage members and settings",
         "team-details": "Team details",
-        "team-email-description-gravatar": "This is optional and is primarily used to set the team profile avatar (via gravatar service)."
+        "team-email-description-gravatar": "This is optional and is primarily used to set the team profile avatar (via gravatar service).",
+        "add-member": "Add member",
+        "no-members": "There are no members in this team or you do not have the permissions to list the current members."
       },
       "manage-auth": "Manage your auth settings and configure single sign-on.",
       "manage-auth-findout": "Manage your auth settings and configure single sign-on. Find out more in our"

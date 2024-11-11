@@ -6,13 +6,13 @@
       "serviceaccount-label": "Service Account",
       "team-label": "Team",
       "title": "Add permission for",
-      "user-label": "User"
+      "user-label": "사용자"
     },
     "add-permissions": {
-      "save": "Save"
+      "save": "저장"
     },
     "permission-list": {
-      "permission": "Permission"
+      "permission": "권한"
     },
     "permissions": {
       "add-label": "Add a permission",
@@ -22,7 +22,7 @@
       "serviceaccount": "Service Account",
       "team": "Team",
       "title": "Permissions",
-      "user": "User"
+      "user": "자용자"
     }
   },
   "alert-labels": {
@@ -835,7 +835,7 @@
       "query-template-added": "Query template successfully added to the library",
       "query-template-edit-error": "Error attempting to edit this query",
       "query-template-edited": "Query template successfully edited",
-      "save": "Save"
+      "save": "저장"
     },
     "query-template-modal": {
       "add-info": "You're about to save this query. Once saved, you can easily access it in the Query Library tab for future use and reference.",
@@ -1220,7 +1220,7 @@
       "disable-button": "Disable",
       "discard-button": "Discard",
       "save-and-enable-button": "Save and enable",
-      "save-button": "Save"
+      "save-button": "저장"
     },
     "documentation": "documentation",
     "host": {
@@ -1943,7 +1943,7 @@
       "name-label": "Name",
       "name-placeholder": "Name",
       "name-required": "Name is required",
-      "save": "Save",
+      "save": "저장",
       "table-delete": "Delete playlist item",
       "table-drag": "Drag and drop to reorder",
       "table-empty": "Playlist is empty. Add dashboards below.",
@@ -1982,7 +1982,7 @@
       "update-all": {
         "all-plugins-updated": "All plugins updated!",
         "available-header": "Available",
-        "button": "Update all",
+        "button": "모두 업데이트",
         "cloud-update-message": "* It may take a few minutes for the plugins to be available for usage.",
         "error": "Error updating plugin:",
         "error-status-text": "failed - see error messages",
@@ -2843,7 +2843,9 @@
       "members": "구성원",
       "user": "사용자",
       "submit": "제출",
-      "skip": "건너뛰기"
+      "skip": "건너뛰기",
+      "type": "유형",
+      "sort": "정렬"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2999,7 +3001,10 @@
         "new-team-subtitle": "새 팀을 생성하세요. 팀을 사용하면 사용자 그룹에 권한을 부여할 수 있습니다.",
         "team-email-description": "이 항목은 선택 사항이며, 주로 사용자 정의 팀 아바타를 허용하는 데 사용됩니다.",
         "manage-members-and-settings": "구성원 및 설정 관리",
-        "team-details": "팀 세부사항"
+        "team-details": "팀 세부사항",
+        "team-email-description-gravatar": "이 항목은 선택 사항이며 주로 팀 프로필 아바타를 설정하는 데 사용됩니다 (gravatar 서비스를 사용).",
+        "add-member": "구성원 추가",
+        "no-members": "이 팀에는 구성원이 없거나 현재 구성원을 표시할 권한이 없습니다."
       },
       "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다.",
       "manage-auth-findout": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."
