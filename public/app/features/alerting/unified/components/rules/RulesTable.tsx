@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { useStyles2, Tooltip } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { CombinedRule } from 'app/types/unified-alerting';
 
 import { DEFAULT_PER_PAGE_PAGINATION } from '../../../../../core/constants';
@@ -40,7 +41,7 @@ export const RulesTable = ({
   rules,
   className,
   showGuidelines = false,
-  emptyMessage = 'No rules found.',
+  emptyMessage = t('ablestack-wall.administration.alert.no-rules-found', 'No rules found.'),
   showGroupColumn = false,
   showSummaryColumn = false,
   showNextEvaluationColumn = false,

@@ -4,6 +4,7 @@ import { selectors } from '@grafana/e2e-selectors';
 import { isFetchError } from '@grafana/runtime';
 import { Dashboard } from '@grafana/schema';
 import { Alert, Box, Button, Stack } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 import { Diffs } from '../settings/version-history/utils';
 
@@ -69,7 +70,11 @@ export function SaveButton({ overwrite, isLoading, isValid, onSave }: SaveButton
       variant={overwrite ? 'destructive' : 'primary'}
       data-testid={selectors.components.Drawer.DashboardSaveDrawer.saveButton}
     >
-      {isLoading ? 'Saving...' : overwrite ? 'Save and overwrite' : 'Save'}
+      {isLoading
+        ? t('ablestack-wall.common.saving', 'Saving...')
+        : overwrite
+          ? t('ablestack-wall.common.save-and-overwrite', 'Save and overwrite')
+          : t('ablestack-wall.common.save', 'Save')}
     </Button>
   );
 }

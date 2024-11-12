@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 
 import { NavModelItem } from '@grafana/data';
+import { t } from 'app/core/internationalization';
 
 const defaultPageNav: Partial<NavModelItem> = {
   icon: 'bell-slash',
@@ -16,8 +17,11 @@ export function useSilenceNavData() {
       setPageNav({
         ...defaultPageNav,
         id: 'silence-new',
-        text: 'Silence alert rule',
-        subTitle: 'Configure silences to stop notifications from a particular alert rule',
+        text: t('ablestack-wall.alert.silence-alert-rule', 'Silence alert rule'),
+        subTitle: t(
+          'ablestack-wall.alert.silence-alert-rule-subtitle',
+          'Configure silences to stop notifications from a particular alert rule.'
+        ),
       });
     } else if (path === '/alerting/silence/:id/edit') {
       setPageNav({

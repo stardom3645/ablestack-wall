@@ -42,7 +42,7 @@ const AlertLabelDropdown: FC<AlertLabelDropdownProps> = forwardRef<HTMLDivElemen
       <div ref={ref}>
         <Field disabled={false} data-testid={`alertlabel-${type}-picker`} className={styles.resetMargin}>
           <Select<string>
-            placeholder={`Choose ${type}`}
+            placeholder={`t("ablestack-wall.common.choose", "Choose") ${type}`}
             width={29}
             className="ds-picker select-container"
             backspaceRemovesValue={false}

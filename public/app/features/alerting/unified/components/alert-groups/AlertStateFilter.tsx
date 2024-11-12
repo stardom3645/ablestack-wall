@@ -1,5 +1,6 @@
 import { SelectableValue } from '@grafana/data';
 import { RadioButtonGroup, Label, Tooltip, Icon } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { AlertState } from 'app/plugins/datasource/alertmanager/types';
 
 interface Props {
@@ -18,7 +19,7 @@ export const AlertStateFilter = ({ onStateFilterChange, stateFilter }: Props) =>
   return (
     <div>
       <Label>
-        <span>Notification state&nbsp;</span>
+        <span>{t('ablestack-wall.alert.notification-state', 'Notification state')}&nbsp;</span>
         <Tooltip
           content={
             <div>

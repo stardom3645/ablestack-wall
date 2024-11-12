@@ -14,7 +14,7 @@ import {
   useStyles2,
 } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
-import { Trans } from 'app/core/internationalization';
+import { Trans, t } from 'app/core/internationalization';
 import { alertSilencesApi } from 'app/features/alerting/unified/api/alertSilencesApi';
 import { featureDiscoveryApi } from 'app/features/alerting/unified/api/featureDiscoveryApi';
 import { MATCHER_ALERT_RULE_UID, SILENCES_POLL_INTERVAL_MS } from 'app/features/alerting/unified/utils/constants';
@@ -274,7 +274,7 @@ function useColumns(alertManagerSourceName: string) {
     const columns: SilenceTableColumnProps[] = [
       {
         id: 'state',
-        label: 'State',
+        label: t('ablestack-wall.common.state', 'State'),
         renderCell: function renderStateTag({ data: { status } }) {
           return <SilenceStateTag state={status.state} />;
         },
@@ -282,7 +282,7 @@ function useColumns(alertManagerSourceName: string) {
       },
       {
         id: 'alert-rule',
-        label: 'Alert rule targeted',
+        label: t('ablestack-wall.alert.alert-rule-targeted', 'Alert rule targeted'),
         renderCell: function renderAlertRuleLink({ data: { metadata } }) {
           return metadata?.rule_title ? (
             <Link
@@ -298,7 +298,7 @@ function useColumns(alertManagerSourceName: string) {
       },
       {
         id: 'matchers',
-        label: 'Matching labels',
+        label: t('ablestack-wall.alert.matching-labels', 'Matching labels'),
         renderCell: function renderMatchers({ data: { matchers } }) {
           const filteredMatchers = matchers?.filter((matcher) => matcher.name !== MATCHER_ALERT_RULE_UID) || [];
           return <Matchers matchers={filteredMatchers} />;
@@ -307,7 +307,7 @@ function useColumns(alertManagerSourceName: string) {
       },
       {
         id: 'alerts',
-        label: 'Alerts silenced',
+        label: t('ablestack-wall.alert.alerts-silenced', 'Alerts silenced'),
         renderCell: function renderSilencedAlerts({ data: { silencedAlerts } }) {
           return <span data-testid="alerts">{Array.isArray(silencedAlerts) ? silencedAlerts.length : '-'}</span>;
         },
@@ -315,7 +315,7 @@ function useColumns(alertManagerSourceName: string) {
       },
       {
         id: 'schedule',
-        label: 'Schedule',
+        label: t('ablestack-wall.common.schedule', 'Schedule'),
         renderCell: function renderSchedule({ data: { startsAt, endsAt } }) {
           const startsAtDate = dateMath.parse(startsAt);
           const endsAtDate = dateMath.parse(endsAt);
@@ -328,7 +328,7 @@ function useColumns(alertManagerSourceName: string) {
     if (updateSupported) {
       columns.push({
         id: 'actions',
-        label: 'Actions',
+        label: t('ablestack-wall.common.actions', 'Actions'),
         renderCell: function renderActions({ data: silence }) {
           const isExpired = silence.status.state === SilenceState.Expired;
 

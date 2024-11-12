@@ -11,6 +11,7 @@ import { useAppNotification } from 'app/core/copy/appNotification';
 import { contextSrv } from 'app/core/core';
 import { useCleanup } from 'app/core/hooks/useCleanup';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
+import { t } from 'app/core/internationalization';
 import InfoPausedRule from 'app/features/alerting/unified/components/InfoPausedRule';
 import {
   getRuleGroupLocationFromRuleWithLocation,
@@ -197,7 +198,7 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
           disabled={submitState.loading}
         >
           {submitState.loading && <Spinner className={styles.buttonSpinner} inline={true} />}
-          Save rule
+          {t('ablestack-wall.alert.save-rule', 'Save rule')}
         </Button>
       )}
       <Button
@@ -208,16 +209,16 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
         disabled={submitState.loading}
       >
         {submitState.loading && <Spinner className={styles.buttonSpinner} inline={true} />}
-        Save rule and exit
+        {t('ablestack-wall.alert.save-rule-and-exit', 'Save rule and exit')}
       </Button>
       <Link to={returnTo}>
         <Button variant="secondary" disabled={submitState.loading} type="button" onClick={cancelRuleCreation} size="sm">
-          Cancel
+          {t('ablestack-wall.common.cancel', 'Cancel')}
         </Button>
       </Link>
       {existing ? (
         <Button fill="outline" variant="destructive" type="button" onClick={() => setShowDeleteModal(true)} size="sm">
-          Delete
+          {t('ablestack-wall.common.delete', 'Delete')}
         </Button>
       ) : null}
       {existing && isCortexLokiOrRecordingRule(watch) && (

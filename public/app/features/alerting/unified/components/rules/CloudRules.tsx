@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 
 import { GrafanaTheme2, urlUtil } from '@grafana/data';
 import { LinkButton, LoadingPlaceholder, Pagination, Spinner, Text, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { CombinedRuleNamespace } from 'app/types/unified-alerting';
 
 import { DEFAULT_PER_PAGE_PAGINATION } from '../../../../../core/constants';
@@ -140,7 +141,7 @@ export function CreateRecordingRuleButton() {
         icon="plus"
         variant="secondary"
       >
-        New recording rule
+        {t('alerting.list-view.empty.new-recording-rule', 'New recording rule')}
       </LinkButton>
     );
   }

@@ -35,7 +35,7 @@ export default function AdminListOrgsPages() {
       navId="global-orgs"
       actions={
         <LinkButton icon="plus" href="org/new" disabled={!canCreateOrg}>
-          New org
+          <Trans i18nKey="ablestack-wall.administration.general.new-org-button">New org</Trans>
         </LinkButton>
       }
     >

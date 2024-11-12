@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { DataSourceInstanceSettings, GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { Button, Field, Icon, Input, Label, RadioButtonGroup, Stack, Tooltip, useStyles2 } from '@grafana/ui';
 import { DashboardPicker } from 'app/core/components/Select/DashboardPicker';
+import { Trans } from 'app/core/internationalization';
 import { PromAlertingRuleState, PromRuleType } from 'app/types/unified-alerting-dto';
 
 import {
@@ -149,7 +150,9 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
             label={
               <Label htmlFor="data-source-picker">
                 <Stack gap={0.5} alignItems="center">
-                  <span>Search by data sources</span>
+                  <span>
+                    <Trans i18nKey="ablestack-wall.alert.search-by-data-sources">Search by data sources</Trans>
+                  </span>
                   <Tooltip
                     content={
                       <div>
@@ -188,7 +191,11 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
 
           <Field
             className={styles.dashboardPickerContainer}
-            label={<Label htmlFor="filters-dashboard-picker">Dashboard</Label>}
+            label={
+              <Label htmlFor="filters-dashboard-picker">
+                <Trans i18nKey="ablestack-wall.common.dashboard">Dashboard</Trans>
+              </Label>
+            }
           >
             {/* The key prop is to clear the picker value */}
             {/* DashboardPicker doesn't do that itself when value is undefined */}
@@ -203,7 +210,9 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
           </Field>
 
           <div>
-            <Label>State</Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.state">State</Trans>
+            </Label>
             <RadioButtonGroup
               options={RuleStateOptions}
               value={filterState.ruleState}
@@ -211,11 +220,15 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
             />
           </div>
           <div>
-            <Label>Rule type</Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.rule-type">Rule type</Trans>
+            </Label>
             <RadioButtonGroup options={RuleTypeOptions} value={filterState.ruleType} onChange={handleRuleTypeChange} />
           </div>
           <div>
-            <Label>Health</Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.health">Health</Trans>
+            </Label>
             <RadioButtonGroup
               options={RuleHealthOptions}
               value={filterState.ruleHealth}
@@ -250,7 +263,9 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
                 label={
                   <Label htmlFor="rulesSearchInput">
                     <Stack gap={0.5} alignItems="center">
-                      <span>Search</span>
+                      <span>
+                        <Trans i18nKey="ablestack-wall.common.search">Search</Trans>
+                      </span>
                       <HoverCard content={<SearchQueryHelp />}>
                         <Icon name="info-circle" size="sm" tabIndex={0} title="Search help" />
                       </HoverCard>
@@ -274,7 +289,9 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
               <input type="submit" hidden />
             </form>
             <div>
-              <Label>View as</Label>
+              <Label>
+                <Trans i18nKey="ablestack-wall.common.view-as">View as</Trans>
+              </Label>
               <RadioButtonGroup
                 options={ViewOptions}
                 value={queryParams.get('view') ?? ViewOptions[0].value}
@@ -285,7 +302,7 @@ const RulesFilter = ({ onFilterCleared = () => undefined }: RulesFilerProps) => 
           {hasActiveFilters && (
             <div>
               <Button fullWidth={false} icon="times" variant="secondary" onClick={handleClearFiltersClick}>
-                Clear filters
+                <Trans i18nKey="ablestack-wall.common.clear-filters">Clear filters</Trans>
               </Button>
             </div>
           )}

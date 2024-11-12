@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { Button, Field, Icon, Input, Label, Select, Stack, Text, Tooltip, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { ObjectMatcher, Receiver, RouteWithID } from 'app/plugins/datasource/alertmanager/types';
 
 import { useURLSearchParams } from '../../hooks/useURLSearchParams';
@@ -73,7 +74,7 @@ const NotificationPoliciesFilter = ({
         label={
           <Label>
             <Stack gap={0.5}>
-              <span>Search by matchers</span>
+              <span>{t('ablestack-wall.alert.search-by-matchers', 'Search by matchers')}</span>
               <Tooltip
                 content={
                   <div>
@@ -93,7 +94,7 @@ const NotificationPoliciesFilter = ({
         <Input
           ref={searchInputRef}
           data-testid="search-query-input"
-          placeholder="Search"
+          placeholder={t('ablestack-wall.common.search', 'Search')}
           width={46}
           prefix={<Icon name="search" />}
           onChange={(event) => {
@@ -102,7 +103,10 @@ const NotificationPoliciesFilter = ({
           defaultValue={queryString}
         />
       </Field>
-      <Field label="Search by contact point" style={{ marginBottom: 0 }}>
+      <Field
+        label={t('ablestack-wall.alert.search-by-contact-point', 'Search by contact point')}
+        style={{ marginBottom: 0 }}
+      >
         <Select
           id="receiver"
           aria-label="Search by contact point"

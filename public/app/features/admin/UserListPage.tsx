@@ -65,20 +65,20 @@ export default function UserListPage() {
       {showAdminAndOrgTabs ? (
         <TabsBar className={styles.tabsMargin}>
           <Tab
-            label="All users"
+            label={t('ablestack-wall.administration.service-and-access.all-user', 'All users')}
             active={view === TabView.ADMIN}
             onChangeTab={() => setView(TabView.ADMIN)}
             data-testid={selectors.tabs.allUsers}
           />
           <Tab
-            label="Organization users"
+            label={t('ablestack-wall.administration.service-and-access.organization-users', 'Organization users')}
             active={view === TabView.ORG}
             onChangeTab={() => setView(TabView.ORG)}
             data-testid={selectors.tabs.orgUsers}
           />
           {config.anonymousEnabled && (
             <Tab
-              label="Anonymous devices"
+              label={t('ablestack-wall.administration.service-and-access.anonymous-devices', 'Anonymous devices')}
               active={view === TabView.ANON}
               onChangeTab={() => setView(TabView.ANON)}
               data-testid={selectors.tabs.anonUserDevices}

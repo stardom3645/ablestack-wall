@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { GrafanaTheme2 } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
 import { Alert, Button, Field, FieldSet, Input, LinkButton, LoadingPlaceholder, useStyles2 } from '@grafana/ui';
-import { Trans } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
 import {
   MuteTiming,
   useCreateMuteTiming,
@@ -109,8 +109,8 @@ const MuteTimingForm = ({ muteTiming, showError, loading, provisioned, editMode 
           <FieldSet label={'Create mute timing'} disabled={provisioned || updating}>
             <Field
               required
-              label="Name"
-              description="A unique name for the mute timing"
+              label={t('ablestack-wall.common.name', 'Name')}
+              description={t('ablestack-wall.alert.mute-timings-add-subtitle', 'A unique name for the mute timing')}
               invalid={!!formApi.formState.errors?.name}
               error={formApi.formState.errors.name?.message}
               disabled={disableNameField}

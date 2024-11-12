@@ -3,6 +3,7 @@ import { useAsync } from 'react-use';
 
 import { NavModelItem } from '@grafana/data';
 import { withErrorBoundary } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { useDispatch } from 'app/types';
 import { RuleIdentifier } from 'app/types/unified-alerting';
@@ -32,9 +33,17 @@ const getPageNav = (identifier?: RuleIdentifier, type?: 'recording' | 'alerting'
   if (type === 'recording' || type === 'grafana-recording') {
     if (identifier) {
       // this branch should never trigger actually, the type param isn't used when editing rules
-      return { ...defaultPageNav, id: 'alert-rule-edit', text: 'Edit recording rule' };
+      return {
+        ...defaultPageNav,
+        id: 'alert-rule-edit',
+        text: t('alerting.list-view.empty.edit-recording-rule', 'Edit recording rule'),
+      };
     } else {
-      return { ...defaultPageNav, id: 'alert-rule-add', text: 'New recording rule' };
+      return {
+        ...defaultPageNav,
+        id: 'alert-rule-add',
+        text: t('alerting.list-view.empty.new-recording-rule', 'New recording rule'),
+      };
     }
   }
 

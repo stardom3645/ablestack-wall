@@ -6,6 +6,7 @@ import { NavModelItem } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Input, Field } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
+import { t, Trans } from 'app/core/internationalization';
 
 interface UserDTO {
   name: string;
@@ -19,8 +20,8 @@ const createUser = async (user: UserDTO) => getBackendSrv().post('/api/admin/use
 const pageNav: NavModelItem = {
   icon: 'user',
   id: 'user-new',
-  text: 'New user',
-  subTitle: 'Create a new Grafana user.',
+  text: t('ablestack-wall.administration.service-and-access.new-user', 'New user'),
+  subTitle: t('ablestack-wall.administration.service-and-access.new-user-description', 'Create a new Grafana user.'),
 };
 
 const UserCreatePage = () => {
@@ -69,7 +70,9 @@ const UserCreatePage = () => {
               type="password"
             />
           </Field>
-          <Button type="submit">Create user</Button>
+          <Button type="submit">
+            <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-button">Create user</Trans>
+          </Button>
         </form>
       </Page.Contents>
     </Page>
