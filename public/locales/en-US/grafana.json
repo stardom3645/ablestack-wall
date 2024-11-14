@@ -2868,7 +2868,9 @@
       "save-no-changes": "No changes to save",
       "save-dashboard": "Save dashboard",
       "save-dashboard-copy": "Save dashboard copy",
-      "save-Provisioned-dashboard": "Provisioned dashboard"
+      "save-Provisioned-dashboard": "Provisioned dashboard",
+      "new-playlist": "New playlist",
+      "new-playlist-sub-title": "A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build situational awareness, or just show off your metrics to your team or visitors."
     },
     "alert": {
       "alert-rule": "Alert rules",

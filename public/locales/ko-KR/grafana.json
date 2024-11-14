@@ -22,7 +22,7 @@
       "serviceaccount": "Service Account",
       "team": "Team",
       "title": "Permissions",
-      "user": "자용자"
+      "user": "사용자"
     }
   },
   "alert-labels": {
@@ -814,7 +814,7 @@
     }
   },
   "explore": {
-    "add-to-dashboard": "Add to dashboard",
+    "add-to-dashboard": "대시보드에 추가",
     "logs": {
       "maximum-pinned-logs": "Maximum of {{PINNED_LOGS_LIMIT}} pinned logs reached. Unpin a log to add another.",
       "no-logs-found": "No logs found.",
@@ -958,11 +958,11 @@
       "switch-datasource-button": "Switch data source and run query"
     },
     "secondary-actions": {
-      "query-add-button": "Add query",
+      "query-add-button": "쿼리 추가",
       "query-add-button-aria-label": "Add query",
-      "query-history-button": "Query history",
+      "query-history-button": "쿼리 기록",
       "query-history-button-aria-label": "Query history",
-      "query-inspector-button": "Query inspector",
+      "query-inspector-button": "쿼리 인스펙터",
       "query-inspector-button-aria-label": "Query inspector"
     },
     "table": {
@@ -1008,7 +1008,7 @@
       "title": "Export dashboard JSON"
     },
     "menu": {
-      "export-as-json-label": "Export",
+      "export-as-json-label": "내보내기",
       "export-as-json-tooltip": "Export"
     }
   },
@@ -1091,7 +1091,7 @@
       "toggle-panel-legend": "Toggle panel legend",
       "zoom-out-time-range": "Zoom out time range"
     },
-    "title": "Shortcuts"
+    "title": "단축키"
   },
   "help-wizard": {
     "download-snapshot": "Download snapshot",
@@ -1589,8 +1589,8 @@
       "title": "Application"
     },
     "apps": {
-      "subtitle": "App plugins that extend the Grafana experience",
-      "title": "More apps"
+      "subtitle": "Wall 기능 확장하는 앱 플러그인",
+      "title": "더 많은 앱"
     },
     "authentication": {
       "title": "인증",
@@ -1690,7 +1690,7 @@
     },
     "help/community": "Community",
     "help/documentation": "문서",
-    "help/keyboard-shortcuts": "Keyboard shortcuts",
+    "help/keyboard-shortcuts": "키보드 단축키",
     "help/support": "지원",
     "home": {
       "title": "홈"
@@ -1712,8 +1712,8 @@
       "title": "Kubernetes"
     },
     "library-panels": {
-      "subtitle": "Reusable panels that can be added to multiple dashboards",
-      "title": "Library panels"
+      "subtitle": "여러 대시보드에 추가할 수 있는 재사용 가능한 패널",
+      "title": "라이브러리 패널"
     },
     "machine-learning": {
       "title": "Machine learning"
@@ -1749,8 +1749,8 @@
       "title": "기본 설정"
     },
     "playlists": {
-      "subtitle": "Groups of dashboards that are displayed in a sequence",
-      "title": "Playlists"
+      "subtitle": "시퀀스에 표시되는 대시보드 그룹",
+      "title": "플레이리스트"
     },
     "plugins": {
       "subtitle": "플러그인을 통해 Grafana 기능 확장",
@@ -1773,7 +1773,7 @@
       "title": "Profiles"
     },
     "public": {
-      "title": "Public dashboards"
+      "title": "공개 대시보드"
     },
     "recently-deleted": {
       "subtitle": "Any items listed here for more than 30 days will be automatically deleted.",
@@ -1816,8 +1816,8 @@
       "title": "SLO"
     },
     "snapshots": {
-      "subtitle": "Interactive, publically available, point-in-time representations of dashboards and panels",
-      "title": "Snapshots"
+      "subtitle": "대시보드와 패널의 특정 시점 상태를 대중에게 공개하여 상호작용할 수 있는 형태로 제공",
+      "title": "스냅샷"
     },
     "starred": {
       "title": "즐겨찾기"
@@ -1864,10 +1864,10 @@
       "tv-alert": "Press ESC to exit kiosk mode"
     },
     "megamenu": {
-      "close": "Close menu",
+      "close": "메뉴 닫기",
       "dock": "Dock menu",
       "list-label": "Navigation",
-      "open": "Open menu",
+      "open": "메뉴 열기",
       "undock": "Undock menu"
     },
     "toolbar": {
@@ -1932,22 +1932,22 @@
   "playlist-edit": {
     "error-prefix": "Error loading playlist:",
     "form": {
-      "add-tag-label": "Add by tag",
+      "add-tag-label": "태그로 추가",
       "add-tag-placeholder": "Select a tag",
-      "add-title-label": "Add by title",
-      "cancel": "Cancel",
-      "heading": "Add dashboards",
-      "interval-label": "Interval",
+      "add-title-label": "제목으로 추가",
+      "cancel": "취소",
+      "heading": "대시보드 추가",
+      "interval-label": "인터벌",
       "interval-placeholder": "5m",
       "interval-required": "Interval is required",
-      "name-label": "Name",
+      "name-label": "이름",
       "name-placeholder": "Name",
       "name-required": "Name is required",
       "save": "저장",
       "table-delete": "Delete playlist item",
       "table-drag": "Drag and drop to reorder",
-      "table-empty": "Playlist is empty. Add dashboards below.",
-      "table-heading": "Dashboards"
+      "table-empty": "플레이리스트가 비어 있습니다. 아래에 대시보드를 추가하세요.",
+      "table-heading": "대시보드"
     },
     "sub-title": "A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build situational awareness, or just show off your metrics to your team or visitors.",
     "title": "Edit playlist"
@@ -1960,16 +1960,16 @@
       "tooltip": "Share playlist"
     },
     "create-button": {
-      "title": "New playlist"
+      "title": "새 플레이리스트"
     },
     "delete-modal": {
       "body": "Are you sure you want to delete {{name}} playlist?",
       "confirm-text": "Delete"
     },
     "empty": {
-      "button": "Create playlist",
-      "pro-tip": "You can use playlists to cycle dashboards on TVs without user control. <2>Learn more</2>",
-      "title": "There are no playlists created yet"
+      "button": "플레이리스트 생성",
+      "pro-tip": "플레이리스트를 사용하면 사용자 제어 없이 TV에서 대시보드를 순환하며 표시할 수 있습니다. <2>Learn more</2>",
+      "title": "아직 생성된 플레이리스트가 없습니다"
     }
   },
   "playlists": {
@@ -2017,29 +2017,29 @@
   },
   "profile": {
     "change-password": {
-      "cancel-button": "Cancel",
-      "cannot-change-password-message": "Password cannot be changed here.",
+      "cancel-button": "취소",
+      "cannot-change-password-message": "비밀번호는 여기서 변경할 수 없습니다.",
       "change-password-button": "비밀번호 변경",
       "confirm-password-label": "비밀번호 확인",
-      "confirm-password-required": "New password confirmation is required",
+      "confirm-password-required": "새 비밀번호 확인이 필요합니다",
       "ldap-auth-proxy-message": "You cannot change password when signed in with LDAP or auth proxy.",
       "new-password-label": "새로운 비밀번호",
-      "new-password-required": "New password is required",
-      "new-password-same-as-old": "New password can't be the same as the old one.",
-      "old-password-label": "Old password",
-      "old-password-required": "Old password is required",
-      "passwords-must-match": "Passwords must match",
-      "strong-password-validation-register": "Password does not comply with the strong password policy"
+      "new-password-required": "새로운 비밀번호가 필요합니다.",
+      "new-password-same-as-old": "새로운 비밀번호가 기존 비밀번호와 같을 수 없습니다.",
+      "old-password-label": "기존 비밀번호",
+      "old-password-required": "기존 비밀번호가 필요합니다",
+      "passwords-must-match": "비밀번호가 일치해야 합니다.",
+      "strong-password-validation-register": "비밀번호가 강력한 비밀번호 정책을 충족하지 않습니다"
     }
   },
   "public-dashboard": {
     "acknowledgment-checkboxes": {
-      "ack-title": "Before you make the dashboard public, acknowledge the following:",
-      "data-src-ack-desc": "Publishing currently only works with a subset of data sources*",
+      "ack-title": "대시보드를 공개하기 전에 다음 사항을 확인하세요:",
+      "data-src-ack-desc": "게시 기능은 현재 일부 데이터 소스에서만 작동합니다*",
       "data-src-ack-tooltip": "Learn more about public datasources",
-      "public-ack-desc": "Your entire dashboard will be public*",
+      "public-ack-desc": "전체 대시보드가 공개됩니다*",
       "public-ack-tooltip": "Learn more about public dashboards",
-      "usage-ack-desc": "Making a dashboard public will cause queries to run each time it is viewed, which may increase costs*",
+      "usage-ack-desc": "대시보드를 공개하면 조회 시마다 쿼리가 실행되어 비용이 증가할 수 있습니다*",
       "usage-ack-desc-tooltip": "Learn more about query caching"
     },
     "config": {
@@ -2067,9 +2067,9 @@
       "time-range-tooltip": "The shared dashboard uses the default time range settings of the dashboard"
     },
     "create-page": {
-      "generate-public-url-button": "Generate public URL",
-      "unsupported-features-desc": "Currently, we don’t support template variables or frontend data sources",
-      "welcome-title": "Welcome to public dashboards!"
+      "generate-public-url-button": "공개 URL 생성",
+      "unsupported-features-desc": "현재 템플릿 변수나 프론트엔드 데이터 소스를 지원하지 않습니다.",
+      "welcome-title": "공개 대시보드에 오신 것을 환영합니다!"
     },
     "delete-modal": {
       "revoke-body-text": "Are you sure you want to revoke this URL? The dashboard will no longer be public.",
@@ -2110,8 +2110,8 @@
       "unsupport-data-source-alert-readmore-link": "Read more about supported data sources",
       "unsupported-data-source-alert-desc": "There are data sources in this dashboard that are unsupported for public dashboards. Panels that use these data sources may not function properly: {{unsupportedDataSources}}.",
       "unsupported-data-source-alert-title": "Unsupported data sources",
-      "unsupported-template-variable-alert-desc": "This public dashboard may not work since it uses template variables",
-      "unsupported-template-variable-alert-title": "Template variables are not supported"
+      "unsupported-template-variable-alert-desc": "이 공개 대시보드는 템플릿 변수를 사용하므로 제대로 작동하지 않을 수 있습니다",
+      "unsupported-template-variable-alert-title": "템플릿 변수는 지원되지 않습니다"
     },
     "public-sharing": {
       "accept-button": "Accept",
@@ -2175,8 +2175,8 @@
       "view-button-tooltip": "View public dashboard"
     },
     "empty-state": {
-      "message": "You haven't created any public dashboards yet",
-      "more-info": "Create a public dashboard from any existing dashboard through the <1>Share</1> modal. <4>Learn more</4>"
+      "message": "아직 공개 대시보드를 생성하지 않았습니다",
+      "more-info": "공유 모달을 통해 기존 대시보드에서 공개 대시보드를 생성하세요. <4>Learn more</4>"
     },
     "toggle": {
       "pause-sharing-toggle-text": "Pause sharing"
@@ -2404,7 +2404,7 @@
   },
   "share-modal": {
     "dashboard": {
-      "title": "Share"
+      "title": "공유"
     },
     "embed": {
       "copy": "Copy to clipboard",
@@ -2414,69 +2414,69 @@
       "time-range": "Lock time range"
     },
     "export": {
-      "back-button": "Back to export config",
-      "cancel-button": "Cancel",
-      "info-text": "Export this dashboard.",
-      "save-button": "Save to file",
-      "share-externally-label": "Export for sharing externally",
-      "view-button": "View JSON"
+      "back-button": "내보내기 구성으로 돌아가기",
+      "cancel-button": "취소",
+      "info-text": "이 대시보드를 내보냅니다.",
+      "save-button": "파일로 저장",
+      "share-externally-label": "외부 공유를 위한 내보내기",
+      "view-button": "JSON 보기"
     },
     "library": {
       "info": "Create library panel."
     },
     "link": {
       "copy-link-button": "Copy",
-      "info-text": "Create a direct link to this dashboard or panel, customized with the options below.",
-      "link-url": "Link URL",
+      "info-text": "아래 옵션으로 맞춤화된 이 대시보드나 패널에 대한 직접 링크를 생성하세요.",
+      "link-url": "링크 URL",
       "render-alert": "Image renderer plugin not installed",
       "render-instructions": "To render a panel image, you must install the <2>Grafana image renderer plugin</2>. Please contact your Grafana administrator to install the plugin.",
       "rendered-image": "Direct link rendered image",
       "save-alert": "Dashboard is not saved",
       "save-dashboard": "To render a panel image, you must save the dashboard first.",
-      "shorten-url": "Shorten URL",
-      "time-range-description": "Transforms the current relative time range to an absolute time range",
-      "time-range-label": "Lock time range"
+      "shorten-url": "단축 URL",
+      "time-range-description": "현재 상대 시간 범위를 절대 시간 범위로 변환",
+      "time-range-label": "시간 범위 잠금"
     },
     "panel": {
       "title": "Share Panel"
     },
     "snapshot": {
-      "cancel-button": "Cancel",
-      "copy-link-button": "Copy",
-      "delete-button": "Delete snapshot.",
+      "cancel-button": "취소",
+      "copy-link-button": "복사",
+      "delete-button": "스냅샷 삭제.",
       "deleted-message": "The snapshot has been deleted. If you have already accessed it once, then it might take up to an hour before before it is removed from browser caches or CDN caches.",
       "expire": "Expire",
       "expire-day": "1 Day",
       "expire-hour": "1 Hour",
       "expire-never": "Never",
       "expire-week": "1 Week",
-      "info-text-1": "A snapshot is an instant way to share an interactive dashboard publicly. When created, we strip sensitive data like queries (metric, template, and annotation) and panel links, leaving only the visible metric data and series names embedded in your dashboard.",
-      "info-text-2": "Keep in mind, your snapshot <1>can be viewed by anyone</1> that has the link and can access the URL. Share wisely.",
-      "local-button": "Publish Snapshot",
-      "mistake-message": "Did you make a mistake? ",
-      "name": "Snapshot name",
+      "info-text-1": "스냅샷은 대시보드를 공개적으로 인터랙티브하게 공유하는 즉시 방법입니다. 생성되면 쿼리(메트릭, 템플릿, 주석)와 패널 링크와 같은 민감한 데이터는 제거하고, 대시보드에 포함된 표시된 메트릭 데이터와 시리즈 이름만 남깁니다.",
+      "info-text-2": "엑세스 링크를 가진 <1>누구나 스냅샷을 볼 수 있다</1>는 점을 명심하세요. 공유할 때 신중하게 결정하세요.",
+      "local-button": "스냅샷 게시",
+      "mistake-message": "돌아가기",
+      "name": "스냅샷 이름",
       "timeout": "Timeout (seconds)",
       "timeout-description": "You might need to configure the timeout value if it takes a long time to collect your dashboard metrics.",
-      "url-label": "Snapshot URL"
+      "url-label": "스냅샷 URL"
     },
     "tab-title": {
       "embed": "Embed",
-      "export": "Export",
+      "export": "내보내기",
       "library-panel": "Library panel",
-      "link": "Link",
+      "link": "링크",
       "panel-embed": "Embed",
-      "public-dashboard": "Public Dashboard",
+      "public-dashboard": "공개 대시보드",
       "public-dashboard-title": "Public dashboard",
-      "snapshot": "Snapshot"
+      "snapshot": "스냅샷"
     },
     "theme-picker": {
       "current": "Current",
       "dark": "Dark",
-      "field-name": "Theme",
+      "field-name": "테마",
       "light": "Light"
     },
     "view-json": {
-      "copy-button": "Copy to Clipboard"
+      "copy-button": "클립보드로 복사하기"
     }
   },
   "share-panel": {
@@ -2547,7 +2547,7 @@
       "update-organization-name-button": "조직 이름 수정",
       "home-dashboard-label": "홈 대시보드",
       "home-dashboard-placeholder": "기본 대시보드",
-      "locale-label": "언어",
+      "locale-label": "언어 (언어 변경은 개인 프로필 설정에서 변경 가능)",
       "locale-placeholder": "언어 선택",
       "theme-label": "인터페이스 테마",
       "week-start-label": "주(Week) 시작"
@@ -2580,11 +2580,11 @@
   },
   "snapshot": {
     "empty-state": {
-      "message": "You haven't created any snapshots yet",
-      "more-info": "You can create a snapshot of any dashboard through the <1>Share</1> modal. <4>Learn more</4>"
+      "message": "아직 생성된 스냅샷이 없습니다",
+      "more-info": "공유 모달에서 모든 대시보드의 스냅샷을 생성할 수 있습니다. <4>Learn more</4>"
     },
     "external-badge": "External",
-    "name-column-header": "Name",
+    "name-column-header": "이름",
     "share": {
       "cancel-button": "Cancel",
       "copy-link-button": "Copy link",
@@ -2605,7 +2605,7 @@
     "share-panel": {
       "info-alert": "A Grafana panel snapshot publicly shares a panel while removing sensitive data such as queries and panel links, leaving only visible metrics and series names. Anyone with the link can access the snapshot."
     },
-    "url-column-header": "Snapshot url",
+    "url-column-header": "스냅샷 url",
     "view-button": "View"
   },
   "tag-filter": {
@@ -2624,10 +2624,10 @@
   "time-picker": {
     "absolute": {
       "recent-title": "Recently used absolute ranges",
-      "title": "Absolute time range"
+      "title": "절대 시간 범위"
     },
     "calendar": {
-      "apply-button": "Apply time range",
+      "apply-button": "시간 범위 적용",
       "cancel-button": "Cancel",
       "close": "Close calendar",
       "next-month": "Next month",
@@ -2635,8 +2635,8 @@
       "select-time": "Select a time range"
     },
     "content": {
-      "empty-recent-list-docs": "<0><0>Read the documentation</0><1> to find out more about how to enter custom time ranges.</1></0>",
-      "empty-recent-list-info": "It looks like you haven't used this time picker before. As soon as you enter some time intervals, recently used intervals will appear here.",
+      "empty-recent-list-docs": "사용자 지정 시간 범위를 입력하는 방법에 대해 자세히 알아보십시오. 다음 시간 단위가 지원됩니다. : s (초), m (분), h (시), d (일), w (주), M (달), y (년)",
+      "empty-recent-list-info": "이 시간 선택기를 사용한 적이 없는 것 같습니다. 시간 간격을 입력하자마자 최근에 사용한 간격이 여기에 나타납니다.",
       "filter-placeholder": "Search quick ranges"
     },
     "copy-paste": {
@@ -2647,7 +2647,7 @@
       "tooltip-paste": "Paste time range"
     },
     "footer": {
-      "change-settings-button": "Change time settings",
+      "change-settings-button": "시간대 변경",
       "fiscal-year-option": "Fiscal year",
       "fiscal-year-start": "Fiscal year start month",
       "time-zone-option": "Time zone",
@@ -2657,10 +2657,10 @@
       "apply-button": "Apply time range",
       "default-error": "Please enter a past date or \"now\"",
       "fiscal-year": "Fiscal year",
-      "from-input": "From",
+      "from-input": "부터",
       "open-input-calendar": "Open calendar",
       "range-error": "\"From\" can't be after \"To\"",
-      "to-input": "To"
+      "to-input": "까지"
     },
     "range-picker": {
       "backwards-time-aria-label": "Move time range backwards",
@@ -2868,7 +2868,9 @@
       "save-no-changes": "저장할 변경 사항이 없음",
       "save-dashboard": "대시보드 저장",
       "save-dashboard-copy": "대시보드 복사본 저장",
-      "save-Provisioned-dashboard": "프로비저닝된 대시보드"
+      "save-Provisioned-dashboard": "프로비저닝된 대시보드",
+      "new-playlist": "새 플레이리스트",
+      "new-playlist-sub-title": "플레이리스트는 미리 선택된 대시보드 목록을 순환하며 보여줍니다. 이는 상황 인식을 높이거나 팀원이나 방문자에게 메트릭스를 시각적으로 보여주기에 좋은 방법입니다."
     },
     "alert": {
       "alert-rule": "경고 규칙",
