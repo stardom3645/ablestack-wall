@@ -2845,7 +2845,9 @@
       "submit": "Submit",
       "skip": "Skip",
       "type": "Type",
-      "sort": "Sort"
+      "sort": "Sort",
+      "organizations": "Organizations",
+      "permissions": "Permissions"
     },
     "login": {
       "reset-password": "Reset password",
@@ -2870,7 +2872,11 @@
       "save-dashboard-copy": "Save dashboard copy",
       "save-Provisioned-dashboard": "Provisioned dashboard",
       "new-playlist": "New playlist",
-      "new-playlist-sub-title": "A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build situational awareness, or just show off your metrics to your team or visitors."
+      "new-playlist-sub-title": "A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build situational awareness, or just show off your metrics to your team or visitors.",
+      "remove-panel-title": "Remove panel",
+      "remove-panel-text": "Are you sure you want to remove this panel?",
+      "import-dashboard": "Import dashboard",
+      "import-dashboard-sustitle": "Import dashboard from file or Grafana.com"
     },
     "alert": {
       "alert-rule": "Alert rules",
@@ -2943,7 +2949,8 @@
     "connections": {
       "add-datasource": "Add data source",
       "add-datasource-description": "Choose a data source type",
-      "add-datasource-search-bar": "Filter by name or type"
+      "add-datasource-search-bar": "Filter by name or type",
+      "delete-datasource-text": "Are you sure you want to delete the {{name}} data source?"
     },
     "administration": {
       "general": {
@@ -2978,7 +2985,8 @@
         "confirm-preferences-update": "Confirm preferences update",
         "confirm-preferences-update-text": "This will update the preferences for the whole organization. Are you sure you want to update the preferences?",
         "confirm-delete-org": "Are you sure you want to delete {{orgName}}?",
-        "confirm-sub-delete-org": "All dashboards for this organization will be removed!"
+        "confirm-sub-delete-org": "All dashboards for this organization will be removed!",
+        "type-delete-confirm": "Type \"Delete\" to confirm"
       },
       "plugins": {
         "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to",
@@ -3006,7 +3014,16 @@
         "team-details": "Team details",
         "team-email-description-gravatar": "This is optional and is primarily used to set the team profile avatar (via gravatar service).",
         "add-member": "Add member",
-        "no-members": "There are no members in this team or you do not have the permissions to list the current members."
+        "no-members": "There are no members in this team or you do not have the permissions to list the current members.",
+        "managed": "Managed",
+        "manage-settings-individual-user-subtitle": "Manage settings for an individual user",
+        "delete-user": "Delete user",
+        "enable-user": "Enable user",
+        "disable-user": "Disable user",
+        "delete-user-body": "Are you sure you want to delete this user?",
+        "disable-user-body": "Are you sure you want to delete this user?",
+        "add-user-organization": "Add user to organization",
+        "force-logout-all-devices": "Force logout from all devices"
       },
       "manage-auth": "Manage your auth settings and configure single sign-on.",
       "manage-auth-findout": "Manage your auth settings and configure single sign-on. Find out more in our"

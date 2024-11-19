@@ -15,10 +15,10 @@
       "permission": "권한"
     },
     "permissions": {
-      "add-label": "Add a permission",
-      "no-permissions": "There are no permissions",
-      "permissions-change-warning": "This will change permissions for this folder and all its descendants. In total, this will affect:",
-      "role": "Role",
+      "add-label": "권한 추가",
+      "no-permissions": "권한이 존재하지 않습니다.",
+      "permissions-change-warning": "이 작업은 이 폴더와 모든 하위 항목의 권한을 변경합니다. 총 영향을 받는 항목은 다음과 같습니다.:",
+      "role": "역할",
       "serviceaccount": "Service Account",
       "team": "Team",
       "title": "Permissions",
@@ -310,27 +310,27 @@
   },
   "browse-dashboards": {
     "action": {
-      "cancel-button": "Cancel",
-      "cannot-move-folders": "Folders cannot be moved",
+      "cancel-button": "취소",
+      "cannot-move-folders": "폴더를 이동할 수 없습니다",
       "confirmation-text": "Delete",
-      "delete-button": "Delete",
-      "delete-modal-invalid-text": "One or more folders contain library panels or alert rules. Delete these first in order to proceed.",
-      "delete-modal-invalid-title": "Cannot delete folder",
-      "delete-modal-restore-dashboards-text": "This action will delete the selected folders immediately but the selected dashboards will be marked for deletion in 30 days. Your organization administrator can restore the dashboards anytime before the 30 days expire. Folders cannot be restored.",
-      "delete-modal-text": "This action will delete the following content:",
-      "delete-modal-title": "Delete",
-      "deleting": "Deleting...",
-      "manage-permissions-button": "Manage permissions",
-      "move-button": "Move",
-      "move-modal-alert": "Moving this item may change its permissions.",
-      "move-modal-field-label": "Folder name",
-      "move-modal-text": "This action will move the following content:",
-      "move-modal-title": "Move",
-      "moving": "Moving...",
-      "new-folder-name-required-phrase": "Folder name is required."
+      "delete-button": "삭제",
+      "delete-modal-invalid-text": "하나 이상의 폴더에 라이브러리 패널 또는 알림 규칙이 포함되어 있습니다. 계속 진행하려면 먼저 이를 삭제해야 합니다.",
+      "delete-modal-invalid-title": "폴더를 삭제할 수 없습니다",
+      "delete-modal-restore-dashboards-text": "이 작업은 선택한 폴더를 즉시 삭제하지만, 선택한 대시보드는 30일 후 삭제 예정으로 표시됩니다. 조직 관리자만이 30일이 만료되기 전 언제든지 대시보드를 복원할 수 있습니다. 폴더는 복원할 수 없습니다.",
+      "delete-modal-text": "이 작업은 다음 콘텐츠를 삭제합니다:",
+      "delete-modal-title": "삭제",
+      "deleting": "삭제 중...",
+      "manage-permissions-button": "권한 관리",
+      "move-button": "이동",
+      "move-modal-alert": "이 항목을 이동하면 권한이 변경될 수 있습니다.",
+      "move-modal-field-label": "폴더 이름",
+      "move-modal-text": "이 작업은 다음 콘텐츠를 이동합니다:",
+      "move-modal-title": "이동",
+      "moving": "이동 중...",
+      "new-folder-name-required-phrase": "폴더 이름은 필수 항목입니다."
     },
     "actions": {
-      "button-to-recently-deleted": "Recently deleted"
+      "button-to-recently-deleted": "최근 삭제됨"
     },
     "counts": {
       "alertRule_one": "{{count}} alert rule",
@@ -354,15 +354,15 @@
     },
     "empty-state": {
       "button-title": "대시보드 생성",
-      "pro-tip": "Add/move dashboards to your folder at <2>Browse dashboards</2>",
+      "pro-tip": "대시보드를 <2>Browse dashboards</2>에서 폴더로 추가하거나 이동하세요",
       "title": "아직 대시보드가 생성되지 않았습니다",
-      "title-folder": "This folder doesn't have any dashboards yet"
+      "title-folder": "이 폴더에는 아직 대시보드가 없습니다"
     },
     "folder-actions-button": {
-      "delete": "Delete",
-      "folder-actions": "Folder actions",
-      "manage-permissions": "Manage permissions",
-      "move": "Move"
+      "delete": "삭제",
+      "folder-actions": "폴더 작업",
+      "manage-permissions": "권한 관리",
+      "move": "이동"
     },
     "folder-picker": {
       "accessible-label": "Select folder: {{ label }} currently selected",
@@ -377,14 +377,14 @@
       "success": "Dashboard {{name}} deleted"
     },
     "manage-folder-nav": {
-      "alert-rules": "Alert rules",
-      "dashboards": "Dashboards",
-      "panels": "Panels"
+      "alert-rules": "경고 규칙",
+      "dashboards": "대시보드",
+      "panels": "패널"
     },
     "new-folder-form": {
-      "cancel-label": "Cancel",
-      "create-label": "Create",
-      "name-label": "Folder name"
+      "cancel-label": "취소",
+      "create-label": "생성",
+      "name-label": "폴더 이름"
     },
     "no-results": {
       "clear": "검색 및 필터 지우기",
@@ -429,10 +429,10 @@
     }
   },
   "common": {
-    "apply": "Apply",
-    "cancel": "Cancel",
-    "clear": "Clear",
-    "close": "Close",
+    "apply": "적용",
+    "cancel": "취소",
+    "clear": "지우기",
+    "close": "닫기",
     "locale": {
       "default": "Default"
     },
@@ -661,22 +661,22 @@
   },
   "dashboard-import": {
     "file-dropzone": {
-      "primary-text": "Upload dashboard JSON file",
-      "secondary-text": "Drag and drop here or click to browse"
+      "primary-text": "대시보드 JSON 파일 업로드",
+      "secondary-text": "여기에 끌어다 놓거나 클릭하여 찾아보세요"
     },
     "form-actions": {
-      "cancel": "Cancel",
-      "load": "Load"
+      "cancel": "취소",
+      "load": "로드"
     },
     "gcom-field": {
-      "label": "Find and import dashboards for common applications at <1></1>",
-      "load-button": "Load",
-      "placeholder": "Grafana.com dashboard URL or ID",
-      "validation-required": "A Grafana dashboard URL or ID is required"
+      "label": "일반적인 애플리케이션에 대한 대시보드를 <1></1>에서 검색하고 가져오세요 <1></1>",
+      "load-button": "로드",
+      "placeholder": "Grafana.com 대시보드 URL 또는 ID",
+      "validation-required": "Grafana 대시보드 URL 또는 ID가 필요합니다"
     },
     "json-field": {
-      "label": "Import via dashboard JSON model",
-      "validation-required": "Need a dashboard JSON model"
+      "label": "대시보드 JSON 모델을 통해 가져오기",
+      "validation-required": "대시보드 JSON 모델이 필요합니다"
     }
   },
   "dashboard-links": {
@@ -1077,7 +1077,7 @@
       "open-shared-modal": "Open Panel Share Modal",
       "paste-time-range": "Paste time range",
       "refresh-all-panels": "Refresh all panels",
-      "remove-panel": "Remove Panel",
+      "remove-panel": "패널 삭제",
       "save-dashboard": "대시보드 저장",
       "show-all-shortcuts": "Show all keyboard shortcuts",
       "toggle-active-mode": "Toggle in-active / view mode",
@@ -1719,7 +1719,7 @@
       "title": "Machine learning"
     },
     "manage-folder": {
-      "subtitle": "Manage folder dashboards and permissions"
+      "subtitle": "폴더 대시보드 및 권한 관리"
     },
     "migrate-to-cloud": {
       "subtitle": "Copy configuration from your self-managed installation to a cloud stack",
@@ -2445,7 +2445,7 @@
       "copy-link-button": "복사",
       "delete-button": "스냅샷 삭제.",
       "deleted-message": "The snapshot has been deleted. If you have already accessed it once, then it might take up to an hour before before it is removed from browser caches or CDN caches.",
-      "expire": "Expire",
+      "expire": "만료",
       "expire-day": "1 Day",
       "expire-hour": "1 Hour",
       "expire-never": "Never",
@@ -2628,7 +2628,7 @@
     },
     "calendar": {
       "apply-button": "시간 범위 적용",
-      "cancel-button": "Cancel",
+      "cancel-button": "취소",
       "close": "Close calendar",
       "next-month": "Next month",
       "previous-month": "Previous month",
@@ -2845,7 +2845,9 @@
       "submit": "제출",
       "skip": "건너뛰기",
       "type": "유형",
-      "sort": "정렬"
+      "sort": "정렬",
+      "organizations": "조직",
+      "permissions": "권한"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2870,7 +2872,12 @@
       "save-dashboard-copy": "대시보드 복사본 저장",
       "save-Provisioned-dashboard": "프로비저닝된 대시보드",
       "new-playlist": "새 플레이리스트",
-      "new-playlist-sub-title": "플레이리스트는 미리 선택된 대시보드 목록을 순환하며 보여줍니다. 이는 상황 인식을 높이거나 팀원이나 방문자에게 메트릭스를 시각적으로 보여주기에 좋은 방법입니다."
+      "new-playlist-sub-title": "플레이리스트는 미리 선택된 대시보드 목록을 순환하며 보여줍니다. 이는 상황 인식을 높이거나 팀원이나 방문자에게 메트릭스를 시각적으로 보여주기에 좋은 방법입니다.",
+      "remove-panel-title": "패널 삭제",
+      "remove-panel-text": "이 패널을 정말로 삭제하시겠습니까?",
+      "remove-panel-yes": "삭제",
+      "import-dashboard": "대시보드 가져오기",
+      "import-dashboard-sustitle": "파일 또는 Grafana.com에서 대시보드 가져오기"
     },
     "alert": {
       "alert-rule": "경고 규칙",
@@ -2943,7 +2950,8 @@
     "connections": {
       "add-datasource": "데이터 소스 추가",
       "add-datasource-description": "데이터 소스 종류 선택",
-      "add-datasource-search-bar": "이름 또는 유형별 필터링"
+      "add-datasource-search-bar": "이름 또는 유형별 필터링",
+      "delete-datasource-text": "{{name}} 데이터 소스를 삭제하시겠습니까?"
     },
     "administration": {
       "general": {
@@ -2978,7 +2986,8 @@
         "confirm-preferences-update": "환경 설정 업데이트 확인",
         "confirm-preferences-update-text": "이 작업은 전체 조직의 환경 설정을 업데이트합니다. 정말로 환경 설정을 업데이트하시겠습니까?",
         "confirm-delete-org": "{{orgName}} 조직을 정말로 삭제하시겠습니까?",
-        "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!"
+        "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!",
+        "type-delete-confirm": "\"Delete\" 를 입력하여 삭제합니다."
       },
       "plugins": {
         "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요.",
@@ -3006,7 +3015,16 @@
         "team-details": "팀 세부사항",
         "team-email-description-gravatar": "이 항목은 선택 사항이며 주로 팀 프로필 아바타를 설정하는 데 사용됩니다 (gravatar 서비스를 사용).",
         "add-member": "구성원 추가",
-        "no-members": "이 팀에는 구성원이 없거나 현재 구성원을 표시할 권한이 없습니다."
+        "no-members": "이 팀에는 구성원이 없거나 현재 구성원을 표시할 권한이 없습니다.",
+        "managed": "관리됨",
+        "manage-settings-individual-user-subtitle": "개별 사용자 설정 관리",
+        "delete-user": "사용자 삭제",
+        "enable-user": "사용자 활성화",
+        "disable-user": "사용자 비활성화",
+        "delete-user-body": "이 사용자를 삭제하시겠습니까?",
+        "disable-user-body": "이 사용자를 비활성화하시겠습니까?",
+        "add-user-organization": "조직에 사용자 추가",
+        "force-logout-all-devices": "모든 디바이스에서 강제 로그아웃"
       },
       "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다.",
       "manage-auth-findout": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."

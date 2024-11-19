@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Input, Field } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
-import {t, Trans} from 'app/core/internationalization';
+import { Trans } from 'app/core/internationalization';
 
 interface UserDTO {
   name: string;
@@ -20,7 +20,11 @@ const pageNav: { subTitle: JSX.Element; icon: string; id: string; text: JSX.Elem
   icon: 'user',
   id: 'user-new',
   text: <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user">New user</Trans>,
-  subTitle: <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-description">Create a new Grafana user.</Trans>,
+  subTitle: (
+    <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-description">
+      Create a new Grafana user.
+    </Trans>
+  ),
 };
 
 const UserCreatePage = () => {
@@ -69,7 +73,9 @@ const UserCreatePage = () => {
               type="password"
             />
           </Field>
-          <Button type="submit"><Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-button">Create user</Trans></Button>
+          <Button type="submit">
+            <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-button">Create user</Trans>
+          </Button>
         </form>
       </Page.Contents>
     </Page>

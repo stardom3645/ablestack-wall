@@ -2,6 +2,7 @@ import { createRef, PureComponent } from 'react';
 
 import { ConfirmButton, ConfirmModal, Button, Stack } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
+import { t } from 'app/core/internationalization';
 import { formatDate } from 'app/core/internationalization/dates';
 import { AccessControlAction, UserSession } from 'app/types';
 
@@ -91,12 +92,12 @@ class BaseUserSessions extends PureComponent<Props, State> {
           <div>
             {canLogout && sessions.length > 0 && (
               <Button variant="secondary" onClick={this.showLogoutConfirmationModal} ref={this.forceAllLogoutButton}>
-                Force logout from all devices
+                {t('ablestack-wall.service-and-access.force-logout-all-devices', 'Force logout from all devices')}
               </Button>
             )}
             <ConfirmModal
               isOpen={showLogoutModal}
-              title="Force logout from all devices"
+              title={t('ablestack-wall.service-and-access.force-logout-all-devices', 'Force logout from all devices')}
               body="Are you sure you want to force logout from all devices?"
               confirmText="Force logout"
               onConfirm={this.onAllSessionsRevoke}

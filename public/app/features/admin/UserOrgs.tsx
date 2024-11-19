@@ -61,7 +61,7 @@ export class UserOrgs extends PureComponent<Props, State> {
     const canAddToOrg = contextSrv.hasPermission(AccessControlAction.OrgUsersAdd) && !isExternalUser;
     return (
       <div>
-        <h3 className="page-heading">Organizations</h3>
+        <h3 className="page-heading">{t('ablestack-wall.common-organizations', 'Organizations')}</h3>
         <Stack gap={1.5} direction="column">
           <table className="filter-table form-inline">
             <tbody>
@@ -81,7 +81,7 @@ export class UserOrgs extends PureComponent<Props, State> {
           <div>
             {canAddToOrg && (
               <Button variant="secondary" onClick={this.showOrgAddModal} ref={this.addToOrgButtonRef}>
-                Add user to organization
+                {t('ablestack-wall.service-and-access.add-user-organization', 'Add user to organization')}
               </Button>
             )}
           </div>
@@ -460,7 +460,7 @@ export function ChangeOrgButton({
         </>
       ) : (
         <ConfirmButton
-          confirmText={t("ablestack-wall.common.save", "Save")}
+          confirmText={t('ablestack-wall.common.save', 'Save')}
           onClick={onChangeRoleClick}
           onCancel={onCancelClick}
           onConfirm={onOrgRoleSave}

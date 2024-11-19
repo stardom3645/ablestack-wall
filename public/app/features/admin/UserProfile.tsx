@@ -83,7 +83,7 @@ export function UserProfile({
 
   return (
     <div>
-      <h3 className="page-heading">User information</h3>
+      <h3 className="page-heading">{t('ablestack-wall.service-and-access.user-information', 'User information')}</h3>
       <Stack direction="column" gap={1.5}>
         <div>
           <table className="filter-table form-inline">
@@ -124,13 +124,16 @@ export function UserProfile({
           {canDelete && (
             <>
               <Button variant="destructive" onClick={showDeleteUserModal(true)} ref={deleteUserRef}>
-                Delete user
+                {t('ablestack-wall.service-and-access.delete-user', 'Delete user')}
               </Button>
               <ConfirmModal
                 isOpen={showDeleteModal}
-                title="Delete user"
-                body="Are you sure you want to delete this user?"
-                confirmText="Delete user"
+                title={t('ablestack-wall.service-and-access.delete-user', 'Delete user')}
+                body={t(
+                  'ablestack-wall.service-and-access.delete-user-body',
+                  'Are you sure you want to delete this user?'
+                )}
+                confirmText={t('ablestack-wall.service-and-access.delete-user', 'Delete user')}
                 onConfirm={handleUserDelete}
                 onDismiss={showDeleteUserModal(false)}
               />
@@ -138,19 +141,22 @@ export function UserProfile({
           )}
           {user.isDisabled && canEnable && (
             <Button variant="secondary" onClick={handleUserEnable}>
-              Enable user
+              {t('ablestack-wall.service-and-access.enable-user', 'Enable user')}
             </Button>
           )}
           {!user.isDisabled && canDisable && (
             <>
               <Button variant="secondary" onClick={showDisableUserModal(true)} ref={disableUserRef}>
-                Disable user
+                {t('ablestack-wall.service-and-access.disable-user', 'Disable user')}
               </Button>
               <ConfirmModal
                 isOpen={showDisableModal}
-                title="Disable user"
-                body="Are you sure you want to disable this user?"
-                confirmText="Disable user"
+                title={t('ablestack-wall.service-and-access.disable-user', 'Disable user')}
+                body={t(
+                  'ablestack-wall.service-and-access.disable-user-body',
+                  'Are you sure you want to delete this user?'
+                )}
+                confirmText={t('ablestack-wall.service-and-access.disable-user', 'Disable user')}
                 onConfirm={handleUserDisable}
                 onDismiss={showDisableUserModal(false)}
               />
@@ -277,7 +283,7 @@ export class UserProfileRow extends PureComponent<UserProfileRowProps, UserProfi
         </td>
         <td>
           <ConfirmButton
-            confirmText={t("ablestack-wall.common.save", "Save")}
+            confirmText={t('ablestack-wall.common.save', 'Save')}
             onClick={this.onEditClick}
             onConfirm={this.onSave}
             onCancel={this.onCancelClick}
