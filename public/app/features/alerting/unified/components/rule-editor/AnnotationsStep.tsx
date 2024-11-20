@@ -187,7 +187,7 @@ const AnnotationsStep = () => {
                 append({ key: '', value: '' });
               }}
             >
-              Add custom annotation
+              {t('ablestack-wall.alert.add-custom-annotation', 'Add custom annotation')}
             </Button>
             {!selectedDashboard && (
               <Button type="button" variant="secondary" icon="dashboard" onClick={() => setShowPanelSelector(true)}>

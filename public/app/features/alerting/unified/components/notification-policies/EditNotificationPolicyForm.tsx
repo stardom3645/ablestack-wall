@@ -16,6 +16,7 @@ import {
   Switch,
   useStyles2,
 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import MuteTimingsSelector from 'app/features/alerting/unified/components/alertmanager-entities/MuteTimingsSelector';
 import { ContactPointSelector } from 'app/features/alerting/unified/components/notification-policies/ContactPointSelector';
 import { handleContactPointSelect } from 'app/features/alerting/unified/components/notification-policies/utils';
@@ -153,7 +154,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
           variant="secondary"
           type="button"
         >
-          Add matcher
+          {t('ablestack-wall.alert.add-matcher', 'Add matcher')}
         </Button>
       </Stack>
 

@@ -126,7 +126,7 @@ export function ToolbarActions({ dashboard }: Props) {
     render: () => (
       <ToolbarButton
         key="view-in-old-dashboard-button"
-        tooltip={t("ablestack-wall.common.switch-dashboard", "Switch to old dashboard page")}
+        tooltip={t('ablestack-wall.common.switch-dashboard', 'Switch to old dashboard page')}
         icon="apps"
         onClick={() => {
           locationService.partial({ scenes: false });
@@ -278,7 +278,7 @@ export function ToolbarActions({ dashboard }: Props) {
         icon="arrow-left"
         data-testid={selectors.components.NavToolbar.editDashboard.backToDashboardButton}
       >
-        {t("ablestack-wall.common.back-to-dashboard", "Back to dashboard")}
+        {t('ablestack-wall.common.back-to-dashboard', 'Back to dashboard')}
       </Button>
     ),
   });
@@ -299,7 +299,7 @@ export function ToolbarActions({ dashboard }: Props) {
         icon="arrow-left"
         data-testid={selectors.components.NavToolbar.editDashboard.backToDashboardButton}
       >
-        {t("ablestack-wall.common.back-to-dashboard", "Back to dashboard")}
+        {t('ablestack-wall.common.back-to-dashboard', 'Back to dashboard')}
       </Button>
     ),
   });
@@ -311,7 +311,7 @@ export function ToolbarActions({ dashboard }: Props) {
     render: () => (
       <Button
         key="share-dashboard-button"
-        tooltip={t("ablestack-wall.common.share-dashboard", "Share dashboard")}
+        tooltip={t('ablestack-wall.common.share-dashboard', 'Share dashboard')}
         size="sm"
         className={styles.buttonWithExtraMargin}
         fill="outline"
@@ -321,7 +321,7 @@ export function ToolbarActions({ dashboard }: Props) {
         }}
         data-testid={selectors.components.NavToolbar.shareDashboard}
       >
-        {t("ablestack-wall.common.share", "Share")}
+        {t('ablestack-wall.common.share', 'Share')}
       </Button>
     ),
   });
@@ -334,14 +334,14 @@ export function ToolbarActions({ dashboard }: Props) {
         onClick={() => {
           dashboard.onEnterEditMode();
         }}
-        tooltip={t("ablestack-wall.common.edit-dashboard", "Edit dashboard")}
+        tooltip={t('ablestack-wall.common.edit-dashboard', 'Edit dashboard')}
         key="edit"
         className={styles.buttonWithExtraMargin}
         variant={config.featureToggles.newDashboardSharingComponent ? 'secondary' : 'primary'}
         size="sm"
         data-testid={selectors.components.NavToolbar.editDashboard.editButton}
       >
-        {t("ablestack-wall.common.edit", "Edit")}
+        {t('ablestack-wall.common.edit', 'Edit')}
       </Button>
     ),
   });
@@ -387,14 +387,14 @@ export function ToolbarActions({ dashboard }: Props) {
         onClick={() => {
           dashboard.onOpenSettings();
         }}
-        tooltip={t("ablestack-wall.common.dashboard-setting", "Dashboard setting")}
+        tooltip={t('ablestack-wall.common.dashboard-setting', 'Dashboard setting')}
         fill="text"
         size="sm"
         key="settings"
         variant="secondary"
         data-testid={selectors.components.NavToolbar.editDashboard.settingsButton}
       >
-        {t("ablestack-wall.common.settings", "Settings")}
+        {t('ablestack-wall.common.settings', 'Settings')}
       </Button>
     ),
   });
@@ -405,14 +405,14 @@ export function ToolbarActions({ dashboard }: Props) {
     render: () => (
       <Button
         onClick={() => dashboard.exitEditMode({ skipConfirm: false })}
-        tooltip={t("ablestack-wall.common.exit-edit-tooltip", "Exits edit mode and discards unsaved changes")}
+        tooltip={t('ablestack-wall.common.exit-edit-tooltip', 'Exits edit mode and discards unsaved changes')}
         size="sm"
         key="discard"
         fill="text"
         variant="primary"
         data-testid={selectors.components.NavToolbar.editDashboard.exitButton}
       >
-        {t("ablestack-wall.common.exit-edit", "Exit edit")}
+        {t('ablestack-wall.common.exit-edit', 'Exit edit')}
       </Button>
     ),
   });
@@ -423,7 +423,11 @@ export function ToolbarActions({ dashboard }: Props) {
     render: () => (
       <Button
         onClick={editPanel?.onDiscard}
-        tooltip={editPanel?.state.isNewPanel ? 'Discard panel' : 'Discard panel changes'}
+        tooltip={
+          editPanel?.state.isNewPanel
+            ? 'Discard panel'
+            : t('ablestack-wall.dashboard.discard-panel-changes', 'Discard panel changes')
+        }
         size="sm"
         disabled={!isEditedPanelDirty}
         key="discard"
@@ -502,13 +506,13 @@ export function ToolbarActions({ dashboard }: Props) {
               dashboard.openSaveDrawer({});
             }}
             className={styles.buttonWithExtraMargin}
-            tooltip={t("ablestack-wall.common.save-change", "Save changes")}
+            tooltip={t('ablestack-wall.common.save-change', 'Save changes')}
             key="save"
             size="sm"
             variant={'primary'}
             data-testid={selectors.components.NavToolbar.editDashboard.saveButton}
           >
-            {t("ablestack-wall.common.save-dashboard", "Save-dashboard")}
+            {t('ablestack-wall.common.save-dashboard', 'Save-dashboard')}
           </Button>
         );
       }
@@ -521,12 +525,12 @@ export function ToolbarActions({ dashboard }: Props) {
               dashboard.openSaveDrawer({ saveAsCopy: true });
             }}
             className={styles.buttonWithExtraMargin}
-            tooltip={t("ablestack-wall.common.save-as-copy", "Save as copy")}
+            tooltip={t('ablestack-wall.common.save-as-copy', 'Save as copy')}
             key="save"
             size="sm"
             variant={isDirty ? 'primary' : 'secondary'}
           >
-            {t("ablestack-wall.common.save-as-copy", "Save as copy")}
+            {t('ablestack-wall.common.save-as-copy', 'Save as copy')}
           </Button>
         );
       }
@@ -535,14 +539,14 @@ export function ToolbarActions({ dashboard }: Props) {
       const menu = (
         <Menu>
           <Menu.Item
-            label={t("ablestack-wall.common.save", "Save")}
+            label={t('ablestack-wall.common.save', 'Save')}
             icon="save"
             onClick={() => {
               dashboard.openSaveDrawer({});
             }}
           />
           <Menu.Item
-            label={t("ablestack-wall.common.save-as-copy", "Save as copy")}
+            label={t('ablestack-wall.common.save-as-copy', 'Save as copy')}
             icon="copy"
             onClick={() => {
               dashboard.openSaveDrawer({ saveAsCopy: true });
@@ -562,7 +566,7 @@ export function ToolbarActions({ dashboard }: Props) {
             data-testid={selectors.components.NavToolbar.editDashboard.saveButton}
             variant={isDirty ? 'primary' : 'secondary'}
           >
-            {t("ablestack-wall.common.save-dashboard", "Save-dashboard")}
+            {t('ablestack-wall.common.save-dashboard', 'Save-dashboard')}
           </Button>
           <Dropdown overlay={menu}>
             <Button

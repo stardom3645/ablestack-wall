@@ -35,7 +35,11 @@ const getPageNav = (identifier?: RuleIdentifier, type?: RuleEditorPathParams['ty
       // this branch should never trigger actually, the type param isn't used when editing rules
       return { ...defaultPageNav, id: 'alert-rule-edit', text: 'Edit recording rule' };
     } else {
-      return { ...defaultPageNav, id: 'alert-rule-add', text: t("alerting.list-view.empty.new-recording-rule", "New recording rule") };
+      return {
+        ...defaultPageNav,
+        id: 'alert-rule-add',
+        text: t('alerting.list-view.empty.new-recording-rule', 'New recording rule'),
+      };
     }
   }
 
@@ -43,7 +47,11 @@ const getPageNav = (identifier?: RuleIdentifier, type?: RuleEditorPathParams['ty
     // keep this one ambiguous, don't mentiond a specific alert type here
     return { ...defaultPageNav, id: 'alert-rule-edit', text: 'Edit rule' };
   } else {
-    return { ...defaultPageNav, id: 'alert-rule-add', text: 'New alert rule' };
+    return {
+      ...defaultPageNav,
+      id: 'alert-rule-add',
+      text: t('ablestack-wall.alert.new-alert-rule', 'New alert rule'),
+    };
   }
 };
 

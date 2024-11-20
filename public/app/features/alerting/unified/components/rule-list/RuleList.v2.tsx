@@ -208,7 +208,7 @@ export function CreateAlertButton() {
         icon="plus"
         onClick={() => logInfo(LogMessages.alertRuleFromScratch)}
       >
-        New alert rule
+        {t('ablestack-wall.alert.new-alert-rule', 'New alert rule')}
       </LinkButton>
     );
   }

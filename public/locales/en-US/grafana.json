@@ -2847,7 +2847,10 @@
       "type": "Type",
       "sort": "Sort",
       "organizations": "Organizations",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "discard": "Discard",
+      "download": "Download",
+      "copy-code": "Copy code"
     },
     "login": {
       "reset-password": "Reset password",
@@ -2876,7 +2879,15 @@
       "remove-panel-title": "Remove panel",
       "remove-panel-text": "Are you sure you want to remove this panel?",
       "import-dashboard": "Import dashboard",
-      "import-dashboard-sustitle": "Import dashboard from file or Grafana.com"
+      "import-dashboard-sustitle": "Import dashboard from file or Grafana.com",
+      "explore-metrics": "Explore metrics",
+      "unsaved-changes": "Unsaved changes",
+      "save-changes": "Do you want to save your changes?",
+      "discard-panel-changes": "Discard panel changes",
+      "changed": "Dashboard changed",
+      "updated-by-another-session": "The dashboard has been updated by another session. Do you want to continue editing or discard your local changes?",
+      "continue-editing": "Continue editing",
+      "discard-local-changes": "Discard local changes"
     },
     "alert": {
       "alert-rule": "Alert rules",
@@ -2928,6 +2939,9 @@
       "give-a-name": "Give your {{namePlaceholder}} a name",
       "define-recording-rule": "Define recording rule",
       "define-recording-your-rule": "Define recording your rule",
+      "define-query-and-alert-condition": "Define query and alert condition",
+      "set-evaluation-behavior": "Set evaluation behavior",
+      "add-custom-annotation": "Add custom annotation",
       "select-data-source": "Select data source",
       "add-namespace-and-group": "Add namespace and group",
       "add-namespace-and-group-description": "Select the Namespace and Group for your recording rule.",
@@ -2944,7 +2958,12 @@
       "matching-labels": "Matching labels",
       "alerts-silenced": "Alerts silenced",
       "affected-alerts": "Affected alerts",
-      "add-matcher": "Add matcher"
+      "add-matcher": "Add matcher",
+      "no-alert-rules-linked": "There are no alert rules linked to this panel.",
+      "dashboard-must-be-saved": "Dashboard must be saved before alerts can be added.",
+      "no-query-alert-datasource": "Cannot create alerts from this panel because no query to an alerting capable datasource is found.",
+      "select-format-download": "Select the format and download the file or copy the contents to clipboard",
+      "save-silence": "Save silence"
     },
     "connections": {
       "add-datasource": "Add data source",

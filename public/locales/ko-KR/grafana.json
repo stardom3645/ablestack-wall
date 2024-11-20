@@ -36,7 +36,7 @@
   "alert-rule-form": {
     "evaluation-behaviour": {
       "description": {
-        "text": "Define how the alert rule is evaluated."
+        "text": "경고 규칙이 평가되는 방식을 정의합니다."
       },
       "info-help": {
         "text": "Define the alert behavior when the evaluation fails or the query returns no data."
@@ -57,8 +57,8 @@
   },
   "alerting": {
     "annotations": {
-      "description": "Add more context to your alert notifications.",
-      "title": "Configure notification message"
+      "description": "알림에 더 많은 맥락을 추가하세요.",
+      "title": "알림 메시지 구성"
     },
     "central-alert-history": {
       "details": {
@@ -152,7 +152,7 @@
           "title": "Data source-managed"
         },
         "grafanaManaged": {
-          "export-rules": "Export rules",
+          "export-rules": "규칙 내보내기",
           "loading": "Loading...",
           "new-recording-rule": "새 기록 규칙",
           "title": "Grafana-managed"
@@ -1589,7 +1589,7 @@
       "title": "Application"
     },
     "apps": {
-      "subtitle": "Wall 기능 확장하는 앱 플러그인",
+      "subtitle": "Wall 기능을 확장하는 앱 플러그인",
       "title": "더 많은 앱"
     },
     "authentication": {
@@ -1910,7 +1910,7 @@
       "edit": "편집",
       "explore": "탐색",
       "get-help": "Get help",
-      "hide-legend": "Hide legend",
+      "hide-legend": "범례 숨기기",
       "inspect": "검사",
       "inspect-data": "Data",
       "inspect-json": "Panel JSON",
@@ -1918,10 +1918,10 @@
       "new-alert-rule": "새 경고 규칙",
       "query": "쿼리",
       "remove": "삭제",
-      "replace-library-panel": "Replace library panel",
+      "replace-library-panel": "라이브러리 패널 교체",
       "share": "공유",
-      "show-legend": "Show legend",
-      "unlink-library-panel": "Unlink library panel",
+      "show-legend": "범례 표시",
+      "unlink-library-panel": "라이브러리 패널 연결 해제",
       "view": "보기"
     }
   },
@@ -2547,7 +2547,7 @@
       "update-organization-name-button": "조직 이름 수정",
       "home-dashboard-label": "홈 대시보드",
       "home-dashboard-placeholder": "기본 대시보드",
-      "locale-label": "언어 (언어 변경은 개인 프로필 설정에서 변경 가능)",
+      "locale-label": "언어 (메뉴 및 기능 언어 변경은 개인 프로필 설정에서 변경 가능)",
       "locale-placeholder": "언어 선택",
       "theme-label": "인터페이스 테마",
       "week-start-label": "주(Week) 시작"
@@ -2847,7 +2847,10 @@
       "type": "유형",
       "sort": "정렬",
       "organizations": "조직",
-      "permissions": "권한"
+      "permissions": "권한",
+      "discard": "폐기",
+      "download": "다운로드",
+      "copy-code": "코드 복사"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2877,7 +2880,15 @@
       "remove-panel-text": "이 패널을 정말로 삭제하시겠습니까?",
       "remove-panel-yes": "삭제",
       "import-dashboard": "대시보드 가져오기",
-      "import-dashboard-sustitle": "파일 또는 Grafana.com에서 대시보드 가져오기"
+      "import-dashboard-sustitle": "파일 또는 Grafana.com에서 대시보드 가져오기",
+      "explore-metrics": "메트릭 탐색",
+      "unsaved-changes": "저장되지 않은 변경 사항",
+      "save-changes": "변경 사항을 저장하시겠습니까?",
+      "discard-panel-changes": "패널 변경 사항 버리기",
+      "changed": "대시보드가 변경되었습니다.",
+      "updated-by-another-session": "다른 세션에서 대시보드가 업데이트되었습니다. 계속 편집할지, 로컬 변경 사항을 버릴지 선택하시겠습니까?",
+      "continue-editing": "편집 계속하기",
+      "discard-local-changes": "로컬 변경 사항 버리기"
     },
     "alert": {
       "alert-rule": "경고 규칙",
@@ -2922,13 +2933,16 @@
       "error-occurred-generating-preview-affected-alerts": "영향을 받은 경고의 미리보기를 생성하는 중 오류가 발생했습니다. 매처가 유효한지 확인하세요.",
       "search-by-label": "레이블로 검색",
       "custom-group-by": "사용자 지정 그룹 기준",
-      "group-by": "그룹 기준",
+      "group-by": "그룹화 기준",
       "notification-state": "알림 상태",
       "no-result": "결과 없음.",
       "no-rules-found": "규칙을 찾을 수 없습니다.",
       "give-a-name": "{{namePlaceholder}}에 이름을 지정하세요",
       "define-recording-rule": "기록 규칙 정의",
       "define-recording-your-rule": "기록 규칙을 정의하세요",
+      "define-query-and-alert-condition": "쿼리 및 경고 조건 정의",
+      "set-evaluation-behavior": "평가 동작 설정",
+      "add-custom-annotation": "사용자 지정 주석 추가",
       "select-data-source": "데이터 소스 선택",
       "add-namespace-and-group": "네임스페이스와 그룹 추가",
       "add-namespace-and-group-description": "기록 규칙을 위한 네임스페이스와 그룹을 선택하세요.",
@@ -2945,7 +2959,12 @@
       "matching-labels": "일치하는 레이블",
       "alerts-silenced": "사일런스 상태 경고",
       "affected-alerts": "영향을 받은 경고",
-      "add-matcher": "매처 추가"
+      "add-matcher": "매처 추가",
+      "no-alert-rules-linked": "이 패널에 연결된 경고 규칙이 없습니다.",
+      "dashboard-must-be-saved": "경고를 추가하기 전에 대시보드를 저장해야 합니다.",
+      "no-query-alert-datasource": "경고 기능이 가능한 데이터소스에 대한 쿼리가 없어 이 패널에서 경고를 생성할 수 없습니다.",
+      "select-format-download": "형식을 선택하고 파일을 다운로드하거나 내용을 클립보드에 복사하세요",
+      "save-silence": "사일런스 저장"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",

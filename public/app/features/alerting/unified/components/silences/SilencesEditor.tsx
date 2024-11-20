@@ -196,7 +196,7 @@ export const SilencesEditor = ({
           <div className={styles.silencePeriod}>
             <SilencePeriod />
             <Field
-              label={t("ablestack-wall.common.duration", "Duration")}
+              label={t('ablestack-wall.common.duration', 'Duration')}
               invalid={!!formState.errors.duration}
               error={
                 formState.errors.duration &&
@@ -218,7 +218,7 @@ export const SilencesEditor = ({
           <MatchersField required={Boolean(!ruleUid)} ruleUid={ruleUid} />
 
           <Field
-            label="Comment"
+            label={t('ablestack-wall.common.comment', 'Comment')}
             required
             error={formState.errors.comment?.message}
             invalid={!!formState.errors.comment}
@@ -253,9 +253,9 @@ export const SilencesEditor = ({
               Saving...
             </Button>
           )}
-          {!isLoading && <Button type="submit">Save silence</Button>}
+          {!isLoading && <Button type="submit">{t('ablestack-wall.alert.save-silence', 'Save silence')}</Button>}
           <LinkButton onClick={onCancelHandler} variant={'secondary'}>
-            Cancel
+            {t('ablestack-wall.common.cancel', 'Cancel')}
           </LinkButton>
         </Stack>
       </form>

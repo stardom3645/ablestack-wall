@@ -3,6 +3,7 @@ import { PromQuery } from '@grafana/prometheus';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { SceneTimeRangeState, VizPanel } from '@grafana/scenes';
 import { DataQuery, DataSourceRef } from '@grafana/schema';
+import { t } from 'app/core/internationalization';
 import { getQueryRunnerFor } from 'app/features/dashboard-scene/utils/utils';
 
 import { DashboardScene } from '../../dashboard-scene/scene/DashboardScene';
@@ -55,7 +56,7 @@ export async function addDataTrailPanelAction(dashboard: DashboardScene, panel: 
 
   if (subMenu.length > 0) {
     items.push({
-      text: 'Explore metrics',
+      text: t('ablestack-wall.dashboard.explore-metrics', 'Explore metrics'),
       iconClassName: 'code-branch',
       subMenu: getUnique(subMenu),
     });
@@ -103,7 +104,7 @@ function createCommonEmbeddedTrailStateProps(item: QueryMetric, dashboard: Dashb
 
   const commonProps = {
     scene: embeddedTrail,
-    title: 'Explore metrics',
+    title: t('ablestack-wall.dashboard.explore-metrics', 'Explore metrics'),
   };
 
   return commonProps;
