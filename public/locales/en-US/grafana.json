@@ -2858,7 +2858,10 @@
       "integration": "Integration",
       "addresses": "Addresses",
       "message": "Message",
-      "subject": "Subject"
+      "subject": "Subject",
+      "metrics": "Metrics",
+      "bookmarks": "Bookmarks",
+      "logs": "Logs"
     },
     "login": {
       "reset-password": "Reset password",
@@ -2896,6 +2899,10 @@
       "updated-by-another-session": "The dashboard has been updated by another session. Do you want to continue editing or discard your local changes?",
       "continue-editing": "Continue editing",
       "discard-local-changes": "Discard local changes"
+    },
+    "explore": {
+      "explore-metrics-info": "Explore your Prometheus-compatible metrics without writing a query",
+      "recent-metrics-explorations": "Recent metrics explorations"
     },
     "alert": {
       "alert-rule": "Alert rules",
