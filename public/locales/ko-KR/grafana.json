@@ -175,10 +175,10 @@
     },
     "policies": {
       "default-policy": {
-        "description": "All alert instances will be handled by the default policy if no other matching policies are found.",
-        "title": "Default policy"
+        "description": "다른 일치하는 정책이 없으면 모든 경고 인스턴스는 기본 정책에 의해 처리됩니다.",
+        "title": "기본 정책"
       },
-      "generated-policies": "Auto-generated policies",
+      "generated-policies": "자동 생성된 정책",
       "metadata": {
         "active-time": "Active when",
         "delivered-to": "Delivered to",
@@ -2654,7 +2654,7 @@
       "time-zone-selection": "Time zone selection"
     },
     "range-content": {
-      "apply-button": "Apply time range",
+      "apply-button": "시간 범위 적용",
       "default-error": "Please enter a past date or \"now\"",
       "fiscal-year": "Fiscal year",
       "from-input": "부터",
@@ -2850,7 +2850,15 @@
       "permissions": "권한",
       "discard": "폐기",
       "download": "다운로드",
-      "copy-code": "코드 복사"
+      "copy-code": "코드 복사",
+      "optional": "임의",
+      "settings-low": "설정",
+      "test": "테스트",
+      "duplicate": "복제",
+      "integration": "통합",
+      "addresses": "주소",
+      "message": "메시지",
+      "subject": "제목"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2921,7 +2929,7 @@
       "edit-alertmanager-configuration": "경고 관리자 구성 편집",
       "search-by-name-or-type": "이름 또는 유형으로 검색",
       "search-by-matchers": "매치되는 문자열로 검색",
-      "search-by-contact-point": "컨텍트 포인트로 검색",
+      "search-by-contact-point": "컨택트 포인트로 검색",
       "no-templates-defined": "정의된 템플릿이 없습니다.",
       "silence-alert-rule": "사일런스 경고 규칙",
       "silence-alert-rule-subtitle": "특정 경고 규칙의 알림을 중지하기 위해 사일런스를 구성합니다.",
@@ -2964,7 +2972,15 @@
       "dashboard-must-be-saved": "경고를 추가하기 전에 대시보드를 저장해야 합니다.",
       "no-query-alert-datasource": "경고 기능이 가능한 데이터소스에 대한 쿼리가 없어 이 패널에서 경고를 생성할 수 없습니다.",
       "select-format-download": "형식을 선택하고 파일을 다운로드하거나 내용을 클립보드에 복사하세요",
-      "save-silence": "사일런스 저장"
+      "save-silence": "사일런스 저장",
+      "update-contact-point": "컨택트 포인트 업데이트",
+      "add-contact-point-integration": "컨택트 포인트 통합 추가",
+      "save-contact-point": "컨택트 포인트 저장",
+      "notification-settings": "알림 설정",
+      "email-addresses-info": "여러 개의 이메일 주소를 \";\", \"\n\" 또는 \",\" 구분자를 사용하여 입력할 수 있습니다",
+      "single-email": "단일 이메일",
+      "send-single-email": "모든 수신자에게 단일 이메일을 보냅니다",
+      "optional-message-info": "선택적 메시지입니다. 템플릿을 사용하여 이 필드를 사용자화할 수 있습니다. 사용자 정의 메시지를 사용하면 기본 메시지가 대체됩니다"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",

@@ -84,7 +84,9 @@ export const CloudRules = ({ namespaces, expandAll }: Props) => {
       })}
 
       {!hasDataSourcesConfigured && <p>There are no Prometheus or Loki data sources configured.</p>}
-      {hasDataSourcesConfigured && !hasDataSourcesLoading && !hasNamespaces && <p>No rules found.</p>}
+      {hasDataSourcesConfigured && !hasDataSourcesLoading && !hasNamespaces && (
+        <p>{t('ablestack-wall.administration.alert.no-rules-found', 'No rules found.')}</p>
+      )}
       {!hasSomeResults && hasDataSourcesLoading && <Spinner size="xl" className={styles.spinner} />}
 
       <Pagination
@@ -141,7 +143,7 @@ export function CreateRecordingRuleButton() {
         icon="plus"
         variant="secondary"
       >
-        {t("alerting.list-view.empty.new-recording-rule", "New recording rule")}
+        {t('alerting.list-view.empty.new-recording-rule', 'New recording rule')}
       </LinkButton>
     );
   }

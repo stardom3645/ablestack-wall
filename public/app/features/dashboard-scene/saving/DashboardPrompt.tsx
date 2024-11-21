@@ -139,7 +139,7 @@ export const UnsavedChangesModal = ({ onDiscard, onDismiss, onSaveDashboardClick
         <Button variant="destructive" onClick={onDiscard}>
           {t('ablestack-wall.common.discard', 'Discard')}
         </Button>
-        <Button onClick={onSaveDashboardClick}>Save dashboard</Button>
+        <Button onClick={onSaveDashboardClick}>{t('ablestack-wall.dashboard.save-dashboard', 'Save dashboard')}</Button>
       </Modal.ButtonRow>
     </Modal>
   );
