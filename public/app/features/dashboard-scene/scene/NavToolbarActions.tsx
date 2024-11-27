@@ -435,7 +435,9 @@ export function ToolbarActions({ dashboard }: Props) {
         variant="destructive"
         data-testid={selectors.components.NavToolbar.editDashboard.discardChangesButton}
       >
-        {editPanel?.state.isNewPanel ? 'Discard panel' : 'Discard panel changes'}
+        {editPanel?.state.isNewPanel
+          ? 'Discard panel'
+          : t('ablestack-wall.dashboard.discard-panel-changes', 'Discard panel changes')}
       </Button>
     ),
   });

@@ -8,6 +8,7 @@ import { AppEvents, GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { AsyncSelect, Box, Button, Field, Input, Label, Modal, Stack, Text, useStyles2 } from '@grafana/ui';
 import appEvents from 'app/core/app_events';
+import { t } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
 import { createFolder } from 'app/features/manage-dashboards/state/actions';
 import { AccessControlAction } from 'app/types';
@@ -396,7 +397,10 @@ function EvaluationGroupCreationModal({
             label={
               <Label
                 htmlFor={evaluationGroupNameId}
-                description="A group evaluates all its rules over the same evaluation interval."
+                description={t(
+                  'ablestack-wall.alert.evaluation-group-description',
+                  'A group evaluates all its rules over the same evaluation interval.'
+                )}
               >
                 Evaluation group name
               </Label>

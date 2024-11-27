@@ -2,10 +2,11 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
+import { NavModelItem } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { Button, Input, Field } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
-import { Trans } from 'app/core/internationalization';
+import { Trans, t } from 'app/core/internationalization';
 
 interface UserDTO {
   name: string;
@@ -16,15 +17,11 @@ interface UserDTO {
 
 const createUser = async (user: UserDTO) => getBackendSrv().post('/api/admin/users', user);
 
-const pageNav: { subTitle: JSX.Element; icon: string; id: string; text: JSX.Element } = {
+const pageNav: NavModelItem = {
   icon: 'user',
   id: 'user-new',
-  text: <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user">New user</Trans>,
-  subTitle: (
-    <Trans i18nKey="ablestack-wall.administration.service-and-access.new-user-description">
-      Create a new Grafana user.
-    </Trans>
-  ),
+  text: t('ablestack-wall.administration.service-and-access.new-user', 'New user'),
+  subTitle: t('ablestack-wall.administration.service-and-access.new-user-description', 'Create a new Grafana user.'),
 };
 
 const UserCreatePage = () => {

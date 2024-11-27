@@ -1664,6 +1664,9 @@
     "explore": {
       "title": "Explore"
     },
+    "metrics": {
+      "title": "Metrics"
+    },
     "frontend": {
       "subtitle": "Gain real user monitoring insights",
       "title": "Frontend"
@@ -2861,7 +2864,16 @@
       "subject": "Subject",
       "metrics": "Metrics",
       "bookmarks": "Bookmarks",
-      "logs": "Logs"
+      "logs": "Logs",
+      "summary": "Summary",
+      "instances": "Instances",
+      "labels": "Labels",
+      "created": "Created",
+      "export": "Export",
+      "more": "More",
+      "view-panel": "View panel",
+      "folder": "Folder",
+      "namespace": "Namespace"
     },
     "login": {
       "reset-password": "Reset password",
@@ -2898,11 +2910,15 @@
       "changed": "Dashboard changed",
       "updated-by-another-session": "The dashboard has been updated by another session. Do you want to continue editing or discard your local changes?",
       "continue-editing": "Continue editing",
-      "discard-local-changes": "Discard local changes"
+      "discard-local-changes": "Discard local changes",
+      "discard-dashboard-changes": "Discard changes to dashboard?",
+      "unsaved-dashboard-changes": "You have unsaved changes to this dashboard. Are you sure you want to discard them?"
     },
     "explore": {
       "explore-metrics-info": "Explore your Prometheus-compatible metrics without writing a query",
-      "recent-metrics-explorations": "Recent metrics explorations"
+      "recent-metrics-explorations": "Recent metrics explorations",
+      "new-metric-exploration": "New metric exploration",
+      "select-metric": "Select metric"
     },
     "alert": {
       "alert-rule": "Alert rules",
@@ -2987,7 +3003,52 @@
       "single-email": "Single email",
       "send-single-email": "Send a single email to all recipients",
       "optional-message-info": "Optional message. You can use templates to customize this field. Using a custom message will replace the default message",
-      "optional-subject-info": "Optional subject. You can use templates to customize this field"
+      "optional-subject-info": "Optional subject. You can use templates to customize this field",
+      "link-dashboard-panel": "Link dashboard and panel",
+      "delete-rule": "Delete rule",
+      "delete-rule-warning": "Deleting this rule will permanently remove it from your alert rule list. Are you sure you want to delete this rule?",
+      "confirm-delete": "Yes, delete",
+      "next-evaluation": "Next evaluation",
+      "go-to-dashboard": "Go to dashboard",
+      "go-to-panel": "Go to panel",
+      "show-state-history": "Show state history",
+      "evaluate": "Evaluate",
+      "pending-period": "Pending period",
+      "last-evaluation": "Last evaluation",
+      "evaluation-time": "Evaluation time",
+      "dashboard-uid": "Dashboard UID",
+      "panel-id": "Panel ID",
+      "pause-evaluation": "Pause evaluation",
+      "resume-evaluation": "Resume evaluation",
+      "silence-notifications": "Silence notifications",
+      "copy-link": "Copy link",
+      "edit-rule-group": "Edit rule group",
+      "reorder-group": "Reorder group",
+      "go-to-folder": "Go to folder",
+      "export-rule-folder": "Export rule folder",
+      "manage-permissions": "Manage permissions",
+      "export-rule-group": "Export rule group",
+      "delete-rule-group": "Delete rule group",
+      "reorder-rules": "Reorder rules",
+      "query-and-conditions": "Query and conditions",
+      "instances": "Instances",
+      "history": "History",
+      "details": "Details",
+      "view-in-explore": "View in Explore",
+      "dashboard-and-panel": "Dashboard and panel",
+      "evaluation-interval": "Evaluation interval",
+      "edit-evaluation-group": "Edit evaluation group",
+      "folder": "Folder",
+      "evaluation-group": "Evaluation group",
+      "evaluation-group-description": "A group evaluates all its rules over the same evaluation interval.",
+      "evaluation-interval-description": "How often is the rule evaluated. Applies to every rule within the group.",
+      "rule-list": "List of rules that belong to this group",
+      "eval-column-description": "#Eval column represents the number of evaluations needed before alert starts firing.",
+      "alert": "Alert",
+      "pending-period": "Pending period",
+      "eval-column": "#Eval",
+      "edit-namespace-or-evaluation-group": "Edit namespace or evaluation group",
+      "declare-incident": "Declare incident"
     },
     "connections": {
       "add-datasource": "Add data source",

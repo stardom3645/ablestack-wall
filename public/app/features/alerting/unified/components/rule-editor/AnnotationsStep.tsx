@@ -191,7 +191,7 @@ const AnnotationsStep = () => {
             </Button>
             {!selectedDashboard && (
               <Button type="button" variant="secondary" icon="dashboard" onClick={() => setShowPanelSelector(true)}>
-                Link dashboard and panel
+                {t('ablestack-wall.alert.link-dashboard-panel', 'Link dashboard and panel')}
               </Button>
             )}
           </div>

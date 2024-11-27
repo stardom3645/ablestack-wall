@@ -38,6 +38,7 @@ import { VariablesChanged } from 'app/features/variables/types';
 import { DashboardDTO, DashboardMeta, KioskMode, SaveDashboardResponseDTO } from 'app/types';
 import { ShowConfirmModalEvent } from 'app/types/events';
 
+import { t } from '../../../core/internationalization';
 import { PanelEditor } from '../panel-edit/PanelEditor';
 import { DashboardSceneChangeTracker } from '../saving/DashboardSceneChangeTracker';
 import { SaveDashboardDrawer } from '../saving/SaveDashboardDrawer';
@@ -308,7 +309,8 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
         title: 'Discard changes to dashboard?',
         text: `You have unsaved changes to this dashboard. Are you sure you want to discard them?`,
         icon: 'trash-alt',
-        yesText: 'Discard',
+        yesText: t('ablestack-wall.common.discard', 'Discard'),
+        noText: t('ablestack-wall.common.cancel', 'Cancel'),
         onConfirm: () => {
           this.exitEditModeConfirmed();
           this._scopesFacade?.exitReadOnly();

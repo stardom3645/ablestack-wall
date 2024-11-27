@@ -61,6 +61,8 @@ export function getNavTitle(navId: string | undefined) {
       return t('nav.scenes.title', 'Scenes');
     case 'explore':
       return t('nav.explore.title', 'Explore');
+    case 'explore/metrics':
+      return t('nav.metric.title', 'Metrics');
     case 'alerting':
       return t('nav.alerting.title', 'Alerting');
     case 'plugin-page-grafana-oncall-app':

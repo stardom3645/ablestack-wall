@@ -66,7 +66,7 @@ export class DataTrailsHome extends SceneObjectBase<DataTrailsHomeState> {
       <div className={styles.container}>
         <Stack direction={'column'} gap={1} alignItems={'start'}>
           <Button icon="plus" size="md" variant="primary" onClick={model.onNewMetricsTrail}>
-            New metric exploration
+            {t('ablestack-wall.explore.new-metric-exploration', 'New metric exploration')}
           </Button>
         </Stack>
 
