@@ -51,10 +51,12 @@ export const DeclareIncidentMenuItem = ({ title = '', severity = '', url = '' }:
       )}
       {installed === false && (
         <Tooltip content={'Grafana Incident is not installed or is not configured correctly'}>
-          <Menu.Item label="Declare incident" icon="fire" disabled />
+          <Menu.Item label={t('ablestack-wall.alert.declare-incident', 'Declare incident')} icon="fire" disabled />
         </Tooltip>
       )}
-      {settings && <Menu.Item label="Declare incident" url={bridgeURL} icon="fire" />}
+      {settings && (
+        <Menu.Item label={t('ablestack-wall.alert.declare-incident', 'Declare incident')} url={bridgeURL} icon="fire" />
+      )}
     </>
   );
 };

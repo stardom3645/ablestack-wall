@@ -54,7 +54,7 @@ export const RulesTable = ({
   rules,
   className,
   showGuidelines = false,
-  emptyMessage = t('ablestack-wall.administration.alert.no-rules-found', 'No rules found.'),
+  emptyMessage = t('ablestack-wall.alert.no-rules-found', 'No rules found.'),
   showGroupColumn = false,
   showSummaryColumn = false,
   showNextEvaluationColumn = false,

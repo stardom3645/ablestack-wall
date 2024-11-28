@@ -163,7 +163,7 @@ export const RulesGroup = React.memo(({ group, namespace, expandAll, viewMode }:
               data-testid="export-group"
               key="export-group"
               icon="download-alt"
-              tooltip={t('ablestack-wall.alert.delete-rule-group', 'Delete rule group')}
+              tooltip={t('ablestack-wall.alert.export-rule-group', 'Export rule group')}
               onClick={() => setIsExporting('group')}
             />
           );

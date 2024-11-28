@@ -32,17 +32,17 @@ import { MultipleDataSourcePicker } from '../MultipleDataSourcePicker';
 const ViewOptions: SelectableValue[] = [
   {
     icon: 'folder',
-    label: 'Grouped',
+    label: t('ablestack-wall.common.grouped', 'Grouped'),
     value: 'grouped',
   },
   {
     icon: 'list-ul',
-    label: 'List',
+    label: t('ablestack-wall.common.list', 'List'),
     value: 'list',
   },
   {
     icon: 'heart-rate',
-    label: 'State',
+    label: t('ablestack-wall.common.state', 'State'),
     value: 'state',
   },
 ];
@@ -167,7 +167,9 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
             label={
               <Label htmlFor="data-source-picker">
                 <Stack gap={0.5} alignItems="center">
-                  <span><Trans i18nKey="ablestack-wall.alert.search-by-data-sources">Search by data sources</Trans></span>
+                  <span>
+                    <Trans i18nKey="ablestack-wall.alert.search-by-data-sources">Search by data sources</Trans>
+                  </span>
                   <Tooltip
                     content={
                       <div>
@@ -206,7 +208,13 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
 
           <Field
             className={styles.dashboardPickerContainer}
-            label={<Label htmlFor="filters-dashboard-picker"><Trans i18nKey="nav.dashboards.title"><Trans i18nKey="ablestack-wall.common.dashboard">Dashboard</Trans></Trans></Label>}
+            label={
+              <Label htmlFor="filters-dashboard-picker">
+                <Trans i18nKey="nav.dashboards.title">
+                  <Trans i18nKey="ablestack-wall.common.dashboard">Dashboard</Trans>
+                </Trans>
+              </Label>
+            }
           >
             {/* The key prop is to clear the picker value */}
             {/* DashboardPicker doesn't do that itself when value is undefined */}
@@ -221,7 +229,9 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
           </Field>
 
           <div>
-            <Label><Trans i18nKey="ablestack-wall.common.state">State</Trans></Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.state">State</Trans>
+            </Label>
             <RadioButtonGroup
               options={RuleStateOptions}
               value={filterState.ruleState}
@@ -229,11 +239,15 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
             />
           </div>
           <div>
-            <Label><Trans i18nKey="ablestack-wall.common.rule-type">Rule type</Trans></Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.rule-type">Rule type</Trans>
+            </Label>
             <RadioButtonGroup options={RuleTypeOptions} value={filterState.ruleType} onChange={handleRuleTypeChange} />
           </div>
           <div>
-            <Label><Trans i18nKey="ablestack-wall.common.health">Health</Trans></Label>
+            <Label>
+              <Trans i18nKey="ablestack-wall.common.health">Health</Trans>
+            </Label>
             <RadioButtonGroup
               options={RuleHealthOptions}
               value={filterState.ruleHealth}
@@ -294,7 +308,9 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
                 label={
                   <Label htmlFor="rulesSearchInput">
                     <Stack gap={0.5} alignItems="center">
-                      <span><Trans i18nKey="ablestack-wall.common.search">Search</Trans></span>
+                      <span>
+                        <Trans i18nKey="ablestack-wall.common.search">Search</Trans>
+                      </span>
                       <PopupCard content={<SearchQueryHelp />}>
                         <Icon name="info-circle" size="sm" tabIndex={0} title="Search help" />
                       </PopupCard>
@@ -311,14 +327,16 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
                     searchQueryRef.current = e;
                   }}
                   {...rest}
-                  placeholder={t("ablestack-wall.common.search", "Search")}
+                  placeholder={t('ablestack-wall.common.search', 'Search')}
                   data-testid="search-query-input"
                 />
               </Field>
               <input type="submit" hidden />
             </form>
             <div>
-              <Label><Trans i18nKey="ablestack-wall.common.view-as">View as</Trans></Label>
+              <Label>
+                <Trans i18nKey="ablestack-wall.common.view-as">View as</Trans>
+              </Label>
               <RadioButtonGroup
                 options={ViewOptions}
                 value={queryParams.get('view') ?? ViewOptions[0].value}

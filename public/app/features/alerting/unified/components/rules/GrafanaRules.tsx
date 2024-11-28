@@ -114,7 +114,7 @@ export const GrafanaRules = ({ namespaces, expandAll }: Props) => {
         />
       ))}
       {hasResult && namespacesFormat?.length === 0 && (
-        <p>{t('ablestack-wall.administration.alert.no-rules-found', 'No rules found.')}</p>
+        <p>{t('ablestack-wall.alert.no-rules-found', 'No rules found.')}</p>
       )}
       {!hasResult && loading && <Spinner size="xl" className={styles.spinner} />}
       <Pagination

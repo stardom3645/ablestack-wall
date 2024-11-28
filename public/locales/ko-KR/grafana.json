@@ -78,8 +78,8 @@
           "alerting": "Alerting",
           "error": "Error",
           "no-data": "No data",
-          "normal": "Normal",
-          "pending": "Pending"
+          "normal": "정상",
+          "pending": "지연"
         },
         "state-transitions": "State transition",
         "unknown-event-state": "Unknown",
@@ -149,13 +149,13 @@
       },
       "section": {
         "dataSourceManaged": {
-          "title": "Data source-managed"
+          "title": "데이터 소스에서 관리됨"
         },
         "grafanaManaged": {
           "export-rules": "규칙 내보내기",
           "loading": "Loading...",
           "new-recording-rule": "새 기록 규칙",
-          "title": "Grafana-managed"
+          "title": "Wall에서 관리됨"
         }
       }
     },
@@ -2873,7 +2873,14 @@
       "more": "더보기",
       "view-panel": "패널 보기",
       "folder": "폴더",
-      "namespace": "네임스페이스"
+      "namespace": "네임스페이스",
+      "yes-delete": "예, 삭제",
+      "grouped": "그룹",
+      "list": "리스트",
+      "state": "상태",
+      "details": "상세 정보",
+      "changes": "변경 사항",
+      "full-json-diff": "전체 JSON 차이점"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -3031,6 +3038,7 @@
       "delete-rule-group": "규칙 그룹 삭제",
       "reorder-rules": "규칙 재정렬",
       "query-and-conditions": "쿼리 및 조건",
+      "instance": "인스턴스",
       "instances": "인스턴스",
       "history": "히스토리",
       "details": "상세 정보",
@@ -3048,7 +3056,15 @@
       "pending-period": "대기 기간",
       "eval-column": "#Eval",
       "edit-namespace-or-evaluation-group": "네임스페이스 또는 평가 그룹 편집",
-      "declare-incident": "문제 선언"
+      "declare-incident": "문제 선언",
+      "delete-rule": "규칙 삭제",
+      "delete-rule-confirmation": "이 규칙을 삭제하면 경고 규칙 목록에서 영구적으로 제거됩니다. 정말로 이 규칙을 삭제하시겠습니까?",
+      "firing": "경보 알림",
+      "pending": "보류 중",
+      "normal": "정상",
+      "rules": "개 규칙 존재",
+      "view-alert-rule": "경고 규칙 보기",
+      "hidden-by-filters": "필터로 인해 숨겨짐"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
@@ -3090,7 +3106,8 @@
         "confirm-preferences-update-text": "이 작업은 전체 조직의 환경 설정을 업데이트합니다. 정말로 환경 설정을 업데이트하시겠습니까?",
         "confirm-delete-org": "{{orgName}} 조직을 정말로 삭제하시겠습니까?",
         "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!",
-        "type-delete-confirm": "\"Delete\" 를 입력하여 삭제합니다."
+        "type-delete-confirm": "\"Delete\" 를 입력하여 삭제합니다.",
+        "type-to-confirm": "확인을 위해 \"{{confirmPromptText}}\" 를 입력하세요"
       },
       "plugins": {
         "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요.",

@@ -53,10 +53,14 @@ export class SaveDashboardDrawer extends SceneObjectBase<SaveDashboardDrawerStat
 
     const tabs = (
       <TabsBar>
-        <Tab label={'Details'} active={!showDiff} onChangeTab={() => model.setState({ showDiff: false })} />
+        <Tab
+          label={t('ablestack-wall.alert.details', 'Details')}
+          active={!showDiff}
+          onChangeTab={() => model.setState({ showDiff: false })}
+        />
         {changesCount > 0 && (
           <Tab
-            label={'Changes'}
+            label={t('ablestack-wall.alert.changes', 'Changes')}
             active={showDiff}
             onChangeTab={() => model.setState({ showDiff: true })}
             counter={changesCount}
@@ -65,11 +69,11 @@ export class SaveDashboardDrawer extends SceneObjectBase<SaveDashboardDrawerStat
       </TabsBar>
     );
 
-    let title = t("ablestack-wall.dashboard.save-dashboard", "Save dashboard");
+    let title = t('ablestack-wall.dashboard.save-dashboard', 'Save dashboard');
     if (saveAsCopy) {
-      title = t("ablestack-wall.dashboard.save-dashboard-copy", "Save dashboard copy");
+      title = t('ablestack-wall.dashboard.save-dashboard-copy', 'Save dashboard copy');
     } else if (isProvisioned) {
-      title = t("ablestack-wall.dashboard.save-Provisioned-dashboard", "Provisioned dashboard");
+      title = t('ablestack-wall.dashboard.save-Provisioned-dashboard', 'Provisioned dashboard');
     }
 
     const renderBody = () => {

@@ -242,7 +242,7 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
             disabled={isSubmitting}
           >
             {isSubmitting && <Spinner className={styles.buttonSpinner} inline={true} />}
-            {t("ablestack-wall.alert.save-rule", "Save rule")}
+            {t('ablestack-wall.alert.save-rule', 'Save rule')}
           </Button>
         )}
         <Button
@@ -253,14 +253,14 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
           disabled={isSubmitting}
         >
           {isSubmitting && <Spinner className={styles.buttonSpinner} inline={true} />}
-          {t("ablestack-wall.alert.save-rule-and-exit", "Save rule and exit")}
+          {t('ablestack-wall.alert.save-rule-and-exit', 'Save rule and exit')}
         </Button>
         <Button variant="secondary" disabled={isSubmitting} type="button" onClick={cancelRuleCreation} size="sm">
-          {t("ablestack-wall.common.cancel", "Cancel")}
+          {t('ablestack-wall.common.cancel', 'Cancel')}
         </Button>
         {existing ? (
           <Button fill="outline" variant="destructive" type="button" onClick={() => setShowDeleteModal(true)} size="sm">
-            {t("ablestack-wall.common.delete", "Delete")}
+            {t('ablestack-wall.common.delete', 'Delete')}
           </Button>
         ) : null}
         {existing && isCortexLokiOrRecordingRule(watch) && (
@@ -327,9 +327,12 @@ export const AlertRuleForm = ({ existing, prefill }: Props) => {
       {showDeleteModal ? (
         <ConfirmModal
           isOpen={true}
-          title="Delete rule"
-          body="Deleting this rule will permanently remove it. Are you sure you want to delete this rule?"
-          confirmText="Yes, delete"
+          title={t('ablestack-wall.alert.delete-rule', 'Delete rule')}
+          body={t(
+            'ablestack-wall.alert.delete-rule-confirmation',
+            'Deleting this rule will permanently remove it from your alert rule list. Are you sure you want to delete this rule?'
+          )}
+          confirmText={t('ablestack-wall.common.yes-delete', 'Yes, delete')}
           icon="exclamation-triangle"
           onConfirm={deleteRule}
           onDismiss={() => setShowDeleteModal(false)}

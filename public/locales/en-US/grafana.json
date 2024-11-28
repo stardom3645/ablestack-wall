@@ -2873,7 +2873,14 @@
       "more": "More",
       "view-panel": "View panel",
       "folder": "Folder",
-      "namespace": "Namespace"
+      "namespace": "Namespace",
+      "yes-delete": "Yes, delete",
+      "grouped": "Grouped",
+      "list": "List",
+      "state": "State",
+      "details": "Details",
+      "changes": "Changes",
+      "full-json-diff": "Full JSON diff"
     },
     "login": {
       "reset-password": "Reset password",
@@ -3031,6 +3038,7 @@
       "delete-rule-group": "Delete rule group",
       "reorder-rules": "Reorder rules",
       "query-and-conditions": "Query and conditions",
+      "instance": "Instance",
       "instances": "Instances",
       "history": "History",
       "details": "Details",
@@ -3048,7 +3056,15 @@
       "pending-period": "Pending period",
       "eval-column": "#Eval",
       "edit-namespace-or-evaluation-group": "Edit namespace or evaluation group",
-      "declare-incident": "Declare incident"
+      "declare-incident": "Declare incident",
+      "delete-rule": "Delete rule",
+      "delete-rule-confirmation": "Deleting this rule will permanently remove it from your alert rule list. Are you sure you want to delete this rule?",
+      "firing": "firing",
+      "pending": "pending",
+      "normal": "normal",
+      "rules": "Rules",
+      "view-alert-rule": "View alert rule",
+      "hidden-by-filters": "Hidden by filters"
     },
     "connections": {
       "add-datasource": "Add data source",
@@ -3090,7 +3106,8 @@
         "confirm-preferences-update-text": "This will update the preferences for the whole organization. Are you sure you want to update the preferences?",
         "confirm-delete-org": "Are you sure you want to delete {{orgName}}?",
         "confirm-sub-delete-org": "All dashboards for this organization will be removed!",
-        "type-delete-confirm": "Type \"Delete\" to confirm"
+        "type-delete-confirm": "Type \"Delete\" to confirm",
+        "type-to-confirm": "Type \"{{confirmPromptText}}\" to confirm"
       },
       "plugins": {
         "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to",
