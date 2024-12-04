@@ -2880,7 +2880,16 @@
       "state": "State",
       "details": "Details",
       "changes": "Changes",
-      "full-json-diff": "Full JSON diff"
+      "full-json-diff": "Full JSON diff",
+      "ok": "Ok",
+      "no-data": "No Data",
+      "error": "Error",
+      "copy-tags": "copyTags",
+      "folder": "Folder",
+      "description": "Description",
+      "title": "Title",
+      "confirm": "Confirm",
+      "discard-panel": "Discard panel"
     },
     "login": {
       "reset-password": "Reset password",
@@ -2919,7 +2928,9 @@
       "continue-editing": "Continue editing",
       "discard-local-changes": "Discard local changes",
       "discard-dashboard-changes": "Discard changes to dashboard?",
-      "unsaved-dashboard-changes": "You have unsaved changes to this dashboard. Are you sure you want to discard them?"
+      "unsaved-dashboard-changes": "You have unsaved changes to this dashboard. Are you sure you want to discard them?",
+      "save-current-variable-values-as-dashboard-default": "Save current variable values as dashboard default",
+      "save-current-time-range-as-dashboard-default": "Save current time range as dashboard default"
     },
     "explore": {
       "explore-metrics-info": "Explore your Prometheus-compatible metrics without writing a query",
@@ -3064,7 +3075,16 @@
       "normal": "normal",
       "rules": "Rules",
       "view-alert-rule": "View alert rule",
-      "hidden-by-filters": "Hidden by filters"
+      "hidden-by-filters": "Hidden by filters",
+      "all-data-sources": "All data sources",
+      "select-dashboard": "Select dashboard",
+      "active": "Active",
+      "suppressed": "Suppressed",
+      "unprocessed": "Unprocessed",
+      "alertmanager": "Alertmanager",
+      "choose-alertmanager": "Choose Alertmanager",
+      "alert": "Alert ",
+      "recording": "Recording "
     },
     "connections": {
       "add-datasource": "Add data source",
@@ -3107,7 +3127,11 @@
         "confirm-delete-org": "Are you sure you want to delete {{orgName}}?",
         "confirm-sub-delete-org": "All dashboards for this organization will be removed!",
         "type-delete-confirm": "Type \"Delete\" to confirm",
-        "type-to-confirm": "Type \"{{confirmPromptText}}\" to confirm"
+        "type-to-confirm": "Type \"{{confirmPromptText}}\" to confirm",
+        "uninstall": "Uninstall",
+        "uninstalling": "Uninstalling",
+        "add-new-data-source": "Add new data source",
+        "uninstall-plugin-confirmation": "Are you sure you want to uninstall this plugin?"
       },
       "plugins": {
         "connections": "Extend the Grafana experience with panel plugins and apps. To find more data sources go to",

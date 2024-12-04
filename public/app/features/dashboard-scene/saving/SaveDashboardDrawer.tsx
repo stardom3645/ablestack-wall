@@ -54,13 +54,13 @@ export class SaveDashboardDrawer extends SceneObjectBase<SaveDashboardDrawerStat
     const tabs = (
       <TabsBar>
         <Tab
-          label={t('ablestack-wall.alert.details', 'Details')}
+          label={t('ablestack-wall.common.details', 'Details')}
           active={!showDiff}
           onChangeTab={() => model.setState({ showDiff: false })}
         />
         {changesCount > 0 && (
           <Tab
-            label={t('ablestack-wall.alert.changes', 'Changes')}
+            label={t('ablestack-wall.common.changes', 'Changes')}
             active={showDiff}
             onChangeTab={() => model.setState({ showDiff: true })}
             counter={changesCount}

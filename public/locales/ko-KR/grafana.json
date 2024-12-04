@@ -366,11 +366,11 @@
     },
     "folder-picker": {
       "accessible-label": "Select folder: {{ label }} currently selected",
-      "button-label": "Select folder",
+      "button-label": "폴더 선택",
       "clear-selection": "Clear selection",
       "empty-message": "No folders found",
       "error-title": "Error loading folders",
-      "search-placeholder": "Search folders",
+      "search-placeholder": "폴더 검색",
       "unknown-error": "Unknown error"
     },
     "hard-delete": {
@@ -701,7 +701,7 @@
     "general": {
       "auto-refresh-description": "Define the auto refresh intervals that should be available in the auto refresh list. Use the format '5s' for seconds, '1m' for minutes, '1h' for hours, and '1d' for days (e.g.: '5s,10s,30s,1m,5m,15m,30m,1h,2h,1d').",
       "auto-refresh-label": "Auto refresh",
-      "description-label": "Description",
+      "description-label": "설명",
       "editable-description": "Set to read-only to disable all editing. Reload the dashboard for changes to take effect",
       "editable-label": "Editable",
       "folder-label": "Folder",
@@ -712,7 +712,7 @@
       "panels-preload-label": "Preload panels",
       "tags-label": "Tags",
       "title": "General",
-      "title-label": "Title"
+      "title-label": "제목"
     },
     "json-editor": {
       "save-button": "Save changes",
@@ -1107,7 +1107,7 @@
       "description": "Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a new query. Click refresh button below to trigger a new query.",
       "expand-all": "Expand all",
       "no-data": "No request and response collected yet. Hit refresh button",
-      "refresh": "Refresh"
+      "refresh": "새로고침"
     }
   },
   "ldap-drawer": {
@@ -1537,7 +1537,7 @@
       "title": "Alert rules"
     },
     "alerting": {
-      "subtitle": "시스템에서 문제가 발생한 직후 문제에 대해 알아보기",
+      "subtitle": "시스템 문제 발생 직후 이에 대해 파악하기",
       "title": "경고"
     },
     "alerting-admin": {
@@ -1553,7 +1553,7 @@
     },
     "alerting-groups": {
       "subtitle": "활성화된 알림이 있는 그룹화된 경고 확인",
-      "title": "알림 활성"
+      "title": "활성화된 알림"
     },
     "alerting-home": {
       "title": "Home"
@@ -2880,7 +2880,16 @@
       "state": "상태",
       "details": "상세 정보",
       "changes": "변경 사항",
-      "full-json-diff": "전체 JSON 차이점"
+      "full-json-diff": "전체 JSON 차이점",
+      "ok": "확인",
+      "no-data": "데이터 없음",
+      "error": "오류",
+      "copy-tags": "태그 복사",
+      "folder": "폴더",
+      "description": "설명",
+      "title": "제목",
+      "confirm": "확인",
+      "discard-panel": "패널 삭제"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2920,7 +2929,10 @@
       "continue-editing": "편집 계속하기",
       "discard-local-changes": "로컬 변경 사항 버리기",
       "discard-dashboard-changes": "대시보드 변경 사항을 폐기하시겠습니까?",
-      "unsaved-dashboard-changes": "저장되지 않은 대시보드 변경 사항이 있습니다. 이를 폐기하시겠습니까?"
+      "unsaved-dashboard-changes": "저장되지 않은 대시보드 변경 사항이 있습니다. 이를 폐기하시겠습니까?",
+      "save-current-variable-values-as-dashboard-default": "현재 변수 값을 대시보드 기본값으로 저장",
+      "save-current-time-range-as-dashboard-default": "현재 시간 범위를 대시보드 기본값으로 저장",
+      "save-current-time-range-as-dashboard-default": "현재 시간 범위를 대시보드 기본값으로 저장"
     },
     "explore": {
       "explore-metrics-info": "쿼리를 작성하지 않고 Prometheus 호환 메트릭을 탐색하세요",
@@ -3060,11 +3072,20 @@
       "delete-rule": "규칙 삭제",
       "delete-rule-confirmation": "이 규칙을 삭제하면 경고 규칙 목록에서 영구적으로 제거됩니다. 정말로 이 규칙을 삭제하시겠습니까?",
       "firing": "경보 알림",
-      "pending": "보류 중",
+      "pending": "경보 대기 중",
       "normal": "정상",
       "rules": "개 규칙 존재",
       "view-alert-rule": "경고 규칙 보기",
-      "hidden-by-filters": "필터로 인해 숨겨짐"
+      "hidden-by-filters": "필터로 인해 숨겨짐",
+      "all-data-sources": "모든 데이터 소스",
+      "select-dashboard": "대시보드 선택",
+      "active": "활성",
+      "suppressed": "억제됨",
+      "unprocessed": "처리되지 않음",
+      "alertmanager": "Alertmanager",
+      "choose-alertmanager": "Alertmanager 선택",
+      "alert": "경고 ",
+      "recording": "기록 "
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
@@ -3107,7 +3128,11 @@
         "confirm-delete-org": "{{orgName}} 조직을 정말로 삭제하시겠습니까?",
         "confirm-sub-delete-org": "이 조직의 모든 대시보드가 삭제됩니다!",
         "type-delete-confirm": "\"Delete\" 를 입력하여 삭제합니다.",
-        "type-to-confirm": "확인을 위해 \"{{confirmPromptText}}\" 를 입력하세요"
+        "type-to-confirm": "확인을 위해 \"{{confirmPromptText}}\" 를 입력하세요",
+        "uninstall": "제거",
+        "uninstalling": "제거 중",
+        "add-new-data-source": "새 데이터 소스 추가",
+        "uninstall-plugin-confirmation": "이 플러그인을 제거하시겠습니까?"
       },
       "plugins": {
         "connections": "패널 플러그인과 앱으로 그라파나 경험을 확장하세요. 더 많은 데이터 소스를 찾으려면 다음을 참조하세요.",

@@ -425,7 +425,7 @@ export function ToolbarActions({ dashboard }: Props) {
         onClick={editPanel?.onDiscard}
         tooltip={
           editPanel?.state.isNewPanel
-            ? 'Discard panel'
+            ? t('ablestack-wall.common.discard-panel', 'Discard panel')
             : t('ablestack-wall.dashboard.discard-panel-changes', 'Discard panel changes')
         }
         size="sm"
@@ -436,7 +436,7 @@ export function ToolbarActions({ dashboard }: Props) {
         data-testid={selectors.components.NavToolbar.editDashboard.discardChangesButton}
       >
         {editPanel?.state.isNewPanel
-          ? 'Discard panel'
+          ? t('ablestack-wall.common.discard-panel', 'Discard panel')
           : t('ablestack-wall.dashboard.discard-panel-changes', 'Discard panel changes')}
       </Button>
     ),

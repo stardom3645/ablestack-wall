@@ -306,8 +306,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     appEvents.publish(
       new ShowConfirmModalEvent({
-        title: 'Discard changes to dashboard?',
-        text: `You have unsaved changes to this dashboard. Are you sure you want to discard them?`,
+        title: t('ablestack-wall.alert.discard-dashboard-changes', 'Discard changes to dashboard?'),
+        text: t(
+          'ablestack-wall.alert.unsaved-dashboard-changes',
+          'You have unsaved changes to this dashboard. Are you sure you want to discard them?'
+        ),
         icon: 'trash-alt',
         yesText: t('ablestack-wall.common.discard', 'Discard'),
         noText: t('ablestack-wall.common.cancel', 'Cancel'),

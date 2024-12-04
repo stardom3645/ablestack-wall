@@ -49,19 +49,19 @@ const ViewOptions: SelectableValue[] = [
 
 const RuleTypeOptions: SelectableValue[] = [
   {
-    label: 'Alert ',
+    label: t('ablestack-wall.alert.alert', 'Alert '),
     value: PromRuleType.Alerting,
   },
   {
-    label: 'Recording ',
+    label: t('ablestack-wall.alert.recording', 'Recording '),
     value: PromRuleType.Recording,
   },
 ];
 
 const RuleHealthOptions: SelectableValue[] = [
-  { label: 'Ok', value: RuleHealth.Ok },
-  { label: 'No Data', value: RuleHealth.NoData },
-  { label: 'Error', value: RuleHealth.Error },
+  { label: t('ablestack-wall.common.ok', 'Ok'), value: RuleHealth.Ok },
+  { label: t('ablestack-wall.common.no-data', 'No Data'), value: RuleHealth.NoData },
+  { label: t('ablestack-wall.common.error', 'Error'), value: RuleHealth.Error },
 ];
 
 interface RulesFilerProps {
@@ -199,7 +199,7 @@ const RulesFilter = ({ onClear = () => undefined }: RulesFilerProps) => {
               key={dataSourceKey}
               alerting
               noDefault
-              placeholder="All data sources"
+              placeholder={t('ablestack-wall.alert.all-data-sources', 'All data sources')}
               current={filterState.dataSourceNames}
               onChange={handleDataSourceChange}
               onClear={clearDataSource}
