@@ -53,8 +53,8 @@ export function VariableEditorList({
               >
                 <thead>
                   <tr>
-                    <th>Variable</th>
-                    <th>Definition</th>
+                    <th>{t('ablestack-wall.common.variable', 'Variable')}</th>
+                    <th>{t('ablestack-wall.common.definition', 'Definition')}</th>
                     <th colSpan={5} />
                   </tr>
                 </thead>
@@ -89,7 +89,7 @@ export function VariableEditorList({
                 onClick={onAdd}
                 icon="plus"
               >
-                New variable
+                {t('ablestack-wall.dashboard.new-variable', 'New variable')}
               </Button>
             </Stack>
           </Stack>

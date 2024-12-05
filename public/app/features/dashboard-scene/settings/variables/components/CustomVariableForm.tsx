@@ -1,6 +1,7 @@
 import { FormEvent } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
+import { t } from 'app/core/internationalization';
 
 import { VariableLegend } from '../components/VariableLegend';
 import { VariableTextAreaField } from '../components/VariableTextAreaField';
@@ -43,7 +44,7 @@ export function CustomVariableForm({
         width={52}
         testId={selectors.pages.Dashboard.Settings.Variables.Edit.CustomVariable.customValueInput}
       />
-      <VariableLegend>Selection options</VariableLegend>
+      <VariableLegend>{t('ablestack-wall.dashboard.selection-options', 'Selection options')}</VariableLegend>
       <SelectionOptionsForm
         multi={multi}
         includeAll={includeAll}
