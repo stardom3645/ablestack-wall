@@ -45,19 +45,24 @@ const UserCreatePage = () => {
     <Page navId="global-users" pageNav={pageNav}>
       <Page.Contents>
         <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '600px' }}>
-          <Field label="Name" required invalid={!!errors.name} error={errors.name ? 'Name is required' : undefined}>
+          <Field
+            label={t('ablestack-wall.common.name', 'Name')}
+            required
+            invalid={!!errors.name}
+            error={errors.name ? 'Name is required' : undefined}
+          >
             <Input id="name-input" {...register('name', { required: true })} />
           </Field>
 
-          <Field label="Email">
+          <Field label={t('ablestack-wall.common.email', 'Email')}>
             <Input id="email-input" {...register('email')} />
           </Field>
 
-          <Field label="Username">
+          <Field label={t('ablestack-wall.dashboard.username', 'Username')}>
             <Input id="username-input" {...register('login')} />
           </Field>
           <Field
-            label="Password"
+            label={t('ablestack-wall.dashboard.password', 'Password')}
             required
             invalid={!!errors.password}
             error={errors.password ? 'Password is required and must contain at least 4 characters' : undefined}

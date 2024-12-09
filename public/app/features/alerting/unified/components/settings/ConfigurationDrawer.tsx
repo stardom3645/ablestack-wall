@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { Drawer, Tab, TabsBar } from '@grafana/ui';
-import { Trans, t } from 'app/core/internationalization';
+import { Trans } from 'app/core/internationalization';
 
 import { GRAFANA_RULES_SOURCE_NAME } from '../../utils/datasource';
 
@@ -40,7 +40,11 @@ export function useEditConfigurationDrawer() {
       <Drawer
         onClose={handleDismiss}
         title={title}
-        subtitle={<Trans i18nKey="ablestack-wall.alert.edit-alertmanager-configuration">Edit the Alertmanager configuration</Trans>}
+        subtitle={
+          <Trans i18nKey="ablestack-wall.alert.edit-alertmanager-configuration">
+            Edit the Alertmanager configuration
+          </Trans>
+        }
         tabs={
           <TabsBar>
             <Tab

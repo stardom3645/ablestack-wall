@@ -146,8 +146,11 @@ export function FolderAndGroup({
         {
           <Field
             label={
-              <Label htmlFor="folder" description={'Select a folder to store your rule.'}>
-                Folder
+              <Label
+                htmlFor="folder"
+                description={t('ablestack-wall.alert.select-folder', 'Select a folder to store your rule.')}
+              >
+                {t('ablestack-wall.alert.folder', 'Folder')}
               </Label>
             }
             className={styles.formInput}
@@ -206,9 +209,12 @@ export function FolderAndGroup({
       <Stack alignItems="center">
         <div style={{ width: 420 }}>
           <Field
-            label="Evaluation group and interval"
+            label={t('ablestack-wall.alert.evaluation-group-interval', 'Evaluation group and interval')}
             data-testid="group-picker"
-            description="Define how often the alert rule is evaluated."
+            description={t(
+              'ablestack-wall.alert.evaluation-group-definition',
+              'Define how often the alert rule is evaluated.'
+            )}
             className={styles.formInput}
             error={errors.group?.message}
             invalid={!!errors.group?.message}
@@ -304,12 +310,20 @@ function FolderCreationModal({
   const error = containsSlashes(title);
 
   return (
-    <Modal className={styles.modal} isOpen={true} title={'New folder'} onDismiss={onClose} onClickBackdrop={onClose}>
-      <div className={styles.modalTitle}>Create a new folder to store your rule</div>
+    <Modal
+      className={styles.modal}
+      isOpen={true}
+      title={t('ablestack-wall.alert.new-folder', 'New folder')}
+      onDismiss={onClose}
+      onClickBackdrop={onClose}
+    >
+      <div className={styles.modalTitle}>
+        {t('ablestack-wall.alert.create-new-folder', 'Create a new folder to store your rule')}
+      </div>
 
       <form onSubmit={onSubmit}>
         <Field
-          label={<Label htmlFor="folder">Folder name</Label>}
+          label={<Label htmlFor="folder">{t('ablestack-wall.alert.folder-name', 'Folder name')}</Label>}
           error={"The folder name can't contain slashes"}
           invalid={error}
         >
@@ -326,14 +340,14 @@ function FolderCreationModal({
 
         <Modal.ButtonRow>
           <Button variant="secondary" type="button" onClick={onClose}>
-            Cancel
+            {t('ablestack-wall.common.cancel', 'Cancel')}
           </Button>
           <Button
             type="submit"
             disabled={!title || error}
             data-testid={selectors.components.AlertRules.newFolderNameCreateButton}
           >
-            Create
+            {t('ablestack-wall.common.create', 'Create')}
           </Button>
         </Modal.ButtonRow>
       </form>
@@ -385,11 +399,16 @@ function EvaluationGroupCreationModal({
     <Modal
       className={styles.modal}
       isOpen={true}
-      title={'New evaluation group'}
+      title={t('ablestack-wall.alert.new-evaluation-group', 'New evaluation group')}
       onDismiss={onCancel}
       onClickBackdrop={onCancel}
     >
-      <div className={styles.modalTitle}>Create a new evaluation group to use for this alert rule.</div>
+      <div className={styles.modalTitle}>
+        {t(
+          'ablestack-wall.alert.create-new-evaluation-group',
+          'Create a new evaluation group to use for this alert rule.'
+        )}
+      </div>
 
       <FormProvider {...formAPI}>
         <form onSubmit={handleSubmit(() => onSubmit())}>
@@ -402,7 +421,7 @@ function EvaluationGroupCreationModal({
                   'A group evaluates all its rules over the same evaluation interval.'
                 )}
               >
-                Evaluation group name
+                {t('ablestack-wall.alert.evaluation-group-name', 'Evaluation group name')}
               </Label>
             }
             error={formState.errors.group?.message}
@@ -443,14 +462,14 @@ function EvaluationGroupCreationModal({
 
           <Modal.ButtonRow>
             <Button variant="secondary" type="button" onClick={onCancel}>
-              Cancel
+              {t('ablestack-wall.common.cancel', 'Cancel')}
             </Button>
             <Button
               type="submit"
               disabled={!formState.isValid}
               data-testid={selectors.components.AlertRules.newEvaluationGroupCreate}
             >
-              Create
+              {t('ablestack-wall.common.create', 'Create')}
             </Button>
           </Modal.ButtonRow>
         </form>

@@ -189,7 +189,10 @@ function ForInput({ evaluateEvery }: { evaluateEvery: string }) {
         label={
           <Label
             htmlFor={evaluateForId}
-            description='Period the threshold condition must be met to trigger the alert. Selecting "None" triggers the alert immediately once the condition is met.'
+            description={t(
+              'ablestack-wall.alert.threshold-period',
+              "Period the threshold condition must be met to trigger the alert. Selecting 'None' triggers the alert immediately once the condition is met."
+            )}
           >
             <Trans i18nKey="alert-rule-form.evaluation-behaviour.pending-period">Pending period</Trans>
           </Label>
@@ -225,7 +228,7 @@ function NeedHelpInfoForConfigureNoDataError() {
         contentText="These settings can help mitigate temporary data source issues, preventing alerts from unintentionally firing due to lack of data, errors, or timeouts."
         externalLink={docsLink}
         linkText={`Read more about this option`}
-        title="Configure no data and error handling"
+        title={t('ablestack-wall.alert.no-data-error-handling', 'Configure no data and error handling')}
       />
     </Stack>
   );
@@ -338,12 +341,18 @@ export function GrafanaEvaluationBehavior({
           <CollapseToggle
             isCollapsed={!showErrorHandling}
             onToggle={(collapsed) => setShowErrorHandling(!collapsed)}
-            text="Configure no data and error handling"
+            text={t('ablestack-wall.alert.no-data-error-handling', 'Configure no data and error handling')}
           />
           {showErrorHandling && (
             <>
               <NeedHelpInfoForConfigureNoDataError />
-              <Field htmlFor="no-data-state-input" label="Alert state if no data or all values are null">
+              <Field
+                htmlFor="no-data-state-input"
+                label={t(
+                  'ablestack-wall.alert.alert-state-no-data-null',
+                  'Alert state if no data or all values are null'
+                )}
+              >
                 <Controller
                   render={({ field: { onChange, ref, ...field } }) => (
                     <GrafanaAlertStatePicker
@@ -358,7 +367,10 @@ export function GrafanaEvaluationBehavior({
                   name="noDataState"
                 />
               </Field>
-              <Field htmlFor="exec-err-state-input" label="Alert state if execution error or timeout">
+              <Field
+                htmlFor="exec-err-state-input"
+                label={t('ablestack-wall.alert.alert-state-error-timeout', 'Alert state if execution error or timeout')}
+              >
                 <Controller
                   render={({ field: { onChange, ref, ...field } }) => (
                     <GrafanaAlertStatePicker

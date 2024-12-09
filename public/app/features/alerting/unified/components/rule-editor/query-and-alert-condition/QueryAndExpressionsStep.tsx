@@ -588,7 +588,7 @@ export const QueryAndExpressionsStep = ({ editingExistingRule, onDataChange }: P
                   disabled={noCompatibleDataSources}
                   className={styles.addQueryButton}
                 >
-                  Add query
+                  {t('ablestack-wall.alert.add-query', 'Add query')}
                 </Button>
               </Tooltip>
             )}
@@ -605,9 +605,12 @@ export const QueryAndExpressionsStep = ({ editingExistingRule, onDataChange }: P
             {isAdvancedMode && (
               <>
                 <Stack direction="column" gap={0}>
-                  <Text element="h5">Expressions</Text>
+                  <Text element="h5">{t('ablestack-wall.alert.expressions', 'Expressions')}</Text>
                   <Text variant="bodySmall" color="secondary">
-                    Manipulate data returned from queries with math and other operations.
+                    {t(
+                      'ablestack-wall.alert.expressions-description',
+                      'Manipulate data returned from queries with math and other operations.'
+                    )}
                   </Text>
                 </Stack>
 
@@ -719,7 +722,7 @@ function TypeSelectorButton({ onClickType }: { onClickType: (type: ExpressionQue
   return (
     <Dropdown overlay={newMenu}>
       <Button variant="secondary">
-        Add expression
+        {t('ablestack-wall.alert.add-expression', 'Add expression')}
         <Icon name="angle-down" />
       </Button>
     </Dropdown>

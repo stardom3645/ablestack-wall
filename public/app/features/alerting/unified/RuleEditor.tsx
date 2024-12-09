@@ -45,7 +45,7 @@ const getPageNav = (identifier?: RuleIdentifier, type?: RuleEditorPathParams['ty
 
   if (identifier) {
     // keep this one ambiguous, don't mentiond a specific alert type here
-    return { ...defaultPageNav, id: 'alert-rule-edit', text: 'Edit rule' };
+    return { ...defaultPageNav, id: 'alert-rule-edit', text: t('ablestack-wall.alert.edit-rule', 'Edit rule') };
   } else {
     return {
       ...defaultPageNav,

@@ -1,5 +1,5 @@
 import { LinkButton, Stack, Text } from '@grafana/ui';
-import { Trans, t } from 'app/core/internationalization';
+import { Trans } from 'app/core/internationalization';
 
 import { AlertingPageWrapper } from './components/AlertingPageWrapper';
 import { WithReturnButton } from './components/WithReturnButton';
@@ -38,10 +38,14 @@ function SettingsContent() {
     >
       <Stack direction="column" gap={2}>
         {/* Grafana built-in Alertmanager */}
-        <Text variant="h5"><Trans i18nKey="ablestack-wall.alert.built-in-alertmanager">Built-in Alertmanager</Trans></Text>
+        <Text variant="h5">
+          <Trans i18nKey="ablestack-wall.alert.built-in-alertmanager">Built-in Alertmanager</Trans>
+        </Text>
         <InternalAlertmanager onEditConfiguration={showConfiguration} />
         {/* other (external Alertmanager data sources we have added to Grafana such as vanilla, Mimir, Cortex) */}
-        <Text variant="h5"><Trans i18nKey="ablestack-wall.alert.other-alertmanagers">Other Alertmanagers</Trans></Text>
+        <Text variant="h5">
+          <Trans i18nKey="ablestack-wall.alert.other-alertmanagers">Other Alertmanagers</Trans>
+        </Text>
         <ExternalAlertmanagers onEditConfiguration={showConfiguration} />
       </Stack>
       {configurationDrawer}

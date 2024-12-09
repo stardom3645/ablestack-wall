@@ -19,9 +19,9 @@
       "no-permissions": "권한이 존재하지 않습니다.",
       "permissions-change-warning": "이 작업은 이 폴더와 모든 하위 항목의 권한을 변경합니다. 총 영향을 받는 항목은 다음과 같습니다.:",
       "role": "역할",
-      "serviceaccount": "Service Account",
-      "team": "Team",
-      "title": "Permissions",
+      "serviceaccount": "서비스 계정",
+      "team": "팀",
+      "title": "권한",
       "user": "사용자"
     }
   },
@@ -39,67 +39,67 @@
         "text": "경고 규칙이 평가되는 방식을 정의합니다."
       },
       "info-help": {
-        "text": "Define the alert behavior when the evaluation fails or the query returns no data."
+        "text": "평가 실패 시 또는 쿼리가 데이터를 반환하지 않을 때 알람 동작을 정의합니다."
       },
       "pending-period": "대기 기간"
     },
-    "evaluation-behaviour-description1": "Evaluation groups are containers for evaluating alert and recording rules.",
-    "evaluation-behaviour-description2": "An evaluation group defines an evaluation interval - how often a rule is evaluated. Alert rules within the same evaluation group are evaluated over the same evaluation interval.",
-    "evaluation-behaviour-description3": "Pending period specifies how long the threshold condition must be met before the alert starts firing. This option helps prevent alerts from being triggered by temporary issues.",
+    "evaluation-behaviour-description1": "평가 그룹은 경고 및 기록 규칙을 평가하기 위한 컨테이너입니다.",
+    "evaluation-behaviour-description2": "평가 그룹은 평가 간격을 정의합니다. 즉, 규칙이 얼마나 자주 평가되는지입니다. 동일한 평가 그룹 내의 경고 규칙은 동일한 평가 간격으로 평가됩니다.",
+    "evaluation-behaviour-description3": "대기 기간은 경고가 트리거되기 전에 임계값 조건이 충족되어야 하는 시간을 지정합니다. 이 옵션은 일시적인 문제로 인해 경고가 트리거되는 것을 방지하는 데 도움이 됩니다.",
     "evaluation-behaviour-for": {
-      "error-parsing": "Failed to parse duration",
-      "validation": "Pending period must be greater than or equal to the evaluation interval."
+      "error-parsing": "지속 시간을 구문 분석하는 데 실패했습니다.",
+      "validation": "대기 기간은 평가 간격보다 크거나 같아야 합니다."
     },
     "evaluation-behaviour-group": {
-      "text": "All rules in the selected group are evaluated every {{evaluateEvery}}."
+      "text": "선택한 그룹의 모든 규칙은 {{evaluateEvery}}마다 평가됩니다."
     },
     "pause": "평가 일시 중지"
   },
   "alerting": {
     "annotations": {
-      "description": "알림에 더 많은 맥락을 추가하세요.",
-      "title": "알림 메시지 구성"
+      "description": "경고 알림에 더 많은 정보를 추가하세요.",
+      "title": "경고 메시지 구성"
     },
     "central-alert-history": {
       "details": {
-        "error": "Error loading rule for this event.",
+        "error": "이 이벤트에 대한 규칙을 로드하는 중 오류가 발생했습니다.",
         "header": {
-          "alert-rule": "Alert rule",
-          "instance": "Instance",
-          "state": "State",
-          "timestamp": "Timestamp"
+          "alert-rule": "경고 규칙",
+          "instance": "인스턴스",
+          "state": "상태",
+          "timestamp": "타임스탬프"
         },
-        "loading": "Loading...",
-        "no-recognized-state": "No recognized state",
-        "no-values": "No values",
-        "not-found": "Rule not found for this event.",
-        "number-transitions": "State transitions for selected period:",
+        "loading": "로딩 중...",
+        "no-recognized-state": "인식된 상태 없음",
+        "no-values": "값 없음",
+        "not-found": "이 이벤트에 대한 규칙을 찾을 수 없습니다.",
+        "number-transitions": "선택한 기간의 상태 전환:",
         "state": {
-          "alerting": "Alerting",
-          "error": "Error",
-          "no-data": "No data",
+          "alerting": "경고 중",
+          "error": "오류",
+          "no-data": "데이터 없음",
           "normal": "정상",
           "pending": "지연"
         },
-        "state-transitions": "State transition",
-        "unknown-event-state": "Unknown",
-        "unknown-rule": "Unknown",
-        "value-in-transition": "Value in transition"
+        "state-transitions": "상태 전환",
+        "unknown-event-state": "알 수 없는 상태",
+        "unknown-rule": "알 수 없는 규칙",
+        "value-in-transition": "전환 중인 값"
       },
-      "error": "Something went wrong loading the alert state history",
+      "error": "경고 상태 히스토리를 로드하는 중 문제가 발생했습니다.",
       "filter": {
-        "clear": "Clear filters",
+        "clear": "필터 지우기",
         "info": {
-          "label1": "Filter events using label querying without spaces, ex:",
-          "label2": "Invalid use of spaces:",
-          "label3": "Valid use of spaces:",
-          "label4": "Filter alerts using label querying without braces, ex:"
+          "label1": "공백 없이 레이블 쿼리로 이벤트 필터링, 예:",
+          "label2": "공백 사용은 잘못된 사용법:",
+          "label3": "공백 사용은 올바른 사용법:",
+          "label4": "중괄호 없이 레이블 쿼리로 경고 필터링, 예:"
         }
       },
-      "filterBy": "Filter by:",
+      "filterBy": "필터 기준:",
       "too-many-events": {
-        "text": "The selected time period has too many events to display. Diplaying the latest 5000 events. Try using a shorter time period.",
-        "title": "Unable to display all events"
+        "text": "선택한 시간 기간에는 너무 많은 이벤트가 있어 표시할 수 없습니다. 최신 5000개의 이벤트만 표시됩니다. 더 짧은 시간 기간을 사용해 보세요.",
+        "title": "모든 이벤트를 표시할 수 없습니다"
       }
     },
     "common": {
@@ -114,24 +114,24 @@
     "contact-points": {
       "create": "컨택 포인트 생성",
       "delete-reasons": {
-        "heading": "Contact point cannot be deleted for the following reasons:",
-        "no-permissions": "You do not have the required permission to delete this contact point",
-        "policies": "Contact point is referenced by one or more notification policies",
-        "provisioned": "Contact point is provisioned and cannot be deleted via the UI",
-        "rules": "Contact point is referenced by one or more alert rules"
+        "heading": "다음 이유로 연락처 포인트를 삭제할 수 없습니다:",
+        "no-permissions": "이 연락처 포인트를 삭제할 수 있는 권한이 없습니다.",
+        "policies": "연락처 포인트가 하나 이상의 알림 정책에서 참조되고 있습니다.",
+        "provisioned": "연락처 포인트가 프로비저닝되어 UI를 통해 삭제할 수 없습니다.",
+        "rules": "연락처 포인트가 하나 이상의 경고 규칙에서 참조되고 있습니다."
       },
-      "delivery-duration": "Last delivery took <1></1>",
+      "delivery-duration": "마지막 전달 시간: <1></1>",
       "empty-state": {
-        "title": "You don't have any contact points yet"
+        "title": "아직 연락처 포인트가 없습니다"
       },
-      "last-delivery-attempt": "Last delivery attempt",
-      "last-delivery-failed": "Last delivery attempt failed",
-      "no-delivery-attempts": "No delivery attempts",
-      "no-integrations": "No integrations configured",
-      "only-firing": "Delivering <1>only firing</1> notifications",
+      "last-delivery-attempt": "마지막 전달 시도",
+      "last-delivery-failed": "마지막 전달 시도 실패",
+      "no-delivery-attempts": "전달 시도 없음",
+      "no-integrations": "구성된 통합이 없습니다",
+      "only-firing": "<1>경고 중인</1> 알림만 전달 중",
       "telegram": {
-        "parse-mode-warning-body": "If you use a <1>parse_mode</1> option other than <3>None</3>, truncation may result in an invalid message, causing the notification to fail. For longer messages, we recommend using an alternative contact method.",
-        "parse-mode-warning-title": "Telegram messages are limited to 4096 UTF-8 characters."
+        "parse-mode-warning-body": "만약 <1>parse_mode</1> 옵션을 <3>None</3> 외의 값으로 설정하면, 잘림 현상으로 인해 메시지가 잘못되어 알림이 실패할 수 있습니다. 긴 메시지의 경우, 다른 연락 방법을 사용하는 것이 좋습니다.",
+        "parse-mode-warning-title": "텔레그램 메시지는 4096 UTF-8 문자로 제한됩니다."
       },
       "used-by_one": "{{ count }} 개의 알림 정책에서 사용됨",
       "used-by_other": "{{ count }} 개의 알림 정책에서 사용됨",
@@ -145,7 +145,7 @@
       "empty": {
         "new-alert-rule": "새 경고 규칙",
         "new-recording-rule": "새 기록 규칙",
-        "provisioning": "You can also define rules through file provisioning or Terraform. <2>Learn more</2>"
+        "provisioning": "파일 프로비저닝이나 Terraform을 통해서도 규칙을 정의할 수 있습니다. <2>자세히 알아보기</2>"
       },
       "section": {
         "dataSourceManaged": {
@@ -153,25 +153,25 @@
         },
         "grafanaManaged": {
           "export-rules": "규칙 내보내기",
-          "loading": "Loading...",
+          "loading": "로딩 중...",
           "new-recording-rule": "새 기록 규칙",
           "title": "Wall에서 관리됨"
         }
       }
     },
     "manage-permissions": {
-      "button": "Manage permissions",
-      "title": "Manage permissions"
+      "button": "권한 관리",
+      "title": "권한 관리"
     },
     "mute_timings": {
       "error-loading": {
-        "description": "Could not load mute timings. Please try again later.",
-        "title": "Error loading mute timings"
+        "description": "음소거 시간 로드를 실패했습니다. 나중에 다시 시도해 주세요.",
+        "title": "음소거 시간 로드 오류"
       }
     },
     "mute-timings": {
-      "save": "Save mute timing",
-      "saving": "Saving mute timing"
+      "save": "음소거 시간 저장",
+      "saving": "음소거 시간 저장 중"
     },
     "policies": {
       "default-policy": {
@@ -220,8 +220,8 @@
       "disableAdvancedOptions": {
         "text": "The selected queries and expressions cannot be converted to default. If you deactivate advanced options, your query and condition will be reset to default settings."
       },
-      "preview": "Preview",
-      "previewCondition": "Preview alert rule condition"
+      "preview": "미리보기",
+      "previewCondition": "경고 규칙 조건 미리보기"
     },
     "rule-groups": {
       "delete": {
@@ -959,7 +959,7 @@
     },
     "secondary-actions": {
       "query-add-button": "쿼리 추가",
-      "query-add-button-aria-label": "Add query",
+      "query-add-button-aria-label": "쿼리 추가",
       "query-history-button": "쿼리 기록",
       "query-history-button-aria-label": "Query history",
       "query-inspector-button": "쿼리 인스펙터",
@@ -981,11 +981,11 @@
       "copy-shortened-link-menu": "Open copy link options",
       "refresh-picker-cancel": "Cancel",
       "refresh-picker-run": "Run query",
-      "split-close": " Close ",
+      "split-close": " 닫기 ",
       "split-close-tooltip": "Close split pane",
       "split-narrow": "Narrow pane",
-      "split-title": "Split",
-      "split-tooltip": "Split the pane",
+      "split-title": "분할",
+      "split-tooltip": "창 분할",
       "split-widen": "Widen pane"
     }
   },
@@ -1679,7 +1679,7 @@
       "title": "조직"
     },
     "global-users": {
-      "subtitle": "Grafana 사용자 관리",
+      "subtitle": "Wall 사용자 관리",
       "title": "사용자"
     },
     "grafana-quaderno": {
@@ -2904,7 +2904,12 @@
       "regex": "정규 표현식",
       "general": "일반",
       "text": "텍스트",
-      "options": "Options"
+      "options": "옵션",
+      "close": "닫기",
+      "add": "추가",
+      "username": "사용자 이름",
+      "password": "비밀번호",
+      "reset": "초기화"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -2971,6 +2976,7 @@
       "delete-variable": "변수 삭제",
       "delete-variable-confirmation": "{{name}}을(를) 삭제하시겠습니까?",
       "delete-variable-confirmation-yes": "변수 삭제",
+      "are-you-sure-you-want-to-delete": "삭제하시겠습니까:",
       "data-source": "데이터 소스",
       "query-type": "쿼리 유형",
       "sort-description": "해당 변수 정렬 방법",
@@ -3001,13 +3007,37 @@
       "show-as-dropdown": "드롭다운으로 표시",
       "include-current-time-range": "현재 시간 범위 포함",
       "include-current-template-variable-values": "현재 템플릿 변수 값 포함",
-      "open-link-in-new-tab": "새 탭에서 링크 열기"
+      "open-link-in-new-tab": "새 탭에서 링크 열기",
+      "update-default-time-range": "기본 시간 범위 업데이트",
+      "will-make-current-time-range-the-new-default": "현재 시간 범위를 새 기본값으로 설정합니다",
+      "update-default-refresh-value": "기본 새로 고침 값 업데이트",
+      "will-make-current-refresh-the-new-default": "현재 새로 고침 값을 새 기본값으로 설정합니다",
+      "add-panel-to-dashboard": "대시보드에 패널 추가",
+      "new-dashboard": "새 대시보드",
+      "existing-dashboard": "기존 대시보드",
+      "select-dashboard-and-panel": "대시보드 및 패널 선택",
+      "row-options": "행 옵션",
+      "repeat-for": "반복 대상"
     },
     "explore": {
       "explore-metrics-info": "쿼리를 작성하지 않고 Prometheus 호환 메트릭을 탐색하세요",
       "recent-metrics-explorations": "최근 메트릭 탐색",
       "new-metric-exploration": "새로운 메트릭 탐색",
-      "select-metric": "메트릭 선택"
+      "select-metric": "메트릭 선택",
+      "kick-start-your-query": "쿼리 시작하기",
+      "run-queries": "쿼리 실행",
+      "explain": "설명",
+      "outline": "개요",
+      "kick-start-query-description": "이 쿼리 중 하나를 선택하여 쿼리를 시작하세요. 이후 쿼리를 완성할 수 있습니다.",
+      "rate-query-starters": "비율 쿼리 시작",
+      "histogram-query-starters": "히스토그램 쿼리 시작",
+      "binary-query-starters": "이진 쿼리 시작",
+      "add-to-dashboard": "대시보드에 추가",
+      "add-correlation": "상관 관계 추가",
+      "target-dashboard": "대상 대시보드",
+      "choose-where-to-add-the-panel": "패널을 추가할 위치를 선택하세요.",
+      "open-in-new-tab": "새 탭에서 열기",
+      "open-dashboard": "대시보드 열기"
     },
     "alert": {
       "alert-rule": "경고 규칙",
@@ -3020,9 +3050,9 @@
       "contact-points-hrefText": "컨택트 포인트 관리",
       "mute-timings": "음소거 타이밍",
       "mute-timings-description": "알림을 보내지 않을 구체적인 시간 간격을 입력하거나 특정 기간 동안 알림을 동결합니다.",
-      "mute-timings-empty": "아직 음소거 타이밍을 생성하지 않았습니다.",
-      "mute-timings-add": "음소거 타이밍 추가",
-      "mute-timings-add-subtitle": "음소거 타이밍 고유 이름",
+      "mute-timings-empty": "아직 사일런스 타이밍을 생성하지 않았습니다.",
+      "mute-timings-add": "사일런스 타이밍 추가",
+      "mute-timings-add-subtitle": "사일런스 타이밍 고유 이름",
       "notification-policies": "알림 정책",
       "notification-policies-description": "경고 인스턴스가 컨택트 포인트로 라우팅되는 방식 구성",
       "notification-policies-hrefText": "알림 정책 관리",
@@ -3070,7 +3100,7 @@
       "configure-labels-and-notifications": "레이블과 알림을 구성하세요",
       "add-labels-help-you": "기록 규칙을 더 잘 관리할 수 있도록 레이블을 추가하세요.",
       "select-who-receive-notification": "경고 규칙이 발동되면 알림을 받을 대상자를 선택하세요.",
-      "ablestack-wall.alert.add-labels-to-notification-policy": "검색, 차단(사일런스) 또는 알림 정책으로 라우팅하기 위해 규칙에 레이블을 추가하세요.",
+      "add-labels-to-notification-policy": "검색, 차단(사일런스) 또는 알림 정책으로 라우팅하기 위해 규칙에 레이블을 추가하세요.",
       "no-labels-selected": "선택된 레이블이 없습니다",
       "save-rule-and-exit": "규칙 저장하고 종료",
       "save-rule": "규칙 저장",
@@ -3108,8 +3138,9 @@
       "panel-id": "패널 ID",
       "pause-evaluation": "평가 일시 정지",
       "resume-evaluation": "평가 재개",
-      "silence-notifications": "알림 음소거",
+      "silence-notifications": "알림 사일런스",
       "copy-link": "링크 복사",
+      "edit-rule": "규칙 편집",
       "edit-rule-group": "규칙 그룹 편집",
       "reorder-group": "그룹 재정렬",
       "go-to-folder": "폴더로 이동",
@@ -3154,7 +3185,43 @@
       "alertmanager": "Alertmanager",
       "choose-alertmanager": "Alertmanager 선택",
       "alert": "경고 ",
-      "recording": "기록 "
+      "recording": "기록 ",
+      "add-query": "쿼리 추가",
+      "alert-rule-type-change-error": "기존 규칙의 알림 규칙 유형은 변경할 수 없습니다.",
+      "expressions": "수식",
+      "expressions-description": "수학 및 기타 연산으로 쿼리에서 반환된 데이터를 조작합니다.",
+      "set-as-alert-condition": "알림 조건으로 설정",
+      "free-form-math": "시계열 또는 숫자 데이터에 대한 자유 형식 수학 공식.",
+      "reduce-description": "쿼리 또는 표현식에서 반환된 하나 이상의 시계열을 받아 각 시계열을 단일 숫자로 변환합니다.",
+      "time-stamp-alignment": "각 시계열의 타임스탬프를 일관된 시간 간격으로 변경합니다.",
+      "check-condition": "쿼리 또는 표현식에서 반환된 하나 이상의 시계열을 받아 해당 시계열이 조건과 일치하는지 확인합니다. 이 규칙에 대해 다차원 경고를 비활성화합니다.",
+      "check-threshold": "쿼리 또는 표현식에서 반환된 하나 이상의 시계열을 받아 해당 시계열이 임계값 조건과 일치하는지 확인합니다.",
+      "sql-transformation": "SQL을 사용하여 데이터를 변환합니다. DuckDB의 집계/분석 함수 지원",
+      "add-expression": "수식 추가",
+      "folder": "폴더",
+      "select-folder": "알림 규칙을 저장할 폴더를 선택하세요.",
+      "evaluation-group-interval": "평가 그룹 및 간격",
+      "evaluation-group-definition": "알림 규칙이 평가되는 주기를 정의하세요.",
+      "new-folder": "새 폴더",
+      "new-evaluation-group": "새 평가 그룹",
+      "create-new-folder": "알림 규칙을 저장할 새 폴더를 만드세요",
+      "folder-name": "폴더 이름",
+      "create-new-evaluation-group": "이 알림 규칙에 사용할 새 평가 그룹을 만드세요.",
+      "evaluation-group-name": "평가 그룹 이름",
+      "threshold-period": "알람을 트리거하기 위해 임계값 조건이 충족되어야 하는 기간. '없음'을 선택하면 조건이 충족되자마자 알람이 즉시 트리거됩니다.",
+      "no-data-error-handling": "데이터 없음 및 오류 처리 구성",
+      "notifications": "알림",
+      "muting-grouping-timings-optional": "사일런스, 그룹화 및 타이밍 (선택 사항)",
+      "mute-timings": "사일런스 타이밍",
+      "select-mute-timings-description": "이 경고 규칙에 대한 알림을 보내지 않을 시점을 정의하려면 사일런스 타이밍을 선택하세요.",
+      "select-mute-timings-placeholder": "사일런스 타이밍 선택...",
+      "override-grouping": "그룹 재정의",
+      "override-timings": "타이밍 재정의",
+      "notifications-routing": "발생한 알림은 선택된 연락 지점으로 라우팅됩니다.",
+      "view-or-create-contact-points": "컨택트 포인트 보기 또는 생성",
+      "select-where-alert-rule-managed": "경고 규칙을 관리할 위치를 선택하세요.",
+      "custom-annotation-name-and-content": "사용자 정의 주석 이름 및 내용",
+      "contact-point": "연락처 지점"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",

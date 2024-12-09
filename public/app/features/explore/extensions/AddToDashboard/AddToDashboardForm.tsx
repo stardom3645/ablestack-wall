@@ -6,6 +6,7 @@ import { locationUtil, SelectableValue } from '@grafana/data';
 import { config, locationService, reportInteraction } from '@grafana/runtime';
 import { Alert, Button, Field, Modal, RadioButtonGroup } from '@grafana/ui';
 import { DashboardPicker } from 'app/core/components/Select/DashboardPicker';
+import { t } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
 import { removeDashboardToFetchFromLocalStorage } from 'app/features/dashboard/state/initDashboard';
 import { AccessControlAction, useSelector } from 'app/types';
@@ -79,13 +80,13 @@ export function AddToDashboardForm(props: Props): ReactElement {
   const saveTargets: Array<SelectableValue<SaveTarget>> = [];
   if (canCreateDashboard) {
     saveTargets.push({
-      label: 'New dashboard',
+      label: t('ablestack-wall.dashboard.new-dashboard', 'New dashboard'),
       value: SaveTarget.NewDashboard,
     });
   }
   if (canWriteDashboard) {
     saveTargets.push({
-      label: 'Existing dashboard',
+      label: t('ablestack-wall.dashboard.existing-dashboard', 'Existing dashboard'),
       value: SaveTarget.ExistingDashboard,
     });
   }
@@ -159,7 +160,10 @@ export function AddToDashboardForm(props: Props): ReactElement {
         <Controller
           control={control}
           render={({ field: { ref, ...field } }) => (
-            <Field label="Target dashboard" description="Choose where to add the panel.">
+            <Field
+              label={t('ablestack-wall.explore.target-dashboard', 'Target dashboard')}
+              description={t('ablestack-wall.explore.choose-where-to-add-the-panel', 'Choose where to add the panel.')}
+            >
               <RadioButtonGroup options={saveTargets} {...field} id="e2d-save-target" />
             </Field>
           )}
@@ -203,7 +207,7 @@ export function AddToDashboardForm(props: Props): ReactElement {
 
       <Modal.ButtonRow>
         <Button type="reset" onClick={onClose} fill="outline" variant="secondary">
-          Cancel
+          {t('ablestack-wall.common.cancel', 'Cancel')}
         </Button>
         <Button
           type="submit"
@@ -211,10 +215,10 @@ export function AddToDashboardForm(props: Props): ReactElement {
           onClick={handleSubmit(partial(onSubmit, true))}
           icon="external-link-alt"
         >
-          Open in new tab
+          {t('ablestack-wall.explore.open-in-new-tab', 'Open in new tab')}
         </Button>
         <Button type="submit" variant="primary" onClick={handleSubmit(partial(onSubmit, false))} icon="apps">
-          Open dashboard
+          {t('ablestack-wall.explore.open-dashboard', 'Open dashboard')}
         </Button>
       </Modal.ButtonRow>
     </form>

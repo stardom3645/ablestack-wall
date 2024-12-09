@@ -158,7 +158,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
         </Button>
       </Stack>
 
-      <Field label="Contact point">
+      <Field label={t('ablestack-wall.alert.contact-point', 'Contact point')}>
         <Controller
           render={({ field: { onChange, ref, value, ...field } }) => (
             <ContactPointSelector
@@ -178,7 +178,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
       <Field label="Continue matching subsequent sibling nodes">
         <Switch id="continue-toggle" {...register('continue')} />
       </Field>
-      <Field label="Override grouping">
+      <Field label={t('ablestack-wall.alert.override-grouping', 'Override grouping')}>
         <Switch id="override-grouping-toggle" {...register('overrideGrouping')} />
       </Field>
       {watch().overrideGrouping && (
@@ -267,7 +267,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
         </>
       )}
       <Field
-        label="Mute timings"
+        label={t('ablestack-wall.alert.mute-timings', 'Mute timings')}
         data-testid="am-mute-timing-select"
         description="Add mute timing to policy"
         invalid={!!errors.muteTimeIntervals}

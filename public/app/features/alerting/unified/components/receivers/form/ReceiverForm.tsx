@@ -137,7 +137,7 @@ export function ReceiverForm<R extends ChannelValues>({
         <Stack justifyContent="space-between" alignItems="center">
           <h2 className={styles.heading}>
             {!isEditable
-              ? 'Contact point'
+              ? t('ablestack-wall.alert.contact-point', 'Contact point')
               : initialValues
                 ? t('ablestack-wall.alert.update-contact-point', 'Update contact point')
                 : 'Create contact point'}

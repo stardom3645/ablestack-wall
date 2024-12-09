@@ -71,17 +71,27 @@ export const NotificationsStep = ({ alertUid }: NotificationsStepProps) => {
   return (
     <RuleEditorSection
       stepNo={4}
-      title={isRecordingRuleByType(type) ? t("ablestack-wall.alert.add-labels", "Add labels") : t("ablestack-wall.alert.configure-labels-and-notifications", "Configure labels and notifications")}
+      title={
+        isRecordingRuleByType(type)
+          ? t('ablestack-wall.alert.add-labels', 'Add labels')
+          : t('ablestack-wall.alert.configure-labels-and-notifications', 'Configure labels and notifications')
+      }
       description={
         <Stack direction="row" gap={0.5} alignItems="center">
           {type === RuleFormType.cloudRecording ? (
             <Text variant="bodySmall" color="secondary">
-              {t("ablestack-wall.alert.add-labels-help-you", "Add labels to help you better manage your recording rules")}
+              {t(
+                'ablestack-wall.alert.add-labels-help-you',
+                'Add labels to help you better manage your recording rules'
+              )}
             </Text>
           ) : (
             shouldAllowSimplifiedRouting && (
               <Text variant="bodySmall" color="secondary">
-                {t("ablestack-wall.alert.select-who-receive-notification", "Select who should receive a notification when an alert rule fires.")}
+                {t(
+                  'ablestack-wall.alert.select-who-receive-notification',
+                  'Select who should receive a notification when an alert rule fires.'
+                )}
               </Text>
             )
           )}
@@ -98,9 +108,12 @@ export const NotificationsStep = ({ alertUid }: NotificationsStepProps) => {
       />
       {shouldAllowSimplifiedRouting && (
         <div className={styles.configureNotifications}>
-          <Text element="h5">Notifications</Text>
+          <Text element="h5">{t('ablestack-wall.alert.notifications', 'Notifications')}</Text>
           <Text variant="bodySmall" color="secondary">
-            Select who should receive a notification when an alert rule fires.
+            {t(
+              'ablestack-wall.alert.select-who-receive-notification',
+              'Select who should receive a notification when an alert rule fires.'
+            )}
           </Text>
         </div>
       )}
@@ -253,7 +266,10 @@ export const RoutingOptionDescription = ({ manualRouting }: NotificationsStepDes
     <Stack alignItems="center">
       <Text variant="bodySmall" color="secondary">
         {manualRouting
-          ? 'Notifications for firing alerts are routed to a selected contact point.'
+          ? t(
+              'ablestack-wall.alert.notifications-routing',
+              'Notifications for firing alerts are routed to a selected contact point.'
+            )
           : 'Notifications for firing alerts are routed to contact points based on matching labels and the notification policy tree.'}
       </Text>
       {manualRouting ? <NeedHelpInfoForContactpoint /> : <NeedHelpInfoForNotificationPolicy />}

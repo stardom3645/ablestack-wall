@@ -17,6 +17,7 @@ import {
   Tooltip,
   useStyles2,
 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 import { DashboardModel } from '../../../../dashboard/state';
 import { dashboardApi } from '../../api/dashboardApi';
@@ -167,7 +168,7 @@ export const DashboardPicker = ({ dashboardUid, panelId, isOpen, onChange, onDis
 
   return (
     <Modal
-      title="Select dashboard and panel"
+      title={t('ablestack-wall.dashboard.select-dashboard-and-panel', 'Select dashboard and panel')}
       closeOnEscape
       isOpen={isOpen}
       onDismiss={onDismiss}
@@ -243,7 +244,7 @@ export const DashboardPicker = ({ dashboardUid, panelId, isOpen, onChange, onDis
       </div>
       <Modal.ButtonRow>
         <Button type="button" variant="secondary" onClick={onDismiss} fill="text">
-          Cancel
+          {t('ablestack-wall.common.cancel', 'Cancel')}
         </Button>
         <Button
           type="button"
@@ -255,7 +256,7 @@ export const DashboardPicker = ({ dashboardUid, panelId, isOpen, onChange, onDis
             }
           }}
         >
-          Confirm
+          {t('ablestack-wall.common.confirm', 'Confirm')}
         </Button>
       </Modal.ButtonRow>
     </Modal>

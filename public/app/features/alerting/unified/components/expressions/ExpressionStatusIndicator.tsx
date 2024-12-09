@@ -2,6 +2,7 @@ import { css } from '@emotion/css';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Badge, clearButtonStyles, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 
 interface AlertConditionProps {
   isCondition?: boolean;
@@ -21,7 +22,7 @@ export const ExpressionStatusIndicator = ({ isCondition, onSetCondition }: Alert
         className={styles.actionLink}
         onClick={() => onSetCondition && onSetCondition()}
       >
-        Set as alert condition
+        {t('ablestack-wall.alert.set-as-alert-condition', 'Set as alert condition')}
       </button>
     );
   }
