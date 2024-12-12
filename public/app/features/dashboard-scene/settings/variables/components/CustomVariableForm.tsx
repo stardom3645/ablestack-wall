@@ -33,10 +33,10 @@ export function CustomVariableForm({
 }: CustomVariableFormProps) {
   return (
     <>
-      <VariableLegend>Custom options</VariableLegend>
+      <VariableLegend>{t('ablestack-wall.dashboard.custom-options', 'Custom options')}</VariableLegend>
 
       <VariableTextAreaField
-        name="Values separated by comma"
+        name={t('ablestack-wall.dashboard.values-separated-by-comma', 'Values separated by comma')}
         defaultValue={query}
         placeholder="1, 10, mykey : myvalue, myvalue, escaped\,value"
         onBlur={onQueryChange}

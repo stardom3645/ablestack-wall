@@ -140,7 +140,7 @@ export function ReceiverForm<R extends ChannelValues>({
               ? t('ablestack-wall.alert.contact-point', 'Contact point')
               : initialValues
                 ? t('ablestack-wall.alert.update-contact-point', 'Update contact point')
-                : 'Create contact point'}
+                : t('ablestack-wall.alert.create-contact-point', 'Create contact point')}
           </h2>
           {canManagePermissions && contactPointId && (
             <ManagePermissions

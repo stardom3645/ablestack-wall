@@ -85,7 +85,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
     <form onSubmit={handleSubmit(onSubmit)}>
       <input type="hidden" {...register('id')} />
       <Stack direction="column" alignItems="flex-start">
-        <div>Matching labels</div>
+        <div>{t('ablestack-wall.alert.matching-labels', 'Matching labels')}</div>
         {fields.length === 0 && (
           <Badge
             color="orange"
@@ -175,7 +175,12 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
           name="receiver"
         />
       </Field>
-      <Field label="Continue matching subsequent sibling nodes">
+      <Field
+        label={t(
+          'ablestack-wall.alert.continue-matching-subsequent-sibling-nodes',
+          'Continue matching subsequent sibling nodes'
+        )}
+      >
         <Switch id="continue-toggle" {...register('continue')} />
       </Field>
       <Field label={t('ablestack-wall.alert.override-grouping', 'Override grouping')}>
@@ -218,7 +223,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
           />
         </Field>
       )}
-      <Field label="Override general timings">
+      <Field label={t('ablestack-wall.alert.override-general-timings', 'Override general timings')}>
         <Switch id="override-timings-toggle" {...register('overrideTimings')} />
       </Field>
       {watch().overrideTimings && (
@@ -269,7 +274,7 @@ export const AmRoutesExpandedForm = ({ actionButtons, route, onSubmit, defaults 
       <Field
         label={t('ablestack-wall.alert.mute-timings', 'Mute timings')}
         data-testid="am-mute-timing-select"
-        description="Add mute timing to policy"
+        description={t('ablestack-wall.alert.add-mute-timing-to-policy', 'Add mute timing to policy')}
         invalid={!!errors.muteTimeIntervals}
       >
         <Controller

@@ -224,7 +224,12 @@ export const DashboardPicker = ({ dashboardUid, panelId, isOpen, onChange, onDis
         <div className={styles.column}>
           {!selectedDashboardUid && !isDashboardFetching && (
             <div className={styles.selectDashboardPlaceholder}>
-              <div>Select a dashboard to get a list of available panels</div>
+              <div>
+                {t(
+                  'ablestack-wall.alert.select-dashboard-panels',
+                  'Select a dashboard to get a list of available panels'
+                )}
+              </div>
             </div>
           )}
           {isDashboardFetching && (

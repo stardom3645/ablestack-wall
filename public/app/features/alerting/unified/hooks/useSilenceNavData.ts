@@ -18,15 +18,21 @@ export function useSilenceNavData() {
       setPageNav({
         ...defaultPageNav,
         id: 'silence-new',
-        text: t("ablestack-wall.alert.silence-alert-rule", "Silence alert rule"),
-        subTitle: t("ablestack-wall.alert.silence-alert-rule-subtitle", "Configure silences to stop notifications from a particular alert rule."),
+        text: t('ablestack-wall.alert.silence-alert-rule', 'Silence alert rule'),
+        subTitle: t(
+          'ablestack-wall.alert.silence-alert-rule-subtitle',
+          'Configure silences to stop notifications from a particular alert rule.'
+        ),
       });
     } else if (isEditPath) {
       setPageNav({
         ...defaultPageNav,
         id: 'silence-edit',
-        text: 'Edit silence',
-        subTitle: 'Recreate existing silence to stop notifications from a particular alert rule',
+        text: t('ablestack-wall.alert.edit-silence', 'Edit silence'),
+        subTitle: t(
+          'ablestack-wall.alert.recreate-existing-silence-description',
+          'Recreate existing silence to stop notifications from a particular alert rule'
+        ),
       });
     }
   }, [isEditPath, isNewPath]);

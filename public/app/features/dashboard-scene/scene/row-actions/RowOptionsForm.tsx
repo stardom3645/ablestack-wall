@@ -35,7 +35,7 @@ export const RowOptionsForm = ({ repeat, title, sceneContext, warning, onUpdate,
 
   return (
     <form onSubmit={handleSubmit(submit)}>
-      <Field label="Title">
+      <Field label={t('ablestack-wall.common.title', 'Title')}>
         <Input {...register('title')} type="text" />
       </Field>
       <Field label={t('ablestack-wall.dashboard.repeat-for', 'Repeat for')}>

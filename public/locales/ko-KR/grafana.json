@@ -110,9 +110,9 @@
       "export-all": "모두 내보내기",
       "view": "View"
     },
-    "contact-point": "컨택 포인트",
+    "contact-point": "콘택트 포인트",
     "contact-points": {
-      "create": "컨택 포인트 생성",
+      "create": "콘택트 포인트 생성",
       "delete-reasons": {
         "heading": "다음 이유로 연락처 포인트를 삭제할 수 없습니다:",
         "no-permissions": "이 연락처 포인트를 삭제할 수 있는 권한이 없습니다.",
@@ -139,7 +139,7 @@
       "used-by-rules_other": "{{ count }}개의 경고 규칙에서 사용됨{{ count }}개의 경고 규칙에서 사용됨"
     },
     "contactPointFilter": {
-      "label": "컨택트 포인트"
+      "label": "콘택트 포인트"
     },
     "list-view": {
       "empty": {
@@ -180,107 +180,107 @@
       },
       "generated-policies": "자동 생성된 정책",
       "metadata": {
-        "active-time": "Active when",
-        "delivered-to": "Delivered to",
-        "grouped-by": "Grouped by",
+        "active-time": "활성화 시간",
+        "delivered-to": "전달 대상",
+        "grouped-by": "그룹화 기준",
         "grouping": {
-          "none": "Not grouping",
-          "single-group": "Single group"
+          "none": "그룹화 없음",
+          "single-group": "단일 그룹"
         },
-        "inherited": "Inherited",
-        "mute-time": "Muted when",
-        "n-instances_one": "instance",
-        "n-instances_other": "instances",
+        "inherited": "상속됨",
+        "mute-time": "음소거 시간",
+        "n-instances_one": "인스턴스",
+        "n-instances_other": "인스턴스",
         "timingOptions": {
           "groupInterval": {
-            "description": "How long to wait before sending a notification about new alerts that are added to a group of alerts for which an initial notification has already been sent.",
-            "label": "Wait <1></1> before sending updates"
+            "description": "이미 알림이 전송된 경고 그룹에 새로운 경고가 추가될 때 알림을 보내기 전 대기할 시간.",
+            "label": "업데이트를 보내기 전 <1></1> 대기"
           },
           "groupWait": {
-            "description": "How long to initially wait to send a notification for a group of alert instances.",
-            "label": "Wait <1></1> to group instances"
+            "description": "경고 인스턴스 그룹에 대한 알림을 보내기 전 초기 대기 시간.",
+            "label": "인스턴스를 그룹화하기 위해 <1></1> 대기"
           },
           "repeatInterval": {
-            "description": "How often notifications are sent if the group of alerts has not changed since the last notification.",
-            "label": "Repeated every <1></1>"
+            "description": "경고 그룹이 마지막 알림 이후 변경되지 않은 경우 알림이 반복되는 빈도.",
+            "label": "<1></1>마다 반복"
           }
         }
       },
-      "n-more-policies_one": "{{count}} additional policy",
-      "n-more-policies_other": "{{count}} additional policies",
-      "new-child": "New child policy",
-      "new-policy": "Add new policy",
-      "no-matchers": "No matchers"
+      "n-more-policies_one": "{{count}}개의 추가 정책",
+      "n-more-policies_other": "{{count}}개의 추가 정책들",
+      "new-child": "새 하위 정책",
+      "new-policy": "새 정책 추가",
+      "no-matchers": "일치 항목 없음"
     },
     "provisioning": {
-      "badge-tooltip-provenance": "This resource has been provisioned via {{provenance}} and cannot be edited through the UI",
-      "badge-tooltip-standard": "This resource has been provisioned and cannot be edited through the UI"
+      "badge-tooltip-provenance": "이 리소스는 {{provenance}}를 통해 프로비저닝되었으며 UI를 통해 편집할 수 없습니다.",
+      "badge-tooltip-standard": "이 리소스는 프로비저닝되었으며 UI를 통해 편집할 수 없습니다."
     },
     "queryAndExpressionsStep": {
       "disableAdvancedOptions": {
-        "text": "The selected queries and expressions cannot be converted to default. If you deactivate advanced options, your query and condition will be reset to default settings."
+        "text": "선택한 쿼리와 표현식은 기본값으로 변환할 수 없습니다. 고급 옵션을 비활성화하면 쿼리와 조건이 기본 설정으로 재설정됩니다."
       },
       "preview": "미리보기",
       "previewCondition": "경고 규칙 조건 미리보기"
     },
     "rule-groups": {
       "delete": {
-        "success": "Successfully deleted rule group"
+        "success": "규칙 그룹이 성공적으로 삭제되었습니다."
       },
       "move": {
-        "success": "Successfully moved rule group"
+        "success": "규칙 그룹이 성공적으로 이동되었습니다."
       },
       "rename": {
-        "success": "Successfully renamed rule group"
+        "success": "규칙 그룹이 성공적으로 이름이 변경되었습니다."
       },
       "update": {
-        "success": "Successfully updated rule group"
+        "success": "규칙 그룹이 성공적으로 업데이트되었습니다."
       }
     },
     "rule-state": {
-      "creating": "Creating",
-      "deleting": "Deleting",
-      "paused": "Paused",
-      "recording-rule": "Recording rule"
+      "creating": "생성 중",
+      "deleting": "삭제 중",
+      "paused": "일시 중지됨",
+      "recording-rule": "기록 규칙"
     },
     "rule-viewer": {
       "prometheus-consistency-check": {
-        "alert-message": "Alert rule has been updated. Changes may take up to a minute to appear on the Alert rules list view.",
-        "alert-title": "Update in progress"
+        "alert-message": "경고 규칙이 업데이트되었습니다. 변경 사항이 경고 규칙 목록 뷰에 반영되기까지 최대 1분이 소요될 수 있습니다.",
+        "alert-title": "업데이트 진행 중"
       }
     },
     "rules": {
       "add-rule": {
-        "success": "Rule added successfully"
+        "success": "규칙이 성공적으로 추가되었습니다."
       },
       "delete-rule": {
-        "success": "Rule successfully deleted"
+        "success": "규칙이 성공적으로 삭제되었습니다."
       },
       "pause-rule": {
-        "success": "Rule evaluation paused"
+        "success": "규칙 평가가 일시 중지되었습니다."
       },
       "resume-rule": {
-        "success": "Rule evaluation resumed"
+        "success": "규칙 평가가 재개되었습니다."
       },
       "update-rule": {
-        "success": "Rule updated successfully"
+        "success": "규칙이 성공적으로 업데이트되었습니다."
       }
     },
     "search": {
       "property": {
         "data-source": "데이터 소스",
-        "evaluation-group": "Evaluation group",
-        "labels": "Labels",
-        "namespace": "Folder / Namespace",
-        "rule-health": "Health",
-        "rule-name": "Alerting rule name",
+        "evaluation-group": "평가 그룹",
+        "labels": "라벨",
+        "namespace": "폴더 / 네임스페이스",
+        "rule-health": "상태",
+        "rule-name": "경고 규칙 이름",
         "rule-type": "유형",
         "state": "상태"
       },
-      "save-query": "Save current search"
+      "save-query": "현재 검색 저장"
     },
     "simpleCondition": {
-      "alertCondition": "Alert condition",
+      "alertCondition": "경고 조건",
       "ofQuery": {
         "To": "TO"
       }
@@ -333,23 +333,23 @@
       "button-to-recently-deleted": "최근 삭제됨"
     },
     "counts": {
-      "alertRule_one": "{{count}} alert rule",
-      "alertRule_other": "{{count}} alert rules",
-      "dashboard_one": "{{count}} dashboard",
-      "dashboard_other": "{{count}} dashboards",
-      "folder_one": "{{count}} folder",
-      "folder_other": "{{count}} folders",
-      "libraryPanel_one": "{{count}} library panel",
-      "libraryPanel_other": "{{count}} library panels",
-      "total_one": "{{count}} item",
-      "total_other": "{{count}} items"
+      "alertRule_one": "{{count}}개의 경고 규칙",
+      "alertRule_other": "{{count}}개의 경고 규칙",
+      "dashboard_one": "{{count}}개의 대시보드",
+      "dashboard_other": "{{count}}개의 대시보드",
+      "folder_one": "{{count}}개의 폴더",
+      "folder_other": "{{count}}개의 폴더",
+      "libraryPanel_one": "{{count}}개의 라이브러리 패널",
+      "libraryPanel_other": "{{count}}개의 라이브러리 패널",
+      "total_one": "{{count}}개의 항목",
+      "total_other": "{{count}}개의 항목"
     },
     "dashboards-tree": {
-      "collapse-folder-button": "Collapse folder {{title}}",
-      "expand-folder-button": "Expand folder {{title}}",
+      "collapse-folder-button": "폴더 {{title}} 접기",
+      "expand-folder-button": "폴더 {{title}} 펼치기",
       "name-column": "이름",
-      "select-all-header-checkbox": "Select all",
-      "select-checkbox": "Select",
+      "select-all-header-checkbox": "모두 선택",
+      "select-checkbox": "선택",
       "tags-column": "태그"
     },
     "empty-state": {
@@ -365,16 +365,16 @@
       "move": "이동"
     },
     "folder-picker": {
-      "accessible-label": "Select folder: {{ label }} currently selected",
+      "accessible-label": "폴더 선택: 현재 {{label}}이(가) 선택됨",
       "button-label": "폴더 선택",
-      "clear-selection": "Clear selection",
-      "empty-message": "No folders found",
-      "error-title": "Error loading folders",
+      "clear-selection": "선택 해제",
+      "empty-message": "폴더를 찾을 수 없음",
+      "error-title": "폴더 로드 중 오류 발생",
       "search-placeholder": "폴더 검색",
-      "unknown-error": "Unknown error"
+      "unknown-error": "알 수 없는 오류"
     },
     "hard-delete": {
-      "success": "Dashboard {{name}} deleted"
+      "success": "대시보드 {{name}} 삭제됨"
     },
     "manage-folder-nav": {
       "alert-rules": "경고 규칙",
@@ -391,41 +391,41 @@
       "text": "쿼리에 대한 결과가 없습니다"
     },
     "soft-delete": {
-      "success": "Dashboard {{name}} moved to Recently deleted"
+      "success": "대시보드 {{name}}이(가) 최근 삭제된 항목으로 이동되었습니다"
     }
   },
   "clipboard-button": {
     "inline-toast": {
-      "success": "Copied"
+      "success": "복사됨"
     }
   },
   "combobox": {
     "clear": {
-      "title": "Clear value"
+      "title": "값 지우기"
     },
     "custom-value": {
-      "create": "Create custom value"
+      "create": "사용자 정의 값 생성"
     }
   },
   "command-palette": {
     "action": {
-      "change-theme": "Change theme...",
-      "dark-theme": "Dark",
-      "light-theme": "Light"
+      "change-theme": "테마 변경...",
+      "dark-theme": "어두운 테마",
+      "light-theme": "밝은 테마"
     },
     "empty-state": {
-      "message": "No results found"
+      "message": "결과를 찾을 수 없습니다"
     },
     "search-box": {
-      "placeholder": "Search or jump to..."
+      "placeholder": "검색하거나 이동..."
     },
     "section": {
-      "actions": "Actions",
-      "dashboard-search-results": "Dashboards",
-      "folder-search-results": "Folders",
-      "pages": "Pages",
-      "preferences": "Preferences",
-      "recent-dashboards": "Recent dashboards"
+      "actions": "작업",
+      "dashboard-search-results": "대시보드",
+      "folder-search-results": "폴더",
+      "pages": "페이지",
+      "preferences": "환경설정",
+      "recent-dashboards": "최근 대시보드"
     }
   },
   "common": {
@@ -467,7 +467,7 @@
       "label-description": "이 이름은 상관 관계의 레이블로 사용됩니다. 이 이름은 버튼 텍스트, 메뉴 항목 또는 링크의 호버 텍스트로 표시됩니다.",
       "label-label": "레이블",
       "label-placeholder": "예: Tempo 추적",
-      "label-required": "This field is required.",
+      "label-required": "이 필드는 필수입니다.",
       "sub-text": "<0>상관관계를 설명할 텍스트 정의.</0>",
       "title": "상관 관계 레이블 정의 (Step 1 of 3)"
     },
@@ -477,10 +477,10 @@
       "title": "아직 상관관계를 정의하지 않았습니다"
     },
     "list": {
-      "delete": "delete correlation",
+      "delete": "상관관계 삭제",
       "label": "레이블",
-      "loading": "loading...",
-      "read-only": "Read only",
+      "loading": "로딩 중...",
+      "read-only": "읽기 전용",
       "source": "소스",
       "target": "대상"
     },
@@ -490,38 +490,38 @@
       "next-button": "다음",
       "save-button": "저장"
     },
-    "page-content": "To enable Correlations, add it in the Grafana config:",
-    "page-heading": "Correlations are disabled",
+    "page-content": "상관 관계를 활성화하려면 Grafana 설정에 추가하십시오:",
+    "page-heading": "상관 관계가 비활성화되었습니다",
     "query-editor": {
-      "control-rules": "The selected target data source must export a query editor.",
-      "data-source-text": "Please select a target data source first.",
-      "data-source-title": "No data source selected",
-      "error-text": "The selected data source could not be loaded.",
-      "error-title": "Error loading data source",
-      "loading": "Loading query editor...",
-      "query-description": "링크를 클릭할 때 실행되는 쿼리를 정의하세요. 특정 필드 값을 액세스하려면 <2>variables</2>를 사용할 수 있습니다.",
-      "query-editor-title": "Data source does not export a query editor.",
-      "query-label": "Query"
+      "control-rules": "선택한 대상 데이터 소스는 쿼리 편집기를 내보내야 합니다.",
+      "data-source-text": "먼저 대상 데이터 소스를 선택하세요.",
+      "data-source-title": "데이터 소스가 선택되지 않았습니다",
+      "error-text": "선택한 데이터 소스를 로드할 수 없습니다.",
+      "error-title": "데이터 소스 로드 오류",
+      "loading": "쿼리 편집기를 로드하는 중...",
+      "query-description": "링크를 클릭할 때 실행되는 쿼리를 정의하세요. 특정 필드 값을 액세스하려면 <2>변수</2>를 사용할 수 있습니다.",
+      "query-editor-title": "데이터 소스가 쿼리 편집기를 내보내지 않습니다.",
+      "query-label": "쿼리"
     },
     "source-form": {
-      "control-required": "This field is required.",
-      "description": "A data point needs to provide values to all variables as fields or as transformations output to make the correlation button appear in the visualization.<1></1>Note: Not every variable needs to be explicitly defined below. A transformation such as <4>logfmt</4> will create variables for every key/value pair.",
-      "description-external-pre": "You have used following variables in the target URL:",
-      "description-query-pre": "You have used following variables in the target query:",
-      "external-title": "Configure the data source that will use the URL (Step 3 of 3)",
-      "heading-external": "Variables used in the target URL",
-      "heading-query": "Variables used in the target query",
-      "query-title": "{{dataSourceName}}에 연결할 데이터 소스 구성 (Step 3 of 3)",
+      "control-required": "이 필드는 필수입니다.",
+      "description": "데이터 포인트는 모든 변수를 필드로 제공하거나 변환 출력으로 제공해야 시각화에 상관 관계 버튼이 나타납니다.<1></1>참고: 아래에 모든 변수를 명시적으로 정의할 필요는 없습니다. <4>logfmt</4>와 같은 변환은 모든 키/값 쌍에 대해 변수를 생성합니다.",
+      "description-external-pre": "대상 URL에서 다음 변수를 사용했습니다:",
+      "description-query-pre": "대상 쿼리에서 다음 변수를 사용했습니다:",
+      "external-title": "URL을 사용할 데이터 소스 구성 (3단계 중 3단계)",
+      "heading-external": "대상 URL에서 사용된 변수",
+      "heading-query": "대상 쿼리에서 사용된 변수",
+      "query-title": "{{dataSourceName}}에 연결할 데이터 소스 구성 (3단계 중 3단계)",
       "results-description": "이 필드에 링크가 표시됩니다.",
       "results-label": "결과 필드",
-      "results-required": "This field is required.",
-      "source-description": "선택한 소스 데이터 소스의 결과가 패널에 링크가 표시됩니다",
+      "results-required": "이 필드는 필수입니다.",
+      "source-description": "선택한 소스 데이터 소스의 결과가 패널에 링크가 표시됩니다.",
       "source-label": "소스",
       "sub-text": "<0>데이터 소스가 상관 관계를 표시하고 이전에 정의된 변수를 대체한 변수들을 대체하는 방법을 정의합니다.</0>"
     },
     "sub-title": "서로 다른 데이터 소스에 존재하는 데이터가 서로 어떻게 연관되는지 정의합니다. 다음 문서를 참조하세요. <2>documentation<1></1></2>",
     "target-form": {
-      "control-rules": "This field is required.",
+      "control-rules": "이 필드는 필수입니다.",
       "sub-text": "<0>상관 관계가 무엇인지 정의합니다.쿼리 유형을 사용하여 상관관계가 클릭되면 쿼리가 실행됩니다.외부 유형으로 상관 관계를 클릭하면 URL을 엽니다.</0>",
       "target-description-external": "링크를 클릭할 때 열릴 URL 지정",
       "target-description-query": "링크를 클릭할 때 쿼리할 데이터 소스 지정",
@@ -531,12 +531,12 @@
       "type-label": "유형"
     },
     "trans-details": {
-      "logfmt-description": "Parse provided field with logfmt to get variables",
+      "logfmt-description": "제공된 필드를 logfmt로 파싱하여 변수를 추출합니다.",
       "logfmt-label": "Logfmt",
-      "regex-description": "Field will be parsed with regex. Use named capture groups to return multiple variables, or a single unnamed capture group to add variable to named map value. Regex is case insensitive.",
-      "regex-expression": "Use capture groups to extract a portion of the field.",
-      "regex-label": "Regular expression",
-      "regex-map-values": "Defines the name of the variable if the capture group is not named."
+      "regex-description": "필드는 정규 표현식으로 파싱됩니다. 이름이 지정된 캡처 그룹을 사용하여 여러 변수를 반환하거나, 단일 이름 없는 캡처 그룹을 사용하여 변수를 명명된 맵 값에 추가할 수 있습니다. 정규 표현식은 대소문자를 구분하지 않습니다.",
+      "regex-expression": "필드의 일부를 추출하기 위해 캡처 그룹을 사용하세요.",
+      "regex-label": "정규 표현식",
+      "regex-map-values": "캡처 그룹에 이름이 지정되지 않은 경우 변수의 이름을 정의합니다."
     },
     "transform": {
       "add-button": "변환 추가",
@@ -544,19 +544,19 @@
       "no-transform": "변환이 정의되지 않음."
     },
     "transform-row": {
-      "expression-label": "Expression",
-      "expression-required": "Please define an expression",
-      "expression-tooltip": "Required for regular expression. The expression the transformation will use. Logfmt does not use further specifications.",
-      "field-input": "field",
-      "field-label": "Field",
-      "field-tooltip": "Optional. The field to transform. If not specified, the transformation will be applied to the results field.",
-      "map-value-label": "Map value",
-      "map-value-tooltip": "Optional. Defines the name of the variable. This is currently only valid for regular expressions with a single, unnamed capture group.",
-      "remove-button": "Remove",
-      "remove-tooltip": "Remove transformation",
-      "transform-required": "Please select a transformation type",
-      "type-label": "Type",
-      "type-tooltip": "The type of transformation that will be applied to the source data."
+      "expression-label": "식",
+      "expression-required": "식 정의가 필요합니다.",
+      "expression-tooltip": "정규 표현식에 필요합니다. 변환에서 사용할 식입니다. Logfmt는 추가 사양을 사용하지 않습니다.",
+      "field-input": "필드",
+      "field-label": "필드",
+      "field-tooltip": "선택 사항. 변환할 필드입니다. 지정하지 않으면 변환이 결과 필드에 적용됩니다.",
+      "map-value-label": "맵 값",
+      "map-value-tooltip": "선택 사항. 변수의 이름을 정의합니다. 이는 현재 단일 이름 없는 캡처 그룹에 대해만 유효합니다.",
+      "remove-button": "제거",
+      "remove-tooltip": "변환 제거",
+      "transform-required": "변환 유형을 선택하세요.",
+      "type-label": "유형",
+      "type-tooltip": "원본 데이터에 적용할 변환 유형입니다."
     }
   },
   "dashboard": {
@@ -568,8 +568,8 @@
       "widget": "위젯"
     },
     "alert-rules-drawer": {
-      "redirect-link": "List in Grafana Alerting",
-      "subtitle": "Alert rules related to this dashboard"
+      "redirect-link": "Grafana 알림에서 목록",
+      "subtitle": "이 대시보드와 관련된 알림 규칙"
     },
     "empty": {
       "add-library-panel-body": "다른 대시보드와 공유된 시각화를 추가",
@@ -578,7 +578,7 @@
       "add-visualization-body": "데이터 소스를 선택한 후, 차트, 통계, 테이블을 사용해 데이터를 쿼리하고 시각화하거나, 목록, 마크다운 및 기타 위젯을 생성하세요.",
       "add-visualization-button": "시각화 추가",
       "add-visualization-header": "새로운 대시보드 시작을 위해 시각화를 추가",
-      "add-widget-body": "Create lists, markdowns and other widgets",
+      "add-widget-body": "목록, 마크다운 및 기타 위젯을 생성",
       "add-widget-button": "위젯 추가",
       "add-widget-header": "위젯 추가",
       "import-a-dashboard-body": "파일에서 또는 <1>grafana.com</1> 에서 대시보드 가져오기.",
@@ -586,65 +586,65 @@
       "import-dashboard-button": "대시보드 가져오기"
     },
     "inspect": {
-      "data-tab": "Data",
-      "error-tab": "Error",
+      "data-tab": "데이터",
+      "error-tab": "오류",
       "json-tab": "JSON",
-      "meta-tab": "Meta data",
-      "query-tab": "Query",
-      "stats-tab": "Stats",
-      "subtitle": "{{queryCount}} queries with total query time of {{formatted}}",
-      "title": "Inspect: {{panelTitle}}"
+      "meta-tab": "메타 데이터",
+      "query-tab": "쿼리",
+      "stats-tab": "통계",
+      "subtitle": "{{queryCount}}개의 쿼리, 총 쿼리 시간 {{formatted}}",
+      "title": "검사: {{panelTitle}}"
     },
     "inspect-data": {
-      "data-options": "Data options",
-      "dataframe-aria-label": "Select dataframe",
-      "dataframe-label": "Show data frame",
-      "download-csv": "Download CSV",
-      "download-excel-description": "Adds header to CSV for use with Excel",
-      "download-excel-label": "Download for Excel",
-      "download-logs": "Download logs",
-      "download-service": "Download service graph",
-      "download-traces": "Download traces",
-      "excel-header": "Excel header",
-      "formatted": "Formatted data",
-      "formatted-data-description": "Table data is formatted with options defined in the Field and Override tabs.",
-      "formatted-data-label": "Formatted data",
-      "panel-transforms": "Panel transforms",
-      "series-to-columns": "Series joined by time",
-      "transformation": "Series joined by time",
-      "transformations-description": "Table data is displayed with transformations defined in the panel Transform tab.",
-      "transformations-label": "Apply panel transformations"
+      "data-options": "데이터 옵션",
+      "dataframe-aria-label": "데이터프레임 선택",
+      "dataframe-label": "데이터 프레임 보기",
+      "download-csv": "CSV 다운로드",
+      "download-excel-description": "Excel에서 사용할 수 있도록 CSV에 헤더 추가",
+      "download-excel-label": "Excel용 다운로드",
+      "download-logs": "로그 다운로드",
+      "download-service": "서비스 그래프 다운로드",
+      "download-traces": "추적 다운로드",
+      "excel-header": "Excel 헤더",
+      "formatted": "형식화된 데이터",
+      "formatted-data-description": "표 데이터는 필드 및 오버라이드 탭에 정의된 옵션으로 형식화됩니다.",
+      "formatted-data-label": "형식화된 데이터",
+      "panel-transforms": "패널 변환",
+      "series-to-columns": "시간별로 결합된 시리즈",
+      "transformation": "시간별로 결합된 시리즈",
+      "transformations-description": "표 데이터는 패널 변환 탭에 정의된 변환을 사용하여 표시됩니다.",
+      "transformations-label": "패널 변환 적용"
     },
     "inspect-json": {
-      "dataframe-description": "Raw data without transformations and field config applied. ",
-      "dataframe-label": "DataFrame JSON (from Query)",
-      "panel-data-description": "The raw model passed to the panel visualization",
-      "panel-data-label": "Panel data",
-      "panel-json-description": "The model saved in the dashboard JSON that configures how everything works.",
-      "panel-json-label": "Panel JSON",
-      "select-source": "Select source",
-      "unknown": "Unknown Object: {{show}}"
+      "dataframe-description": "변환 및 필드 구성이 적용되지 않은 원시 데이터.",
+      "dataframe-label": "DataFrame JSON (쿼리에서)",
+      "panel-data-description": "패널 시각화에 전달된 원시 모델",
+      "panel-data-label": "패널 데이터",
+      "panel-json-description": "모든 구성 요소가 작동하는 방식을 정의하는 대시보드 JSON에 저장된 모델.",
+      "panel-json-label": "패널 JSON",
+      "select-source": "소스 선택",
+      "unknown": "알 수 없는 객체: {{show}}"
     },
     "inspect-meta": {
-      "no-inspector": "No Metadata Inspector"
+      "no-inspector": "메타데이터 검사기 없음"
     },
     "inspect-stats": {
-      "data-title": "Data source stats",
-      "data-traceids": "Trace IDs",
-      "processing-time": "Data processing time",
-      "queries": "Number of queries",
-      "request-time": "Total request time",
-      "rows": "Total number rows",
-      "table-title": "Stats"
+      "data-title": "데이터 소스 통계",
+      "data-traceids": "추적 ID",
+      "processing-time": "데이터 처리 시간",
+      "queries": "쿼리 수",
+      "request-time": "총 요청 시간",
+      "rows": "총 행 수",
+      "table-title": "통계"
     },
     "toolbar": {
       "add": "추가",
-      "alert-rules": "Alert rules",
+      "alert-rules": "경고 규칙",
       "mark-favorite": "즐겨찾기로 표시",
-      "open-original": "Open original dashboard",
-      "playlist-next": "Go to next dashboard",
-      "playlist-previous": "Go to previous dashboard",
-      "playlist-stop": "Stop playlist",
+      "open-original": "원본 대시보드 열기",
+      "playlist-next": "다음 대시보드로 이동",
+      "playlist-previous": "이전 대시보드로 이동",
+      "playlist-stop": "플레이리스트 멈추기",
       "refresh": "대시보드 새로고침",
       "save": "대시보드 저장",
       "settings": "대시보드 설정",
@@ -653,10 +653,10 @@
       "unmark-favorite": "즐겨찾기 해제"
     },
     "validation": {
-      "invalid-dashboard-id": "Could not find a valid Grafana.com ID",
-      "invalid-json": "Not valid JSON",
-      "tags-expected-array": "tags expected array",
-      "tags-expected-strings": "tags expected array of strings"
+      "invalid-dashboard-id": "유효한 Grafana.com ID를 찾을 수 없습니다.",
+      "invalid-json": "유효하지 않은 JSON입니다.",
+      "tags-expected-array": "태그는 배열이어야 합니다.",
+      "tags-expected-strings": "태그는 문자열 배열이어야 합니다."
     }
   },
   "dashboard-import": {
@@ -681,9 +681,9 @@
   },
   "dashboard-links": {
     "empty-state": {
-      "button-title": "Add dashboard link",
-      "info-box-content": "Dashboard links allow you to place links to other dashboards and web sites directly below the dashboard header. <2>Learn more</2>",
-      "title": "There are no dashboard links added yet"
+      "button-title": "대시보드 링크 추가",
+      "info-box-content": "대시보드 링크를 사용하면 대시보드 헤더 바로 아래에 다른 대시보드와 웹사이트로의 링크를 추가할 수 있습니다. <2>자세히 알아보기</2>",
+      "title": "아직 대시보드 링크가 추가되지 않았습니다."
     }
   },
   "dashboard-settings": {
@@ -726,12 +726,12 @@
       "title": "권한"
     },
     "provisioned-delete-modal": {
-      "confirm-button": "OK",
-      "text-1": "This dashboard is managed by Grafana provisioning and cannot be deleted. Remove the dashboard from the config file to delete it.",
-      "text-2": "See grafana documentation for more information about provisioning. ",
-      "text-3": "File path: {{provisionedId}}",
-      "text-link": "Go to docs page",
-      "title": "Cannot delete provisioned dashboard"
+      "confirm-button": "확인",
+      "text-1": "이 대시보드는 Grafana 프로비저닝에 의해 관리되며 삭제할 수 없습니다. 삭제하려면 구성 파일에서 대시보드를 제거하세요.",
+      "text-2": "프로비저닝에 대한 자세한 정보는 Grafana 문서를 참조하세요.",
+      "text-3": "파일 경로: {{provisionedId}}",
+      "text-link": "문서 페이지로 이동",
+      "title": "프로비저닝된 대시보드는 삭제할 수 없습니다."
     },
     "settings": {
       "title": "설정"
@@ -755,15 +755,15 @@
   },
   "dashboards": {
     "panel-edit": {
-      "angular-deprecation-button-open-panel-json": "Open JSON editor",
-      "angular-deprecation-description": "Angular panels options can only be edited using the JSON editor.",
-      "angular-deprecation-heading": "Panel options"
+      "angular-deprecation-button-open-panel-json": "JSON 편집기 열기",
+      "angular-deprecation-description": "Angular 패널 옵션은 JSON 편집기를 사용하여만 편집할 수 있습니다.",
+      "angular-deprecation-heading": "패널 옵션"
     },
     "settings": {
       "variables": {
         "dependencies": {
-          "button": "Show dependencies",
-          "title": "Dependencies"
+          "button": "종속성 표시",
+          "title": "종속성"
         }
       }
     }
@@ -778,32 +778,32 @@
   "data-source-picker": {
     "add-new-data-source": "새 데이터 소스 구성",
     "built-in-list": {
-      "description-dashboard": "Reuse query results from other visualizations",
-      "description-grafana": "Discover visualizations using mock data",
-      "description-mixed": "Use multiple data sources"
+      "description-dashboard": "다른 시각화에서 쿼리 결과 재사용",
+      "description-grafana": "모의 데이터를 사용하여 시각화 탐색",
+      "description-mixed": "여러 데이터 소스 사용"
     },
     "list": {
-      "no-data-source-message": "No data sources found"
+      "no-data-source-message": "데이터 소스를 찾을 수 없습니다"
     },
     "modal": {
       "configure-new-data-source": "새 탭을 열고 데이터 소스 구성",
       "input-placeholder": "데이터 소스 선택",
       "title": "데이터 소스 선택"
     },
-    "open-advanced-button": "Open advanced data source picker"
+    "open-advanced-button": "고급 데이터 소스 선택기 열기"
   },
   "data-sources": {
     "datasource-add-button": {
       "label": "데이터 소스 추가"
     },
     "empty-state": {
-      "message": "No data sources found"
+      "message": "데이터 소스를 찾을 수 없습니다"
     }
   },
   "embed": {
     "share": {
-      "time-range-description": "Change the current relative time range to an absolute time range",
-      "time-range-label": "Lock time range"
+      "time-range-description": "현재 상대 시간 범위를 절대 시간 범위로 변경",
+      "time-range-label": "시간 범위 고정"
     }
   },
   "errors": {
@@ -816,487 +816,487 @@
   "explore": {
     "add-to-dashboard": "대시보드에 추가",
     "logs": {
-      "maximum-pinned-logs": "Maximum of {{PINNED_LOGS_LIMIT}} pinned logs reached. Unpin a log to add another.",
-      "no-logs-found": "No logs found.",
-      "scan-for-older-logs": "Scan for older logs",
-      "stop-scan": "Stop scan"
+      "maximum-pinned-logs": "최대 {{PINNED_LOGS_LIMIT}}개의 고정된 로그에 도달했습니다. 다른 로그를 고정 해제하여 새 로그를 추가하세요.",
+      "no-logs-found": "로그를 찾을 수 없습니다.",
+      "scan-for-older-logs": "더 오래된 로그 검색",
+      "stop-scan": "검색 중지"
     },
     "query-library": {
-      "add-edit-description": "Add/edit description",
-      "cancel": "Cancel",
-      "default-description": "Public",
-      "delete-query": "Delete query",
-      "delete-query-text": "You're about to remove this query from the query library. This action cannot be undone. Do you want to continue?",
-      "delete-query-title": "Delete query",
-      "private": "Private",
-      "public": "Public",
-      "query-deleted": "Query deleted",
-      "query-template-add-error": "Error attempting to add this query to the library",
-      "query-template-added": "Query template successfully added to the library",
-      "query-template-edit-error": "Error attempting to edit this query",
-      "query-template-edited": "Query template successfully edited",
+      "add-edit-description": "설명 추가/편집",
+      "cancel": "취소",
+      "default-description": "공용",
+      "delete-query": "쿼리 삭제",
+      "delete-query-text": "이 쿼리를 쿼리 라이브러리에서 삭제하려고 합니다. 이 작업은 취소할 수 없습니다. 계속하시겠습니까?",
+      "delete-query-title": "쿼리 삭제",
+      "private": "비공개",
+      "public": "공개",
+      "query-deleted": "쿼리가 삭제되었습니다",
+      "query-template-add-error": "쿼리를 라이브러리에 추가하는 중 오류가 발생했습니다",
+      "query-template-added": "쿼리 템플릿이 라이브러리에 성공적으로 추가되었습니다",
+      "query-template-edit-error": "쿼리 편집 중 오류가 발생했습니다",
+      "query-template-edited": "쿼리 템플릿이 성공적으로 편집되었습니다",
       "save": "저장"
     },
     "query-template-modal": {
-      "add-info": "You're about to save this query. Once saved, you can easily access it in the Query Library tab for future use and reference.",
-      "add-title": "Add query to Query Library",
-      "auto-star": "Auto-star this query to add it to your starred list in the Query Library.",
-      "data-source-name": "Data source name",
-      "description": "Description",
-      "edit-info": "You're about to edit this query. Once saved, you can easily access it in the Query Library tab for future use and reference.",
-      "edit-title": "Edit query",
-      "query": "Query",
-      "visibility": "Visibility"
+      "add-info": "이 쿼리를 저장하려고 합니다. 저장 후 쿼리 라이브러리 탭에서 쉽게 접근하여 나중에 사용할 수 있습니다.",
+      "add-title": "쿼리를 쿼리 라이브러리에 추가",
+      "auto-star": "이 쿼리를 자동으로 별표하여 쿼리 라이브러리에서 별표 목록에 추가합니다.",
+      "data-source-name": "데이터 소스 이름",
+      "description": "설명",
+      "edit-info": "이 쿼리를 편집하려고 합니다. 저장 후 쿼리 라이브러리 탭에서 쉽게 접근하여 나중에 사용할 수 있습니다.",
+      "edit-title": "쿼리 편집",
+      "query": "쿼리",
+      "visibility": "가시성"
     },
     "query-template-modall": {
-      "data-source-type": "Data source type"
+      "data-source-type": "데이터 소스 유형"
     },
     "rich-history": {
-      "close-tooltip": "Close query history",
-      "datasource-a-z": "Data source A-Z",
-      "datasource-z-a": "Data source Z-A",
-      "newest-first": "Newest first",
-      "oldest-first": "Oldest first",
-      "query-history": "Query history",
-      "query-library": "Query library",
-      "settings": "Settings",
-      "starred": "Starred"
+      "close-tooltip": "쿼리 히스토리 닫기",
+      "datasource-a-z": "데이터 소스 A-Z",
+      "datasource-z-a": "데이터 소스 Z-A",
+      "newest-first": "가장 최근 항목 먼저",
+      "oldest-first": "가장 오래된 항목 먼저",
+      "query-history": "쿼리 기록",
+      "query-library": "쿼리 라이브러리",
+      "settings": "설정",
+      "starred": "별표"
     },
     "rich-history-card": {
-      "add-comment-form": "Add comment form",
-      "add-comment-tooltip": "Add comment",
-      "add-to-library": "Add to library",
-      "cancel": "Cancel",
-      "confirm-delete": "Delete",
-      "copy-query-tooltip": "Copy query to clipboard",
-      "copy-shortened-link-tooltip": "Copy shortened link to clipboard",
-      "datasource-icon-label": "Data source icon",
-      "datasource-name-label": "Data source name",
-      "datasource-not-exist": "Data source does not exist anymore",
-      "delete-query-confirmation-title": "Delete",
-      "delete-query-title": "Delete query",
-      "delete-query-tooltip": "Delete query",
-      "delete-starred-query-confirmation-text": "Are you sure you want to permanently delete your starred query?",
-      "edit-comment-tooltip": "Edit comment",
-      "optional-description": "An optional description of what the query does.",
-      "query-comment-label": "Query comment",
-      "query-text-label": "Query text",
-      "save-comment": "Save comment",
-      "star-query-tooltip": "Star query",
-      "unstar-query-tooltip": "Unstar query",
-      "update-comment-form": "Update comment form"
+      "add-comment-form": "댓글 추가 폼",
+      "add-comment-tooltip": "댓글 추가",
+      "add-to-library": "라이브러리에 추가",
+      "cancel": "취소",
+      "confirm-delete": "삭제",
+      "copy-query-tooltip": "쿼리를 클립보드에 복사",
+      "copy-shortened-link-tooltip": "단축 링크를 클립보드에 복사",
+      "datasource-icon-label": "데이터 소스 아이콘",
+      "datasource-name-label": "데이터 소스 이름",
+      "datasource-not-exist": "데이터 소스가 더 이상 존재하지 않습니다",
+      "delete-query-confirmation-title": "삭제",
+      "delete-query-title": "쿼리 삭제",
+      "delete-query-tooltip": "쿼리 삭제",
+      "delete-starred-query-confirmation-text": "별표를 추가한 쿼리를 영구적으로 삭제하시겠습니까?",
+      "edit-comment-tooltip": "댓글 편집",
+      "optional-description": "쿼리가 수행하는 작업에 대한 선택적 설명입니다.",
+      "query-comment-label": "쿼리 댓글",
+      "query-text-label": "쿼리 텍스트",
+      "save-comment": "댓글 저장",
+      "star-query-tooltip": "쿼리 별표",
+      "unstar-query-tooltip": "쿼리 별표 해제",
+      "update-comment-form": "댓글 업데이트 폼"
     },
     "rich-history-container": {
-      "loading": "Loading..."
+      "loading": "로딩 중..."
     },
     "rich-history-notification": {
-      "query-copied": "Query copied to clipboard",
-      "query-deleted": "Query deleted"
+      "query-copied": "쿼리가 클립보드에 복사되었습니다",
+      "query-deleted": "쿼리가 삭제되었습니다"
     },
     "rich-history-queries-tab": {
-      "displaying-partial-queries": "Displaying {{ count }} queries",
-      "displaying-queries": "{{ count }} queries",
-      "filter-aria-label": "Filter queries for data sources(s)",
-      "filter-history": "Filter history",
-      "filter-placeholder": "Filter queries for data sources(s)",
-      "history-local": "The history is local to your browser and is not shared with others.",
-      "loading": "Loading...",
-      "loading-results": "Loading results...",
-      "search-placeholder": "Search queries",
-      "showing-queries": "Showing {{ shown }} of {{ total }} <0>Load more</0>",
-      "sort-aria-label": "Sort queries",
-      "sort-placeholder": "Sort queries by"
+      "displaying-partial-queries": "{{ count }}개의 쿼리 표시 중",
+      "displaying-queries": "{{ count }}개의 쿼리",
+      "filter-aria-label": "데이터 소스별로 쿼리 필터링",
+      "filter-history": "히스토리 필터링",
+      "filter-placeholder": "데이터 소스별로 쿼리 필터링",
+      "history-local": "이 히스토리는 귀하의 브라우저에만 로컬 저장되며 다른 사람과 공유되지 않습니다.",
+      "loading": "로딩 중...",
+      "loading-results": "결과 로딩 중...",
+      "search-placeholder": "쿼리 검색",
+      "showing-queries": "{{ shown }}개 중 {{ total }}개 표시 <0>더 보기</0>",
+      "sort-aria-label": "쿼리 정렬",
+      "sort-placeholder": "쿼리 정렬 기준"
     },
     "rich-history-settings-tab": {
-      "alert-info": "Grafana will keep entries up to {{optionLabel}}.Starred entries won't be deleted.",
-      "change-default-tab": "Change the default active tab from “Query history” to “Starred”",
-      "clear-history-info": "Delete all of your query history, permanently.",
-      "clear-query-history": "Clear query history",
-      "clear-query-history-button": "Clear query history",
-      "delete-confirm": "Delete",
-      "delete-confirm-text": "Are you sure you want to permanently delete your query history?",
-      "delete-title": "Delete",
-      "history-time-span": "History time span",
-      "history-time-span-description": "Select the period of time for which Grafana will save your query history. Up to {{MAX_HISTORY_ITEMS}} entries will be stored.",
-      "only-show-active-datasource": "Only show queries for data source currently active in Explore",
-      "query-history-deleted": "Query history deleted",
+      "alert-info": "Grafana는 최대 {{optionLabel}}개의 항목을 저장합니다. 별표가 지정된 항목은 삭제되지 않습니다.",
+      "change-default-tab": "기본 활성 탭을 ‘쿼리 기록’에서 ‘별표된 항목’으로 변경",
+      "clear-history-info": "모든 쿼리 기록을 영구적으로 삭제합니다.",
+      "clear-query-history": "쿼리 기록 삭제",
+      "clear-query-history-button": "쿼리 기록 삭제",
+      "delete-confirm": "삭제",
+      "delete-confirm-text": "쿼리 기록을 영구적으로 삭제하시겠습니까?",
+      "delete-title": "삭제",
+      "history-time-span": "기록 시간 범위",
+      "history-time-span-description": "Grafana가 쿼리 기록을 저장할 기간을 선택하세요. 최대 {{MAX_HISTORY_ITEMS}}개의 항목이 저장됩니다.",
+      "only-show-active-datasource": "현재 Explore에서 활성화된 데이터 소스에 대해서만 쿼리 표시",
+      "query-history-deleted": "쿼리 기록 삭제됨",
       "retention-period": {
-        "1-week": "1 week",
-        "2-days": "2 days",
-        "2-weeks": "2 weeks",
-        "5-days": "5 days"
+        "1-week": "1주",
+        "2-days": "2일",
+        "2-weeks": "2주",
+        "5-days": "5일"
       }
     },
     "rich-history-starred-tab": {
-      "filter-queries-aria-label": "Filter queries for data sources(s)",
-      "filter-queries-placeholder": "Filter queries for data sources(s)",
-      "loading": "Loading...",
-      "loading-results": "Loading results...",
-      "local-history-message": "The history is local to your browser and is not shared with others.",
-      "search-queries-placeholder": "Search queries",
-      "showing-queries": "Showing {{ shown }} of {{ total }} <0>Load more</0>",
-      "sort-queries-aria-label": "Sort queries",
-      "sort-queries-placeholder": "Sort queries by"
+      "filter-queries-aria-label": "데이터 소스별로 쿼리 필터링",
+      "filter-queries-placeholder": "데이터 소스별로 쿼리 필터링",
+      "loading": "로딩 중...",
+      "loading-results": "결과 로딩 중...",
+      "local-history-message": "이 히스토리는 귀하의 브라우저에만 로컬 저장되며 다른 사람과 공유되지 않습니다.",
+      "search-queries-placeholder": "쿼리 검색",
+      "showing-queries": "{{ shown }}개 중 {{ total }}개 표시 <0>더 보기</0>",
+      "sort-queries-aria-label": "쿼리 정렬",
+      "sort-queries-placeholder": "쿼리 정렬 기준"
     },
     "rich-history-utils": {
-      "a-week-ago": "a week ago",
-      "days-ago": "{{num}} days ago",
+      "a-week-ago": "일주일 전",
+      "days-ago": "{{num}}일 전",
       "default-from": "now-1h",
       "default-to": "now",
-      "today": "today",
-      "two-weeks-ago": "two weeks ago",
-      "yesterday": "yesterday"
+      "today": "오늘",
+      "two-weeks-ago": "2주 전",
+      "yesterday": "어제"
     },
     "rich-history-utils-notification": {
-      "saving-failed": "Saving rich history failed",
-      "update-failed": "Rich History update failed"
+      "saving-failed": "Rich History 저장 실패",
+      "update-failed": "Rich History 업데이트 실패"
     },
     "run-query": {
-      "left-pane": "Left pane",
-      "right-pane": "Right pane",
-      "run-query-button": "Run query",
-      "switch-datasource-button": "Switch data source and run query"
+      "left-pane": "왼쪽 창",
+      "right-pane": "오른쪽 창",
+      "run-query-button": "쿼리 실행",
+      "switch-datasource-button": "데이터 소스 전환 후 쿼리 실행"
     },
     "secondary-actions": {
       "query-add-button": "쿼리 추가",
       "query-add-button-aria-label": "쿼리 추가",
       "query-history-button": "쿼리 기록",
-      "query-history-button-aria-label": "Query history",
+      "query-history-button-aria-label": "쿼리 기록",
       "query-inspector-button": "쿼리 인스펙터",
-      "query-inspector-button-aria-label": "Query inspector"
+      "query-inspector-button-aria-label": "쿼리 인스펙터"
     },
     "table": {
-      "no-data": "0 series returned",
-      "title": "Table",
-      "title-with-name": "Table - {{name}}"
+      "no-data": "0개의 시리즈 반환됨",
+      "title": "테이블",
+      "title-with-name": "테이블 - {{name}}"
     },
     "toolbar": {
-      "aria-label": "Explore toolbar",
-      "copy-link": "Copy URL",
-      "copy-link-abs-time": "Copy absolute URL",
-      "copy-links-absolute-category": "Time-sync URL links (share with time range intact)",
-      "copy-links-normal-category": "Normal URL links",
-      "copy-shortened-link": "Copy shortened URL",
-      "copy-shortened-link-abs-time": "Copy absolute shortened URL",
-      "copy-shortened-link-menu": "Open copy link options",
-      "refresh-picker-cancel": "Cancel",
-      "refresh-picker-run": "Run query",
-      "split-close": " 닫기 ",
-      "split-close-tooltip": "Close split pane",
-      "split-narrow": "Narrow pane",
+      "aria-label": "Explore 툴바",
+      "copy-link": "URL 복사",
+      "copy-link-abs-time": "절대 URL 복사",
+      "copy-links-absolute-category": "시간 동기화 URL 링크 (시간 범위 그대로 공유)",
+      "copy-links-normal-category": "일반 URL 링크",
+      "copy-shortened-link": "단축 URL 복사",
+      "copy-shortened-link-abs-time": "절대 단축 URL 복사",
+      "copy-shortened-link-menu": "링크 복사 옵션 열기",
+      "refresh-picker-cancel": "취소",
+      "refresh-picker-run": "쿼리 실행",
+      "split-close": "닫기",
+      "split-close-tooltip": "분할 창 닫기",
+      "split-narrow": "창 좁히기",
       "split-title": "분할",
       "split-tooltip": "창 분할",
-      "split-widen": "Widen pane"
+      "split-widen": "창 넓히기"
     }
   },
   "explore-metrics": {
     "breakdown": {
-      "clearFilter": "Clear filter",
-      "labelSelect": "Select",
-      "noMatchingValue": "No values found matching; {{filter}}"
+      "clearFilter": "필터 지우기",
+      "labelSelect": "선택",
+      "noMatchingValue": "일치하는 값이 없습니다: {{filter}}"
     },
-    "viewBy": "View by"
+    "viewBy": "보기 기준"
   },
   "export": {
     "json": {
-      "cancel-button": "Cancel",
-      "copy-button": "Copy to clipboard",
-      "download-button": "Download file",
-      "download-successful_toast_message": "Your JSON has been downloaded",
-      "export-externally-label": "Export the dashboard to use in another instance",
-      "info-text": "Copy or download a JSON file containing the JSON of your dashboard",
-      "title": "Export dashboard JSON"
+      "cancel-button": "취소",
+      "copy-button": "클립보드에 복사",
+      "download-button": "파일 다운로드",
+      "download-successful_toast_message": "JSON이 다운로드되었습니다.",
+      "export-externally-label": "다른 인스턴스에서 사용하기 위해 대시보드 내보내기",
+      "info-text": "대시보드의 JSON을 포함하는 JSON 파일을 복사하거나 다운로드하세요.",
+      "title": "대시보드 JSON 내보내기"
     },
     "menu": {
       "export-as-json-label": "내보내기",
-      "export-as-json-tooltip": "Export"
+      "export-as-json-tooltip": "내보내기"
     }
   },
   "folder-picker": {
-    "loading": "Loading folders..."
+    "loading": "폴더 로딩 중..."
   },
   "gen-ai": {
-    "apply-suggestion": "Apply",
-    "incomplete-request-error": "Sorry, I was unable to complete your request. Please try again.",
-    "send-custom-feedback": "Send"
+    "apply-suggestion": "적용",
+    "incomplete-request-error": "죄송합니다. 요청을 완료할 수 없습니다. 다시 시도해주세요.",
+    "send-custom-feedback": "보내기"
   },
   "grafana-ui": {
     "drawer": {
-      "close": "Close"
+      "close": "닫기"
     },
     "modal": {
-      "close-tooltip": "Close"
+      "close-tooltip": "닫기"
     },
     "segment-async": {
-      "error": "Failed to load options",
-      "loading": "Loading options...",
-      "no-options": "No options found"
+      "error": "옵션을 불러오는 데 실패했습니다.",
+      "loading": "옵션 로딩 중...",
+      "no-options": "옵션이 없습니다."
     },
     "select": {
-      "no-options-label": "No options found",
+      "no-options-label": "옵션이 없습니다.",
       "placeholder": "선택"
     },
     "spinner": {
-      "aria-label": "Loading"
+      "aria-label": "로딩 중"
     },
     "table": {
-      "copy": "Copy to Clipboard"
+      "copy": "클립보드에 복사"
     }
   },
   "graph": {
     "container": {
-      "content": "Rendering too many series in a single panel may impact performance and make data harder to read. Consider refining your queries.",
-      "show-all-series": "Show all {{length}}",
-      "show-only-series": "Showing only {{MAX_NUMBER_OF_TIME_SERIES}} series",
-      "title": "Graph"
+      "content": "하나의 패널에 너무 많은 시리즈를 렌더링하면 성능에 영향을 미치고 데이터를 읽기 어렵게 만들 수 있습니다. 쿼리를 세분화하는 것이 좋습니다.",
+      "show-all-series": "{{length}} 모두 보기",
+      "show-only-series": "최대 {{MAX_NUMBER_OF_TIME_SERIES}} 시리즈만 표시",
+      "title": "그래프"
     }
   },
   "help-modal": {
     "shortcuts-category": {
-      "dashboard": "Dashboard",
-      "focused-panel": "Focused panel",
-      "global": "Global",
-      "time-range": "Time range"
+      "dashboard": "대시보드",
+      "focused-panel": "포커스된 패널",
+      "global": "전체",
+      "time-range": "시간 범위"
     },
     "shortcuts-description": {
-      "change-theme": "Change theme",
-      "collapse-all-rows": "Collapse all rows",
-      "copy-time-range": "Copy time range",
-      "dashboard-settings": "Dashboard settings",
-      "duplicate-panel": "Duplicate Panel",
-      "exit-edit/setting-views": "Exit edit/setting views",
-      "expand-all-rows": "Expand all rows",
-      "go-to-dashboards": "Go to Dashboards",
-      "go-to-explore": "Go to Explore",
-      "go-to-home-dashboard": "Go to Home Dashboard",
-      "go-to-profile": "Go to Profile",
-      "make-time-range-permanent": "Make time range absolute/permanent",
-      "move-time-range-back": "Move time range back",
-      "move-time-range-forward": "Move time range forward",
-      "open-search": "Open search",
-      "open-shared-modal": "Open Panel Share Modal",
-      "paste-time-range": "Paste time range",
-      "refresh-all-panels": "Refresh all panels",
+      "change-theme": "테마 변경",
+      "collapse-all-rows": "모든 행 접기",
+      "copy-time-range": "시간 범위 복사",
+      "dashboard-settings": "대시보드 설정",
+      "duplicate-panel": "패널 복제",
+      "exit-edit/setting-views": "편집/설정 보기 종료",
+      "expand-all-rows": "모든 행 펼치기",
+      "go-to-dashboards": "대시보드로 이동",
+      "go-to-explore": "탐색으로 이동",
+      "go-to-home-dashboard": "홈 대시보드로 이동",
+      "go-to-profile": "프로필로 이동",
+      "make-time-range-permanent": "시간 범위를 절대/영구적으로 설정",
+      "move-time-range-back": "시간 범위 되돌리기",
+      "move-time-range-forward": "시간 범위 앞으로 이동",
+      "open-search": "검색 열기",
+      "open-shared-modal": "패널 공유 모달 열기",
+      "paste-time-range": "시간 범위 붙여넣기",
+      "refresh-all-panels": "모든 패널 새로 고침",
       "remove-panel": "패널 삭제",
       "save-dashboard": "대시보드 저장",
-      "show-all-shortcuts": "Show all keyboard shortcuts",
-      "toggle-active-mode": "Toggle in-active / view mode",
-      "toggle-all-panel-legends": "Toggle all panel legends",
-      "toggle-auto-fit": "Toggle auto fit panels (experimental feature)",
-      "toggle-exemplars": "Toggle exemplars in all panel",
-      "toggle-graph-crosshair": "Toggle shared graph crosshair",
-      "toggle-kiosk": "Toggle kiosk mode (hides top nav)",
-      "toggle-panel-edit": "Toggle panel edit view",
-      "toggle-panel-fullscreen": "Toggle panel fullscreen view",
-      "toggle-panel-legend": "Toggle panel legend",
-      "zoom-out-time-range": "Zoom out time range"
+      "show-all-shortcuts": "모든 단축키 보기",
+      "toggle-active-mode": "활성/비활성 모드 전환",
+      "toggle-all-panel-legends": "모든 패널 범례 전환",
+      "toggle-auto-fit": "자동 맞춤 패널 전환 (실험적 기능)",
+      "toggle-exemplars": "모든 패널에서 예시 전환",
+      "toggle-graph-crosshair": "공유된 그래프 교차선 전환",
+      "toggle-kiosk": "키오스크 모드 전환 (상단 내비 숨기기)",
+      "toggle-panel-edit": "패널 편집 보기 전환",
+      "toggle-panel-fullscreen": "패널 전체 화면 보기 전환",
+      "toggle-panel-legend": "패널 범례 전환",
+      "zoom-out-time-range": "시간 범위 축소"
     },
     "title": "단축키"
   },
   "help-wizard": {
-    "download-snapshot": "Download snapshot",
-    "github-comment": "Copy Github comment",
-    "preview-snapshot": "Preview snapshot",
-    "support-bundle": "You can also retrieve a support bundle containing information concerning your Grafana instance and configured datasources in the <1>support bundles section</1>.",
-    "troubleshooting-help": "To request troubleshooting help, send a snapshot of this panel to Grafana Labs Technical Support. The snapshot contains query response data and panel settings."
+    "download-snapshot": "스냅샷 다운로드",
+    "github-comment": "GitHub 댓글 복사",
+    "preview-snapshot": "스냅샷 미리보기",
+    "support-bundle": "또한 <1>지원 번들 섹션</1>에서 Grafana 인스턴스와 구성된 데이터 소스에 관한 정보를 포함한 지원 번들을 가져올 수 있습니다.",
+    "troubleshooting-help": "문제 해결 지원을 요청하려면 이 패널의 스냅샷을 Grafana Labs 기술 지원에 보내세요. 스냅샷에는 쿼리 응답 데이터와 패널 설정이 포함됩니다."
   },
   "inspector": {
     "query": {
-      "collapse-all": "Collapse all",
-      "copy-to-clipboard": "Copy to clipboard",
-      "description": "Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a new query. Click refresh button below to trigger a new query.",
-      "expand-all": "Expand all",
-      "no-data": "No request and response collected yet. Hit refresh button",
+      "collapse-all": "모두 접기",
+      "copy-to-clipboard": "클립보드에 복사",
+      "description": "쿼리 인스펙터는 원시 요청과 응답을 볼 수 있게 해줍니다. 이 데이터를 수집하려면 Grafana가 새로운 쿼리를 실행해야 합니다. 새 쿼리를 실행하려면 아래 새로 고침 버튼을 클릭하세요.",
+      "expand-all": "모두 펼치기",
+      "no-data": "아직 요청 및 응답이 수집되지 않았습니다. 새로 고침 버튼을 클릭하세요.",
       "refresh": "새로고침"
     }
   },
   "ldap-drawer": {
     "attributes-section": {
-      "description": "Specify the LDAP attributes that map to the user's given name, surname, and email address, ensuring the application correctly retrieves and displays user information.",
-      "email-label": "Email",
-      "label": "Attributes",
-      "member-of-label": "Member Of",
-      "name-label": "Name",
-      "surname-label": "Surname",
-      "username-label": "Username"
+      "description": "사용자의 이름, 성, 이메일 주소에 매핑되는 LDAP 속성을 지정하여 애플리케이션이 사용자 정보를 올바르게 검색하고 표시할 수 있도록 합니다.",
+      "email-label": "이메일",
+      "label": "속성",
+      "member-of-label": "소속",
+      "name-label": "이름",
+      "surname-label": "성",
+      "username-label": "사용자 이름"
     },
     "extra-security-section": {
-      "client-cert-label": "Client certificate path",
+      "client-cert-label": "클라이언트 인증서 경로",
       "client-cert-placeholder": "/path/to/client_cert.pem",
-      "client-cert-value-label": "Client certificate content",
-      "client-cert-value-placeholder": "Client certificate content in base64",
-      "client-key-label": "Client key path",
+      "client-cert-value-label": "클라이언트 인증서 내용",
+      "client-cert-value-placeholder": "클라이언트 인증서 내용 (base64)",
+      "client-key-label": "클라이언트 키 경로",
       "client-key-placeholder": "/path/to/client_key.pem",
-      "client-key-value-label": "Client key content",
-      "client-key-value-placeholder": "Client key content in base64",
-      "encryption-provider-base-64": "Base64-encoded content",
-      "encryption-provider-description": "X.509 certificate provides the public part, while the private key issued in a PKCS#8 format provides the private part of the asymmetric encryption.",
-      "encryption-provider-file-path": "Path to files",
-      "encryption-provider-label": "Encryption key and certificate provision specification.",
-      "label": "Extra security measures",
-      "min-tls-version-description": "This is the minimum TLS version allowed. Accepted values are: TLS1.2, TLS1.3.",
-      "min-tls-version-label": "Min TLS version",
-      "root-ca-cert-label": "Root CA certificate path",
+      "client-key-value-label": "클라이언트 키 내용",
+      "client-key-value-placeholder": "클라이언트 키 내용 (base64)",
+      "encryption-provider-base-64": "Base64로 인코딩된 내용",
+      "encryption-provider-description": "X.509 인증서는 공개 부분을 제공하고, PKCS#8 형식으로 발급된 개인 키는 비대칭 암호화의 개인 부분을 제공합니다.",
+      "encryption-provider-file-path": "파일 경로",
+      "encryption-provider-label": "암호화 키 및 인증서 제공 사양",
+      "label": "추가 보안 조치",
+      "min-tls-version-description": "이 값은 허용되는 최소 TLS 버전입니다. 허용된 값은 TLS1.2와 TLS1.3입니다.",
+      "min-tls-version-label": "최소 TLS 버전",
+      "root-ca-cert-label": "루트 CA 인증서 경로",
       "root-ca-cert-placeholder": "/path/to/root_ca_cert.pem",
-      "root-ca-cert-value-label": "Root CA certificate content",
-      "root-ca-cert-value-placeholder": "example: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t",
-      "start-tls-description": "If set to true, use LDAP with STARTTLS instead of LDAPS",
+      "root-ca-cert-value-label": "루트 CA 인증서 내용",
+      "root-ca-cert-value-placeholder": "예: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t",
+      "start-tls-description": "true로 설정하면 LDAPS 대신 STARTTLS를 사용하여 LDAP을 사용합니다.",
       "start-tls-label": "Start TLS",
-      "tls-ciphers-label": "TLS ciphers",
-      "tls-ciphers-placeholder": "example: TLS_AES_256_GCM_SHA384",
-      "use-ssl-description": "Set to true if LDAP server should use TLS connection (either with STARTTLS or LDAPS)",
-      "use-ssl-label": "Use SSL",
-      "use-ssl-tooltip": "For a complete list of supported ciphers and TLS versions, refer to:"
+      "tls-ciphers-label": "TLS 암호화 방식",
+      "tls-ciphers-placeholder": "예: TLS_AES_256_GCM_SHA384",
+      "use-ssl-description": "LDAP 서버가 TLS 연결을 사용해야 하는 경우 (STARTTLS 또는 LDAPS) true로 설정하세요.",
+      "use-ssl-label": "SSL 사용",
+      "use-ssl-tooltip": "지원되는 암호화 방식과 TLS 버전의 전체 목록은 다음을 참조하세요:"
     },
     "group-mapping": {
       "grafana-admin": {
-        "description": "If enabled, all users from this group will be Grafana Admins",
-        "label": "Grafana Admin"
+        "description": "이 그룹이 활성화되면 이 그룹의 모든 사용자가 Grafana 관리자 권한을 갖습니다.",
+        "label": "Grafana 관리자"
       },
       "group-dn": {
-        "description": "The name of the key used to extract the ID token from the returned OAuth2 token.",
-        "label": "Group DN"
+        "description": "반환된 OAuth2 토큰에서 ID 토큰을 추출하는 데 사용되는 키의 이름입니다.",
+        "label": "그룹 DN"
       },
       "org-id": {
-        "description": "The Grafana organization database id. Default org (ID 1) will be used if left out",
-        "label": "Org ID"
+        "description": "Grafana 조직 데이터베이스 ID. 기본 조직(ID 1)을 사용할 수 있습니다.",
+        "label": "조직 ID"
       },
       "org-role": {
-        "label": "Org role *"
+        "label": "조직 역할 *"
       },
       "remove": {
-        "button": "Remove group mapping"
+        "button": "그룹 매핑 삭제"
       }
     },
     "group-mapping-section": {
       "add": {
-        "button": "Add group mapping"
+        "button": "그룹 매핑 추가"
       },
-      "description": "Map LDAP groups to Grafana org roles",
-      "group-search-base-dns-label": "Group search base DNS",
-      "group-search-base-dns-placeholder": "example: ou=groups,dc=example,dc=com",
-      "group-search-filter-description": "Used to filter and identify group entries within the directory",
-      "group-search-filter-label": "Group search filter",
-      "group-search-filter-user-attribute-description": "Identifies users within group entries for filtering purposes",
-      "group-search-filter-user-attribute-label": "Group name attribute",
-      "label": "Group mapping",
-      "skip-org-role-sync-description": "Prevent synchronizing users’ organization roles from your IdP",
-      "skip-org-role-sync-label": "Skip organization role sync"
+      "description": "LDAP 그룹을 Grafana 조직 역할에 매핑합니다.",
+      "group-search-base-dns-label": "그룹 검색 기본 DNS",
+      "group-search-base-dns-placeholder": "예: ou=groups,dc=example,dc=com",
+      "group-search-filter-description": "디렉토리 내에서 그룹 항목을 필터링하고 식별하는 데 사용됩니다.",
+      "group-search-filter-label": "그룹 검색 필터",
+      "group-search-filter-user-attribute-description": "필터링 목적을 위한 그룹 항목 내의 사용자 식별",
+      "group-search-filter-user-attribute-label": "그룹 이름 속성",
+      "label": "그룹 매핑",
+      "skip-org-role-sync-description": "IdP에서 사용자의 조직 역할 동기화를 방지합니다.",
+      "skip-org-role-sync-label": "조직 역할 동기화 건너뛰기"
     },
     "misc-section": {
-      "allow-sign-up-descrition": "If not enabled, only existing Grafana users can log in using LDAP",
-      "allow-sign-up-label": "Allow sign-up",
-      "label": "Misc",
-      "port-description": "Default port is 389 without SSL or 636 with SSL",
-      "port-label": "Port",
-      "timeout-description": "Timeout in seconds for the connection to the LDAP server",
-      "timeout-label": "Timeout"
+      "allow-sign-up-descrition": "활성화되지 않으면 기존 Grafana 사용자만 LDAP를 사용하여 로그인할 수 있습니다.",
+      "allow-sign-up-label": "가입 허용",
+      "label": "기타",
+      "port-description": "기본 포트는 SSL 없이 389, SSL 사용 시 636입니다.",
+      "port-label": "포트",
+      "timeout-description": "LDAP 서버와의 연결에 대한 타임아웃(초 단위)",
+      "timeout-label": "타임아웃"
     },
-    "title": "Advanced settings"
+    "title": "고급 설정"
   },
   "ldap-settings-page": {
     "advanced-settings-section": {
-      "edit-button": "Edit",
-      "subtitle": "Mappings, extra security measures, and more.",
-      "title": "Advanced Settings"
+      "edit-button": "편집",
+      "subtitle": "매핑, 추가 보안 조치 등.",
+      "title": "고급 설정"
     },
     "alert": {
-      "discard-success": "LDAP settings discarded",
-      "error-fetching": "Error fetching LDAP settings",
-      "error-saving": "Error saving LDAP settings",
-      "error-validate-form": "Error validating LDAP settings",
-      "feature-flag-disabled": "This page is only accessible by enabling the <1>ssoSettingsLDAP</1> feature flag.",
-      "saved": "LDAP settings saved"
+      "discard-success": "LDAP 설정이 버려졌습니다",
+      "error-fetching": "LDAP 설정을 가져오는 중 오류가 발생했습니다",
+      "error-saving": "LDAP 설정을 저장하는 중 오류가 발생했습니다",
+      "error-validate-form": "LDAP 설정을 검증하는 중 오류가 발생했습니다",
+      "feature-flag-disabled": "이 페이지는 <1>ssoSettingsLDAP</1> 기능 플래그를 활성화해야만 접근할 수 있습니다.",
+      "saved": "LDAP 설정이 저장되었습니다"
     },
     "bind-dn": {
-      "description": "Distinguished name of the account used to bind and authenticate to the LDAP server.",
+      "description": "LDAP 서버에 바인딩하고 인증하기 위해 사용하는 계정의 구별된 이름.",
       "label": "Bind DN",
-      "placeholder": "example: cn=admin,dc=grafana,dc=org"
+      "placeholder": "예: cn=admin,dc=grafana,dc=org"
     },
     "bind-password": {
-      "label": "Bind password"
+      "label": "Bind 비밀번호"
     },
     "buttons-section": {
-      "disable-button": "Disable",
-      "discard-button": "Discard",
-      "save-and-enable-button": "Save and enable",
+      "disable-button": "비활성화",
+      "discard-button": "버리기",
+      "save-and-enable-button": "저장하고 활성화",
       "save-button": "저장"
     },
-    "documentation": "documentation",
+    "documentation": "문서",
     "host": {
-      "description": "Hostname or IP address of the LDAP server you wish to connect to.",
-      "label": "Server host *",
-      "placeholder": "example: 127.0.0.1"
+      "description": "연결하려는 LDAP 서버의 호스트명 또는 IP 주소.",
+      "label": "서버 호스트 *",
+      "placeholder": "예: 127.0.0.1"
     },
     "login-form-alert": {
-      "description": "Your LDAP configuration is not working because the basic login form is currently disabled. Please enable the login form to use LDAP authentication. You can enable it on the Authentication page under “Auth settings”.",
-      "title": "Basic login disabled"
+      "description": "기본 로그인 양식이 현재 비활성화되어 LDAP 구성이 작동하지 않습니다. LDAP 인증을 사용하려면 로그인 양식을 활성화해야 합니다. ‘인증 설정’ 페이지에서 로그인 양식을 활성화할 수 있습니다.",
+      "title": "기본 로그인 비활성화"
     },
     "search_filter": {
-      "description": "LDAP search filter used to locate specific entries within the directory.",
-      "label": "Search filter *",
-      "placeholder": "example: cn=%s"
+      "description": "디렉토리 내에서 특정 항목을 찾는 데 사용되는 LDAP 검색 필터.",
+      "label": "검색 필터 *",
+      "placeholder": "예: cn=%s"
     },
     "search-base-dns": {
-      "description": "An array of base dns to search through.",
-      "label": "Search base DNS *",
-      "placeholder": "example: dc=grafana,dc=org"
+      "description": "검색할 기본 DNS 배열.",
+      "label": "검색 기본 DNS *",
+      "placeholder": "예: dc=grafana,dc=org"
     },
-    "subtitle": "The LDAP integration in Grafana allows your Grafana users to log in with their LDAP credentials. Find out more in our <2><0>documentation</0></2>.",
-    "title": "Basic Settings"
+    "subtitle": "Grafana의 LDAP 통합을 사용하면 Grafana 사용자가 LDAP 자격 증명으로 로그인할 수 있습니다. 자세한 내용은 <2><0>문서</0></2>에서 확인하세요.",
+    "title": "기본 설정"
   },
   "library-panel": {
     "add-modal": {
-      "cancel": "Cancel",
-      "create": "Create library panel",
-      "error": "Library panel with this name already exists",
-      "folder": "Save in folder",
-      "folder-description": "Library panel permissions are derived from the folder permissions",
-      "name": "Library panel name"
+      "cancel": "취소",
+      "create": "라이브러리 패널 생성",
+      "error": "이미 해당 이름의 라이브러리 패널이 존재합니다",
+      "folder": "폴더에 저장",
+      "folder-description": "라이브러리 패널 권한은 폴더 권한에서 파생됩니다",
+      "name": "라이브러리 패널 이름"
     },
     "add-widget": {
       "title": "패널 라이브러리에서 패널 추가"
     },
     "empty-state": {
       "message": "아직 패널 라이브러리가 생성되지 않았습니다.",
-      "more-info": "패널 컨텍스트 메뉴를 통해 기존 대시보드 패널에서 라이브러리 패널을 생성하세요. <2>Learn more</2>"
+      "more-info": "패널 컨텍스트 메뉴를 통해 기존 대시보드 패널에서 라이브러리 패널을 생성하세요. <2>자세히 보기</2>"
     }
   },
   "library-panels": {
     "empty-state": {
-      "message": "No library panels found"
+      "message": "라이브러리 패널이 없습니다"
     },
-    "loading-panel-text": "Loading library panel",
+    "loading-panel-text": "라이브러리 패널 로딩 중",
     "modal": {
-      "body_one": "This panel is being used in {{count}} dashboard. Please choose which dashboard to view the panel in:",
-      "body_other": "This panel is being used in {{count}} dashboard. Please choose which dashboard to view the panel in:",
-      "button-cancel": "Cancel",
-      "button-view-panel1": "View panel in {{label}}...",
-      "button-view-panel2": "View panel in dashboard...",
-      "panel-not-linked": "Panel is not linked to a dashboard. Add the panel to a dashboard and retry.",
-      "select-no-options-message": "No dashboards found",
-      "select-placeholder": "Start typing to search for dashboard",
-      "title": "View panel in dashboard"
+      "body_one": "이 패널은 {{count}}개의 대시보드에서 사용 중입니다. 해당 대시보드를 선택하여 패널을 확인하세요:",
+      "body_other": "이 패널은 {{count}}개의 대시보드에서 사용 중입니다. 해당 대시보드를 선택하여 패널을 확인하세요:",
+      "button-cancel": "취소",
+      "button-view-panel1": "{{label}} 대시보드에서 패널 보기...",
+      "button-view-panel2": "대시보드에서 패널 보기...",
+      "panel-not-linked": "패널이 대시보드에 연결되지 않았습니다. 패널을 대시보드에 추가하고 다시 시도하세요.",
+      "select-no-options-message": "대시보드가 없습니다",
+      "select-placeholder": "대시보드를 검색하려면 입력을 시작하세요",
+      "title": "대시보드에서 패널 보기"
     },
     "save": {
-      "error": "Error saving library panel: \"{{errorMsg}}\"",
-      "success": "Library panel saved"
+      "error": "라이브러리 패널 저장 오류: \"{{errorMsg}}\"",
+      "success": "라이브러리 패널 저장됨"
     }
   },
   "link": {
     "share": {
-      "config-alert-description": "Updating your settings will modify the default copy link to include these changes. Please note that these settings are saved within your current browser scope.",
-      "config-alert-title": "Link settings",
-      "config-description": "Create a personalized, direct link to share your dashboard within your organization, with the following customization settings:",
-      "copy-link-button": "Copy link",
-      "copy-to-clipboard": "Link copied to clipboard",
-      "short-url-label": "Shorten link",
-      "time-range-description": "Change the current relative time range to an absolute time range",
-      "time-range-label": "Lock time range"
+      "config-alert-description": "설정을 업데이트하면 기본 복사 링크가 이러한 변경 사항을 포함하도록 수정됩니다. 이 설정은 현재 브라우저 범위 내에서 저장됩니다.",
+      "config-alert-title": "링크 설정",
+      "config-description": "조직 내에서 대시보드를 공유할 수 있는 개인화된 직링크를 생성하려면 다음의 사용자화 설정을 적용하세요:",
+      "copy-link-button": "링크 복사",
+      "copy-to-clipboard": "링크가 클립보드에 복사되었습니다",
+      "short-url-label": "링크 단축",
+      "time-range-description": "현재 상대 시간 범위를 절대 시간 범위로 변경합니다",
+      "time-range-label": "시간 범위 고정"
     },
     "share-panel": {
-      "config-description": "Create a personalized, direct link to share your panel within your organization, with the following customization settings:",
-      "render-image": "Render image"
+      "config-description": "조직 내에서 패널을 공유할 수 있는 개인화된 직링크를 생성하려면 다음의 사용자화 설정을 적용하세요:",
+      "render-image": "이미지로 렌더링"
     }
   },
   "login": {
@@ -1318,7 +1318,7 @@
       "username-required": "이메일 또는 사용자 이름이 필요합니다"
     },
     "services": {
-      "sing-in-with-prefix": "Sign in with {{serviceName}}"
+      "sing-in-with-prefix": "다음으로 로그인: {{serviceName}}"
     },
     "signup": {
       "button-label": "로그인",
@@ -1327,202 +1327,202 @@
   },
   "logs": {
     "infinite-scroll": {
-      "older-logs": "Older logs"
+      "older-logs": "이전 로그"
     }
   },
   "migrate-to-cloud": {
     "build-snapshot": {
-      "description": "This tool can migrate some resources from this installation to your cloud stack. To get started, you'll need to create a snapshot of this installation. Creating a snapshot typically takes less than two minutes. The snapshot is stored alongside this Grafana installation.",
-      "title": "No snapshot exists",
-      "when-complete": "Once the snapshot is complete, you will be able to upload it to your cloud stack."
+      "description": "이 도구는 이 설치에서 일부 리소스를 클라우드 스택으로 마이그레이션할 수 있습니다. 시작하려면 이 설치의 스냅샷을 생성해야 합니다. 스냅샷 생성은 보통 2분 이내에 완료됩니다. 스냅샷은 이 Grafana 설치와 함께 저장됩니다.",
+      "title": "스냅샷이 존재하지 않음",
+      "when-complete": "스냅샷이 완료되면 클라우드 스택에 업로드할 수 있습니다."
     },
     "building-snapshot": {
-      "description": "We're creating a point-in-time snapshot of the current state of this installation. Once the snapshot is complete. you'll be able to upload it to Grafana Cloud.",
-      "description-eta": "Creating a snapshot typically takes less than two minutes.",
-      "title": "Building installation snapshot"
+      "description": "현재 설치 상태의 시점 스냅샷을 생성 중입니다. 스냅샷이 완료되면 이를 Grafana Cloud에 업로드할 수 있습니다.",
+      "description-eta": "스냅샷 생성은 보통 2분 이내에 완료됩니다.",
+      "title": "설치 스냅샷 생성 중"
     },
     "can-i-move": {
-      "body": "Once you connect this installation to a cloud stack, you'll be able to upload data sources and dashboards.",
-      "link-title": "Learn about migrating other settings",
-      "title": "Can I move this installation to Grafana Cloud?"
+      "body": "이 설치를 클라우드 스택에 연결하면 데이터 소스와 대시보드를 업로드할 수 있습니다.",
+      "link-title": "다른 설정 마이그레이션에 대해 알아보기",
+      "title": "이 설치를 Grafana Cloud로 이동할 수 있나요?"
     },
     "connect-modal": {
-      "body-cloud-stack": "You'll also need a cloud stack. If you just signed up, we'll automatically create your first stack. If you have an account, you'll need to select or create a stack.",
-      "body-get-started": "To get started, you'll need a Grafana.com account.",
-      "body-sign-up": "Sign up for a Grafana.com account",
-      "body-token": "Your self-managed Grafana installation needs special access to securely migrate content. You'll need to create a migration token on your chosen cloud stack.",
-      "body-token-field": "Migration token",
-      "body-token-field-placeholder": "Paste token here",
-      "body-token-instructions": "Log into your cloud stack and navigate to Administration, General, Migrate to Grafana Cloud. Create a migration token on that screen and paste the token here.",
-      "body-view-stacks": "View my cloud stacks",
-      "cancel": "Cancel",
-      "connect": "Connect to this stack",
-      "connecting": "Connecting to this stack...",
-      "title": "Connect to a cloud stack",
-      "token-error-description": "There was an error saving the token. See the Grafana server logs for more details.",
-      "token-error-title": "Error saving token",
-      "token-required-error": "Migration token is required"
+      "body-cloud-stack": "클라우드 스택도 필요합니다. 가입한 경우 첫 번째 스택을 자동으로 생성합니다. 계정이 있으면 스택을 선택하거나 생성해야 합니다.",
+      "body-get-started": "시작하려면 Grafana.com 계정이 필요합니다.",
+      "body-sign-up": "Grafana.com 계정에 가입하기",
+      "body-token": "자체 관리 Grafana 설치는 콘텐츠를 안전하게 마이그레이션하려면 특별한 액세스가 필요합니다. 선택한 클라우드 스택에서 마이그레이션 토큰을 생성해야 합니다.",
+      "body-token-field": "마이그레이션 토큰",
+      "body-token-field-placeholder": "여기에 토큰을 붙여넣으세요",
+      "body-token-instructions": "클라우드 스택에 로그인하고 관리, 일반, Grafana Cloud로 마이그레이션을 클릭하여 마이그레이션 토큰을 생성한 후 여기에 붙여넣으세요.",
+      "body-view-stacks": "내 클라우드 스택 보기",
+      "cancel": "취소",
+      "connect": "이 스택에 연결",
+      "connecting": "이 스택에 연결 중...",
+      "title": "클라우드 스택에 연결",
+      "token-error-description": "토큰을 저장하는 중 오류가 발생했습니다. 자세한 내용은 Grafana 서버 로그를 참조하세요.",
+      "token-error-title": "토큰 저장 오류",
+      "token-required-error": "마이그레이션 토큰이 필요합니다."
     },
     "cta": {
-      "button": "Migrate this instance to Cloud",
-      "header": "Let us manage your Grafana stack"
+      "button": "이 인스턴스를 클라우드로 마이그레이션",
+      "header": "Grafana 스택을 관리하도록 하세요"
     },
     "delete-migration-token-confirm": {
-      "body": "If you've already used this token with a self-managed installation, that installation will no longer be able to upload content.",
-      "confirm-button": "Delete token",
-      "error-title": "Error deleting token",
-      "title": "Delete migration token"
+      "body": "이 토큰을 자체 관리 설치에서 이미 사용한 경우, 해당 설치는 더 이상 콘텐츠를 업로드할 수 없습니다.",
+      "confirm-button": "토큰 삭제",
+      "error-title": "토큰 삭제 오류",
+      "title": "마이그레이션 토큰 삭제"
     },
     "disconnect-modal": {
-      "body": "This will remove the migration token from this installation. If you wish to upload more resources in the future, you will need to enter a new migration token.",
-      "cancel": "Cancel",
-      "disconnect": "Disconnect",
-      "disconnecting": "Disconnecting...",
-      "error": "There was an error disconnecting",
-      "title": "Disconnect from cloud stack"
+      "body": "이렇게 하면 이 설치에서 마이그레이션 토큰이 제거됩니다. 나중에 더 많은 리소스를 업로드하려면 새 마이그레이션 토큰을 입력해야 합니다.",
+      "cancel": "취소",
+      "disconnect": "연결 해제",
+      "disconnecting": "연결 해제 중...",
+      "error": "연결 해제 중 오류 발생",
+      "title": "클라우드 스택과 연결 해제"
     },
     "get-started": {
-      "body": "The migration process must be started from your self-managed Grafana instance.",
-      "configure-pdc-link": "Configure PDC for this stack",
-      "link-title": "Learn more about Private Data Source Connect",
-      "step-1": "Log in to your self-managed instance and navigate to Administration, General, Migrate to Grafana Cloud.",
-      "step-2": "Select \"Migrate this instance to Cloud\".",
-      "step-3": "You'll be prompted for a migration token. Generate one from this screen.",
-      "step-4": "In your self-managed instance, select \"Upload everything\" to upload data sources and dashboards to this cloud stack.",
-      "step-5": "If some of your data sources will not work over the public internet, you’ll need to install Private Data Source Connect in your self-managed environment.",
-      "title": "Performing a migration"
+      "body": "마이그레이션 과정은 자체 관리 Grafana 인스턴스에서 시작해야 합니다.",
+      "configure-pdc-link": "이 스택에 대해 PDC 구성",
+      "link-title": "Private Data Source Connect에 대해 알아보기",
+      "step-1": "자체 관리 인스턴스에 로그인하고 관리, 일반, Grafana Cloud로 마이그레이션을 클릭하세요.",
+      "step-2": "\"이 인스턴스를 클라우드로 마이그레이션\"을 선택하세요.",
+      "step-3": "마이그레이션 토큰을 요청받습니다. 이 화면에서 토큰을 생성하세요.",
+      "step-4": "자체 관리 인스턴스에서 \"모든 항목 업로드\"를 선택하여 데이터 소스와 대시보드를 클라우드 스택에 업로드하세요.",
+      "step-5": "일부 데이터 소스가 공용 인터넷을 통해 작동하지 않으면, 자체 관리 환경에 Private Data Source Connect를 설치해야 합니다.",
+      "title": "마이그레이션 수행"
     },
     "is-it-secure": {
-      "body": "Grafana Labs is committed to maintaining the highest standards of data privacy and security. By implementing industry-standard security technologies and procedures, we help protect our customers' data from unauthorized access, use, or disclosure.",
+      "body": "Grafana Labs는 데이터 개인 정보 보호 및 보안의 최고 표준을 유지하는 데 전념하고 있습니다. 업계 표준 보안 기술과 절차를 구현하여 고객의 데이터를 무단 액세스, 사용 또는 공개로부터 보호합니다.",
       "link-title": "Grafana Labs Trust Center",
-      "title": "Is it secure?"
+      "title": "안전한가요?"
     },
     "migrate-to-this-stack": {
-      "body": "You can migrate some resources from your self-managed Grafana installation to this cloud stack. To do this securely, you'll need to generate a migration token. Your self-managed instance will use the token to authenticate with this cloud stack.",
-      "link-title": "View the full migration guide",
-      "title": "Let us help you migrate to this stack"
+      "body": "자체 관리 Grafana 설치에서 이 클라우드 스택으로 일부 리소스를 마이그레이션할 수 있습니다. 이를 안전하게 수행하려면 마이그레이션 토큰을 생성해야 합니다. 자체 관리 인스턴스는 이 토큰을 사용하여 클라우드 스택과 인증합니다.",
+      "link-title": "전체 마이그레이션 가이드 보기",
+      "title": "이 스택으로 마이그레이션하는 데 도움을 드리겠습니다"
     },
     "migrated-counts": {
-      "dashboards": "dashboards",
-      "datasources": "data sources",
-      "folders": "folders",
-      "library_elements": "library elements"
+      "dashboards": "대시보드",
+      "datasources": "데이터 소스",
+      "folders": "폴더",
+      "library_elements": "라이브러리 요소"
     },
     "migration-token": {
-      "delete-button": "Delete token",
-      "delete-modal-body": "If you've already used this token with a self-managed installation, that installation will no longer be able to upload content.",
-      "delete-modal-cancel": "Cancel",
-      "delete-modal-confirm": "Delete",
-      "delete-modal-deleting": "Deleting...",
-      "delete-modal-title": "Delete migration token",
-      "error-body": "Unable to generate a migration token. Please try again later.",
-      "error-title": "Something went wrong",
-      "generate-button": "Generate a migration token",
-      "generate-button-loading": "Generating a migration token...",
-      "modal-close": "Close",
-      "modal-copy-and-close": "Copy to clipboard and close",
-      "modal-copy-button": "Copy to clipboard",
-      "modal-field-description": "Copy the token now as you will not be able to see it again. Losing a token requires creating a new one.",
-      "modal-field-label": "Token",
-      "modal-title": "Migration token created",
-      "status": "Current status: <2></2>"
+      "delete-button": "토큰 삭제",
+      "delete-modal-body": "이 토큰을 자체 관리 설치에서 이미 사용한 경우, 해당 설치는 더 이상 콘텐츠를 업로드할 수 없습니다.",
+      "delete-modal-cancel": "취소",
+      "delete-modal-confirm": "삭제",
+      "delete-modal-deleting": "삭제 중...",
+      "delete-modal-title": "마이그레이션 토큰 삭제",
+      "error-body": "마이그레이션 토큰을 생성할 수 없습니다. 나중에 다시 시도하세요.",
+      "error-title": "문제가 발생했습니다",
+      "generate-button": "마이그레이션 토큰 생성",
+      "generate-button-loading": "마이그레이션 토큰 생성 중...",
+      "modal-close": "닫기",
+      "modal-copy-and-close": "클립보드에 복사하고 닫기",
+      "modal-copy-button": "클립보드에 복사",
+      "modal-field-description": "토큰을 지금 복사하세요. 다시는 볼 수 없습니다. 토큰을 잃으면 새로 생성해야 합니다.",
+      "modal-field-label": "토큰",
+      "modal-title": "마이그레이션 토큰 생성됨",
+      "status": "현재 상태: <2></2>"
     },
     "onprem": {
-      "cancel-snapshot-error-title": "Error cancelling creating snapshot",
-      "create-snapshot-error-title": "Error creating snapshot",
-      "disconnect-error-title": "Error disconnecting",
-      "error-see-server-logs": "See the Grafana server logs for more details",
-      "get-session-error-title": "Error loading migration configuration",
-      "get-snapshot-error-title": "Error loading snapshot",
-      "migration-finished-with-caveat-title": "Resource migration complete",
-      "migration-finished-with-errors-body": "The migration has completed, but some items could not be migrated to the cloud stack. Check the failed resources for more details",
-      "migration-finished-with-warnings-body": "The migration has completed with some warnings. Check individual resources for more details",
-      "snapshot-error-status-body": "There was an error creating the snapshot or starting the migration process. See the Grafana server logs for more details",
-      "snapshot-error-status-title": "Error migrating resources",
-      "success-message": "Successfully migrated {{successCount}} {{types, list}} to your Grafana Cloud instance.",
-      "success-title": "Migration completed!",
-      "upload-snapshot-error-title": "Error uploading snapshot"
+      "cancel-snapshot-error-title": "스냅샷 생성 취소 오류",
+      "create-snapshot-error-title": "스냅샷 생성 오류",
+      "disconnect-error-title": "연결 해제 오류",
+      "error-see-server-logs": "자세한 내용은 Grafana 서버 로그를 참조하세요",
+      "get-session-error-title": "마이그레이션 구성 로딩 오류",
+      "get-snapshot-error-title": "스냅샷 로딩 오류",
+      "migration-finished-with-caveat-title": "리소스 마이그레이션 완료",
+      "migration-finished-with-errors-body": "마이그레이션이 완료되었으나 일부 항목이 클라우드 스택으로 마이그레이션되지 않았습니다. 실패한 리소스를 확인하세요",
+      "migration-finished-with-warnings-body": "마이그레이션이 완료되었으나 일부 경고가 있었습니다. 개별 리소스를 확인하세요",
+      "snapshot-error-status-body": "스냅샷 생성 또는 마이그레이션 과정 시작에 오류가 발생했습니다. Grafana 서버 로그를 참조하세요",
+      "snapshot-error-status-title": "리소스 마이그레이션 오류",
+      "success-message": "{{successCount}} {{types, list}}가 성공적으로 Grafana Cloud 인스턴스로 마이그레이션되었습니다.",
+      "success-title": "마이그레이션 완료!",
+      "upload-snapshot-error-title": "스냅샷 업로드 오류"
     },
     "pdc": {
-      "body": "Exposing your data sources to the internet can raise security concerns. Private data source connect (PDC) allows Grafana Cloud to access your existing data sources over a secure network tunnel.",
-      "link-title": "Learn about PDC",
-      "title": "Not all my data sources are on the public internet"
+      "body": "데이터 소스를 인터넷에 노출하는 것은 보안 우려를 일으킬 수 있습니다. Private Data Source Connect(PDC)는 Grafana Cloud가 기존 데이터 소스를 안전한 네트워크 터널을 통해 액세스할 수 있도록 합니다.",
+      "link-title": "PDC에 대해 알아보기",
+      "title": "내 데이터 소스가 공용 인터넷에 있지 않습니다"
     },
     "pricing": {
-      "body": "Grafana Cloud has a generous free plan and a 14 day unlimited usage trial. After your trial expires, you'll be billed based on usage over the free plan limits.",
-      "link-title": "Grafana Cloud pricing",
-      "title": "How much does it cost?"
+      "body": "Grafana Cloud는 관대한 무료 플랜과 14일 무제한 사용 체험을 제공합니다. 체험이 끝나면 무료 플랜 한도를 초과한 사용에 대해 요금이 부과됩니다.",
+      "link-title": "Grafana Cloud 가격",
+      "title": "가격은 얼마인가요?"
     },
     "public-preview": {
-      "button-text": "Give feedback",
-      "message": "No SLAs are available yet. <2>Visit our docs</2> to learn more about this feature!",
-      "title": "Migrate to Grafana Cloud is in public preview"
+      "button-text": "피드백 제공",
+      "message": "SLAs는 아직 제공되지 않습니다. <2>문서를 참조</2>하여 이 기능에 대해 더 알아보세요!",
+      "title": "Grafana Cloud로의 마이그레이션이 공개 미리보기 중입니다"
     },
     "resource-details": {
-      "dismiss-button": "OK",
-      "error-title": "Unable to migrate this resource:",
-      "generic-title": "Resource migration details:",
-      "missing-message": "No message provided.",
+      "dismiss-button": "확인",
+      "error-title": "이 리소스를 마이그레이션할 수 없습니다:",
+      "generic-title": "리소스 마이그레이션 세부 사항:",
+      "missing-message": "메시지가 제공되지 않았습니다.",
       "resource-summary": "{{refId}} ({{typeName}})",
-      "title": "Migration resource details",
-      "warning-title": "Resource migrated with a warning:"
+      "title": "마이그레이션 리소스 세부 사항",
+      "warning-title": "경고와 함께 마이그레이션된 리소스:"
     },
     "resource-status": {
-      "error-details-button": "Details",
-      "failed": "Error",
-      "migrated": "Uploaded to cloud",
-      "migrating": "Uploading...",
-      "not-migrated": "Not yet uploaded",
-      "unknown": "Unknown",
-      "warning": "Uploaded with warning",
-      "warning-details-button": "Details"
+      "error-details-button": "세부 사항",
+      "failed": "오류",
+      "migrated": "클라우드에 업로드됨",
+      "migrating": "업로드 중...",
+      "not-migrated": "아직 업로드되지 않음",
+      "unknown": "알 수 없음",
+      "warning": "경고와 함께 업로드됨",
+      "warning-details-button": "세부 사항"
     },
     "resource-table": {
-      "dashboard-load-error": "Unable to load dashboard",
-      "error-library-element-sub": "Library Element {uid}",
-      "error-library-element-title": "Unable to load library element",
-      "unknown-datasource-title": "Data source {{datasourceUID}}",
-      "unknown-datasource-type": "Unknown data source"
+      "dashboard-load-error": "대시보드를 로드할 수 없습니다",
+      "error-library-element-sub": "라이브러리 요소 {uid}",
+      "error-library-element-title": "라이브러리 요소를 로드할 수 없습니다",
+      "unknown-datasource-title": "데이터 소스 {{datasourceUID}}",
+      "unknown-datasource-type": "알 수 없는 데이터 소스"
     },
     "resource-type": {
-      "dashboard": "Dashboard",
-      "datasource": "Data source",
-      "folder": "Folder",
-      "library_element": "Library Element",
-      "unknown": "Unknown"
+      "dashboard": "대시보드",
+      "datasource": "데이터 소스",
+      "folder": "폴더",
+      "library_element": "라이브러리 요소",
+      "unknown": "알 수 없음"
     },
     "summary": {
-      "cancel-snapshot": "Cancel snapshot",
-      "disconnect": "Disconnect",
-      "errored-resource-count": "Errors",
-      "page-loading": "Loading...",
-      "rebuild-snapshot": "Rebuild snapshot",
-      "snapshot-date": "Snapshot timestamp",
-      "snapshot-not-created": "Not yet created",
-      "start-migration": "Build snapshot",
-      "successful-resource-count": "Successfully migrated",
-      "target-stack-title": "Uploading to",
-      "total-resource-count": "Total resources",
-      "upload-migration": "Upload snapshot"
+      "cancel-snapshot": "스냅샷 취소",
+      "disconnect": "연결 해제",
+      "errored-resource-count": "오류",
+      "page-loading": "로딩 중...",
+      "rebuild-snapshot": "스냅샷 재생성",
+      "snapshot-date": "스냅샷 타임스탬프",
+      "snapshot-not-created": "아직 생성되지 않음",
+      "start-migration": "스냅샷 생성",
+      "successful-resource-count": "성공적으로 마이그레이션됨",
+      "target-stack-title": "업로드 대상",
+      "total-resource-count": "총 리소스",
+      "upload-migration": "스냅샷 업로드"
     },
     "support-types-disclosure": {
-      "text": "Dashboards, Folders, and built-in core data sources are migrated to your Grafana Cloud stack. <2>Learn about migrating other settings.</2>"
+      "text": "대시보드, 폴더 및 내장된 핵심 데이터 소스는 Grafana Cloud 스택으로 마이그레이션됩니다. <2>다른 설정 마이그레이션에 대해 알아보세요.</2>"
     },
     "token-status": {
-      "active": "Token created and active",
-      "no-active": "No active token",
-      "unknown": "Unknown",
-      "unknown-error": "Error retrieving token"
+      "active": "토큰이 생성되어 활성화되었습니다",
+      "no-active": "활성 토큰이 없습니다",
+      "unknown": "알 수 없음",
+      "unknown-error": "토큰을 가져오는 중 오류 발생"
     },
     "what-is-cloud": {
-      "body": "Grafana cloud is a fully managed cloud-hosted observability platform ideal for cloud native environments. It's everything you love about Grafana without the overhead of maintaining, upgrading, and supporting an installation.",
-      "link-title": "Learn about cloud features",
-      "title": "What is Grafana Cloud?"
+      "body": "Grafana Cloud는 클라우드 네이티브 환경에 최적화된 완전 관리형 클라우드 호스팅 관측 플랫폼입니다. 설치를 유지하고 업그레이드하며 지원하는 번거로움 없이 Grafana에서 제공하는 모든 기능을 즐길 수 있습니다.",
+      "link-title": "클라우드 기능에 대해 알아보세요",
+      "title": "Grafana Cloud란 무엇인가요?"
     },
     "why-host": {
-      "body": "In addition to the convenience of managed hosting, Grafana Cloud includes many cloud-exclusive features like SLOs, incident management, machine learning, and powerful observability integrations.",
-      "link-title": "More questions? Talk to an expert",
-      "title": "Why host with Grafana?"
+      "body": "관리형 호스팅의 편리함 외에도, Grafana Cloud는 SLO, 인시던트 관리, 머신 러닝 및 강력한 관측 통합과 같은 클라우드 전용 기능들을 제공합니다.",
+      "link-title": "더 궁금한 점이 있나요? 전문가와 상담하기",
+      "title": "왜 Grafana에서 호스팅하나요?"
     }
   },
   "nav": {
@@ -1530,11 +1530,11 @@
       "title": "새 연결 추가"
     },
     "admin": {
-      "subtitle": "Manage server-wide settings and access to resources such as organizations, users, and licenses",
-      "title": "Server admin"
+      "subtitle": "서버 전반적인 설정과 조직, 사용자, 라이선스와 같은 리소스에 대한 접근을 관리합니다.",
+      "title": "서버 관리자"
     },
     "alert-list-legacy": {
-      "title": "Alert rules"
+      "title": "경고 규칙"
     },
     "alerting": {
       "subtitle": "시스템 문제 발생 직후 이에 대해 파악하기",
@@ -1545,7 +1545,7 @@
       "title": "설정"
     },
     "alerting-am-routes": {
-      "subtitle": "컨택트 포인트로 경고를 라우팅하는 방법 결정",
+      "subtitle": "콘택트 포인트로 경고를 라우팅하는 방법 결정",
       "title": "알림 정책"
     },
     "alerting-channels": {
@@ -1559,34 +1559,34 @@
       "title": "Home"
     },
     "alerting-legacy": {
-      "title": "Alerting (legacy)"
+      "title": "경고(레거시)"
     },
     "alerting-list": {
       "subtitle": "경고 발생 여부를 결정하는 규칙",
       "title": "경고 규칙"
     },
     "alerting-receivers": {
-      "subtitle": "알림 인스턴스가 시작될 때 컨택트 포인트에 알림을 보내는 방법 선택",
-      "title": "컨택트 포인트"
+      "subtitle": "알림 인스턴스가 시작될 때 콘택트 포인트에 알림을 보내는 방법 선택",
+      "title": "콘택트 포인트"
     },
     "alerting-silences": {
       "subtitle": "하나 이상의 경고 규칙에서 알림 중지 설정",
       "title": "사일런스"
     },
     "alerting-upgrade": {
-      "subtitle": "Upgrade your existing legacy alerts and notification channels to the new Grafana Alerting",
-      "title": "Alerting upgrade"
+      "subtitle": "기존의 레거시 경고 및 알림 채널을 새로운 Grafana 경고 시스템으로 업그레이드하세요",
+      "title": "경고 시스템 업그레이드"
     },
     "alerts-and-incidents": {
-      "subtitle": "Alerting and incident management apps",
-      "title": "Alerts & IRM"
+      "subtitle": "경고 및 사고 관리 애플리케이션",
+      "title": "경고 및 IRM"
     },
     "api-keys": {
-      "subtitle": "Manage and create API keys that are used to interact with Grafana HTTP APIs",
-      "title": "API keys"
+      "subtitle": "Grafana HTTP API와 상호작용하는 데 사용되는 API 키를 관리하고 생성하세요",
+      "title": "API 키"
     },
     "application": {
-      "title": "Application"
+      "title": "애플리케이션"
     },
     "apps": {
       "subtitle": "Wall 기능을 확장하는 앱 플러그인",
@@ -1603,7 +1603,7 @@
       "title": "페이지를 북마크하여 여기에 표시"
     },
     "collector": {
-      "title": "Collector"
+      "title": "수집기"
     },
     "config": {
       "title": "관리"
@@ -1621,7 +1621,7 @@
       "title": "플러그인 및 데이터"
     },
     "connect-data": {
-      "title": "Connect data"
+      "title": "데이터 연결"
     },
     "connections": {
       "subtitle": "탐색 및 새 연결 추가",
@@ -1659,7 +1659,7 @@
       "title": "데이터 소스"
     },
     "detect": {
-      "title": "Detect"
+      "title": "탐지"
     },
     "explore": {
       "title": "탐색"
@@ -1668,11 +1668,11 @@
       "title": "메트릭"
     },
     "frontend": {
-      "subtitle": "Gain real user monitoring insights",
-      "title": "Frontend"
+      "subtitle": "실제 사용자 모니터링 인사이트 얻기",
+      "title": "프론트엔드"
     },
     "frontend-app": {
-      "title": "Frontend"
+      "title": "프론트엔드"
     },
     "global-orgs": {
       "subtitle": "동일한 서버에 실행 중인 그룹 격리된 인스턴스",
@@ -1686,12 +1686,12 @@
       "title": "Grafana Quaderno"
     },
     "groupsync": {
-      "subtitle": "Manage mappings of Identity Provider groups to Grafana Roles"
+      "subtitle": "아이덴티티 제공자 그룹을 Grafana 역할에 매핑 관리"
     },
     "help": {
-      "title": "Help"
+      "title": "도움말"
     },
-    "help/community": "Community",
+    "help/community": "커뮤니티",
     "help/documentation": "문서",
     "help/keyboard-shortcuts": "키보드 단축키",
     "help/support": "지원",
@@ -1699,38 +1699,38 @@
       "title": "홈"
     },
     "incidents": {
-      "title": "Incident"
+      "title": "사고"
     },
     "infrastructure": {
-      "subtitle": "Understand your infrastructure's health",
-      "title": "Infrastructure"
+      "subtitle": "인프라의 상태를 이해하기",
+      "title": "인프라"
     },
     "integrations": {
-      "title": "Integrations"
+      "title": "통합"
     },
     "k6": {
-      "title": "Performance"
+      "title": "성능"
     },
     "kubernetes": {
-      "title": "Kubernetes"
+      "title": "쿠버네티스"
     },
     "library-panels": {
       "subtitle": "여러 대시보드에 추가할 수 있는 재사용 가능한 패널",
       "title": "라이브러리 패널"
     },
     "machine-learning": {
-      "title": "Machine learning"
+      "title": "머신러닝"
     },
     "manage-folder": {
       "subtitle": "폴더 대시보드 및 권한 관리"
     },
     "migrate-to-cloud": {
-      "subtitle": "Copy configuration from your self-managed installation to a cloud stack",
-      "title": "Migrate to Grafana Cloud"
+      "subtitle": "자체 관리 설치에서 클라우드 스택으로 구성을 복사합니다.",
+      "title": "Grafana Cloud로 마이그레이션"
     },
     "monitoring": {
-      "subtitle": "Out-of-the-box observability solutions",
-      "title": "Observability"
+      "subtitle": "즉시 사용할 수 있는 가시성 솔루션",
+      "title": "가시성"
     },
     "new": {
       "title": "생성"
@@ -1742,10 +1742,10 @@
       "title": "새 폴더"
     },
     "observability": {
-      "title": "Observability"
+      "title": "가시성"
     },
     "oncall": {
-      "title": "OnCall"
+      "title": "온-콜"
     },
     "org-settings": {
       "subtitle": "조직 전체의 환경 설정 관리",
@@ -1760,8 +1760,8 @@
       "title": "플러그인"
     },
     "private-data-source-connections": {
-      "subtitle": "Query data that lives within a secured network without opening the network to inbound traffic from Grafana Cloud. Learn more in our docs.",
-      "title": "Private data source connect"
+      "subtitle": "Grafana Cloud에서 인바운드 트래픽을 열지 않고 보안된 네트워크 내에서 데이터를 쿼리합니다. 자세한 내용은 문서를 참조하세요.",
+      "title": "프라이빗 데이터 소스 연결"
     },
     "profile/notifications": {
       "title": "알림 기록"
@@ -1773,29 +1773,29 @@
       "title": "프로필"
     },
     "profiles": {
-      "title": "Profiles"
+      "title": "프로필"
     },
     "public": {
       "title": "공개 대시보드"
     },
     "recently-deleted": {
-      "subtitle": "Any items listed here for more than 30 days will be automatically deleted.",
-      "title": "Recently deleted"
+      "subtitle": "여기에 나열된 항목은 30일이 지나면 자동으로 삭제됩니다.",
+      "title": "최근 삭제됨"
     },
     "recorded-queries": {
-      "title": "Recorded queries"
+      "title": "기록된 쿼리"
     },
     "reporting": {
-      "title": "Reporting"
+      "title": "보고서"
     },
     "scenes": {
-      "title": "Scenes"
+      "title": "장면"
     },
     "search": {
       "placeholderCommandPalette": "검색 또는 이동..."
     },
     "search-dashboards": {
-      "title": "Search dashboards"
+      "title": "대시보드 검색"
     },
     "server-settings": {
       "subtitle": "Wall 구성에 정의된 설정 보기",
@@ -1809,8 +1809,8 @@
       "title": "Setup guide"
     },
     "shared-dashboard": {
-      "subtitle": "Manage your organization's externally shared dashboards",
-      "title": "Shared dashboards"
+      "subtitle": "조직의 외부 공유 대시보드를 관리합니다.",
+      "title": "공유 대시보드"
     },
     "sign-out": {
       "title": "로그아웃"
@@ -1829,80 +1829,80 @@
       "title": "즐겨찾기(별표)된 대시보드가 여기에 나타납니다"
     },
     "statistics-and-licensing": {
-      "title": "Statistics and licensing"
+      "title": "통계 및 라이센스"
     },
     "storage": {
-      "subtitle": "Manage file storage",
-      "title": "Storage"
+      "subtitle": "파일 저장소 관리",
+      "title": "저장소"
     },
     "support-bundles": {
-      "subtitle": "Download support bundles",
-      "title": "Support bundles"
+      "subtitle": "지원 번들 다운로드",
+      "title": "지원 번들"
     },
     "synthetics": {
-      "title": "Synthetics"
+      "title": "합성 모니터링"
     },
     "teams": {
       "subtitle": "공통 대시보드와 권한 요구 사항을 가진 사용자 그룹",
       "title": "팀"
     },
     "testing-and-synthetics": {
-      "subtitle": "Optimize performance with k6 and Synthetic Monitoring insights",
-      "title": "Testing & synthetics"
+      "subtitle": "k6와 합성 모니터링 통찰력을 통해 성능 최적화",
+      "title": "테스트 및 합성 모니터링"
     },
     "upgrading": {
-      "title": "통계"
+      "title": "업그레이드"
     },
     "users": {
-      "subtitle": "Invite and assign roles to users",
-      "title": "Users"
+      "subtitle": "사용자를 초대하고 역할을 할당합니다.",
+      "title": "사용자"
     }
   },
   "navigation": {
     "item": {
-      "add-bookmark": "Add to Bookmarks",
-      "remove-bookmark": "Remove from Bookmarks"
+      "add-bookmark": "북마크에 추가",
+      "remove-bookmark": "북마크에서 제거"
     },
     "kiosk": {
-      "tv-alert": "Press ESC to exit kiosk mode"
+      "tv-alert": "ESC 키를 눌러 키오스크 모드를 종료하세요"
     },
     "megamenu": {
       "close": "메뉴 닫기",
-      "dock": "Dock menu",
-      "list-label": "Navigation",
+      "dock": "메뉴 고정",
+      "list-label": "내비게이션",
       "open": "메뉴 열기",
-      "undock": "Undock menu"
+      "undock": "메뉴 분리"
     },
     "toolbar": {
-      "close-menu": "Close menu",
-      "enable-kiosk": "Enable kiosk mode",
-      "open-menu": "Open menu",
-      "toggle-search-bar": "Toggle top search bar"
+      "close-menu": "메뉴 닫기",
+      "enable-kiosk": "키오스크 모드 활성화",
+      "open-menu": "메뉴 열기",
+      "toggle-search-bar": "상단 검색 바 토글"
     }
   },
   "news": {
     "drawer": {
-      "close": "Close Drawer"
+      "close": "서랍 닫기"
     },
-    "title": "Latest from the blog"
+    "title": "블로그의 최신 소식"
   },
   "notifications": {
     "empty-state": {
-      "description": "Notifications you have received will appear here",
-      "title": "You're all caught up!"
+      "description": "받은 알림은 여기에서 확인할 수 있습니다",
+      "title": "모든 알림을 확인했습니다!"
     },
-    "starred-dashboard": "Dashboard starred",
-    "unstarred-dashboard": "Dashboard unstarred"
+    "starred-dashboard": "대시보드에 즐겨찾기 추가됨",
+    "unstarred-dashboard": "대시보드에서 즐겨찾기 제거됨"
   },
   "oauth": {
     "form": {
-      "server-discovery-action-button": "Enter OpenID Connect Discovery URL",
-      "server-discovery-modal-close": "Close",
-      "server-discovery-modal-loading": "Loading...",
-      "server-discovery-modal-submit": "Submit"
+      "server-discovery-action-button": "OpenID Connect Discovery URL 입력",
+      "server-discovery-modal-close": "닫기",
+      "server-discovery-modal-loading": "로딩 중...",
+      "server-discovery-modal-submit": "제출"
     },
     "login": {
-      "error": "Login provider denied login request"
+      "error": "로그인 제공자가 로그인 요청을 거부했습니다"
     }
   },
   "panel": {
@@ -1912,11 +1912,11 @@
       "duplicate": "복제",
       "edit": "편집",
       "explore": "탐색",
-      "get-help": "Get help",
+      "get-help": "도움",
       "hide-legend": "범례 숨기기",
       "inspect": "검사",
-      "inspect-data": "Data",
-      "inspect-json": "Panel JSON",
+      "inspect-data": "데이터",
+      "inspect-json": "패널 JSON",
       "more": "더보기...",
       "new-alert-rule": "새 경고 규칙",
       "query": "쿼리",
@@ -1929,93 +1929,93 @@
     }
   },
   "panel-search": {
-    "no-matches": "No matches found",
-    "unsupported-layout": "Unsupported layout"
+    "no-matches": "일치하는 항목이 없습니다.",
+    "unsupported-layout": "지원되지 않는 레이아웃"
   },
   "playlist-edit": {
-    "error-prefix": "Error loading playlist:",
+    "error-prefix": "플레이리스트 로딩 오류:",
     "form": {
       "add-tag-label": "태그로 추가",
-      "add-tag-placeholder": "Select a tag",
+      "add-tag-placeholder": "태그 선택",
       "add-title-label": "제목으로 추가",
       "cancel": "취소",
       "heading": "대시보드 추가",
       "interval-label": "인터벌",
       "interval-placeholder": "5m",
-      "interval-required": "Interval is required",
+      "interval-required": "인터벌은 필수입니다.",
       "name-label": "이름",
-      "name-placeholder": "Name",
-      "name-required": "Name is required",
+      "name-placeholder": "이름",
+      "name-required": "이름은 필수입니다.",
       "save": "저장",
-      "table-delete": "Delete playlist item",
-      "table-drag": "Drag and drop to reorder",
+      "table-delete": "플레이리스트 항목 삭제",
+      "table-drag": "순서를 변경하려면 드래그 앤 드롭",
       "table-empty": "플레이리스트가 비어 있습니다. 아래에 대시보드를 추가하세요.",
       "table-heading": "대시보드"
     },
-    "sub-title": "A playlist rotates through a pre-selected list of dashboards. A playlist can be a great way to build situational awareness, or just show off your metrics to your team or visitors.",
-    "title": "Edit playlist"
+    "sub-title": "플레이리스트는 미리 선택된 대시보드 목록을 순차적으로 표시합니다. 플레이리스트는 상황 인식 구축 또는 팀과 방문자에게 메트릭을 보여주는 데 유용할 수 있습니다.",
+    "title": "플레이리스트 편집"
   },
   "playlist-page": {
     "card": {
-      "delete": "Delete playlist",
-      "edit": "Edit playlist",
-      "start": "Start playlist",
-      "tooltip": "Share playlist"
+      "delete": "플레이리스트 삭제",
+      "edit": "플레이리스트 편집",
+      "start": "플레이리스트 시작",
+      "tooltip": "플레이리스트 공유"
     },
     "create-button": {
       "title": "새 플레이리스트"
     },
     "delete-modal": {
-      "body": "Are you sure you want to delete {{name}} playlist?",
-      "confirm-text": "Delete"
+      "body": "{{name}} 플레이리스트를 삭제하시겠습니까?",
+      "confirm-text": "삭제"
     },
     "empty": {
       "button": "플레이리스트 생성",
-      "pro-tip": "플레이리스트를 사용하면 사용자 제어 없이 TV에서 대시보드를 순환하며 표시할 수 있습니다. <2>Learn more</2>",
+      "pro-tip": "플레이리스트를 사용하면 사용자 제어 없이 TV에서 대시보드를 순차적으로 표시할 수 있습니다. <2>자세히 알아보기</2>",
       "title": "아직 생성된 플레이리스트가 없습니다"
     }
   },
   "playlists": {
     "empty-state": {
-      "message": "No playlists found"
+      "message": "플레이리스트가 없습니다"
     }
   },
   "plugins": {
     "catalog": {
       "update-all": {
-        "all-plugins-updated": "All plugins updated!",
-        "available-header": "Available",
+        "all-plugins-updated": "모든 플러그인이 업데이트되었습니다!",
+        "available-header": "사용 가능",
         "button": "모두 업데이트",
-        "cloud-update-message": "* It may take a few minutes for the plugins to be available for usage.",
-        "error": "Error updating plugin:",
-        "error-status-text": "failed - see error messages",
-        "header": "The following plugins have update available",
-        "installed-header": "Installed",
-        "modal-confirmation": "Update",
-        "modal-dismiss": "Close",
-        "modal-in-progress": "Updating...",
-        "modal-title": "Update Plugins",
-        "name-header": "Name",
-        "update-header": "Update",
-        "update-status-text": "plugins updated"
+        "cloud-update-message": "* 플러그인이 사용 가능해지기까지 몇 분이 걸릴 수 있습니다.",
+        "error": "플러그인 업데이트 오류:",
+        "error-status-text": "실패 - 오류 메시지를 확인하세요",
+        "header": "다음 플러그인에 업데이트가 있습니다",
+        "installed-header": "설치됨",
+        "modal-confirmation": "업데이트",
+        "modal-dismiss": "닫기",
+        "modal-in-progress": "업데이트 중...",
+        "modal-title": "플러그인 업데이트",
+        "name-header": "이름",
+        "update-header": "업데이트",
+        "update-status-text": "플러그인이 업데이트되었습니다"
       }
     },
     "details": {
       "labels": {
-        "contactGrafanaLabs": "Contact Grafana Labs",
-        "dependencies": "Dependencies",
-        "downloads": "Downloads",
-        "from": "From",
-        "links": "Links ",
-        "reportAbuse": "Report a concern ",
-        "signature": "Signature",
-        "status": "Status",
-        "updatedAt": "Last updated: ",
-        "version": "Version"
+        "contactGrafanaLabs": "Grafana Labs에 문의",
+        "dependencies": "의존성",
+        "downloads": "다운로드",
+        "from": "출처",
+        "links": "링크",
+        "reportAbuse": "문제 신고",
+        "signature": "서명",
+        "status": "상태",
+        "updatedAt": "마지막 업데이트: ",
+        "version": "버전"
       }
     },
     "empty-state": {
-      "message": "No plugins found"
+      "message": "플러그인이 없습니다"
     }
   },
   "profile": {
@@ -2025,7 +2025,7 @@
       "change-password-button": "비밀번호 변경",
       "confirm-password-label": "비밀번호 확인",
       "confirm-password-required": "새 비밀번호 확인이 필요합니다",
-      "ldap-auth-proxy-message": "You cannot change password when signed in with LDAP or auth proxy.",
+      "ldap-auth-proxy-message": "LDAP 또는 인증 프록시로 로그인한 경우 비밀번호를 변경할 수 없습니다.",
       "new-password-label": "새로운 비밀번호",
       "new-password-required": "새로운 비밀번호가 필요합니다.",
       "new-password-same-as-old": "새로운 비밀번호가 기존 비밀번호와 같을 수 없습니다.",
@@ -2039,35 +2039,35 @@
     "acknowledgment-checkboxes": {
       "ack-title": "대시보드를 공개하기 전에 다음 사항을 확인하세요:",
       "data-src-ack-desc": "게시 기능은 현재 일부 데이터 소스에서만 작동합니다*",
-      "data-src-ack-tooltip": "Learn more about public datasources",
+      "data-src-ack-tooltip": "공개 데이터 소스에 대해 자세히 알아보세요",
       "public-ack-desc": "전체 대시보드가 공개됩니다*",
-      "public-ack-tooltip": "Learn more about public dashboards",
+      "public-ack-tooltip": "공개 대시보드에 대해 자세히 알아보세요",
       "usage-ack-desc": "대시보드를 공개하면 조회 시마다 쿼리가 실행되어 비용이 증가할 수 있습니다*",
-      "usage-ack-desc-tooltip": "Learn more about query caching"
+      "usage-ack-desc-tooltip": "쿼리 캐싱에 대해 자세히 알아보세요"
     },
     "config": {
-      "can-view-dashboard-radio-button-label": "Can view dashboard",
-      "copy-button": "Copy",
-      "dashboard-url-field-label": "Dashboard URL",
-      "email-share-type-option-label": "Only specified people",
-      "pause-sharing-dashboard-label": "Pause sharing dashboard",
-      "public-share-type-option-label": "Anyone with a link",
-      "revoke-public-URL-button": "Revoke public URL",
-      "revoke-public-URL-button-title": "Revoke public URL",
+      "can-view-dashboard-radio-button-label": "대시보드를 볼 수 있음",
+      "copy-button": "복사",
+      "dashboard-url-field-label": "대시보드 URL",
+      "email-share-type-option-label": "지정된 사람만",
+      "pause-sharing-dashboard-label": "대시보드 공유 일시 정지",
+      "public-share-type-option-label": "링크가 있는 누구나",
+      "revoke-public-URL-button": "공개 URL 취소",
+      "revoke-public-URL-button-title": "공개 URL 취소",
       "settings-title": "설정"
     },
     "configuration": {
-      "display-annotations-description": "Present annotations on this dashboard",
-      "display-annotations-label": "Display annotations",
-      "enable-time-range-description": "Allow people to change time range",
-      "enable-time-range-label": "Enable time range",
+      "display-annotations-description": "이 대시보드에 주석을 표시합니다",
+      "display-annotations-label": "주석 표시",
+      "enable-time-range-description": "사용자가 시간 범위를 변경할 수 있도록 허용",
+      "enable-time-range-label": "시간 범위 활성화",
       "settings-label": "설정",
-      "success-pause": "Your dashboard access has been paused",
-      "success-resume": "Your dashboard access has been resumed",
-      "success-update": "Settings have been successfully updated",
-      "success-update-old": "Public dashboard updated!",
-      "time-range-label": "Time range",
-      "time-range-tooltip": "The shared dashboard uses the default time range settings of the dashboard"
+      "success-pause": "대시보드 접근이 일시 정지되었습니다",
+      "success-resume": "대시보드 접근이 다시 활성화되었습니다",
+      "success-update": "설정이 성공적으로 업데이트되었습니다",
+      "success-update-old": "공개 대시보드가 업데이트되었습니다!",
+      "time-range-label": "시간 범위",
+      "time-range-tooltip": "공유 대시보드는 대시보드의 기본 시간 범위 설정을 사용합니다"
     },
     "create-page": {
       "generate-public-url-button": "공개 URL 생성",
@@ -2075,284 +2075,284 @@
       "welcome-title": "공개 대시보드에 오신 것을 환영합니다!"
     },
     "delete-modal": {
-      "revoke-body-text": "Are you sure you want to revoke this URL? The dashboard will no longer be public.",
-      "revoke-title": "Revoke public URL"
+      "revoke-body-text": "이 URL을 취소하시겠습니까? 대시보드는 더 이상 공개되지 않습니다.",
+      "revoke-title": "공개 URL 취소"
     },
     "email-sharing": {
-      "accept-button": "Accept",
-      "alert-text": "Sharing dashboards by email is billed per user for the duration of the 30-day token, regardless of how many dashboards are shared. Billing stops after 30 days unless you renew the token.",
-      "bill-ack": "I understand that adding users requires payment.*",
-      "cancel-button": "Cancel",
-      "input-invalid-email-text": "Invalid email",
-      "input-required-email-text": "Email is required",
+      "accept-button": "수락",
+      "alert-text": "이메일로 대시보드를 공유하는 것은 30일 토큰 기간 동안 사용자별로 청구되며, 대시보드 수에 관계없이 비용이 발생합니다. 30일 후에는 토큰을 갱신하지 않으면 청구가 중지됩니다.",
+      "bill-ack": "사용자를 추가하려면 비용이 발생하는 것을 이해합니다.*",
+      "cancel-button": "취소",
+      "input-invalid-email-text": "잘못된 이메일",
+      "input-required-email-text": "이메일은 필수 항목입니다",
       "invite-button": "초대",
-      "invite-field-desc": "Invite people by email",
-      "invite-field-label": "Invite",
-      "learn-more-button": "Learn more",
-      "recipient-email-placeholder": "Email",
-      "recipient-invalid-email-text": "Invalid email",
-      "recipient-invitation-button": "Invite",
-      "recipient-invitation-description": "Invite someone by email",
-      "recipient-invitation-tooltip": "This dashboard contains sensitive data. By using this feature you will be sharing with external people.",
-      "recipient-list-description": "Only people you've directly invited can access this dashboard",
-      "recipient-list-title": "People with access",
-      "recipient-required-email-text": "Email is required",
-      "resend-button": "Resend",
-      "resend-button-title": "Resend",
-      "resend-invite-label": "Resend invite",
-      "revoke-access-label": "Revoke access",
-      "revoke-button": "Revoke",
-      "revoke-button-title": "Revoke",
-      "success-creation": "Your dashboard is ready for external sharing",
-      "success-share-type-change": "Dashboard access updated: Only specific people can now access with the link"
+      "invite-field-desc": "이메일로 사람을 초대하세요",
+      "invite-field-label": "초대",
+      "learn-more-button": "자세히 알아보기",
+      "recipient-email-placeholder": "이메일",
+      "recipient-invalid-email-text": "잘못된 이메일",
+      "recipient-invitation-button": "초대",
+      "recipient-invitation-description": "이메일로 사람을 초대하세요",
+      "recipient-invitation-tooltip": "이 대시보드는 민감한 데이터를 포함하고 있습니다. 이 기능을 사용하면 외부 사람과 공유하게 됩니다.",
+      "recipient-list-description": "직접 초대한 사람만 이 대시보드에 접근할 수 있습니다",
+      "recipient-list-title": "접근 권한이 있는 사람들",
+      "recipient-required-email-text": "이메일은 필수 항목입니다",
+      "resend-button": "다시 보내기",
+      "resend-button-title": "다시 보내기",
+      "resend-invite-label": "초대 다시 보내기",
+      "revoke-access-label": "접근 권한 취소",
+      "revoke-button": "취소",
+      "revoke-button-title": "취소",
+      "success-creation": "대시보드가 외부 공유를 위해 준비되었습니다",
+      "success-share-type-change": "대시보드 접근 권한이 업데이트되었습니다: 이제 링크로만 특정 사람들이 접근할 수 있습니다"
     },
     "modal-alerts": {
-      "no-upsert-perm-alert-desc": "Contact your admin to get permission to {{mode}} public dashboards",
-      "no-upsert-perm-alert-title": "You don’t have permission to {{ mode }} a public dashboard",
-      "save-dashboard-changes-alert-title": "Please save your dashboard changes before updating the public configuration",
-      "unsupport-data-source-alert-readmore-link": "Read more about supported data sources",
-      "unsupported-data-source-alert-desc": "There are data sources in this dashboard that are unsupported for public dashboards. Panels that use these data sources may not function properly: {{unsupportedDataSources}}.",
-      "unsupported-data-source-alert-title": "Unsupported data sources",
+      "no-upsert-perm-alert-desc": "공개 대시보드를 {{mode}}할 권한을 얻으려면 관리자에게 문의하세요",
+      "no-upsert-perm-alert-title": "공개 대시보드를 {{mode}}할 권한이 없습니다",
+      "save-dashboard-changes-alert-title": "공개 설정을 업데이트하기 전에 대시보드 변경 사항을 저장하세요",
+      "unsupport-data-source-alert-readmore-link": "지원되는 데이터 소스에 대해 자세히 알아보세요",
+      "unsupported-data-source-alert-desc": "이 대시보드에는 공개 대시보드에서 지원되지 않는 데이터 소스가 포함되어 있습니다. 이러한 데이터 소스를 사용하는 패널은 제대로 작동하지 않을 수 있습니다: {{unsupportedDataSources}}.",
+      "unsupported-data-source-alert-title": "지원되지 않는 데이터 소스",
       "unsupported-template-variable-alert-desc": "이 공개 대시보드는 템플릿 변수를 사용하므로 제대로 작동하지 않을 수 있습니다",
       "unsupported-template-variable-alert-title": "템플릿 변수는 지원되지 않습니다"
     },
     "public-sharing": {
-      "accept-button": "Accept",
-      "alert-text": "Sharing this dashboard externally makes it entirely accessible to anyone with the link.",
-      "cancel-button": "Cancel",
-      "learn-more-button": "Learn more",
-      "public-ack": "I understand that this entire dashboard will be public.*",
-      "success-creation": "Your dashboard is now publicly accessible",
-      "success-share-type-change": "Dashboard access updated: Anyone with the link can now access"
+      "accept-button": "수락",
+      "alert-text": "이 대시보드를 외부에서 공유하면 링크가 있는 누구나 대시보드에 접근할 수 있게 됩니다.",
+      "cancel-button": "취소",
+      "learn-more-button": "자세히 알아보기",
+      "public-ack": "이 대시보드 전체가 공개됨을 이해합니다.*",
+      "success-creation": "대시보드가 이제 공개적으로 접근 가능합니다",
+      "success-share-type-change": "대시보드 접근 권한이 업데이트되었습니다: 이제 링크로 누구나 접근할 수 있습니다"
     },
     "settings-bar-header": {
-      "collapse-settings-tooltip": "Collapse settings",
-      "expand-settings-tooltip": "Expand settings"
+      "collapse-settings-tooltip": "설정 축소",
+      "expand-settings-tooltip": "설정 확장"
     },
     "settings-configuration": {
-      "default-time-range-label": "Default time range",
-      "default-time-range-label-desc": "The public dashboard uses the default time range settings of the dashboard",
-      "show-annotations-label": "Show annotations",
-      "show-annotations-label-desc": "Show annotations on public dashboard",
-      "time-range-picker-label": "Time range picker enabled",
-      "time-range-picker-label-desc": "Allow viewers to change time range"
+      "default-time-range-label": "기본 시간 범위",
+      "default-time-range-label-desc": "공개 대시보드는 대시보드의 기본 시간 범위 설정을 사용합니다",
+      "show-annotations-label": "주석 표시",
+      "show-annotations-label-desc": "공개 대시보드에 주석 표시",
+      "time-range-picker-label": "시간 범위 선택기 사용",
+      "time-range-picker-label-desc": "뷰어가 시간 범위를 변경할 수 있도록 허용"
     },
     "settings-summary": {
-      "annotations-hide-text": "Annotations = hide",
-      "annotations-show-text": "Annotations = show",
-      "time-range-picker-disabled-text": "Time range picker = disabled",
-      "time-range-picker-enabled-text": "Time range picker = enabled",
-      "time-range-text": "Time range = "
+      "annotations-hide-text": "주석 = 숨기기",
+      "annotations-show-text": "주석 = 표시",
+      "time-range-picker-disabled-text": "시간 범위 선택기 = 사용 안 함",
+      "time-range-picker-enabled-text": "시간 범위 선택기 = 사용",
+      "time-range-text": "시간 범위 = "
     },
     "share": {
-      "success-delete": "Your dashboard is no longer shareable",
-      "success-delete-old": "Public dashboard deleted!"
+      "success-delete": "대시보드를 더 이상 공유할 수 없습니다",
+      "success-delete-old": "공개 대시보드가 삭제되었습니다!"
     },
     "share-configuration": {
-      "share-type-label": "Link access"
+      "share-type-label": "링크 접근"
     },
     "share-externally": {
-      "copy-link-button": "Copy external link",
-      "email-share-type-option-description": "Only people with the link can access dashboard",
-      "email-share-type-option-label": "Only specific people",
-      "no-upsert-perm-alert-desc": "Contact your admin to get permission to {{mode}} shared dashboards",
-      "no-upsert-perm-alert-title": "You don’t have permission to {{ mode }} a shared dashboard",
-      "pause-access-button": "Pause access",
-      "pause-access-tooltip": "Pausing will temporarily disable access to this dashboard for all users",
-      "public-share-type-option-description": "Anyone with the link can access dashboard",
-      "public-share-type-option-label": "Anyone with the link",
-      "resume-access-button": "Resume access",
-      "revoke-access-button": "Revoke access",
-      "revoke-access-description": "Are you sure you want to revoke this access? The dashboard can no longer be shared.",
-      "unsupported-data-source-alert-desc": "There are data sources in this dashboard that are unsupported for shared dashboards. Panels that use these data sources may not function properly: {{unsupportedDataSources}}."
+      "copy-link-button": "외부 링크 복사",
+      "email-share-type-option-description": "링크가 있는 사람만 대시보드에 접근할 수 있습니다",
+      "email-share-type-option-label": "특정 사람만",
+      "no-upsert-perm-alert-desc": "공유 대시보드를 {{mode}}할 권한을 얻으려면 관리자에게 문의하세요",
+      "no-upsert-perm-alert-title": "공유 대시보드를 {{mode}}할 권한이 없습니다",
+      "pause-access-button": "접근 중지",
+      "pause-access-tooltip": "접근 중지는 모든 사용자의 대시보드 접근을 일시적으로 비활성화합니다",
+      "public-share-type-option-description": "링크가 있는 누구나 대시보드에 접근할 수 있습니다",
+      "public-share-type-option-label": "링크가 있는 누구나",
+      "resume-access-button": "접근 재개",
+      "revoke-access-button": "접근 취소",
+      "revoke-access-description": "이 접근을 취소하시겠습니까? 대시보드를 더 이상 공유할 수 없습니다.",
+      "unsupported-data-source-alert-desc": "이 대시보드에는 공유 대시보드에서 지원되지 않는 데이터 소스가 포함되어 있습니다. 이러한 데이터 소스를 사용하는 패널은 제대로 작동하지 않을 수 있습니다: {{unsupportedDataSources}}."
     },
     "sharing": {
-      "success-creation": "Dashboard is public!"
+      "success-creation": "대시보드가 공개되었습니다!"
     }
   },
   "public-dashboard-list": {
     "button": {
-      "config-button-tooltip": "Configure public dashboard",
-      "revoke-button-text": "Revoke public URL",
-      "revoke-button-tooltip": "Revoke public dashboard URL",
-      "view-button-tooltip": "View public dashboard"
+      "config-button-tooltip": "공개 대시보드 구성",
+      "revoke-button-text": "공개 URL 취소",
+      "revoke-button-tooltip": "공개 대시보드 URL 취소",
+      "view-button-tooltip": "공개 대시보드 보기"
     },
     "empty-state": {
       "message": "아직 공개 대시보드를 생성하지 않았습니다",
-      "more-info": "공유 모달을 통해 기존 대시보드에서 공개 대시보드를 생성하세요. <4>Learn more</4>"
+      "more-info": "공유 모달을 통해 기존 대시보드에서 공개 대시보드를 생성하세요. <4>자세히 알아보기</4>"
     },
     "toggle": {
-      "pause-sharing-toggle-text": "Pause sharing"
+      "pause-sharing-toggle-text": "공유 일시 중지"
     }
   },
   "public-dashboard-users-access-list": {
     "dashboard-modal": {
-      "external-link": "External link",
-      "loading-text": "Loading...",
-      "open-dashboard-list-text": "Open dashboards list",
-      "public-dashboard-link": "Public dashboard URL",
-      "public-dashboard-setting": "Public dashboard settings",
-      "sharing-setting": "Sharing settings"
+      "external-link": "외부 링크",
+      "loading-text": "로딩 중...",
+      "open-dashboard-list-text": "대시보드 목록 열기",
+      "public-dashboard-link": "공개 대시보드 URL",
+      "public-dashboard-setting": "공개 대시보드 설정",
+      "sharing-setting": "공유 설정"
     },
     "delete-user-modal": {
-      "delete-user-button-text": "Delete user",
-      "delete-user-cancel-button": "Cancel",
-      "delete-user-revoke-access-button": "Revoke access",
-      "revoke-access-title": "Revoke access",
-      "revoke-user-access-modal-desc-line1": "Are you sure you want to revoke access for {{email}}?",
-      "revoke-user-access-modal-desc-line2": "This action will immediately revoke {{email}}&apos;s access to all public dashboards."
+      "delete-user-button-text": "사용자 삭제",
+      "delete-user-cancel-button": "취소",
+      "delete-user-revoke-access-button": "접근 권한 취소",
+      "revoke-access-title": "접근 권한 취소",
+      "revoke-user-access-modal-desc-line1": "{{email}}의 접근 권한을 취소하시겠습니까?",
+      "revoke-user-access-modal-desc-line2": "이 작업은 {{email}}의 모든 공개 대시보드 접근 권한을 즉시 취소합니다."
     },
     "delete-user-shared-dashboards-modal": {
-      "revoke-user-access-modal-desc-line2": "This action will immediately revoke {{email}}&apos;s access to all shared dashboards."
+      "revoke-user-access-modal-desc-line2": "이 작업은 {{email}}의 모든 공유 대시보드 접근 권한을 즉시 취소합니다."
     },
     "modal": {
-      "dashboard-modal-title": "Public dashboards",
-      "shared-dashboard-modal-title": "Shared dashboards"
+      "dashboard-modal-title": "공개 대시보드",
+      "shared-dashboard-modal-title": "공유 대시보드"
     },
     "table-header": {
-      "activated-label": "Activated",
-      "activated-tooltip": "Earliest time user has been an active user to a dashboard",
-      "email-label": "Email",
-      "last-active-label": "Last active",
-      "origin-label": "Origin",
-      "role-label": "Role"
+      "activated-label": "활성화됨",
+      "activated-tooltip": "사용자가 대시보드에 대해 활성 사용자로 활동한 최초 시간",
+      "email-label": "이메일",
+      "last-active-label": "마지막 활동",
+      "origin-label": "출처",
+      "role-label": "역할"
     }
   },
   "query-library": {
-    "datasource-names": "Datasource name(s):",
-    "delete-query-button": "Delete query",
-    "query-template-get-error": "Error attempting to get query template from the library: {{error}}",
-    "search": "Search by data source, query content or description",
-    "user-info-get-error": "Error attempting to get user info from the library: {{error}}",
-    "user-names": "User name(s):"
+    "datasource-names": "데이터소스 이름:",
+    "delete-query-button": "쿼리 삭제",
+    "query-template-get-error": "쿼리 템플릿을 라이브러리에서 가져오는 중 오류 발생: {{error}}",
+    "search": "데이터소스, 쿼리 내용 또는 설명으로 검색",
+    "user-info-get-error": "라이브러리에서 사용자 정보를 가져오는 중 오류 발생: {{error}}",
+    "user-names": "사용자 이름:"
   },
   "query-operation": {
     "header": {
-      "collapse-row": "Collapse query row",
-      "datasource-help": "Show data source help",
-      "drag-and-drop": "Drag and drop to reorder",
-      "duplicate-query": "Duplicate query",
-      "expand-row": "Expand query row",
-      "hide-response": "Hide response",
-      "remove-query": "Remove query",
-      "save-to-query-library": "Save to query library",
-      "show-response": "Show response",
-      "toggle-edit-mode": "Toggle text edit mode"
+      "collapse-row": "쿼리 행 축소",
+      "datasource-help": "데이터소스 도움말 보기",
+      "drag-and-drop": "드래그 앤 드롭으로 재정렬",
+      "duplicate-query": "쿼리 복제",
+      "expand-row": "쿼리 행 확장",
+      "hide-response": "응답 숨기기",
+      "remove-query": "쿼리 제거",
+      "save-to-query-library": "쿼리 라이브러리에 저장",
+      "show-response": "응답 보기",
+      "toggle-edit-mode": "텍스트 편집 모드 전환"
     },
-    "query-editor-not-exported": "Data source plugin does not export any Query Editor component"
+    "query-editor-not-exported": "데이터소스 플러그인에서 Query Editor 컴포넌트를 내보내지 않습니다"
   },
   "recently-deleted": {
     "buttons": {
-      "delete": "Delete permanently",
-      "restore": "Restore"
+      "delete": "영구 삭제",
+      "restore": "복원"
     },
     "page": {
-      "no-deleted-dashboards": "You haven't deleted any dashboards recently.",
-      "no-deleted-dashboards-text": "When you delete a dashboard, it will appear here for 30 days before being permanently deleted. Your organization administrator can restore recently-deleted dashboards.",
-      "no-search-result": "No results found for your query"
+      "no-deleted-dashboards": "최근에 삭제한 대시보드가 없습니다.",
+      "no-deleted-dashboards-text": "대시보드를 삭제하면 30일 동안 여기에 나타나며, 그 후에 영구적으로 삭제됩니다. 조직 관리자만 최근에 삭제된 대시보드를 복원할 수 있습니다.",
+      "no-search-result": "검색 결과가 없습니다."
     },
     "permanently-delete-modal": {
-      "confirm-text": "Delete",
-      "delete-button": "Delete",
-      "delete-loading": "Deleting...",
-      "text_one": "This action will delete {{numberOfDashboards}} dashboard.",
-      "text_other": "This action will delete {{numberOfDashboards}} dashboards.",
-      "title": "Permanently Delete Dashboards"
+      "confirm-text": "삭제",
+      "delete-button": "삭제",
+      "delete-loading": "삭제 중...",
+      "text_one": "이 작업은 {{numberOfDashboards}}개의 대시보드를 삭제합니다.",
+      "text_other": "이 작업은 {{numberOfDashboards}}개의 대시보드를 삭제합니다.",
+      "title": "대시보드 영구 삭제"
     },
     "restore-modal": {
-      "folder-picker-text_one": "Please choose a folder where your dashboard will be restored.",
-      "folder-picker-text_other": "Please choose a folder where your dashboards will be restored.",
-      "restore-button": "Restore",
-      "restore-loading": "Restoring...",
-      "text_one": "This action will restore {{numberOfDashboards}} dashboard.",
-      "text_other": "This action will restore {{numberOfDashboards}} dashboards.",
-      "title": "Restore Dashboards"
+      "folder-picker-text_one": "대시보드를 복원할 폴더를 선택해주세요.",
+      "folder-picker-text_other": "대시보드를 복원할 폴더를 선택해주세요.",
+      "restore-button": "복원",
+      "restore-loading": "복원 중...",
+      "text_one": "이 작업은 {{numberOfDashboards}}개의 대시보드를 복원합니다.",
+      "text_other": "이 작업은 {{numberOfDashboards}}개의 대시보드를 복원합니다.",
+      "title": "대시보드 복원"
     }
   },
   "recentlyDeleted": {
     "filter": {
-      "placeholder": "Search for dashboards"
+      "placeholder": "대시보드 검색"
     }
   },
   "refresh-picker": {
     "aria-label": {
-      "choose-interval": "Auto refresh turned off. Choose refresh time interval",
-      "duration-selected": "Choose refresh time interval with current interval {{durationAriaLabel}} selected"
+      "choose-interval": "자동 새로 고침이 꺼져 있습니다. 새로 고침 시간 간격 선택",
+      "duration-selected": "현재 선택된 간격 {{durationAriaLabel}}로 새로 고침 시간 간격 선택"
     },
     "auto-option": {
       "aria-label": "",
       "label": ""
     },
     "live-option": {
-      "aria-label": "Turn on live streaming",
-      "label": "Live"
+      "aria-label": "라이브 스트리밍 켜기",
+      "label": "라이브"
     },
     "off-option": {
-      "aria-label": "Turn off auto refresh",
-      "label": "Off"
+      "aria-label": "자동 새로 고침 끄기",
+      "label": "꺼짐"
     },
     "tooltip": {
-      "interval-selected": "Set auto refresh interval",
-      "turned-off": "Auto refresh off"
+      "interval-selected": "자동 새로 고침 간격 설정",
+      "turned-off": "자동 새로 고침 끄기"
     }
   },
   "return-to-previous": {
     "button": {
-      "label": "Back to {{title}}"
+      "label": "{{title}}로 돌아가기"
     },
-    "dismissable-button": "Close"
+    "dismissable-button": "닫기"
   },
   "save-dashboards": {
     "name-exists": {
-      "message-info": "A dashboard with the same name in the selected folder already exists, including recently deleted dashboards.",
-      "message-suggestion": "Please choose a different name or folder.",
-      "title": "Dashboard name already exists"
+      "message-info": "선택한 폴더에 같은 이름의 대시보드가 이미 존재합니다. 최근에 삭제된 대시보드도 포함됩니다.",
+      "message-suggestion": "다른 이름이나 폴더를 선택하세요.",
+      "title": "대시보드 이름이 이미 존재합니다"
     }
   },
   "scopes": {
     "dashboards": {
-      "collapse": "Collapse",
-      "expand": "Expand",
-      "loading": "Loading dashboards",
-      "noResultsForFilter": "No results found for your query",
-      "noResultsForFilterClear": "Clear search",
-      "noResultsForScopes": "No dashboards found for the selected scopes",
-      "noResultsNoScopes": "No scopes selected",
-      "search": "Search",
+      "collapse": "축소",
+      "expand": "확장",
+      "loading": "대시보드 로딩 중",
+      "noResultsForFilter": "검색 결과가 없습니다.",
+      "noResultsForFilterClear": "검색 초기화",
+      "noResultsForScopes": "선택한 범위에 대한 대시보드가 없습니다.",
+      "noResultsNoScopes": "선택된 범위 없음",
+      "search": "검색",
       "toggle": {
-        "collapse": "Collapse suggested dashboards list",
-        "disabled": "Suggested dashboards list is disabled due to read only mode",
-        "expand": "Expand suggested dashboards list"
+        "collapse": "추천 대시보드 목록 축소",
+        "disabled": "읽기 전용 모드로 인해 추천 대시보드 목록이 비활성화되었습니다.",
+        "expand": "추천 대시보드 목록 확장"
       }
     },
     "selector": {
-      "apply": "Apply",
-      "cancel": "Cancel",
+      "apply": "적용",
+      "cancel": "취소",
       "input": {
-        "placeholder": "Select scopes...",
-        "removeAll": "Remove all scopes"
+        "placeholder": "범위 선택...",
+        "removeAll": "모든 범위 제거"
       },
-      "title": "Select scopes"
+      "title": "범위 선택"
     },
     "tree": {
-      "collapse": "Collapse",
-      "expand": "Expand",
+      "collapse": "축소",
+      "expand": "확장",
       "headline": {
-        "noResults": "No results found for your query",
-        "recommended": "Recommended",
-        "results": "Results"
+        "noResults": "검색 결과가 없습니다.",
+        "recommended": "추천됨",
+        "results": "결과"
       },
-      "search": "Search"
+      "search": "검색"
     }
   },
   "search": {
     "actions": {
-      "include-panels": "Include panels",
-      "remove-datasource-filter": "Datasource: {{datasource}}",
-      "sort-placeholder": "Sort",
-      "starred": "Starred",
-      "view-as-folders": "View by folders",
-      "view-as-list": "View as list"
+      "include-panels": "패널 포함",
+      "remove-datasource-filter": "데이터 소스: {{datasource}}",
+      "sort-placeholder": "정렬",
+      "starred": "즐겨찾기",
+      "view-as-folders": "폴더로 보기",
+      "view-as-list": "목록으로 보기"
     },
     "dashboard-actions": {
       "import": "가져오기",
@@ -2361,9 +2361,9 @@
       "new-folder": "새 폴더"
     },
     "results-table": {
-      "datasource-header": "Data source",
-      "deleted-less-than-1-min": "< 1 min",
-      "deleted-remaining-header": "Time remaining",
+      "datasource-header": "데이터 소스",
+      "deleted-less-than-1-min": "< 1분",
+      "deleted-remaining-header": "남은 시간",
       "location-header": "위치",
       "name-header": "이름",
       "tags-header": "태그",
@@ -2378,7 +2378,7 @@
   },
   "select": {
     "select-menu": {
-      "selected-count": "Selected "
+      "selected-count": "선택됨 "
     }
   },
   "service-accounts": {
@@ -2391,18 +2391,18 @@
   },
   "share-dashboard": {
     "menu": {
-      "export-json-title": "Export as JSON",
-      "share-externally-title": "Share externally",
-      "share-internally-title": "Share internally",
-      "share-snapshot-title": "Share snapshot"
+      "export-json-title": "JSON으로 내보내기",
+      "share-externally-title": "외부에 공유",
+      "share-internally-title": "내부에 공유",
+      "share-snapshot-title": "스냅샷 공유"
     },
     "share-button": "공유",
     "share-button-tooltip": "링크 복사"
   },
   "share-drawer": {
     "confirm-action": {
-      "back-arrow-button": "Back button",
-      "cancel-button": "Cancel"
+      "back-arrow-button": "뒤로 버튼",
+      "cancel-button": "취소"
     }
   },
   "share-modal": {
@@ -2410,11 +2410,11 @@
       "title": "공유"
     },
     "embed": {
-      "copy": "Copy to clipboard",
-      "html": "Embed HTML",
-      "html-description": "The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, the users viewing that page need to be signed into Grafana for the graph to load.",
-      "info": "Generate HTML for embedding an iframe with this panel",
-      "time-range": "Lock time range"
+      "copy": "클립보드에 복사",
+      "html": "HTML 포함",
+      "html-description": "아래 HTML 코드를 복사하여 다른 웹 페이지에 포함시킬 수 있습니다. 익명 액세스가 활성화되지 않은 경우, 해당 페이지를 보는 사용자는 그래프가 로드되도록 Grafana에 로그인해야 합니다.",
+      "info": "이 패널을 포함하는 iframe을 위한 HTML 생성",
+      "time-range": "시간 범위 고정"
     },
     "export": {
       "back-button": "내보내기 구성으로 돌아가기",
@@ -2425,55 +2425,55 @@
       "view-button": "JSON 보기"
     },
     "library": {
-      "info": "Create library panel."
+      "info": "라이브러리 패널 생성"
     },
     "link": {
-      "copy-link-button": "Copy",
+      "copy-link-button": "복사",
       "info-text": "아래 옵션으로 맞춤화된 이 대시보드나 패널에 대한 직접 링크를 생성하세요.",
       "link-url": "링크 URL",
-      "render-alert": "Image renderer plugin not installed",
-      "render-instructions": "To render a panel image, you must install the <2>Grafana image renderer plugin</2>. Please contact your Grafana administrator to install the plugin.",
-      "rendered-image": "Direct link rendered image",
-      "save-alert": "Dashboard is not saved",
-      "save-dashboard": "To render a panel image, you must save the dashboard first.",
+      "render-alert": "이미지 렌더러 플러그인이 설치되지 않았습니다",
+      "render-instructions": "패널 이미지를 렌더링하려면 <2>Grafana 이미지 렌더러 플러그인</2>을 설치해야 합니다. 플러그인을 설치하려면 Grafana 관리자에게 문의하십시오.",
+      "rendered-image": "직접 링크 렌더링된 이미지",
+      "save-alert": "대시보드가 저장되지 않았습니다",
+      "save-dashboard": "패널 이미지를 렌더링하려면 먼저 대시보드를 저장해야 합니다.",
       "shorten-url": "단축 URL",
       "time-range-description": "현재 상대 시간 범위를 절대 시간 범위로 변환",
       "time-range-label": "시간 범위 잠금"
     },
     "panel": {
-      "title": "Share Panel"
+      "title": "패널 공유"
     },
     "snapshot": {
       "cancel-button": "취소",
       "copy-link-button": "복사",
-      "delete-button": "스냅샷 삭제.",
-      "deleted-message": "The snapshot has been deleted. If you have already accessed it once, then it might take up to an hour before before it is removed from browser caches or CDN caches.",
+      "delete-button": "스냅샷 삭제",
+      "deleted-message": "스냅샷이 삭제되었습니다. 이미 한 번 접속한 경우, 브라우저 캐시나 CDN 캐시에서 제거되기까지 최대 한 시간이 소요될 수 있습니다.",
       "expire": "만료",
-      "expire-day": "1 Day",
-      "expire-hour": "1 Hour",
-      "expire-never": "Never",
-      "expire-week": "1 Week",
-      "info-text-1": "스냅샷은 대시보드를 공개적으로 인터랙티브하게 공유하는 즉시 방법입니다. 생성되면 쿼리(메트릭, 템플릿, 주석)와 패널 링크와 같은 민감한 데이터는 제거하고, 대시보드에 포함된 표시된 메트릭 데이터와 시리즈 이름만 남깁니다.",
+      "expire-day": "1일",
+      "expire-hour": "1시간",
+      "expire-never": "없음",
+      "expire-week": "1주",
+      "info-text-1": "스냅샷은 대시보드를 공개적으로 인터랙티브하게 공유하는 즉시 방법입니다. 생성되면 쿼리(메트릭, 템플릿, 주석)와 패널 링크와 같은 민감한 데이터는 제거되고, 대시보드에 포함된 표시된 메트릭 데이터와 시리즈 이름만 남깁니다.",
       "info-text-2": "엑세스 링크를 가진 <1>누구나 스냅샷을 볼 수 있다</1>는 점을 명심하세요. 공유할 때 신중하게 결정하세요.",
       "local-button": "스냅샷 게시",
       "mistake-message": "돌아가기",
       "name": "스냅샷 이름",
-      "timeout": "Timeout (seconds)",
-      "timeout-description": "You might need to configure the timeout value if it takes a long time to collect your dashboard metrics.",
+      "timeout": "타임아웃 (초)",
+      "timeout-description": "대시보드 메트릭을 수집하는 데 시간이 오래 걸리면 타임아웃 값을 설정해야 할 수 있습니다.",
       "url-label": "스냅샷 URL"
     },
     "tab-title": {
-      "embed": "Embed",
+      "embed": "임베드",
       "export": "내보내기",
-      "library-panel": "Library panel",
+      "library-panel": "라이브러리 패널",
       "link": "링크",
-      "panel-embed": "Embed",
+      "panel-embed": "임베드",
       "public-dashboard": "공개 대시보드",
-      "public-dashboard-title": "Public dashboard",
+      "public-dashboard-title": "공개 대시보드",
       "snapshot": "스냅샷"
     },
     "theme-picker": {
-      "current": "Current",
+      "current": "현재",
       "dark": "Dark",
       "field-name": "테마",
       "light": "Light"
@@ -2484,45 +2484,45 @@
   },
   "share-panel": {
     "drawer": {
-      "new-library-panel-title": "New library panel",
-      "share-embed-title": "Share embed",
-      "share-link-title": "Link settings"
+      "new-library-panel-title": "새 라이브러리 패널",
+      "share-embed-title": "임베드 공유",
+      "share-link-title": "링크 설정"
     },
     "menu": {
-      "new-library-panel-title": "New library panel",
-      "share-embed-title": "Share embed",
-      "share-link-title": "Share link",
-      "share-snapshot-title": "Share snapshot"
+      "new-library-panel-title": "새 라이브러리 패널",
+      "share-embed-title": "임베드 공유",
+      "share-link-title": "링크 공유",
+      "share-snapshot-title": "스냅샷 공유"
     },
     "new-library-panel": {
-      "cancel-button": "Cancel",
-      "create-button": "Create library panel"
+      "cancel-button": "취소",
+      "create-button": "라이브러리 패널 생성"
     }
   },
   "share-playlist": {
-    "checkbox-description": "Panel heights will be adjusted to fit screen size",
-    "checkbox-label": "Autofit",
-    "copy-link-button": "Copy",
-    "link-url-label": "Link URL",
-    "mode": "Mode",
-    "mode-kiosk": "Kiosk",
-    "mode-normal": "Normal",
+    "checkbox-description": "패널 높이가 화면 크기에 맞게 조정됩니다",
+    "checkbox-label": "자동 맞춤",
+    "copy-link-button": "복사",
+    "link-url-label": "링크 URL",
+    "mode": "모드",
+    "mode-kiosk": "키오스크",
+    "mode-normal": "일반",
     "mode-tv": "TV",
-    "title": "Share playlist"
+    "title": "플레이리스트 공유"
   },
   "shared": {
     "preferences": {
       "theme": {
         "dark-label": "Dark",
         "light-label": "Light",
-        "system-label": "System preference"
+        "system-label": "시스템 설정"
       }
     }
   },
   "shared-dashboard": {
     "delete-modal": {
-      "revoke-body-text": "Are you sure you want to revoke this access? The dashboard can no longer be shared.",
-      "revoke-title": "Revoke access"
+      "revoke-body-text": "이 액세스를 취소하시겠습니까? 대시보드는 더 이상 공유할 수 없습니다.",
+      "revoke-title": "액세스 취소"
     },
     "fields": {
       "timezone-label": "시간대"
@@ -2530,17 +2530,17 @@
   },
   "shared-dashboard-list": {
     "button": {
-      "config-button-tooltip": "Configure shared dashboard",
-      "revoke-button-text": "Revoke access",
-      "revoke-button-tooltip": "Revoke access",
-      "view-button-tooltip": "View shared dashboard"
+      "config-button-tooltip": "공유 대시보드 설정",
+      "revoke-button-text": "액세스 취소",
+      "revoke-button-tooltip": "액세스 취소",
+      "view-button-tooltip": "공유 대시보드 보기"
     },
     "empty-state": {
-      "message": "You haven't created any shared dashboards yet",
-      "more-info": "Create a shared dashboard from any existing dashboard through the <1>Share</1> modal. <4>Learn more</4>"
+      "message": "아직 공유 대시보드를 생성하지 않았습니다",
+      "more-info": "기존 대시보드에서 <1>공유</1> 모달을 통해 공유 대시보드를 생성하세요. <4>자세히 보기</4>"
     },
     "toggle": {
-      "pause-sharing-toggle-text": "Pause access"
+      "pause-sharing-toggle-text": "액세스 일시 정지"
     }
   },
   "shared-preferences": {
@@ -2570,15 +2570,15 @@
       "edit-button": "편집",
       "expired-silences": "만료된 사일런스 항목은 5일 후 자동으로 삭제됩니다.",
       "no-matching-silences": "일치하는 사일런스 항목을 찾을 수 없습니다.",
-      "noConfig": "새로운 컨택트 포인트를 만들어 기본 값을 사용하여 구성을 생성하거나, Alertmanager 설정을 위해 관리자에게 문의하세요.",
+      "noConfig": "새로운 콘택트 포인트를 만들어 기본 값을 사용하여 구성을 생성하거나, Alertmanager 설정을 위해 관리자에게 문의하세요.",
       "recreate-button": "다시 생성",
-      "unsilence-button": "Unsilence"
+      "unsilence-button": "사일런스 해제"
     }
   },
   "silences-table": {
     "header": {
-      "alert-name": "Alert name",
-      "state": "State"
+      "alert-name": "경고 이름",
+      "state": "상태"
     }
   },
   "snapshot": {
@@ -2586,30 +2586,30 @@
       "message": "아직 생성된 스냅샷이 없습니다",
       "more-info": "공유 모달에서 모든 대시보드의 스냅샷을 생성할 수 있습니다. <4>Learn more</4>"
     },
-    "external-badge": "External",
+    "external-badge": "외부",
     "name-column-header": "이름",
     "share": {
-      "cancel-button": "Cancel",
-      "copy-link-button": "Copy link",
-      "delete-button": "Delete snapshot",
-      "delete-description": "Are you sure you want to delete this snapshot?",
-      "delete-title": "Delete snapshot",
-      "deleted-alert": "Snapshot deleted. It could take an hour to be cleared from CDN caches.",
-      "expiration-label": "Expires in",
-      "info-alert": "A Grafana dashboard snapshot publicly shares a dashboard while removing sensitive data such as queries and panel links, leaving only visible metrics and series names. Anyone with the link can access the snapshot.",
-      "learn-more-button": "Learn more",
-      "local-button": "Publish snapshot",
-      "name-label": "Snapshot name",
-      "new-snapshot-button": "New snapshot",
-      "success-creation": "Your snapshot has been created",
-      "success-delete": "Your snapshot has been deleted",
-      "view-all-button": "View all snapshots"
+      "cancel-button": "취소",
+      "copy-link-button": "링크 복사",
+      "delete-button": "스냅샷 삭제",
+      "delete-description": "이 스냅샷을 삭제하시겠습니까?",
+      "delete-title": "스냅샷 삭제",
+      "deleted-alert": "스냅샷이 삭제되었습니다. CDN 캐시에서 제거되기까지 최대 1시간이 걸릴 수 있습니다.",
+      "expiration-label": "만료됨",
+      "info-alert": "Grafana 대시보드 스냅샷은 대시보드를 공개적으로 공유하면서 쿼리 및 패널 링크와 같은 민감한 데이터를 제거하고 표시된 메트릭과 시리즈 이름만 남깁니다. 링크가 있는 누구나 스냅샷에 액세스할 수 있습니다.",
+      "learn-more-button": "자세히 보기",
+      "local-button": "스냅샷 게시",
+      "name-label": "스냅샷 이름",
+      "new-snapshot-button": "새 스냅샷",
+      "success-creation": "스냅샷이 생성되었습니다.",
+      "success-delete": "스냅샷이 삭제되었습니다.",
+      "view-all-button": "모든 스냅샷 보기"
     },
     "share-panel": {
-      "info-alert": "A Grafana panel snapshot publicly shares a panel while removing sensitive data such as queries and panel links, leaving only visible metrics and series names. Anyone with the link can access the snapshot."
+      "info-alert": "Grafana 패널 스냅샷은 패널을 공개적으로 공유하면서 쿼리 및 패널 링크와 같은 민감한 데이터를 제거하고 표시된 메트릭과 시리즈 이름만 남깁니다. 링크가 있는 누구나 스냅샷에 액세스할 수 있습니다."
     },
-    "url-column-header": "스냅샷 url",
-    "view-button": "View"
+    "url-column-header": "스냅샷 URL",
+    "view-button": "보기"
   },
   "tag-filter": {
     "loading": "Loading...",
@@ -2626,16 +2626,16 @@
   },
   "time-picker": {
     "absolute": {
-      "recent-title": "Recently used absolute ranges",
+      "recent-title": "최근 사용한 절대 시간 범위",
       "title": "절대 시간 범위"
     },
     "calendar": {
       "apply-button": "시간 범위 적용",
       "cancel-button": "취소",
-      "close": "Close calendar",
-      "next-month": "Next month",
-      "previous-month": "Previous month",
-      "select-time": "Select a time range"
+      "close": "달력 닫기",
+      "next-month": "다음 달",
+      "previous-month": "이전 달",
+      "select-time": "시간 범위 선택"
     },
     "content": {
       "empty-recent-list-docs": "사용자 지정 시간 범위를 입력하는 방법에 대해 자세히 알아보십시오. 다음 시간 단위가 지원됩니다. : s (초), m (분), h (시), d (일), w (주), M (달), y (년)",
@@ -2643,45 +2643,45 @@
       "filter-placeholder": "Search quick ranges"
     },
     "copy-paste": {
-      "copy-success-message": "Time range copied to clipboard",
-      "default-error-message": "{{error}} is not a valid time range",
-      "default-error-title": "Invalid time range",
-      "tooltip-copy": "Copy time range to clipboard",
-      "tooltip-paste": "Paste time range"
+      "copy-success-message": "시간 범위가 클립보드에 복사되었습니다",
+      "default-error-message": "{{error}}는 유효한 시간 범위가 아닙니다",
+      "default-error-title": "유효하지 않은 시간 범위",
+      "tooltip-copy": "시간 범위를 클립보드에 복사",
+      "tooltip-paste": "시간 범위 붙여넣기"
     },
     "footer": {
       "change-settings-button": "시간대 변경",
-      "fiscal-year-option": "Fiscal year",
-      "fiscal-year-start": "Fiscal year start month",
-      "time-zone-option": "Time zone",
-      "time-zone-selection": "Time zone selection"
+      "fiscal-year-option": "회계연도",
+      "fiscal-year-start": "회계연도 시작 월",
+      "time-zone-option": "시간대",
+      "time-zone-selection": "시간대 선택"
     },
     "range-content": {
       "apply-button": "시간 범위 적용",
-      "default-error": "Please enter a past date or \"now\"",
-      "fiscal-year": "Fiscal year",
+      "default-error": "과거 날짜나 \"지금\"을 입력하세요",
+      "fiscal-year": "회계연도",
       "from-input": "부터",
-      "open-input-calendar": "Open calendar",
-      "range-error": "\"From\" can't be after \"To\"",
+      "open-input-calendar": "캘린더 열기",
+      "range-error": "\"From\"은 \"To\" 이후일 수 없습니다",
       "to-input": "까지"
     },
     "range-picker": {
-      "backwards-time-aria-label": "Move time range backwards",
-      "current-time-selected": "Time range selected: {{currentTimeRange}}",
-      "forwards-time-aria-label": "Move time range forwards",
-      "to": "to",
-      "zoom-out-button": "Zoom out time range",
-      "zoom-out-tooltip": "Time range zoom out <1></1> CTRL+Z"
+      "backwards-time-aria-label": "시간 범위를 뒤로 이동",
+      "current-time-selected": "선택된 시간 범위: {{currentTimeRange}}",
+      "forwards-time-aria-label": "시간 범위를 앞으로 이동",
+      "to": "까지",
+      "zoom-out-button": "시간 범위 축소",
+      "zoom-out-tooltip": "시간 범위 축소 <1></1> CTRL+Z"
     },
     "time-range": {
-      "aria-role": "Time range selection",
-      "default-title": "Time ranges",
-      "example-title": "Example time ranges",
-      "specify": "Specify time range <1></1>"
+      "aria-role": "시간 범위 선택",
+      "default-title": "시간 범위",
+      "example-title": "예시 시간 범위",
+      "specify": "시간 범위 지정 <1></1>"
     },
     "zone": {
-      "select-aria-label": "Time zone picker",
-      "select-search-input": "Type to search (country, city, abbreviation)"
+      "select-aria-label": "시간대 선택기",
+      "select-search-input": "검색 (국가, 도시, 약어)"
     }
   },
   "trails": {
@@ -2689,27 +2689,27 @@
       "empty-state": "아직 북마크를 생성하지 않았습니다. Explore Metrics 북마크 기능을 사용하여 패널을 북마크로 저장하세요."
     },
     "metric-overview": {
-      "description-label": "Description",
-      "labels": "Labels",
-      "metric-attributes": "Metric attributes",
-      "no-description": "No description available",
-      "type-label": "Type",
-      "unit-label": "Unit",
-      "unknown-type": "Unknown"
+      "description-label": "설명",
+      "labels": "라벨",
+      "metric-attributes": "메트릭 속성",
+      "no-description": "설명 없음",
+      "type-label": "유형",
+      "unit-label": "단위",
+      "unknown-type": "알 수 없음"
     },
     "metric-select": {
-      "filter-by": "Filter by",
-      "otel-switch": "This switch enables filtering by OTel resources for OTel native data sources."
+      "filter-by": "필터 기준",
+      "otel-switch": "이 스위치는 OTel 네이티브 데이터 소스를 위한 OTel 리소스로 필터링을 활성화합니다."
     },
     "settings": {
-      "always-keep-selected-metric-graph-in-view": "Always keep selected metric graph in-view",
-      "show-previews-of-metric-graphs": "Show previews of metric graphs"
+      "always-keep-selected-metric-graph-in-view": "선택된 메트릭 그래프를 항상 화면에 표시",
+      "show-previews-of-metric-graphs": "메트릭 그래프 미리보기 표시"
     }
   },
   "transformations": {
     "empty": {
-      "add-transformation-body": "Transformations allow data to be changed in various ways before your visualization is shown.<1></1>This includes joining data together, renaming fields, making calculations, formatting data for display, and more.",
-      "add-transformation-header": "Start transforming data"
+      "add-transformation-body": "변환은 시각화가 표시되기 전에 데이터를 다양한 방식으로 변경할 수 있게 합니다.<1></1>여기에는 데이터를 결합하거나, 필드를 이름 바꾸거나, 계산을 수행하거나, 디스플레이용 데이터를 포맷팅하는 등이 포함됩니다.",
+      "add-transformation-header": "데이터 변환 시작"
     }
   },
   "user-orgs": {
@@ -2721,9 +2721,9 @@
   },
   "user-profile": {
     "fields": {
-      "email-error": "Email is required",
+      "email-error": "이메일은 필수입니다",
       "email-label": "이메일",
-      "name-error": "Name is required",
+      "name-error": "이름은 필수입니다",
       "name-label": "이름",
       "username-label": "사용자 이름"
     },
@@ -2739,34 +2739,34 @@
     "seen-at-column": "마지막으로 로그인 시간"
   },
   "user-sessions": {
-    "loading": "Loading sessions..."
+    "loading": "세션 로딩 중..."
   },
   "users": {
     "empty-state": {
-      "message": "No users found"
+      "message": "사용자를 찾을 수 없습니다"
     }
   },
   "users-access-list": {
     "tabs": {
-      "public-dashboard-users-tab-title": "Public dashboard users",
-      "shared-dashboard-users-tab-title": "Shared dashboard users"
+      "public-dashboard-users-tab-title": "공개 대시보드 사용자",
+      "shared-dashboard-users-tab-title": "공유 대시보드 사용자"
     }
   },
   "variable": {
     "adhoc": {
-      "placeholder": "Select value"
+      "placeholder": "값 선택"
     },
     "dropdown": {
-      "placeholder": "Enter variable value"
+      "placeholder": "변수 값 입력"
     },
     "picker": {
-      "link-all": "All",
-      "option-all": "All",
-      "option-selected-values": "Selected",
-      "option-tooltip": "Clear selections"
+      "link-all": "모두",
+      "option-all": "모두",
+      "option-selected-values": "선택됨",
+      "option-tooltip": "선택 해제"
     },
     "textbox": {
-      "placeholder": "Enter variable value"
+      "placeholder": "변수 값 입력"
     }
   },
   "variables": {
@@ -2791,7 +2791,7 @@
       "health": "활성 상태",
       "view-as": "다음과 같은 방식으로 보기",
       "search": "검색",
-      "clear-filters": "Clear filters",
+      "clear-filters": "필터 지우기",
       "name": "이름",
       "share": "공유",
       "edit": "편집",
@@ -3017,7 +3017,9 @@
       "existing-dashboard": "기존 대시보드",
       "select-dashboard-and-panel": "대시보드 및 패널 선택",
       "row-options": "행 옵션",
-      "repeat-for": "반복 대상"
+      "repeat-for": "반복 대상",
+      "custom-options": "사용자 정의 옵션",
+      "values-separated-by-comma": "쉼표로 구분된 값"
     },
     "explore": {
       "explore-metrics-info": "쿼리를 작성하지 않고 Prometheus 호환 메트릭을 탐색하세요",
@@ -3045,16 +3047,16 @@
       "alert-rule-hrefText": "경고 규칙 관리",
       "alert-rule-enter-name": "{{entityName}} 이름 입력",
       "alert-rule-enter-name-description": "{{entityName}}을 식별할 이름 입력.",
-      "contact-points": "컨택트 포인트",
+      "contact-points": "콘택트 포인트",
       "contact-points-description": "알림을 받는 사람과 전송 방법 구성",
-      "contact-points-hrefText": "컨택트 포인트 관리",
+      "contact-points-hrefText": "콘택트 포인트 관리",
       "mute-timings": "음소거 타이밍",
-      "mute-timings-description": "알림을 보내지 않을 구체적인 시간 간격을 입력하거나 특정 기간 동안 알림을 동결합니다.",
-      "mute-timings-empty": "아직 사일런스 타이밍을 생성하지 않았습니다.",
-      "mute-timings-add": "사일런스 타이밍 추가",
-      "mute-timings-add-subtitle": "사일런스 타이밍 고유 이름",
+      "mute-timings-description": "알림을 보내지 않을 구체적인 시간 간격을 입력하거나 특정 기간 동안 알림을 정지합니다.",
+      "mute-timings-empty": "아직 음소거 타이밍을 생성하지 않았습니다.",
+      "mute-timings-add": "음소거 타이밍 추가",
+      "mute-timings-add-subtitle": "음소거 타이밍 고유 이름",
       "notification-policies": "알림 정책",
-      "notification-policies-description": "경고 인스턴스가 컨택트 포인트로 라우팅되는 방식 구성",
+      "notification-policies-description": "경고 인스턴스가 콘택트 포인트로 라우팅되는 방식 구성",
       "notification-policies-hrefText": "알림 정책 관리",
       "notification-templates": "알림 템플릿",
       "notification-templates-add": "알림 템플릿 추가",
@@ -3070,7 +3072,7 @@
       "edit-alertmanager-configuration": "경고 관리자 구성 편집",
       "search-by-name-or-type": "이름 또는 유형으로 검색",
       "search-by-matchers": "매치되는 문자열로 검색",
-      "search-by-contact-point": "컨택트 포인트로 검색",
+      "search-by-contact-point": "콘택트 포인트로 검색",
       "no-templates-defined": "정의된 템플릿이 없습니다.",
       "silence-alert-rule": "사일런스 경고 규칙",
       "silence-alert-rule-subtitle": "특정 경고 규칙의 알림을 중지하기 위해 사일런스를 구성합니다.",
@@ -3114,9 +3116,9 @@
       "no-query-alert-datasource": "경고 기능이 가능한 데이터소스에 대한 쿼리가 없어 이 패널에서 경고를 생성할 수 없습니다.",
       "select-format-download": "형식을 선택하고 파일을 다운로드하거나 내용을 클립보드에 복사하세요",
       "save-silence": "사일런스 저장",
-      "update-contact-point": "컨택트 포인트 업데이트",
-      "add-contact-point-integration": "컨택트 포인트 통합 추가",
-      "save-contact-point": "컨택트 포인트 저장",
+      "update-contact-point": "콘택트 포인트 업데이트",
+      "add-contact-point-integration": "콘택트 포인트 통합 추가",
+      "save-contact-point": "콘택트 포인트 저장",
       "notification-settings": "알림 설정",
       "email-addresses-info": "여러 개의 이메일 주소를 \";\", \"\n\" 또는 \",\" 구분자를 사용하여 입력할 수 있습니다",
       "single-email": "단일 이메일",
@@ -3212,16 +3214,68 @@
       "no-data-error-handling": "데이터 없음 및 오류 처리 구성",
       "notifications": "알림",
       "muting-grouping-timings-optional": "사일런스, 그룹화 및 타이밍 (선택 사항)",
-      "mute-timings": "사일런스 타이밍",
-      "select-mute-timings-description": "이 경고 규칙에 대한 알림을 보내지 않을 시점을 정의하려면 사일런스 타이밍을 선택하세요.",
-      "select-mute-timings-placeholder": "사일런스 타이밍 선택...",
+      "mute-timings": "음소거 타이밍",
+      "select-mute-timings-description": "이 경고 규칙에 대한 알림을 보내지 않을 시점을 정의하려면 음소거 타이밍을 선택하세요.",
+      "select-mute-timings-placeholder": "음소거 타이밍 선택...",
       "override-grouping": "그룹 재정의",
       "override-timings": "타이밍 재정의",
-      "notifications-routing": "발생한 알림은 선택된 연락 지점으로 라우팅됩니다.",
-      "view-or-create-contact-points": "컨택트 포인트 보기 또는 생성",
+      "notifications-routing": "발생한 알림은 선택된 콘택트 포인트으로 라우팅됩니다.",
+      "view-or-create-contact-points": "콘택트 포인트 보기 또는 생성",
       "select-where-alert-rule-managed": "경고 규칙을 관리할 위치를 선택하세요.",
       "custom-annotation-name-and-content": "사용자 정의 주석 이름 및 내용",
-      "contact-point": "연락처 지점"
+      "contact-point": "콘택트 포인트",
+      "notifications-routing": "알림이 발생하는 경고는 일치하는 레이블과 알림 정책 트리에 따라 연락처로 라우팅됩니다.",
+      "alert-instance-routing-preview": "알림 인스턴스 라우팅 미리보기",
+      "preview-routing": "라우팅 미리보기",
+      "select-dashboard-panels": "패널 목록을 얻을 대시보드를 선택하세요",
+      "create-contact-point": "콘택트 포인트 추가",
+      "disable-resolved-message": "해결된 메시지 비활성화",
+      "disable-resolved-message": "경고 상태가 해제될 때 전송되는 [OK] 해제 메시지를 비활성화합니다.",
+      "test-contact-point": "콘택트 포인트 테스트",
+      "notification-message": "알림 메시지",
+      "test-notification-message": "미리 정의된 경고를 사용하여 테스트 알림을 보냅니다. 사용자 정의 템플릿이나 메시지를 정의한 경우, 더 나은 결과를 위해 위에서 <strong>사용자 정의</strong> 알림 메시지로 전환하세요.",
+      "send-test-notification": "테스트 알림 보내기",
+      "add-more": "더 추가하기",
+      "edit-notification-policy": "알림 정책 편집",
+      "update-default-policy": "기본 정책 업데이트",
+      "update-policy": "정책 업데이트",
+      "default-contact-point": "기본 연락처 포인트",
+      "combine-multiple-alerts": "같은 레이블 값을 기준으로 여러 알림을 하나의 알림으로 결합",
+      "timing-options": "타이밍 옵션",
+      "group-wait": "그룹 대기",
+      "group-wait-description": "새로운 알림 그룹에 대한 첫 번째 알림을 보내기 전 대기 시간. 기본값은 30초입니다.",
+      "group-interval": "그룹 간격",
+      "group-interval-description": "첫 번째 알림이 전송된 후 알림 그룹의 변경 사항에 대한 알림을 보내기 전 대기 시간. 기본값은 5분입니다.",
+      "repeat-interval": "반복 간격",
+      "repeat-interval-description": "이미 성공적으로 전송된 알림을 다시 전송하기 전 대기 시간. 기본값은 4시간입니다. 그룹 간격의 배수여야 합니다.",
+      "create-contact-point": "콘택트 포인트 생성",
+      "add-notification-policy": "알림 정책 추가",
+      "save-policy": "정책 저장",
+      "continue-matching-subsequent-sibling-nodes": "후속 형제 노드와의 일치를 계속 진행",
+      "override-general-timings": "일반 타이밍 덮어쓰기",
+      "add-mute-timing-to-policy": "정책에 음소거 타이밍 추가",
+      "time-intervals": "시간 간격",
+      "time-intervals-description-1": "시간 간격은 특정 시점을 정의하는 것입니다. 모든 필드는 리스트로 구성되며, 최소한 하나의 리스트 요소가 해당 필드를 만족해야 필드와 일치합니다. 필드가 비어 있으면 시간의 어떤 순간도 해당 필드와 일치합니다.",
+      "time-intervals-description-2": "시점이 완전한 시간 간격과 일치하려면 모든 필드가 일치해야 합니다. 음소거 타이밍은 여러 개의 시간 간격을 포함할 수 있습니다.",
+      "time-range": "시간 범위",
+      "time-range-description": "시작 시간을 포함하고 종료 시간은 제외한 시간 (위치가 선택되지 않으면 UTC 기준, 그렇지 않으면 로컬 시간)",
+      "add-another-time-range": "다른 시간 범위 추가",
+      "start-time": "시작 시간",
+      "end-time": "종료 시간",
+      "location": "위치",
+      "days-of-the-week": "요일",
+      "days-of-the-month": "월의 일",
+      "days-of-the-month-description": "월의 1일부터 31일까지의 일. 음수 값을 사용하여 월의 끝에서 시작하는 날을 나타낼 수 있습니다.",
+      "months": "개월",
+      "months-description": "숫자 또는 전체 달력 월로 나타낸 한 해의 개월",
+      "years": "년도",
+      "remove-time-interval": "시간 간격 제거",
+      "save-mute-timing": "음소거 타이밍 저장",
+      "add-another-time-interval": "다른 시간 간격 추가",
+      "expired-silences": "만료된 사일런스",
+      "edit-silence": "사일런스 편집",
+      "recreate-existing-silence-description": "특정 알림 규칙에서 알림을 중지하기 위해 기존 사일런스를 재생성",
+      "instance-labels": "인스턴스 레이블"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",

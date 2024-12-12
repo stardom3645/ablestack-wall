@@ -190,7 +190,7 @@ export function FolderAndGroup({
                     disabled={!contextSrv.hasPermission(AccessControlAction.FoldersCreate)}
                     data-testid={selectors.components.AlertRules.newFolderButton}
                   >
-                    New folder
+                    title={t('ablestack-wall.alert.new-folder', 'New folder')}
                   </Button>
                 </>
               )) || <div>Creating new folder...</div>}
@@ -270,7 +270,7 @@ export function FolderAndGroup({
             disabled={!folder}
             data-testid={selectors.components.AlertRules.newEvaluationGroupButton}
           >
-            New evaluation group
+            {t('ablestack-wall.alert.new-evaluation-group', 'New evaluation group')}
           </Button>
         </Box>
         {isCreatingEvaluationGroup && (

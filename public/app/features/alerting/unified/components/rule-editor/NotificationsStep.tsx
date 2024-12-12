@@ -270,7 +270,10 @@ export const RoutingOptionDescription = ({ manualRouting }: NotificationsStepDes
               'ablestack-wall.alert.notifications-routing',
               'Notifications for firing alerts are routed to a selected contact point.'
             )
-          : 'Notifications for firing alerts are routed to contact points based on matching labels and the notification policy tree.'}
+          : t(
+              'ablestack-wall.alert.notifications-routing',
+              'Notifications for firing alerts are routed to contact points based on matching labels and the notification policy tree.'
+            )}
       </Text>
       {manualRouting ? <NeedHelpInfoForContactpoint /> : <NeedHelpInfoForNotificationPolicy />}
     </Stack>
