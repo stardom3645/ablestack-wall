@@ -46,7 +46,7 @@ export const ScenesNewRuleFromPanelButton = ({ panel, className }: ScenesNewRule
 
   return (
     <Button icon="bell" onClick={onClick} className={className} data-testid="create-alert-rule-button">
-      New alert rule
+      {t('ablestack-wall.alert.new-alert-rule', 'New alert rule')}
     </Button>
   );
 };
