@@ -2909,7 +2909,8 @@
       "add": "추가",
       "username": "사용자 이름",
       "password": "비밀번호",
-      "reset": "초기화"
+      "reset": "초기화",
+      "warning": "경고"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -3019,7 +3020,12 @@
       "row-options": "행 옵션",
       "repeat-for": "반복 대상",
       "custom-options": "사용자 정의 옵션",
-      "values-separated-by-comma": "쉼표로 구분된 값"
+      "values-separated-by-comma": "쉼표로 구분된 값",
+      "remove-transformation-note": "하나의 변환을 제거하면 다른 변환이 깨질 수 있습니다. 변환이 하나뿐인 경우 기본 선택 화면으로 돌아갑니다.",
+      "builder-mode-message": "빌더 모드는 코드에서 변경한 내용을 표시하지 않습니다. 쿼리 빌더는 빌더 모드에서 마지막으로 변경한 내용을 표시합니다.",
+      "copy-code-to-clipboard": "코드를 클립보드에 복사하시겠습니까?",
+      "discard-code-switch": "코드를 버리고 전환합니다.",
+      "copy-code-switch": "코드를 복사하고 전환합니다."
     },
     "explore": {
       "explore-metrics-info": "쿼리를 작성하지 않고 Prometheus 호환 메트릭을 탐색하세요",
