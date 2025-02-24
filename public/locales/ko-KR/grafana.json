@@ -3025,7 +3025,15 @@
       "builder-mode-message": "빌더 모드는 코드에서 변경한 내용을 표시하지 않습니다. 쿼리 빌더는 빌더 모드에서 마지막으로 변경한 내용을 표시합니다.",
       "copy-code-to-clipboard": "코드를 클립보드에 복사하시겠습니까?",
       "discard-code-switch": "코드를 버리고 전환합니다.",
-      "copy-code-switch": "코드를 복사하고 전환합니다."
+      "copy-code-switch": "코드를 복사하고 전환합니다.",
+      "autofit": "자동 맞춤",
+      "panel-heights-will-be-adjusted-to-fit-screen-size": "패널 높이가 화면 크기에 맞게 조정됩니다.",
+      "display-dashboard-controls": "대시보드 컨트롤 표시",
+      "customize-dashboard-elements-visibility": "대시보드 요소 가시성 사용자 지정",
+      "time-and-refresh": "시간 및 새로 고침",
+      "variables": "변수",
+      "dashboard-links": "대시보드 링크",
+      "start": "시작"
     },
     "explore": {
       "explore-metrics-info": "쿼리를 작성하지 않고 Prometheus 호환 메트릭을 탐색하세요",
@@ -3365,7 +3373,8 @@
         "delete-user-body": "이 사용자를 삭제하시겠습니까?",
         "disable-user-body": "이 사용자를 비활성화하시겠습니까?",
         "add-user-organization": "조직에 사용자 추가",
-        "force-logout-all-devices": "모든 디바이스에서 강제 로그아웃"
+        "force-logout-all-devices": "모든 디바이스에서 강제 로그아웃",
+        "user-information": "사용자 정보"
       },
       "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다.",
       "manage-auth-findout": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."

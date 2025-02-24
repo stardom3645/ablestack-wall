@@ -3211,7 +3211,15 @@
       "builder-mode-message": "Builder mode does not display changes made in code. The query builder will display the last changes you made in builder mode.",
       "copy-code-to-clipboard": "Do you want to copy your code to the clipboard?",
       "discard-code-switch": "Discard code and switch",
-      "copy-code-switch": "Copy code and switch"
+      "copy-code-switch": "Copy code and switch",
+      "autofit": "Autofit",
+      "panel-heights-will-be-adjusted-to-fit-screen-size": "Panel heights will be adjusted to fit screen size",
+      "display-dashboard-controls": "Display dashboard controls",
+      "customize-dashboard-elements-visibility": "Customize dashboard elements visibility",
+      "time-and-refresh": "Time and refresh",
+      "variables": "Variables",
+      "dashboard-links": "Dashboard links",
+      "start": "Start"
     },
     "explore": {
       "explore-metrics-info": "Explore your Prometheus-compatible metrics without writing a query",
@@ -3552,7 +3560,8 @@
         "delete-user-body": "Are you sure you want to delete this user?",
         "disable-user-body": "Are you sure you want to delete this user?",
         "add-user-organization": "Add user to organization",
-        "force-logout-all-devices": "Force logout from all devices"
+        "force-logout-all-devices": "Force logout from all devices",
+        "user-information": "User information"
       },
       "manage-auth": "Manage your auth settings and configure single sign-on.",
       "manage-auth-findout": "Manage your auth settings and configure single sign-on. Find out more in our"
