@@ -21,33 +21,7 @@ export function NewsContainer({ className }: NewsContainerProps) {
     <>
       <ToolbarButton className={className} onClick={onToggleShowNewsDrawer} iconOnly icon="rss" aria-label="News" />
       {showNewsDrawer && (
-        <Drawer
-          title={
-            <div className={styles.title}>
-              <Text element="h2">{t('news.title', 'Latest from the blog')}</Text>
-              <a
-                href="https://grafana.com/blog/"
-                target="_blank"
-                rel="noreferrer"
-                title="Go to Grafana labs blog"
-                className={styles.grot}
-              >
-                <img src="public/img/grot-news.svg" alt="Grot reading news" />
-              </a>
-              <div className={styles.actions}>
-                <IconButton
-                  name="times"
-                  variant="secondary"
-                  onClick={onToggleShowNewsDrawer}
-                  data-testid={selectors.components.Drawer.General.close}
-                  tooltip={t(`news.drawer.close`, 'Close Drawer')}
-                />
-              </div>
-            </div>
-          }
-          onClose={onToggleShowNewsDrawer}
-          size="md"
-        >
+        <Drawer title={} onClose={onToggleShowNewsDrawer} size="md">
           <NewsWrapper feedUrl={DEFAULT_FEED_URL} />
         </Drawer>
       )}
