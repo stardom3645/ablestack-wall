@@ -1613,7 +1613,7 @@
       "title": "사용자 및 액세스"
     },
     "config-general": {
-      "subtitle": "그라파나 전역 기본 환경설정 및 설정 관리",
+      "subtitle": "Wall 전역 기본 환경설정 및 설정 관리",
       "title": "일반"
     },
     "config-plugins": {
