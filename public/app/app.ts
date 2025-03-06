@@ -237,13 +237,16 @@ export class GrafanaApp {
 
       // initialize chrome service
       const queryParams = locationService.getSearchObject();
+      const kioskValue = queryParams.kiosk !== undefined ? queryParams.kiosk : '1';
+
       const chromeService = new AppChromeService();
       const keybindingsService = new KeybindingSrv(locationService, chromeService);
       const newAssetsChecker = new NewFrontendAssetsChecker();
       newAssetsChecker.start();
 
       // Read initial kiosk mode from url at app startup
-      chromeService.setKioskModeFromUrl(queryParams.kiosk);
+      // chromeService.setKioskModeFromUrl(queryParams.kiosk);
+      chromeService.setKioskModeFromUrl(kioskValue);
 
       // Clean up old search local storage values
       try {
