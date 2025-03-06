@@ -2910,7 +2910,13 @@
       "username": "사용자 이름",
       "password": "비밀번호",
       "reset": "초기화",
-      "warning": "경고"
+      "warning": "경고",
+      "information": "정보",
+      "name": "이름",
+      "creation-date": "생성 날짜",
+      "expires": "만료됨",
+      "created": "생성됨",
+      "last-used-at": "마지막 사용 일시"
     },
     "login": {
       "reset-password": "비밀번호 초기화",
@@ -3374,7 +3380,26 @@
         "disable-user-body": "이 사용자를 비활성화하시겠습니까?",
         "add-user-organization": "조직에 사용자 추가",
         "force-logout-all-devices": "모든 디바이스에서 강제 로그아웃",
-        "user-information": "사용자 정보"
+        "user-information": "사용자 정보",
+        "manage-service-account-settings": "개별 서비스 계정의 설정 관리",
+        "delete-service-account": "서비스 계정 삭제",
+        "enable-service-account": "서비스 계정 활성화",
+        "disable-service-account": "서비스 계정 비활성화",
+        "confirm-delete-service-account": "이 서비스 계정을 삭제하시겠습니까?",
+        "add-service-account-token": "서비스 계정 토큰 추가",
+        "add-permission": "권한 추가",
+        "add-service-account-token": "서비스 계정 토큰 추가",
+        "name-to-easily-identify-token": "토큰을 쉽게 식별할 이름",
+        "expiration": "만료",
+        "expiration-date": "만료 날짜",
+        "no-expiration": "만료 없음",
+        "set-expiration-date": "만료 날짜 설정",
+        "generate-token": "토큰 생성",
+        "service-account-token-created": "서비스 계정 토큰 생성됨",
+        "copy-token-warning": "지금 토큰을 복사하세요. 다시 볼 수 없습니다. 토큰을 분실하면 새로 생성해야 합니다.",
+        "copy-clipboard": "클립보드 복사",
+        "copy-to-clipboard-and-close": "클립보드에 복사 후 닫기",
+        "confirm-disable": "비활성화하시겠습니까?"
       },
       "manage-auth": "인증 설정을 관리하고 단일 로그인을 구성합니다.",
       "manage-auth-findout": "인증 설정을 관리하고 단일 로그인을 구성합니다. 자세한 내용은 다음 문서를 참조하세요."

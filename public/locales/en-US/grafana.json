@@ -3098,7 +3098,13 @@
       "username": "Username",
       "password": "Password",
       "reset": "Reset",
-      "warning": "Warning"
+      "warning": "Warning",
+      "information": "Information",
+      "name": "Name",
+      "creation-date": "Creation date",
+      "expires": "Expires",
+      "created": "Created",
+      "last-used-at": "Last used at"
     },
     "login": {
       "reset-password": "Reset password",
@@ -3561,7 +3567,26 @@
         "disable-user-body": "Are you sure you want to delete this user?",
         "add-user-organization": "Add user to organization",
         "force-logout-all-devices": "Force logout from all devices",
-        "user-information": "User information"
+        "user-information": "User information",
+        "manage-service-account-settings": "Manage settings for an individual service account",
+        "delete-service-account": "Delete service account",
+        "enable-service-account": "Enable service account",
+        "disable-service-account": "Disable service account",
+        "confirm-delete-service-account": "Are you sure you want to delete this service account?",
+        "add-service-account-token": "Add service account token",
+        "add-permission": "Add permission",
+        "add-service-account-token": "Add service account token",
+        "name-to-easily-identify-token": "Name to easily identify the token",
+        "expiration": "Expiration",
+        "expiration-date": "Expiration date",
+        "no-expiration": "No expiration",
+        "set-expiration-date": "Set expiration date",
+        "generate-token": "Generate token",
+        "service-account-token-created": "Service account token created",
+        "copy-token-warning": "Copy the token now as you will not be able to see it again. Losing a token requires creating a new one.",
+        "copy-clipboard": "Copy clipboard",
+        "copy-to-clipboard-and-close": "Copy to clipboard and close",
+        "confirm-disable": "Are you sure you want to disable"
       },
       "manage-auth": "Manage your auth settings and configure single sign-on.",
       "manage-auth-findout": "Manage your auth settings and configure single sign-on. Find out more in our"
