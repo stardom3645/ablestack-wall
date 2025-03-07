@@ -39,7 +39,8 @@ export class AppChromeService {
   private routeChangeHandled = true;
 
   private megaMenuDocked = Boolean(
-    window.innerWidth >= config.theme2.breakpoints.values.xl && store.getBool(DOCKED_LOCAL_STORAGE_KEY, false)
+    window.innerWidth >= config.theme2.breakpoints.values.xl &&
+      store.getBool(DOCKED_LOCAL_STORAGE_KEY, Boolean(window.innerWidth >= config.theme2.breakpoints.values.xxl))
   );
 
   private sessionStorageData = window.sessionStorage.getItem('returnToPrevious');
