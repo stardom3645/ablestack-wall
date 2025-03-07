@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { DOMAttributes } from '@react-types/shared';
-import { useEffect, memo, forwardRef, useCallback } from 'react';
+import { memo, forwardRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom-v5-compat';
 
 import { GrafanaTheme2, NavModelItem } from '@grafana/data';
@@ -36,11 +36,6 @@ export const MegaMenu = memo(
     const state = chrome.useState();
     const [patchPreferences] = usePatchUserPreferencesMutation();
     const pinnedItems = usePinnedItems();
-
-    // 컴포넌트가 처음 마운트될 때 대시보드(메가 메뉴)를 닫힌 상태로 설정
-    useEffect(() => {
-      chrome.setMegaMenuOpen(false);
-    }, [chrome]);
 
     // Remove profile + help from tree
     const navItems = navTree
