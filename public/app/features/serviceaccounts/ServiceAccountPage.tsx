@@ -194,7 +194,10 @@ export const ServiceAccountPageUnconnected = ({
             <h3>{t('ablestack-wall.common.tokens', 'Tokens')}</h3>
             {!serviceAccount.isExternal && (
               <Button onClick={() => setIsTokenModalOpen(true)} disabled={tokenActionsDisabled}>
-                {t('ablestack-wall.alert.add-service-account-token', 'Add service account token')}
+                {t(
+                  'ablestack-wall.administration.service-and-access.add-service-account-token',
+                  'Add service account token'
+                )}
               </Button>
             )}
           </Stack>

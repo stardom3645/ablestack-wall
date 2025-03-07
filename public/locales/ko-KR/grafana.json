@@ -3386,7 +3386,6 @@
         "enable-service-account": "서비스 계정 활성화",
         "disable-service-account": "서비스 계정 비활성화",
         "confirm-delete-service-account": "이 서비스 계정을 삭제하시겠습니까?",
-        "add-service-account-token": "서비스 계정 토큰 추가",
         "add-permission": "권한 추가",
         "add-service-account-token": "서비스 계정 토큰 추가",
         "name-to-easily-identify-token": "토큰을 쉽게 식별할 이름",
