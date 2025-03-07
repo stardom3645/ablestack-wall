@@ -17,8 +17,11 @@ import {
 import { t } from 'app/core/internationalization';
 
 const EXPIRATION_OPTIONS = [
-  { label: t('ablestack-wall.service-and-access.no-expiration', 'No expiration'), value: false },
-  { label: t('ablestack-wall.service-and-access.set-expiration-date', 'Set expiration date'), value: true },
+  { label: t('ablestack-wall.administration.service-and-access.no-expiration', 'No expiration'), value: false },
+  {
+    label: t('ablestack-wall.administration.service-and-access.set-expiration-date', 'Set expiration date'),
+    value: true,
+  },
 ];
 
 export type ServiceAccountToken = {
@@ -83,8 +86,11 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
   };
 
   const modalTitle = !token
-    ? t('ablestack-wall.service-and-access.add-service-account-token', 'Add service account token')
-    : t('ablestack-wall.service-and-access.service-account-token-created', 'Service account token created');
+    ? t('ablestack-wall.administration.service-and-access.add-service-account-token', 'Add service account token')
+    : t(
+        'ablestack-wall.administration.service-and-access.service-account-token-created',
+        'Service account token created'
+      );
 
   return (
     <Modal isOpen={isOpen} title={modalTitle} onDismiss={onCloseInternal} className={styles.modal}>
@@ -93,7 +99,7 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
           <Field
             label={t('ablestack-wall.common.display-name', 'Display name')}
             description={t(
-              'ablestack-wall.service-and-access.name-to-easily-identify-token',
+              'ablestack-wall.administration.service-and-access.name-to-easily-identify-token',
               'Name to easily identify the token'
             )}
             // for now this is required
@@ -109,7 +115,7 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
               }}
             />
           </Field>
-          <Field label={t('ablestack-wall.service-and-access.expiration', 'Expiration')}>
+          <Field label={t('ablestack-wall.administration.service-and-access.expiration', 'Expiration')}>
             <RadioButtonGroup
               options={EXPIRATION_OPTIONS}
               value={isWithExpirationDate}
@@ -118,7 +124,7 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
             />
           </Field>
           {isWithExpirationDate && (
-            <Field label={t('ablestack-wall.service-and-access.expiration-date', 'Expiration date')}>
+            <Field label={t('ablestack-wall.administration.service-and-access.expiration-date', 'Expiration date')}>
               <DatePickerWithInput
                 onChange={onExpirationDateChange}
                 value={newTokenExpirationDate}
@@ -130,7 +136,7 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
           )}
           <Modal.ButtonRow>
             <Button onClick={onGenerateToken} disabled={isWithExpirationDate && !isExpirationDateValid}>
-              {t('ablestack-wall.service-and-access.generate-token', 'Generate token')}
+              {t('ablestack-wall.administration.service-and-access.generate-token', 'Generate token')}
             </Button>
           </Modal.ButtonRow>
         </div>
@@ -139,7 +145,7 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
           <Field
             label={t('ablestack-wall.common.tokens', 'Tokens')}
             description={t(
-              'ablestack-wall.service-and-access.copy-token-warning',
+              'ablestack-wall.administration.service-and-access.copy-token-warning',
               'Copy the token now as you will not be able to see it again. Losing a token requires creating a new one.'
             )}
           >
@@ -152,13 +158,16 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
                 icon="copy"
                 getText={() => token}
               >
-                {t('ablestack-wall.service-and-access.copy-clipboard', 'Copy clipboard')}
+                {t('ablestack-wall.administration.service-and-access.copy-clipboard', 'Copy clipboard')}
               </ClipboardButton>
             </div>
           </Field>
           <Modal.ButtonRow>
             <ClipboardButton variant="primary" getText={() => token} onClipboardCopy={onCloseInternal}>
-              {t('ablestack-wall.service-and-access.copy-to-clipboard-and-close', 'Copy to clipboard and close')}
+              {t(
+                'ablestack-wall.administration.service-and-access.copy-to-clipboard-and-close',
+                'Copy to clipboard and close'
+              )}
             </ClipboardButton>
             <Button variant="secondary" onClick={onCloseInternal}>
               {t('ablestack-wall.common.close', 'Close')}

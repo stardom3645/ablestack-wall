@@ -85,7 +85,7 @@ export const ServiceAccountPageUnconnected = ({
     text: serviceAccount.name,
     img: serviceAccount.avatarUrl,
     subTitle: t(
-      'ablestack-wall.service-and-access.manage-service-account-settings',
+      'ablestack-wall.administration.service-and-access.manage-service-account-settings',
       'Manage settings for an individual service account.'
     ),
   };
@@ -148,7 +148,7 @@ export const ServiceAccountPageUnconnected = ({
                 onClick={showDeleteServiceAccountModal(true)}
                 disabled={!contextSrv.hasPermission(AccessControlAction.ServiceAccountsDelete)}
               >
-                {t('ablestack-wall.service-and-access.delete-service-account', 'Delete service account')}
+                {t('ablestack-wall.administration.service-and-access.delete-service-account', 'Delete service account')}
               </Button>
               {serviceAccount.isDisabled ? (
                 <Button
@@ -157,7 +157,10 @@ export const ServiceAccountPageUnconnected = ({
                   onClick={handleServiceAccountEnable}
                   disabled={!ableToWrite}
                 >
-                  {t('ablestack-wall.service-and-access.enable-service-account', 'Enable service account')}
+                  {t(
+                    'ablestack-wall.administration.service-and-access.enable-service-account',
+                    'Enable service account'
+                  )}
                 </Button>
               ) : (
                 <Button
@@ -166,7 +169,10 @@ export const ServiceAccountPageUnconnected = ({
                   onClick={showDisableServiceAccountModal(true)}
                   disabled={!ableToWrite}
                 >
-                  {t('ablestack-wall.service-and-access.disable-service-account', 'Disable service account')}
+                  {t(
+                    'ablestack-wall.administration.service-and-access.disable-service-account',
+                    'Disable service account'
+                  )}
                 </Button>
               )}
             </Stack>
@@ -207,23 +213,32 @@ export const ServiceAccountPageUnconnected = ({
 
         <ConfirmModal
           isOpen={isDeleteModalOpen}
-          title={t('ablestack-wall.service-and-access.delete-service-account', 'Delete service account')}
+          title={t('ablestack-wall.administration.service-and-access.delete-service-account', 'Delete service account')}
           body={t(
-            'ablestack-wall.service-and-access.confirm-delete-service-account',
+            'ablestack-wall.administration.service-and-access.confirm-delete-service-account',
             'Are you sure you want to delete this service account?'
           )}
-          confirmText={t('ablestack-wall.service-and-access.delete-service-account', 'Delete service account')}
+          confirmText={t(
+            'ablestack-wall.administration.service-and-access.delete-service-account',
+            'Delete service account'
+          )}
           onConfirm={handleServiceAccountDelete}
           onDismiss={showDeleteServiceAccountModal(false)}
         />
         <ConfirmModal
           isOpen={isDisableModalOpen}
-          title={t('ablestack-wall.service-and-access.disable-service-account', 'Disable service account')}
+          title={t(
+            'ablestack-wall.administration.service-and-access.disable-service-account',
+            'Disable service account'
+          )}
           body={t(
-            'ablestack-wall.service-and-access.confirm-delete-service-account',
+            'ablestack-wall.administration.service-and-access.confirm-delete-service-account',
             'Are you sure you want to delete this service account?'
           )}
-          confirmText={t('ablestack-wall.service-and-access.disable-service-account', 'Disable service account')}
+          confirmText={t(
+            'ablestack-wall.administration.service-and-access.disable-service-account',
+            'Disable service account'
+          )}
           onConfirm={handleServiceAccountDisable}
           onDismiss={showDisableServiceAccountModal(false)}
         />

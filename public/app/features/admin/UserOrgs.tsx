@@ -81,7 +81,10 @@ export class UserOrgs extends PureComponent<Props, State> {
           <div>
             {canAddToOrg && (
               <Button variant="secondary" onClick={this.showOrgAddModal} ref={this.addToOrgButtonRef}>
-                {t('ablestack-wall.service-and-access.add-user-organization', 'Add user to organization')}
+                {t(
+                  'ablestack-wall.administration.service-and-access.add-user-organization',
+                  'Add user to organization'
+                )}
               </Button>
             )}
           </div>
