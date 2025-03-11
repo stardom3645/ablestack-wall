@@ -3482,7 +3482,9 @@
       "expired-silences": "Expired silences",
       "edit-silence": "Edit silence",
       "recreate-existing-silence-description": "Recreate existing silence to stop notifications from a particular alert rule",
-      "instance-labels": "Instance labels"
+      "instance-labels": "Instance labels",
+      "predefined": "Predefined",
+      "custom": "Custom"
     },
     "connections": {
       "add-datasource": "Add data source",

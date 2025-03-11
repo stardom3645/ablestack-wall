@@ -135,7 +135,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -218,7 +218,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -319,7 +319,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -396,7 +396,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 				},
 				"labels": {
 					"alertname": "TestAlert",
-					"instance": "Grafana"
+					"instance": "Wall"
 				}
 			},
 			"receivers": [{
@@ -484,7 +484,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -585,7 +585,7 @@ func TestIntegrationTestReceivers(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -691,7 +691,7 @@ func TestIntegrationTestReceiversAlertCustomization(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana",
+				"instance": "Wall",
 				"label1": "value1"
 			}
 		},
@@ -780,7 +780,7 @@ func TestIntegrationTestReceiversAlertCustomization(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "TestAlert",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
@@ -867,7 +867,7 @@ func TestIntegrationTestReceiversAlertCustomization(t *testing.T) {
 			},
 			"labels": {
 				"alertname": "This is a custom label",
-				"instance": "Grafana"
+				"instance": "Wall"
 			}
 		},
 		"receivers": [{
