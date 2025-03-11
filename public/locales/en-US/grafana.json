@@ -3484,7 +3484,8 @@
       "recreate-existing-silence-description": "Recreate existing silence to stop notifications from a particular alert rule",
       "instance-labels": "Instance labels",
       "predefined": "Predefined",
-      "custom": "Custom"
+      "custom": "Custom",
+      "no-rules-created": "You haven't created any rules yet"
     },
     "connections": {
       "add-datasource": "Add data source",

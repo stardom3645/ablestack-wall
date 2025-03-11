@@ -3297,7 +3297,8 @@
       "recreate-existing-silence-description": "특정 알림 규칙에서 알림을 중지하기 위해 기존 사일런스를 재생성",
       "instance-labels": "인스턴스 레이블",
       "predefined": "사전 정의됨",
-      "custom": "사용자 정의"
+      "custom": "사용자 정의",
+      "no-rules-created": "아직 생성된 규칙이 없습니다"
     },
     "connections": {
       "add-datasource": "데이터 소스 추가",
