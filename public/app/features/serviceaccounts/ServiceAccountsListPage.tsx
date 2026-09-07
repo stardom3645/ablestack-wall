@@ -3,15 +3,7 @@ import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { OrgRole } from '@grafana/data';
-import {
-  ConfirmModal,
-  FilterInput,
-  LinkButton,
-  RadioButtonGroup,
-  InlineField,
-  EmptyState,
-  Box
-} from '@grafana/ui';
+import { ConfirmModal, FilterInput, LinkButton, RadioButtonGroup, InlineField, EmptyState, Box } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/core';
@@ -55,9 +47,12 @@ const mapDispatchToProps = {
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 const availableFilters = [
-  { label: t("ablestack-wall.common.all", "All"), value: ServiceAccountStateFilter.All },
-  { label: t("ablestack-wall.administration.service-and-access.with-expired-tokens", "With expired tokens"), value: ServiceAccountStateFilter.WithExpiredTokens },
-  { label: t("ablestack-wall.common.disabled", "Disabled"), value: ServiceAccountStateFilter.Disabled }
+  { label: t('ablestack-wall.common.all', 'All'), value: ServiceAccountStateFilter.All },
+  {
+    label: t('ablestack-wall.administration.service-and-access.with-expired-tokens', 'With expired tokens'),
+    value: ServiceAccountStateFilter.WithExpiredTokens,
+  },
+  { label: t('ablestack-wall.common.disabled', 'Disabled'), value: ServiceAccountStateFilter.Disabled },
 ];
 
 if (config.featureToggles.externalServiceAccounts) {
@@ -196,7 +191,7 @@ export const ServiceAccountsListPageUnconnected = ({
         <>
           {!noServiceAccountsCreated && contextSrv.hasPermission(AccessControlAction.ServiceAccountsCreate) && (
             <LinkButton href="org/serviceaccounts/create" variant="primary">
-              {t("ablestack-wall.administration.service-and-access.add-service-account", "Add service account")}
+              {t('ablestack-wall.administration.service-and-access.add-service-account', 'Add service account')}
             </LinkButton>
           )}
         </>
@@ -206,7 +201,10 @@ export const ServiceAccountsListPageUnconnected = ({
         <div className="page-action-bar">
           <InlineField grow>
             <FilterInput
-              placeholder={t("ablestack-wall.administration.service-and-access.search-bar-service-account-by-name", "Search service account by name")}
+              placeholder={t(
+                'ablestack-wall.administration.service-and-access.search-bar-service-account-by-name',
+                'Search service account by name'
+              )}
               value={query}
               onChange={onQueryChange}
               width={50}
@@ -282,9 +280,18 @@ export const ServiceAccountsListPageUnconnected = ({
             />
             <ConfirmModal
               isOpen={isDisableModalOpen}
-              title="Disable service account"
-              body={`Are you sure you want to disable '${currentServiceAccount.name}'?`}
-              confirmText="Disable service account"
+              title={t(
+                'ablestack-wall.administration.service-and-access.disable-service-account',
+                'Disable service account'
+              )}
+              body={t(
+                'ablestack-wall.administration.service-and-access.confirm-disable',
+                "Are you sure you want to disable '${currentServiceAccount.name}'?"
+              )}
+              confirmText={t(
+                'ablestack-wall.administration.service-and-access.disable-service-account',
+                'Disable service account'
+              )}
               onConfirm={onDisable}
               onDismiss={onDisableModalClose}
             />

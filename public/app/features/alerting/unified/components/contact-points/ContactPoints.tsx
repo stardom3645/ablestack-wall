@@ -12,6 +12,7 @@ import {
   TabContent,
   TabsBar,
   Text,
+  withErrorBoundary,
 } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
 import { t, Trans } from 'app/core/internationalization';
@@ -24,6 +25,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { useURLSearchParams } from '../../hooks/useURLSearchParams';
 import { useAlertmanager } from '../../state/AlertmanagerContext';
 import { GRAFANA_RULES_SOURCE_NAME } from '../../utils/datasource';
+import { AlertmanagerPageWrapper } from '../AlertingPageWrapper';
 import { GrafanaAlertmanagerDeliveryWarning } from '../GrafanaAlertmanagerDeliveryWarning';
 
 import { ContactPoint } from './ContactPoint';
@@ -121,7 +123,7 @@ const ContactPointsTab = () => {
               disabled={!exportContactPointsAllowed}
               onClick={() => showExportDrawer(ALL_CONTACT_POINTS)}
             >
-              {t("alerting.common.export-all", "Export all")}
+              {t('alerting.common.export-all', 'Export all')}
             </Button>
           )}
         </Stack>
@@ -144,7 +146,10 @@ const NotificationTemplatesTab = () => {
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Text variant="body" color="secondary">
-          {t("ablestack-wall.alert.notification-templates-description", "Create notification templates to customize your notifications.")}
+          {t(
+            'ablestack-wall.alert.notification-templates-description',
+            'Create notification templates to customize your notifications.'
+          )}
         </Text>
         {createTemplateSupported && (
           <LinkButton
@@ -153,7 +158,7 @@ const NotificationTemplatesTab = () => {
             href="/alerting/notifications/templates/new"
             disabled={!createTemplateAllowed}
           >
-            {t("ablestack-wall.alert.notification-templates-add", "Add notification template")}
+            {t('ablestack-wall.alert.notification-templates-add', 'Add notification template')}
           </LinkButton>
         )}
       </Stack>
@@ -179,7 +184,7 @@ const useTabQueryParam = () => {
   return [param, setParam] as const;
 };
 
-const ContactPointsPageContents = () => {
+export const ContactPointsPageContents = () => {
   const { selectedAlertmanager } = useAlertmanager();
   const [activeTab, setActiveTab] = useTabQueryParam();
 
@@ -197,14 +202,14 @@ const ContactPointsPageContents = () => {
       <Stack direction="column">
         <TabsBar>
           <Tab
-            label={t("ablestack-wall.alert.contact-points", "Contact Points")}
+            label={t('ablestack-wall.alert.contact-points', 'Contact Points')}
             active={showingContactPoints}
             counter={contactPoints.length}
             onChangeTab={() => setActiveTab(ActiveTab.ContactPoints)}
           />
           {showTemplatesTab && (
             <Tab
-              label={t("ablestack-wall.alert.notification-templates", "Notification Templates")}
+              label={t('ablestack-wall.alert.notification-templates', 'Notification Templates')}
               active={showNotificationTemplates}
               onChangeTab={() => setActiveTab(ActiveTab.NotificationTemplates)}
             />
@@ -242,4 +247,12 @@ const ContactPointsList = ({ contactPoints, search, pageSize = DEFAULT_PAGE_SIZE
   );
 };
 
-export default ContactPointsPageContents;
+function ContactPointsPage() {
+  return (
+    <AlertmanagerPageWrapper navId="receivers" accessType="notification">
+      <ContactPointsPageContents />
+    </AlertmanagerPageWrapper>
+  );
+}
+
+export default withErrorBoundary(ContactPointsPage, { style: 'page' });

@@ -50,9 +50,19 @@ export const ChangePassword = ({ onSubmit, onSkip, showDefaultPasswordWarning }:
   return (
     <form onSubmit={handleSubmit(submit)}>
       {showDefaultPasswordWarning && (
-        <Alert severity="info" title={t("ablestack-wall.login.continuing-password-exposes", "Continuing to use the default password exposes you to security risks.")} />
+        <Alert
+          severity="info"
+          title={t(
+            'ablestack-wall.login.continuing-password-exposes',
+            'Continuing to use the default password exposes you to security risks.'
+          )}
+        />
       )}
-      <Field label={t("ablestack-wall.login.new-password", "New password")} invalid={!!errors.newPassword} error={errors?.newPassword?.message}>
+      <Field
+        label={t('ablestack-wall.login.new-password', 'New password')}
+        invalid={!!errors.newPassword}
+        error={errors?.newPassword?.message}
+      >
         <PasswordField
           onFocus={() => setDisplayValidationLabels(true)}
           {...register('newPassword', {
@@ -72,7 +82,11 @@ export const ChangePassword = ({ onSubmit, onSkip, showDefaultPasswordWarning }:
           strongPasswordValidations={strongPasswordValidations}
         />
       )}
-      <Field label={t("ablestack-wall.login.confirm-new-password", "Confirm new password")} invalid={!!errors.confirmNew} error={errors?.confirmNew?.message}>
+      <Field
+        label={t('ablestack-wall.login.confirm-new-password', 'Confirm new password')}
+        invalid={!!errors.confirmNew}
+        error={errors?.confirmNew?.message}
+      >
         <PasswordField
           {...register('confirmNew', {
             required: 'Confirmed Password is required',
@@ -84,12 +98,15 @@ export const ChangePassword = ({ onSubmit, onSkip, showDefaultPasswordWarning }:
       </Field>
       <Stack direction="column">
         <Button type="submit" className={styles.submitButton}>
-          {t("ablestack-wall.common.submit", "Submit")}
+          {t('ablestack-wall.common.submit', 'Submit')}
         </Button>
 
         {!config.auth.basicAuthStrongPasswordPolicy && onSkip && (
           <Tooltip
-            content={t("ablestack-wall.login.if-you-skip", "If you skip you will be prompted to change password next time you log in.")}
+            content={t(
+              'ablestack-wall.login.if-you-skip',
+              'If you skip you will be prompted to change password next time you log in.'
+            )}
             placement="bottom"
           >
             <Button
@@ -99,7 +116,7 @@ export const ChangePassword = ({ onSubmit, onSkip, showDefaultPasswordWarning }:
               type="button"
               data-testid={selectors.pages.Login.skip}
             >
-              {t("ablestack-wall.common.skip", "Skip")}
+              {t('ablestack-wall.common.skip', 'Skip')}
             </Button>
           </Tooltip>
         )}

@@ -107,7 +107,7 @@ export const FolderPickerTab = (props: Props) => {
       <Field>
         <FilterInput
           value={searchQuery ?? ''}
-          placeholder={t("ablestack-wall.common.search", "Search")}
+          placeholder={t('ablestack-wall.common.search', 'Search')}
           onChange={(v) => {
             onChangeSearch(v);
             setSearchQuery(v);

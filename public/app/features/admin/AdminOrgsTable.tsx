@@ -8,7 +8,7 @@ import { SkeletonComponent, attachSkeleton } from '@grafana/ui/src/unstable';
 import { contextSrv } from 'app/core/core';
 import { AccessControlAction, Organization } from 'app/types';
 
-import {t} from "../../core/internationalization";
+import { t } from '../../core/internationalization';
 
 interface Props {
   orgs: Organization[];
@@ -18,8 +18,8 @@ interface Props {
 const getTableHeader = () => (
   <thead>
     <tr>
-      <th>{t("ablestack-wall.common.id", "ID")}</th>
-      <th>{t("ablestack-wall.common.name", "Name")}</th>
+      <th>{t('ablestack-wall.common.id', 'ID')}</th>
+      <th>{t('ablestack-wall.common.name', 'Name')}</th>
       <th style={{ width: '1%' }}></th>
     </tr>
   </thead>
@@ -58,15 +58,25 @@ function AdminOrgsTableComponent({ orgs, onDelete }: Props) {
         <ConfirmModal
           isOpen
           icon="trash-alt"
-          title={t("ablestack-wall.common.delete", "Delete")}
+          title={t('ablestack-wall.common.delete', 'Delete')}
           body={
             <div>
-              {t('ablestack-wall.administration.general.confirm-delete-org', 'Are you sure you want to delete {{orgName}}?', {orgName: deleteOrg.name,})}
-              <br /> <small>{t('ablestack-wall.administration.general.confirm-sub-delete-org', "All dashboards for this organization will be removed!")}</small>
+              {t(
+                'ablestack-wall.administration.general.confirm-delete-org',
+                'Are you sure you want to delete {{orgName}}?',
+                { orgName: deleteOrg.name }
+              )}
+              <br />{' '}
+              <small>
+                {t(
+                  'ablestack-wall.administration.general.confirm-sub-delete-org',
+                  'All dashboards for this organization will be removed!'
+                )}
+              </small>
             </div>
           }
-          confirmText={t("ablestack-wall.common.delete", "Delete")}
-          dismissText={t("ablestack-wall.common.cancel", "Cancel")}
+          confirmText={t('ablestack-wall.common.delete', 'Delete')}
+          dismissText={t('ablestack-wall.common.cancel', 'Cancel')}
           onDismiss={() => setDeleteOrg(undefined)}
           onConfirm={() => {
             onDelete(deleteOrg.id);

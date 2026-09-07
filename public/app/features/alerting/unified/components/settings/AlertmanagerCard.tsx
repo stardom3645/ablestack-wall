@@ -94,7 +94,11 @@ export function AlertmanagerCard({
         <Stack direction="row" gap={1}>
           {/* ⚠️ provisioned Data sources cannot have their "enable" / "disable" actions but we should still allow editing of the configuration */}
           <Button onClick={onEditConfiguration} icon={readOnly ? 'eye' : 'edit'} variant="secondary" fill="outline">
-            {readOnly ? 'View configuration' : <Trans i18nKey="ablestack-wall.common.edit-configuration">Edit configuration</Trans>}
+            {readOnly ? (
+              'View configuration'
+            ) : (
+              <Trans i18nKey="ablestack-wall.common.edit-configuration">Edit configuration</Trans>
+            )}
           </Button>
           {showActions ? (
             <>

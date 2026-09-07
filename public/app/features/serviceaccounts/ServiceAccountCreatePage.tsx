@@ -100,7 +100,12 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="serviceaccounts" pageNav={{ text: t("ablestack-wall.administration.service-and-access.create-service-account", "reate service account") }}>
+    <Page
+      navId="serviceaccounts"
+      pageNav={{
+        text: t('ablestack-wall.administration.service-and-access.create-service-account', 'reate service account'),
+      }}
+    >
       <Page.Contents>
         <Form onSubmit={onSubmit} validateOn="onSubmit">
           {({ register, errors }) => {
@@ -108,14 +113,14 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
               <>
                 <FieldSet>
                   <Field
-                    label={t("ablestack-wall.common.display-name", "Display name")}
+                    label={t('ablestack-wall.common.display-name', 'Display name')}
                     required
                     invalid={!!errors.name}
                     error={errors.name ? 'Display name is required' : undefined}
                   >
                     <Input id="display-name-input" {...register('name', { required: true })} autoFocus />
                   </Field>
-                  <Field label={t("ablestack-wall.common.role", "Role")}>
+                  <Field label={t('ablestack-wall.common.role', 'Role')}>
                     {contextSrv.licensedAccessControlEnabled() ? (
                       <UserRolePicker
                         apply
@@ -133,7 +138,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
                     )}
                   </Field>
                 </FieldSet>
-                <Button type="submit">{t("ablestack-wall.common.create", "Create")}</Button>
+                <Button type="submit">{t('ablestack-wall.common.create', 'Create')}</Button>
               </>
             );
           }}

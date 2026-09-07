@@ -47,7 +47,7 @@ export const SilencePeriod = () => {
   return (
     <Field
       className={styles.timeRange}
-      label={t("ablestack-wall.alert.silence-start-and-end", "Silence start and end")}
+      label={t('ablestack-wall.alert.silence-start-and-end', 'Silence start and end')}
       error={invalid ? 'To is before or the same as from' : ''}
       invalid={invalid}
     >

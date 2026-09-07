@@ -8,7 +8,6 @@ import { Trans } from 'app/core/internationalization';
 
 import { createOrganization } from './state/actions';
 
-
 const mapDispatchToProps = {
   createOrganization,
 };
@@ -37,7 +36,11 @@ export const NewOrgPage = ({ createOrganization }: Props) => {
     <Page navId="global-orgs" pageNav={pageNav}>
       <Page.Contents>
         <p className="muted">
-          <Trans i18nKey="ablestack-wall.administration.general.new-organization-description">Each organization contains their own dashboards, data sources, and configuration, which cannot be shared shared between organizations. While users might belong to more than one organization, multiple organizations are most frequently used in multi-tenant deployments.</Trans>
+          <Trans i18nKey="ablestack-wall.administration.general.new-organization-description">
+            Each organization contains their own dashboards, data sources, and configuration, which cannot be shared
+            shared between organizations. While users might belong to more than one organization, multiple organizations
+            are most frequently used in multi-tenant deployments.
+          </Trans>
         </p>
 
         <Form<CreateOrgFormDTO> onSubmit={createOrg}>
@@ -47,10 +50,13 @@ export const NewOrgPage = ({ createOrganization }: Props) => {
                 <FieldSet>
                   <Field
                     label={
-                    <Trans i18nKey="ablestack-wall.administration.general.new-organization-name">
-                      Organization name
-                    </Trans>
-                    } invalid={!!errors.name} error={errors.name && errors.name.message}>
+                      <Trans i18nKey="ablestack-wall.administration.general.new-organization-name">
+                        Organization name
+                      </Trans>
+                    }
+                    invalid={!!errors.name}
+                    error={errors.name && errors.name.message}
+                  >
                     <Input
                       placeholder="Org name"
                       {...register('name', {
@@ -59,7 +65,9 @@ export const NewOrgPage = ({ createOrganization }: Props) => {
                     />
                   </Field>
                 </FieldSet>
-                <Button type="submit"><Trans i18nKey="ablestack-wall.administration.general.new-organization-name-create">Create</Trans></Button>
+                <Button type="submit">
+                  <Trans i18nKey="ablestack-wall.administration.general.new-organization-name-create">Create</Trans>
+                </Button>
               </>
             );
           }}

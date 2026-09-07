@@ -45,7 +45,7 @@ export const GroupAndNamespaceFields = ({ rulesSourceName }: Props) => {
     <div className={style.flexRow}>
       <Field
         data-testid="namespace-picker"
-        label={t("ablestack-wall.common.namespace", "Namespace")}
+        label={t('ablestack-wall.common.namespace', 'Namespace')}
         error={errors.namespace?.message}
         invalid={!!errors.namespace?.message}
       >
@@ -72,7 +72,12 @@ export const GroupAndNamespaceFields = ({ rulesSourceName }: Props) => {
           }}
         />
       </Field>
-      <Field data-testid="group-picker" label={t("ablestack-wall.common.group", "Group")} error={errors.group?.message} invalid={!!errors.group?.message}>
+      <Field
+        data-testid="group-picker"
+        label={t('ablestack-wall.common.group', 'Group')}
+        error={errors.group?.message}
+        invalid={!!errors.group?.message}
+      >
         <Controller
           render={({ field: { ref, ...field } }) => (
             <VirtualizedSelect

@@ -174,7 +174,11 @@ export function getInsightsScenes() {
     controls: [
       new SceneReactObject({
         component: SectionSubheader,
-        props: { children: <div>{t("ablestack-wall.alert.insight-tab-description", "Monitor the status of your system.")}</div> },
+        props: {
+          children: (
+            <div>{t('ablestack-wall.alert.insight-tab-description', 'Monitor the status of your system.')}</div>
+          ),
+        },
       }),
       new SceneControlsSpacer(),
       new SceneTimePicker({}),

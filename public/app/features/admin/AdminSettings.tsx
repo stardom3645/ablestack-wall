@@ -16,7 +16,10 @@ function AdminSettings() {
     <Page navId="server-settings">
       <Page.Contents>
         <Alert severity="info" title="">
-          <Trans i18nKey="ablestack-wall.administration.general.setting-alert">These system settings are defined in grafana.ini or custom.ini (or overridden in ENV variables). To change these you currently need to restart Wall.</Trans>
+          <Trans i18nKey="ablestack-wall.administration.general.setting-alert">
+            These system settings are defined in grafana.ini or custom.ini (or overridden in ENV variables). To change
+            these you currently need to restart Wall.
+          </Trans>
         </Alert>
 
         {loading && <AdminSettingsTable.Skeleton />}

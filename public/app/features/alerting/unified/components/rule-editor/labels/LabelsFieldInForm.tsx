@@ -22,7 +22,10 @@ export function LabelsFieldInForm({ onEditClick }: LabelsFieldInFormProps) {
         <Text element="h5">Labels</Text>
         <Stack direction={'row'} gap={1}>
           <Text variant="bodySmall" color="secondary">
-            {t("ablestack-wall.alert.add-labels-to-notification-policy", "Add labels to your rule for searching, silencing, or routing to a notification policy.")}
+            {t(
+              'ablestack-wall.alert.add-labels-to-notification-policy',
+              'Add labels to your rule for searching, silencing, or routing to a notification policy.'
+            )}
           </Text>
           <NeedHelpInfo
             contentText="The dropdown only displays labels that you have previously used for alerts.
@@ -35,13 +38,13 @@ export function LabelsFieldInForm({ onEditClick }: LabelsFieldInFormProps) {
         <LabelsInRule labels={labels} />
         {hasLabels ? (
           <Button variant="secondary" type="button" onClick={onEditClick} size="sm">
-            {t("ablestack-wall.alert.edit-labels", "Edit labels")}
+            {t('ablestack-wall.alert.edit-labels', 'Edit labels')}
           </Button>
         ) : (
           <Stack direction="row" gap={2} alignItems="center">
-            <Text>{t("ablestack-wall.alert.no-labels-selected", "No labels selected")}</Text>
+            <Text>{t('ablestack-wall.alert.no-labels-selected', 'No labels selected')}</Text>
             <Button icon="plus" type="button" variant="secondary" onClick={onEditClick} size="sm">
-              {t("ablestack-wall.alert.add-labels", "Add labels")}
+              {t('ablestack-wall.alert.add-labels', 'Add labels')}
             </Button>
           </Stack>
         )}

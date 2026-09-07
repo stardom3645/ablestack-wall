@@ -45,7 +45,9 @@ export const LoginLayout = ({ children, branding, isChangingPassword }: React.Pr
             <Branding.LoginLogo className={loginStyles.loginLogo} logo={loginLogo} />
             <div className={loginStyles.titleWrapper}>
               {isChangingPassword ? (
-                <h1 className={loginStyles.mainTitle}>{t("ablestack-wall.login.update-your-password", "Update your password")}</h1>
+                <h1 className={loginStyles.mainTitle}>
+                  {t('ablestack-wall.login.update-your-password', 'Update your password')}
+                </h1>
               ) : (
                 <>
                   <h1 className={loginStyles.mainTitle}>{loginTitle}</h1>
