@@ -3,7 +3,7 @@ import { fromFetch } from 'rxjs/fetch';
 import { delay } from 'rxjs/operators';
 
 import { AppEvents, DataQueryErrorType, EventBusExtended } from '@grafana/data';
-import { BackendSrvRequest, FetchError, FetchResponse } from '@grafana/runtime';
+import { BackendSrvRequest, FetchError, FetchResponse, locationService } from '@grafana/runtime';
 
 import { TokenRevokedModal } from '../../features/users/TokenRevokedModal';
 import { ShowModalReactEvent } from '../../types/events';
@@ -382,6 +382,37 @@ describe('backendSrv', () => {
           jest.advanceTimersByTime(50);
           expect(appEventsMock.emit).not.toHaveBeenCalled();
         });
+      });
+    });
+
+    describe('when an anonymous user is denied access to a dashboard', () => {
+      it('redirects the current dashboard page to login', () => {
+        jest.useFakeTimers();
+        const originalLocation = window.location;
+        Object.defineProperty(window, 'location', {
+          configurable: true,
+          value: { href: '' },
+        });
+
+        try {
+          const { backendSrv, appEventsMock } = getTestContext({ isSignedIn: false });
+          const options = { url: '/api/dashboards/uid/admin-only', method: 'GET' } as BackendSrvRequest;
+          const error = {
+            status: 403,
+            data: { message: 'Access denied to this dashboard' },
+            config: options,
+          } as FetchError;
+          locationService.replace('/d/admin-only/admin-dashboard?from=now-6h&to=now');
+
+          const result = backendSrv.processRequestError(options, error);
+
+          expect(result.isHandled).toBe(true);
+          expect(window.location.href).toBe('/d/admin-only/admin-dashboard?from=now-6h&to=now&forceLogin=true');
+          jest.advanceTimersByTime(50);
+          expect(appEventsMock.emit).not.toHaveBeenCalled();
+        } finally {
+          Object.defineProperty(window, 'location', { configurable: true, value: originalLocation });
+        }
       });
     });
 
