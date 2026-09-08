@@ -6,11 +6,13 @@ import * as runtimeMock from '@grafana/runtime';
 import LoginPage from './LoginPage';
 
 const postMock = jest.fn();
+const putMock = jest.fn();
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
   __esModule: true,
   getBackendSrv: () => ({
     post: postMock,
+    put: putMock,
   }),
   config: {
     ...jest.requireActual('@grafana/runtime').config,
@@ -41,7 +43,7 @@ describe('Login Page', () => {
   it('renders correctly', () => {
     render(<LoginPage />);
 
-    expect(screen.getByRole('heading', { name: 'Welcome to Grafana' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'ABLESTACK Wall' })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Email or username' })).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument();
@@ -93,6 +95,32 @@ describe('Login Page', () => {
       expect(postMock).toHaveBeenCalledWith('/login', { password: 'test', user: 'admin' }, { showErrorAlert: false })
     );
     expect(window.location.assign).toHaveBeenCalledWith('/');
+  });
+
+  it('should prompt to change the initial admin password', async () => {
+    postMock.mockResolvedValueOnce({ message: 'Logged in' });
+    putMock.mockResolvedValueOnce({ message: 'User password changed' });
+    render(<LoginPage />);
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Email or username' }), 'admin');
+    await userEvent.type(screen.getByLabelText('Password'), 'password');
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+
+    expect(
+      await screen.findByText('Continuing to use the default password exposes you to security risks.')
+    ).toBeInTheDocument();
+
+    await userEvent.type(screen.getByLabelText('New password'), 'NewStrongPassword123!');
+    await userEvent.type(screen.getByLabelText('Confirm new password'), 'NewStrongPassword123!');
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() =>
+      expect(putMock).toHaveBeenCalledWith('/api/user/password', {
+        newPassword: 'NewStrongPassword123!',
+        confirmNew: 'NewStrongPassword123!',
+        oldPassword: 'password',
+      })
+    );
   });
 
   it('renders social logins correctly', () => {

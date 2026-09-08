@@ -2,8 +2,8 @@ import $ from 'jquery';
 import _, { isFunction } from 'lodash'; // eslint-disable-line lodash/import-scope
 import moment from 'moment'; // eslint-disable-line no-restricted-imports
 
-import { AppEvents, dateMath, UrlQueryValue } from '@grafana/data';
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import { AppEvents, dateMath, locationUtil, UrlQueryValue } from '@grafana/data';
+import { config, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
 import { backendSrv } from 'app/core/services/backend_srv';
 import impressionSrv from 'app/core/services/impression_srv';
 import kbn from 'app/core/utils/kbn';
@@ -16,6 +16,15 @@ import { getDashboardAPI } from '../api/dashboard_api';
 
 import { getDashboardSrv } from './DashboardSrv';
 import { getDashboardSnapshotSrv } from './SnapshotSrv';
+
+export function redirectAnonymousUserToLoginOnForbidden(error: unknown): boolean {
+  if (!isFetchError(error) || error.status !== 403 || config.bootData.user.isSignedIn) {
+    return false;
+  }
+
+  window.location.href = locationUtil.getUrlForPartial(locationService.getLocation(), { forceLogin: 'true' });
+  return true;
+}
 
 export class DashboardLoaderSrv {
   constructor() {}
@@ -91,7 +100,12 @@ export class DashboardLoaderSrv {
           }
           return result;
         })
-        .catch(() => {
+        .catch((error) => {
+          if (redirectAnonymousUserToLoginOnForbidden(error)) {
+            // Keep the dashboard in its loading state until the browser follows the login redirect.
+            return new Promise<DashboardDTO>(() => {});
+          }
+
           const dash = this._dashboardLoadFailed('Not found', true);
           dash.dashboard.uid = uid;
           return dash;

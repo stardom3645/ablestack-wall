@@ -24,7 +24,7 @@ To sign in to Grafana for the first time, follow these steps:
 
    Unless you have configured Grafana differently, it is set to use `http://localhost:3000` by default.
 
-1. On the signin page, enter `admin` for username and password.
+1. On the signin page, enter `admin` for the username and `password` for the password.
 1. Click **Sign in**.
 
    If successful, you will see a prompt to change the password.

@@ -10,6 +10,8 @@ const isOauthEnabled = () => {
   return !!config.oauth && Object.keys(config.oauth).length > 0;
 };
 
+const defaultAdminPassword = 'password';
+
 export interface FormModel {
   user: string;
   password: string;
@@ -60,7 +62,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
     const pw = {
       newPassword: password,
       confirmNew: password,
-      oldPassword: 'admin',
+      oldPassword: defaultAdminPassword,
     };
 
     if (this.props.resetCode) {
@@ -95,11 +97,11 @@ export class LoginCtrl extends PureComponent<Props, State> {
       .post<LoginDTO>('/login', formModel, { showErrorAlert: false })
       .then((result) => {
         this.result = result;
-        if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
+        if (formModel.password !== defaultAdminPassword || config.ldapEnabled || config.authProxyEnabled) {
           this.toGrafana();
           return;
         } else {
-          this.changeView(formModel.password === 'admin');
+          this.changeView(true);
         }
       })
       .catch((err) => {
