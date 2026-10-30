@@ -172,3 +172,5 @@
 ### 커밋 검사 방식
 
 원본 사용자 index tree는 `363312b24e976cc838035e769a3b2e0ff62aa015`로 유지했다. Worktree의 변경 TS/TSX38개에 Betterer와 같은 strict 규칙을 HEAD 대비 적용하여 신규 진단0을 확인했다. 기존 WIP/legacy Betterer 기준선 제약은 이전 기록과 같으므로 이 기능 커밋에서만 해당 hook을 이 전후 비교로 대체한다. 정상 frontend-lint(ESLint/Prettier) hook은 실행한다. DESIGN_SYSTEM 전체 표의 불필요한 재정렬을 피하도록 other-format hook은 새 REF-68/진행 기록 조각과 AGENTS의 직접 포맷 검사로 대체한다. hook/config/baseline 자체는 수정하지 않는다.
+
+기능 커밋: **4076a02eab** `feat(wall): replace panel editing and dashboard settings presentation` (이 Worktree 개발 브랜치). 정상 frontend-lint hook 통과, Worktree clean 확인. 최종 preview `/api/health` database ok, 대시보드 HTTP200, fixture launchd running/query success를 확인했다. 실제 사용자 탭은 미저장0 상태로 최종 빌드를 반영하고 Light로 복귀했다. 원본 사용자 staged tree는 그대로이며 운영 배포/merge/push는 수행하지 않았다.
