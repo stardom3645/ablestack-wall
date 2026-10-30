@@ -88,3 +88,5 @@
 - 05번 native 패널 삭제는 DESIGN_SYSTEM.md REF-65를 따른다. DashboardScene.removePanel이 삭제한 ID의 Wall layouts/panelSources만 함께 정리한다. 다른 좌표·텍스트·복제본의 표시 원본 ID 값은 보존하며 native 취소는 패널과 메타데이터를 함께 복원한다. 다른 UID의 삭제와 쿼리/저장 API는 변경하지 않는다.
 
 - 콘텐츠 높이는 DESIGN_SYSTEM.md REF-66을 따른다. 서버/legacy/draft/Undo 기준점과 진행 중 조작이 없는 미조작 기본 배치만 데이터 도착 후 높이를 갱신한다. WallEntityList는 행당 고정 추정 대신 실제 콘텐츠+공통 chrome 높이를 측정하고 기존 한도/큰 목록 스크롤을 유지한다. 자동 높이 측정은 Dirty를 만들거나 사용자 저장·Resize 크기를 덮어쓰지 않는다.
+
+- 05번 긴 대시보드의 스크롤은 DESIGN_SYSTEM.md REF-67을 따른다. NativeScrollbar.scrollContainer opt-in으로 본문만 스크롤하며 같은 요소를 native 스크롤 저장/복원에 연결한다. 기존 다른 caller는 wrapper 없는 document 스크롤을 유지한다. Wall Shell overflow 제한은 승인 UID에만 적용하며 사이드바/공통 헤더와 키오스크 geometry를 유지한다.

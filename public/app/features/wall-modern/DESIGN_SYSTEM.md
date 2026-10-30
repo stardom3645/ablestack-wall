@@ -1291,3 +1291,14 @@ REF-58 최종 확인: 전체 TypeScript 검사는 기존130개 외 이번 변경
 | 회귀      | untouched/server/legacy/draft4개 조건의 높이 baseline 보존 검사 통과. records 실측 높이 검사 및 기존 모든 field/단위/링크/상태 검사17개 통과. 변경된 폰트/화면폭의 자연스러운 줄바꿈도 내용 observer로 측정한다                                                                             |
 
 변경 파일: workspace/WallEditContext.tsx·WallEditContext.test.tsx, visualizations/WallPanelContent.tsx·WallPanelContent.test.tsx. 48열 좌표 계산·수동 배치·데이터 의미는 유지한다.
+### REF-67 본문 스크롤과 고정 Wall Shell (2026-10-30)
+
+| 항목          | 구현 / 검증                                                                                                                                                                                                                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 원인          | native NativeScrollbar는 wrapper 없이 documentElement를 스크롤하는 shim이었다. 긴 네트워크/스토리지 탭에서 전체 Wall Shell이 페이지 위로 밀려 사이드바와 공통 헤더까지 사라졌다                                                                                                                    |
+| 적용          | NativeScrollbar에 명시적 scrollContainer opt-in만 추가한다. 기본 호출은 기존 document 스크롤/DOM을 그대로 유지한다. DashboardSceneRenderer의 승인된05번 Workspace에서만 bounded div를 사용하고 같은 요소를 native onSetScrollRef에 연결한다. Wall Shell의 overflow도 해당 UID에만 제한한다         |
+| 기능 보존     | 기존 native scrollTo의 높이 대기/재시도와 dashboard remember/restoreScrollPos를 재사용한다. 스크롤 때문에48열 배치·Dirty·쿼리·그리드 엔진·패널 높이를 저장하지 않는다. native PanelEditor/다른 UID의 스크롤 정책은 변경하지 않는다                                                                 |
+| 실제 브라우저 | 1730×873px에서 document 높이873/scrollY0, 본문 top68/height805이며 사이드바 top0/height873이다. 하단 패널 메뉴→native 편집기→복귀에서 본문 scrollTop743→743·사이드바 top0을 확인했다. 최종 키오스크 전후 모든 카드의 transform/width/height가 동일하며 핸들/설정0, ESC 복귀와 공유 보존을 확인했다 |
+| 검사          | 기존 caller의 wrapper 없는 DOM/document ref 및 opt-in 컨테이너의 scrollTop/scrollTo 회귀2개 통과. 공통 기능 관련13 suites112tests 및 표시 컴포넌트17tests가 통과했다. production build 성공(기존 경고2개). 새 UI/애니메이션 라이브러리는 없다                                                      |
+
+변경 파일: core/components/NativeScrollbar.tsx·NativeScrollbar.test.tsx, DashboardSceneRenderer.tsx, modern.css. CSS 부분은 UID 한정 overflow 처리이고 실제 스크롤 소유권/복원은 opt-in 컴포넌트 변경이다.

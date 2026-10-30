@@ -3,6 +3,8 @@ export interface Props {
   children: React.ReactNode;
   onSetScrollRef?: (ref: ScrollRefElement) => void;
   divId?: string;
+  /** Opt-in for a bounded application shell; document scrolling remains the default. */
+  scrollContainer?: boolean;
 }
 
 export interface ScrollRefElement {
@@ -11,15 +13,23 @@ export interface ScrollRefElement {
 }
 
 // Shim to provide API-compatibility for Page's scroll-related props
-export default function NativeScrollbar({ children, onSetScrollRef, divId }: Props) {
+export default function NativeScrollbar({ children, onSetScrollRef, divId, scrollContainer = false }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (onSetScrollRef) {
-      onSetScrollRef(new DivScrollElement(document.documentElement));
+    const element = scrollContainer ? ref.current : document.documentElement;
+    if (onSetScrollRef && element) {
+      onSetScrollRef(new DivScrollElement(element));
     }
-  }, [ref, onSetScrollRef]);
+  }, [scrollContainer, onSetScrollRef]);
 
+  if (scrollContainer) {
+    return (
+      <div ref={ref} id={divId} style={{ flex: '1 1 0', minHeight: 0, minWidth: 0, overflow: 'auto' }}>
+        {children}
+      </div>
+    );
+  }
   return children;
 }
 

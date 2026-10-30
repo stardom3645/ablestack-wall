@@ -1458,6 +1458,9 @@
 }
 
 /* Kiosk is a visibility policy for the representative dashboard, not a new canvas. */
+.wall-shell[data-wall-stat-pilot='storage-vm'] {
+  overflow: hidden;
+}
 .wall-shell.wall-embedded[data-wall-stat-pilot='storage-vm'] > .wall-sidebar,
 .wall-shell.wall-embedded[data-wall-stat-pilot='storage-vm'] .wall-topbar {
   display: flex;

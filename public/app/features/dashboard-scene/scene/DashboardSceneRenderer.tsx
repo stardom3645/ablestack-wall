@@ -126,7 +126,7 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
       <Page navModel={navModel} pageNav={pageNav} layout={PageLayoutType.Custom}>
         {editPanel && <editPanel.Component model={editPanel} />}
         {!editPanel && (
-          <NativeScrollbar divId="page-scrollbar" onSetScrollRef={model.onSetScrollRef}>
+          <NativeScrollbar scrollContainer={workspace} divId="page-scrollbar" onSetScrollRef={model.onSetScrollRef}>
             <div className={cx(styles.pageContainer, hasControls && styles.pageContainerWithControls)}>
               {wallToolbar ? <AppChromeUpdate /> : <NavToolbarActions dashboard={model} />}
               {controls && (
