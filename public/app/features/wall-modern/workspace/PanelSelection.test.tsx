@@ -321,3 +321,50 @@ it('commits the last predicted drop and neighbour positions instead of recomputi
   expect(item('28')).toHaveStyle({ transform: 'translate(0px,300px)' });
   expect(item('32')).toHaveStyle({ transform: 'translate(0px,0px)' });
 });
+
+it('aborts live Resize when switching to read-only while preserving earlier edits and Undo', async () => {
+  const content = (readOnly: boolean) => (
+    <WallLayoutHistoryProvider>
+      <WallLayoutHistoryControls />
+      <PanelLayoutGrid
+        panels={panels}
+        initialLayout={initial}
+        validate={validate}
+        storageKey="read-only-transition"
+        readOnly={readOnly}
+        original={null}
+        renderPanel={(panel) => <WallPanelHeader title={<h3>{panel.title}</h3>} />}
+        rowPitch={2}
+        maxWidth={Infinity}
+        bounds={() => ({ minW: 4, minH: 12, maxH: 2000 })}
+      />
+    </WallLayoutHistoryProvider>
+  );
+  const view = render(content(false));
+  await screen.findByRole('button', { name: '28 이동 핸들' });
+  fireEvent.mouseDown(screen.getByRole('button', { name: '28 이동 핸들' }), { button: 0, clientX: 20, clientY: 10 });
+  fireEvent.mouseMove(document, { buttons: 1, clientX: 20, clientY: 310 });
+  fireEvent.mouseUp(document, { clientX: 20, clientY: 310 });
+  expect(item('28')).toHaveStyle({ transform: 'translate(0px,300px)' });
+  let paint: FrameRequestCallback = () => {};
+  jest.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+    paint = callback;
+    return 1;
+  });
+  fireEvent.mouseDown(item('28').querySelector('.wall-kpi-resize')!, { button: 0, clientX: 240, clientY: 395 });
+  fireEvent.mouseMove(document, { buttons: 1, clientX: 264, clientY: 408 });
+  act(() => paint(16));
+  expect(document.querySelector('[data-interacting="true"]')).toBeInTheDocument();
+  view.rerender(content(true));
+  expect(document.querySelector('[data-interacting="true"]')).not.toBeInTheDocument();
+  expect(document.querySelector('[data-wall-magnet]')).not.toBeInTheDocument();
+  expect(document.querySelector('.wall-layout-footprint')).not.toBeInTheDocument();
+  expect(document.querySelector('.wall-kpi-resize')).not.toBeInTheDocument();
+  expect(item('28')).toHaveStyle({ transform: 'translate(0px,300px)', width: '253px', height: '108px' });
+  fireEvent.mouseUp(document, { clientX: 264, clientY: 408 });
+  view.rerender(content(false));
+  expect(item('28')).toHaveStyle({ transform: 'translate(0px,300px)', width: '253px', height: '108px' });
+  fireEvent.click(screen.getByRole('button', { name: '실행 취소' }));
+  expect(item('28')).toHaveStyle({ transform: 'translate(0px,0px)' });
+  expect(screen.queryByRole('button', { name: '배치 저장' })).not.toBeInTheDocument();
+});

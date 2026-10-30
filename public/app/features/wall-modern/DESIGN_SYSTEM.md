@@ -1245,3 +1245,16 @@ REF-58 최종 확인: 전체 TypeScript 검사는 기존130개 외 이번 변경
 | 실제 사용 화면 |1296910978의 dirty0/active0 확인 후 **현재 사용 탭**에 새 빌드를 반영했다. 조사용 Resize/교환은 모두 취소하고 Light·25타일·dirty0/active0·가동 시간 카드289×96px/x256/y386으로 복원했다. 서버 저장은 수행하지 않고3317 launchd 서버를 유지한다 |
 
 변경 파일: workspace/panelGeometry.ts(신규), LayoutFootprint.tsx, PanelLayoutGrid.tsx, PanelSelection.test.tsx 및 본 기준표/AGENTS.md. REF-61의 셀 전체를 파란 예측 경계로 사용하는 정책을 폐기하며, REF-60의 같은 paint preview/좌표 고정과 기존 실제 카드 간격은 보존한다.
+
+
+### REF-63 조작 중 키오스크·읽기 전용 전환 취소 (2026-10-30)
+
+| 항목                 | 구현 / 검증                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0 원인              | 실제 Drag/Resize 중 readOnly가 true로 바뀌면 핸들 권한만 바뀌고 진행 중 native gesture·Grid·footprint가 남았다. 키오스크/권한 전환이 drop으로 처리되거나 차트 입력 차단이 남을 수 있는 상태였다. 수정 전 native RGL 회귀 테스트에서 data-interacting=true·resize marker·footprint 잔류를 재현했다                                                                                   |
+| 수정                 | PanelLayoutGrid의 readOnly 전환 effect가 기존 abortGesture를 호출한다. pending input/rAF/임시 표시를 제거하고 native Grid를 현재 draft로 재구성한다. 진행 중 한 조작만 취소하며 이전 완료 작업과 미저장 draft/Undo는 유지한다. UI 정책 전환을 배치 변경/저장으로 취급하지 않는다                                                                                                    |
+| 범위 / 실제 컴포넌트 | 기존05번 Workspace의 공통 PanelLayoutGrid/useEffect·abort 경로만 사용한다. shadcn/Base UI primitive·CSS·새 라이브러리·새 엔진·다른 UID·데이터·쿼리·저장 모델 변경은 없다. REF-62의 실제 카드 미리보기/last preview 확정은 유지한다                                                                                                                                                  |
+| 검증                 | 수정 전 신규 테스트1개 실패로 재현, 수정 후 관련3 suites16tests 통과. 이전 완료 이동→진행 중 Resize→readOnly→일반 모드 복귀에서 Grid/표시/Resize 핸들이 제거되고 이전 이동/원래 크기는 남으며 Undo가 그 이동 한 건만 복원한다. ESLint/Prettier 통과. 네이티브 Grid 컴포넌트 테스트이며 실제 브라우저에서 버튼을 누른 채 키오스크를 전환하는 동시 입력 실사를 했다고 표현하지 않는다 |
+| 자율 실행 / 보존     | 기존 사용자의 staged/unstaged 작업을 건드리지 않도록 로컬 WIP snapshot 기반 별도 관리 Worktree/개발 브랜치에서 수정·커밋한다. 기존 원본 index를 유지하고 원본 파일이 snapshot과 같을 때만 검증된 변경을 반영한다. 상세 커밋/실행 결과는 docs/WALL_AUTODEV_PROGRESS.md에 기록한다                                                                                                    |
+
+변경 파일: workspace/PanelLayoutGrid.tsx, PanelSelection.test.tsx 및 본 기준표/AGENTS.md. 저장/취소/48열/직접 조작의 기존 기준은 유지한다.

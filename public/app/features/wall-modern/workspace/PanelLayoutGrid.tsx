@@ -232,6 +232,13 @@ export function PanelLayoutGrid<T>({
       doc.removeEventListener('mousemove', released, true);
     };
   }, [history]);
+  useEffect(() => {
+    // Kiosk/permission changes are UI policy changes, not a drop operation.
+    // Cancel only the live gesture; retain earlier drafts and their Undo history.
+    if (readOnly) {
+      abortGesture.current?.();
+    }
+  }, [readOnly]);
   useLayoutEffect(() => {
     const element = container.current;
     if (!element || (!storageKey && !readOnly)) {

@@ -80,3 +80,5 @@
 - Dot/파란 배치 안내 기준은 DESIGN_SYSTEM.md REF-61이다. Dot은 간격 포함 Grid 셀 경계이므로 LayoutFootprint의 외곽선은 w×pitch / h×rowPitch 전체 셀 크기를 사용한다. gutter12px을 빼서 파란 선이 Dot 사이에 오도록 되돌리지 않는다. 실제 카드 크기·padding/gutter·저장 좌표는 유지하고 크기 안내에 카드 크기를 구분한다. REF-60의 조작 중 좌표 고정/동일 프레임 preview는 유지하며 셀과 outline의 실제 DOM rect 일치도 검증한다. 실제 사용 탭은 미저장0 확인 후 반영하고 조사용 배치는 원복한다.
 
 - 미리보기/놓기 최신 기준은 DESIGN_SYSTEM.md REF-62다. 파란 선·빗금·크기 안내는 panelPixelRect가 계산한 **최종 실제 카드 border box**를 예측한다. REF-61의 간격 포함 셀 크기 외곽선을 복원하지 않는다. native outer 셀/gutter와 실제 카드 rect를 혼동하지 않는다. mouseup에서 배치를 다시 계산하지 않고 마지막 화면의 gesture.preview를 native items와 draft/Undo에 동일하게 확정한다. 실측은 drop 직전 렌더된 preview DOM rect와 drop 후 실제 카드 DOM rect의 x/y/w/h를 비교한다. data-wall-drop-preview는 다음 조작에서 지우는 단일 패널 DOM 진단이며 저장/전송하지 않는다. 기존 Grid·모션·데이터·일괄 저장/취소는 유지한다.
+
+- 조작 중 키오스크/읽기 전용 전환은 DESIGN_SYSTEM.md REF-63을 따른다. readOnly 전환 시 진행 중 Drag/Resize와 pending 입력·Grid/footprint만 기존 abort 경로로 취소하고 이전 완료 draft/Undo는 보존한다. 전환을 drop·저장으로 처리하지 않는다. 자율 개발은 기존 사용자 index/미커밋 작업을 보존하는 관리 Worktree를 재사용하고 진행/커밋/검증은 docs/WALL_AUTODEV_PROGRESS.md에 기록한다.
