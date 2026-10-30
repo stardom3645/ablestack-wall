@@ -10,6 +10,8 @@ import { useMediaQueryChange } from 'app/core/hooks/useMediaQueryChange';
 import store from 'app/core/store';
 import { CommandPalette } from 'app/features/commandPalette/CommandPalette';
 import { ScopesDashboards, useScopesDashboardsState } from 'app/features/scopes';
+import { WallChrome } from 'app/features/wall-modern/WallChrome';
+import { isWallModernRoute } from 'app/features/wall-modern/model';
 import { KioskMode } from 'app/types';
 
 import { AppChromeMenu } from './AppChromeMenu';
@@ -83,6 +85,22 @@ export function AppChrome({ children }: Props) {
   // Chromeless routes are without topNav, mega menu, search & command palette
   // We check chromeless twice here instead of having a separate path so {children}
   // doesn't get re-mounted when chromeless goes from true to false.
+  // Keep the same parent mounted when entering panel edit, fullscreen or kiosk.
+  // Otherwise dashboard state (including unsaved edits) would be discarded.
+  if (isWallModernRoute(pathname)) {
+    return (
+      <>
+        <WallChrome actions={state.actions} embedded={new URLSearchParams(search).has('kiosk')}>
+          {children}
+        </WallChrome>
+        {!state.chromeless && <CommandPalette />}
+        {shouldShowReturnToPrevious && state.returnToPrevious && (
+          <ReturnToPrevious href={state.returnToPrevious.href} title={state.returnToPrevious.title} />
+        )}
+      </>
+    );
+  }
+
   return (
     <div
       className={classNames('main-view', {

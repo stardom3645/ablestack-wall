@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { CSSProperties, ReactElement, ReactNode, useId } from 'react';
+import { CSSProperties, ReactElement, ReactNode, useContext, useId } from 'react';
 import * as React from 'react';
 import { useMeasure, useToggle } from 'react-use';
 
@@ -15,6 +15,7 @@ import { Text } from '../Text/Text';
 import { Tooltip } from '../Tooltip';
 
 import { HoverWidget } from './HoverWidget';
+import { PanelChromePresentationContext } from './PanelChromePresentation';
 import { PanelDescription } from './PanelDescription';
 import { PanelMenu } from './PanelMenu';
 import { PanelStatus } from './PanelStatus';
@@ -136,6 +137,8 @@ export function PanelChrome({
   onMouseEnter,
 }: PanelChromeProps) {
   const theme = useTheme2();
+  const configuredPresentation = useContext(PanelChromePresentationContext);
+  const presentation = !hoverHeader && !collapsible ? configuredPresentation : undefined;
   const styles = useStyles2(getStyles);
   const panelContentId = useId();
   const panelTitleId = useId().replace(/:/g, '_');
@@ -153,19 +156,21 @@ export function PanelChrome({
   const showOnHoverClass = 'show-on-hover';
   const isPanelTransparent = displayMode === 'transparent';
 
-  const headerHeight = getHeaderHeight(theme, hasHeader);
+  const headerHeight = presentation?.headerHeight ?? getHeaderHeight(theme, hasHeader);
   const { contentStyle, innerWidth, innerHeight } = getContentStyle(
     padding,
     theme,
     headerHeight,
     collapsed,
     height,
-    width
+    width,
+    presentation?.contentPadding
   );
 
   const headerStyles: CSSProperties = {
     height: headerHeight,
     cursor: dragClass ? 'move' : 'auto',
+    ...(presentation ? { padding: 0, background: 'transparent' } : {}),
   };
 
   const containerStyles: CSSProperties = { width, height: collapsed ? undefined : height };
@@ -181,7 +186,7 @@ export function PanelChrome({
   const headerContent = (
     <>
       {/* Non collapsible title */}
-      {!collapsible && title && (
+      {!presentation && !collapsible && title && (
         <div className={styles.title}>
           <Text
             element="h2"
@@ -254,6 +259,26 @@ export function PanelChrome({
     </>
   );
 
+  const headerElements = (
+    <>
+      {statusMessage && (
+        <div className={dragClassCancel}>
+          <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
+        </div>
+      )}
+      {headerContent}
+      {menu && (
+        <PanelMenu
+          menu={menu}
+          title={typeof title === 'string' ? title : undefined}
+          placement="bottom-end"
+          menuButtonClass={cx(styles.menuItem, dragClassCancel, showOnHoverClass)}
+          onOpenMenu={onOpenMenu}
+        />
+      )}
+    </>
+  );
+
   return (
     // tabIndex={0} is needed for keyboard accessibility in the plot area
     <section
@@ -261,6 +286,7 @@ export function PanelChrome({
       style={containerStyles}
       aria-labelledby={!!title ? panelTitleId : undefined}
       data-testid={testid}
+      data-wall-panel-chrome={presentation ? 'overview' : undefined}
       tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
       onFocus={onFocus}
       onMouseMove={onMouseMove}
@@ -295,23 +321,9 @@ export function PanelChrome({
 
       {hasHeader && (
         <div className={cx(styles.headerContainer, dragClass)} style={headerStyles} data-testid="header-container">
-          {statusMessage && (
-            <div className={dragClassCancel}>
-              <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
-            </div>
-          )}
-
-          {headerContent}
-
-          {menu && (
-            <PanelMenu
-              menu={menu}
-              title={typeof title === 'string' ? title : undefined}
-              placement="bottom-end"
-              menuButtonClass={cx(styles.menuItem, dragClassCancel, showOnHoverClass)}
-              onOpenMenu={onOpenMenu}
-            />
-          )}
+          {presentation
+            ? presentation.renderHeader({ title, titleId: panelTitleId, children: headerElements })
+            : headerElements}
         </div>
       )}
 
@@ -348,21 +360,23 @@ const getContentStyle = (
   headerHeight: number,
   collapsed: boolean,
   height?: number,
-  width?: number
+  width?: number,
+  contentPadding?: { horizontal: number; vertical: number }
 ) => {
   const chromePadding = (padding === 'md' ? theme.components.panel.padding : 0) * theme.spacing.gridSize;
 
-  const panelPadding = chromePadding * 2;
+  const horizontalPadding = contentPadding?.horizontal ?? chromePadding;
+  const verticalPadding = contentPadding?.vertical ?? chromePadding;
   const panelBorder = 1 * 2;
 
   let innerWidth = 0;
   if (width) {
-    innerWidth = width - panelPadding - panelBorder;
+    innerWidth = width - horizontalPadding * 2 - panelBorder;
   }
 
   let innerHeight = 0;
   if (height) {
-    innerHeight = height - headerHeight - panelPadding - panelBorder;
+    innerHeight = height - headerHeight - verticalPadding * 2 - panelBorder;
   }
 
   if (collapsed) {
@@ -370,7 +384,7 @@ const getContentStyle = (
   }
 
   const contentStyle: CSSProperties = {
-    padding: chromePadding,
+    padding: contentPadding ? `${verticalPadding}px ${horizontalPadding}px` : chromePadding,
   };
 
   return { contentStyle, innerWidth, innerHeight };

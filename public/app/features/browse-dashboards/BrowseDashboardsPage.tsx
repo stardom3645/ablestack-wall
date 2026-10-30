@@ -1,14 +1,17 @@
 import { css } from '@emotion/css';
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { config, reportInteraction } from '@grafana/runtime';
-import { LinkButton, FilterInput, useStyles2 } from '@grafana/ui';
+import { LinkButton, FilterInput, useStyles2, Drawer } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { getConfig } from 'app/core/config';
 import { Trans } from 'app/core/internationalization';
+import WallDashboardLibrary from 'app/features/wall-modern/WallDashboardLibrary';
+import { isWallModernRoute } from 'app/features/wall-modern/model';
+import { WallDashboardContext } from 'app/features/wall-modern/useWallDashboards';
 import { useDispatch } from 'app/types';
 
 import { contextSrv } from '../../core/services/context_srv';
@@ -28,6 +31,34 @@ import { setAllSelection, useHasSelection } from './state';
 
 // New Browse/Manage/Search Dashboards views for nested folders
 const BrowseDashboardsPage = memo(() => {
+  const location = useLocation();
+  const [managing, setManaging] = useState(false);
+  const source = useContext(WallDashboardContext);
+  if (!isWallModernRoute(location.pathname, location.search)) {
+    return <GrafanaBrowseDashboardsPage />;
+  }
+  return (
+    <>
+      <WallDashboardLibrary onManage={() => setManaging(true)} />
+      {managing && (
+        <Drawer
+          title="대시보드 및 폴더 관리"
+          size="lg"
+          onClose={() => {
+            setManaging(false);
+            source?.reload();
+          }}
+        >
+          <div className="wall-management-frame">
+            <GrafanaBrowseDashboardsPage />
+          </div>
+        </Drawer>
+      )}
+    </>
+  );
+});
+
+const GrafanaBrowseDashboardsPage = memo(function GrafanaBrowseDashboardsPage() {
   const { uid: folderUID } = useParams();
   const dispatch = useDispatch();
 

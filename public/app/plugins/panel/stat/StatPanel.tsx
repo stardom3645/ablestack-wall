@@ -1,5 +1,6 @@
 import { isNumber } from 'lodash';
-import { PureComponent } from 'react';
+import memoizeOne from 'memoize-one';
+import { ContextType, PureComponent } from 'react';
 
 import {
   DisplayValueAlignmentFactors,
@@ -11,14 +12,25 @@ import {
   PanelProps,
 } from '@grafana/data';
 import { findNumericFieldMinMax } from '@grafana/data/src/field/fieldOverrides';
+import { getValueMappingResult } from '@grafana/data/src/utils/valueMappings';
 import { BigValueTextMode, BigValueGraphMode } from '@grafana/schema';
 import { BigValue, DataLinksContextMenu, VizRepeater, VizRepeaterRenderValueProps } from '@grafana/ui';
+import { StatCardPresentationContext } from '@grafana/ui/src/components/BigValue/StatCardPresentation';
 import { DataLinksContextMenuApi } from '@grafana/ui/src/components/DataLinks/DataLinksContextMenu';
 import { config } from 'app/core/config';
+import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
 
 import { Options } from './panelcfg.gen';
 
 export class StatPanel extends PureComponent<PanelProps<Options>> {
+  static contextType = StatCardPresentationContext;
+  declare context: ContextType<typeof StatCardPresentationContext>;
+  // VizRepeater is pure: refresh its render callback on skin/theme changes without re-querying data.
+  presentedRenderValue = memoizeOne(
+    (_presentation: typeof this.context) =>
+      (valueProps: VizRepeaterRenderValueProps<FieldDisplay, DisplayValueAlignmentFactors>) =>
+        this.renderValue(valueProps)
+  );
   renderComponent = (
     valueProps: VizRepeaterRenderValueProps<FieldDisplay, DisplayValueAlignmentFactors>,
     menuProps: DataLinksContextMenuApi
@@ -26,6 +38,7 @@ export class StatPanel extends PureComponent<PanelProps<Options>> {
     const { timeRange, options } = this.props;
     const { value, alignmentFactors, width, height, count } = valueProps;
     const { openMenu, targetClassName } = menuProps;
+    const mapping = this.context ? getValueMappingResult(value.field.mappings ?? [], value.display.numeric) : null;
     let sparkline = value.sparkline;
     if (sparkline) {
       sparkline.timeRange = timeRange;
@@ -33,6 +46,8 @@ export class StatPanel extends PureComponent<PanelProps<Options>> {
 
     return (
       <BigValue
+        statPresentation={this.context}
+        isValueMapped={this.context ? mapping?.text != null && mapping.text === value.display.text : undefined}
         value={value.display}
         count={count}
         sparkline={sparkline}
@@ -122,18 +137,20 @@ export class StatPanel extends PureComponent<PanelProps<Options>> {
     const { height, options, width, data, renderCounter } = this.props;
 
     return (
-      <VizRepeater
-        getValues={this.getValues}
-        getAlignmentFactors={getDisplayValueAlignmentFactors}
-        renderValue={this.renderValue}
-        width={width}
-        height={height}
-        source={data}
-        itemSpacing={3}
-        renderCounter={renderCounter}
-        autoGrid={true}
-        orientation={options.orientation}
-      />
+      <WallPanelContent panel={this.props}>
+        <VizRepeater
+          getValues={this.getValues}
+          getAlignmentFactors={getDisplayValueAlignmentFactors}
+          renderValue={this.context ? this.presentedRenderValue(this.context) : this.renderValue}
+          width={width}
+          height={height}
+          source={data}
+          itemSpacing={3}
+          renderCounter={renderCounter}
+          autoGrid={true}
+          orientation={options.orientation}
+        />
+      </WallPanelContent>
     );
   }
 }

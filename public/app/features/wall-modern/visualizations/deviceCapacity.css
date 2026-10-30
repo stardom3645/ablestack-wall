@@ -1,0 +1,76 @@
+/* Device Capacity View is opt-in only for panel 246. */
+.wall-device-capacity {
+  height: 100%;
+  padding: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.wall-device-capacity-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--wall-type-caption-size);
+  color: var(--wall-muted);
+}
+.wall-device-capacity-tools > div {
+  display: flex;
+  gap: 4px;
+}
+.wall-device-capacity-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.8fr) minmax(0, 3fr);
+  gap: var(--wall-card-content-gap) var(--wall-card-padding);
+  align-items: center;
+  padding: var(--wall-card-padding) 0;
+}
+.wall-device-capacity-row + .wall-device-capacity-row {
+  border-top: 1px solid var(--wall-border);
+}
+.wall-device-capacity-identity > span,
+.wall-device-capacity-identity > small,
+.wall-device-capacity-row dt {
+  display: block;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+}
+.wall-device-capacity-identity strong {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--wall-type-body-size);
+  font-weight: var(--wall-type-panel-weight);
+  overflow-wrap: anywhere;
+}
+.wall-device-capacity-values {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--wall-card-gap);
+  margin: 0;
+}
+.wall-device-capacity-row dd {
+  margin: 4px 0 0;
+  font-size: var(--wall-type-body-size);
+  font-weight: var(--wall-type-panel-weight);
+  line-height: var(--wall-type-body-line);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.wall-device-capacity-usage .wall-capacity-track {
+  height: 5px;
+  margin-top: 8px;
+}
+.wall-device-capacity-notice {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+  overflow-wrap: anywhere;
+}
+.wall-device-capacity-extra {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wall-card-content-gap) var(--wall-section-gap);
+  margin: 0;
+}

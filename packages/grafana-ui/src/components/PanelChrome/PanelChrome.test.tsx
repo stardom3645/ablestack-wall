@@ -5,6 +5,7 @@ import { LoadingState } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 
 import { PanelChrome, PanelChromeProps } from './PanelChrome';
+import { PanelChromePresentationContext } from './PanelChromePresentation';
 
 const setup = (propOverrides?: Partial<PanelChromeProps>) => {
   const props: PanelChromeProps = {
@@ -44,6 +45,25 @@ it('renders an empty panel with required props only', () => {
   setup();
 
   expect(screen.getByText("Panel's Content")).toBeInTheDocument();
+});
+
+it('uses optional presentation padding for both the DOM inset and native renderer dimensions', () => {
+  render(
+    <PanelChromePresentationContext.Provider
+      value={{
+        headerHeight: 32,
+        contentPadding: { horizontal: 16, vertical: 8 },
+        renderHeader: ({ title }) => <span>{title}</span>,
+      }}
+    >
+      <PanelChrome width={300} height={100} padding="none" title="Wall KPI">
+        {(width, height) => <div data-testid="wall-sized-content" style={{ width, height }} />}
+      </PanelChrome>
+    </PanelChromePresentationContext.Provider>
+  );
+  const content = screen.getByTestId('wall-sized-content');
+  expect(content.parentElement).toHaveStyle({ padding: '8px 16px' });
+  expect(content).toHaveStyle({ width: '266px', height: '50px' });
 });
 
 it('renders an empty panel without padding', () => {

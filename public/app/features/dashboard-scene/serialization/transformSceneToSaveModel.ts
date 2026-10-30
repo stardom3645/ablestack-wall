@@ -1,4 +1,4 @@
-import { defaults, isEqual } from 'lodash';
+import { cloneDeep, defaults, isEqual } from 'lodash';
 
 import { isEmptyObject, ScopedVars, TimeRange } from '@grafana/data';
 import {
@@ -133,10 +133,109 @@ export function transformSceneToSaveModel(scene: DashboardScene, isSnapshot = fa
     graphTooltip,
     liveNow,
     schemaVersion: DASHBOARD_SCHEMA_VERSION,
+    ...(state.wallModern ? { wallModern: state.wallModern } : {}),
     refresh: refreshPicker?.state.refresh,
   };
 
-  return sortedDeepCloneWithoutNulls(dashboard);
+  // A Wall-only layout save must not rewrite otherwise unchanged panels merely
+  // because the preview runtime advertises a different plugin build version.
+  const unchangedWallPanels = new Map<number, Panel>();
+  if (state.uid === 'aec03x1adsi68f') {
+    // DashboardModel sorts by native gridPos while hydrating. Wall copies use
+    // their Row's y to retain membership; their real position lives in the
+    // 48-column document. Retain wire order within each Row so that simply
+    // loading a saved copy does not become an order-only dashboard edit.
+    dashboard.panels = preserveWallRowOrder(dashboard.panels ?? [], scene.getInitialSaveModel()?.panels ?? []);
+    const original: Array<Panel | RowPanel> = [];
+    const indexOriginal = (items: Array<Panel | RowPanel>) => {
+      for (const item of items) {
+        original.push(item);
+        if ('panels' in item && Array.isArray(item.panels)) {
+          indexOriginal(item.panels);
+        }
+      }
+    };
+    indexOriginal(scene.getInitialSaveModel()?.panels ?? []);
+    // The native threshold base is NaN in memory but null in JSON. Compare the
+    // actual persisted representation before deciding a panel was edited.
+    const canonical = (value: object) => sortedDeepCloneWithoutNulls(JSON.parse(JSON.stringify(value)));
+    const preserveVersion = (next: Panel[]) => {
+      for (const panel of next) {
+        if ('panels' in panel && Array.isArray(panel.panels)) {
+          preserveVersion(panel.panels);
+        }
+        const previous = original.find((item) => item.id === panel.id);
+        if (previous && 'pluginVersion' in previous) {
+          const { pluginVersion: beforeVersion, ...before } = previous;
+          const { pluginVersion: afterVersion, ...after } = panel;
+          if (isEqual(canonical(before), canonical(after))) {
+            panel.pluginVersion = beforeVersion;
+            if (panel.id !== undefined) {
+              unchangedWallPanels.set(panel.id, previous);
+            }
+          }
+        }
+      }
+    };
+    preserveVersion(dashboard.panels ?? []);
+  }
+
+  const saved = sortedDeepCloneWithoutNulls(dashboard);
+  const restoreUnchanged = (panels: Panel[]): Panel[] =>
+    panels.map((panel) => {
+      const previous = panel.id === undefined ? undefined : unchangedWallPanels.get(panel.id);
+      if (previous) {
+        return cloneDeep(previous);
+      }
+      if ('panels' in panel && Array.isArray(panel.panels)) {
+        panel.panels = restoreUnchanged(panel.panels);
+      }
+      return panel;
+    });
+  if (unchangedWallPanels.size) {
+    saved.panels = restoreUnchanged(saved.panels ?? []);
+  }
+  return saved;
+}
+
+function preserveWallRowOrder(panels: Panel[], initial: Panel[]): Panel[] {
+  const rows = new Map<number | undefined, number[]>();
+  let rowId: number | undefined;
+  for (const panel of initial) {
+    if (panel.type === 'row') {
+      rowId = panel.id;
+      rows.set(
+        rowId,
+        ((panel as RowPanel).panels ?? []).map((child) => child.id!)
+      );
+    } else if (panel.id !== undefined) {
+      const ids = rows.get(rowId) ?? [];
+      ids.push(panel.id);
+      rows.set(rowId, ids);
+    }
+  }
+  const ordered = (items: Panel[], id: number | undefined) => {
+    const ids = rows.get(id) ?? [];
+    const rank = new Map(ids.map((panelId, index) => [panelId, index]));
+    // Unknown (new) IDs remain in insertion order after saved IDs.
+    return [...items].sort((a, b) => (rank.get(a.id!) ?? ids.length) - (rank.get(b.id!) ?? ids.length));
+  };
+  const result: Panel[] = [];
+  let segment: Panel[] = [];
+  rowId = undefined;
+  for (const panel of panels) {
+    if (panel.type !== 'row') {
+      segment.push(panel);
+      continue;
+    }
+    result.push(...ordered(segment, rowId));
+    segment = [];
+    rowId = panel.id;
+    const row = panel as RowPanel;
+    result.push(row.panels ? { ...row, panels: ordered(row.panels, rowId) } : row);
+  }
+  result.push(...ordered(segment, rowId));
+  return result;
 }
 
 export function gridItemToPanel(gridItem: DashboardGridItem, isSnapshot = false): Panel {

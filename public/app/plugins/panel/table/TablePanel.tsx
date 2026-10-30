@@ -14,6 +14,7 @@ import {
 import { config, PanelDataErrorView } from '@grafana/runtime';
 import { Select, Table, usePanelContext, useTheme2 } from '@grafana/ui';
 import { TableSortByFieldState } from '@grafana/ui/src/components/Table/types';
+import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
 
 import { getActions } from '../../../features/actions/utils';
 
@@ -23,6 +24,14 @@ import { Options } from './panelcfg.gen';
 interface Props extends PanelProps<Options> {}
 
 export function TablePanel(props: Props) {
+  return (
+    <WallPanelContent panel={props}>
+      <NativeTablePanel {...props} />
+    </WallPanelContent>
+  );
+}
+
+function NativeTablePanel(props: Props) {
   const { data, height, width, options, fieldConfig, id, timeRange } = props;
 
   const theme = useTheme2();

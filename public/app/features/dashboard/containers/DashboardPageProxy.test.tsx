@@ -99,6 +99,69 @@ function setup(props: Partial<DashboardPageProxyProps> & { uid?: string }) {
 }
 
 describe('DashboardPageProxy', () => {
+  describe('Wall storage workspace', () => {
+    const storageUid = 'aec03x1adsi68f';
+    it('uses existing Scenes for this UID even without the global feature flag', async () => {
+      const previous = {
+        scenes: config.featureToggles.dashboardScene,
+        viewers: config.featureToggles.dashboardSceneForViewers,
+      };
+      try {
+        config.featureToggles.dashboardScene = false;
+        config.featureToggles.dashboardSceneForViewers = false;
+        getDashboardScenePageStateManager().setDashboardCache(storageUid, {
+          ...dashMockEditable,
+          dashboard: { ...dashMockEditable.dashboard, uid: storageUid },
+        });
+        setup({ uid: storageUid, route: { routeName: DashboardRoutes.Normal, component: () => null, path: '/' } });
+        await waitFor(() => expect(screen.getAllByTestId('dashboard-scene-page')).toHaveLength(1));
+      } finally {
+        config.featureToggles.dashboardScene = previous.scenes;
+        config.featureToggles.dashboardSceneForViewers = previous.viewers;
+      }
+    });
+    it('keeps the explicit legacy diagnostic route available', async () => {
+      const previous = {
+        scenes: config.featureToggles.dashboardScene,
+        viewers: config.featureToggles.dashboardSceneForViewers,
+      };
+      try {
+        config.featureToggles.dashboardScene = false;
+        config.featureToggles.dashboardSceneForViewers = false;
+        setup({
+          uid: storageUid,
+          queryParams: { scenes: false },
+          route: { routeName: DashboardRoutes.Normal, component: () => null, path: '/' },
+        });
+        await waitFor(() => expect(screen.queryAllByTestId('dashboard-scene-page')).toHaveLength(0));
+      } finally {
+        config.featureToggles.dashboardScene = previous.scenes;
+        config.featureToggles.dashboardSceneForViewers = previous.viewers;
+      }
+    });
+    it('can switch from a different legacy dashboard to the workspace without changing hook order', async () => {
+      const previous = {
+        scenes: config.featureToggles.dashboardScene,
+        viewers: config.featureToggles.dashboardSceneForViewers,
+      };
+      try {
+        config.featureToggles.dashboardScene = false;
+        config.featureToggles.dashboardSceneForViewers = false;
+        const route = { routeName: DashboardRoutes.Normal, component: () => null, path: '/' };
+        const { rerender } = setup({ uid: 'other-dashboard', route });
+        getDashboardScenePageStateManager().setDashboardCache(storageUid, {
+          ...dashMockEditable,
+          dashboard: { ...dashMockEditable.dashboard, uid: storageUid },
+        });
+        (useParams as jest.Mock).mockReturnValue({ uid: storageUid });
+        rerender(<DashboardPageProxy location={locationService.getLocation()} queryParams={{}} route={route} />);
+        await waitFor(() => expect(screen.getAllByTestId('dashboard-scene-page')).toHaveLength(1));
+      } finally {
+        config.featureToggles.dashboardScene = previous.scenes;
+        config.featureToggles.dashboardSceneForViewers = previous.viewers;
+      }
+    });
+  });
   describe('when dashboardSceneForViewers feature toggle disabled', () => {
     beforeEach(() => {
       config.featureToggles.dashboardSceneForViewers = false;

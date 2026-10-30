@@ -35,6 +35,7 @@ import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { dashboardWatcher } from 'app/features/live/dashboard/dashboardWatcher';
 import { getClosestScopesFacade, ScopesFacade } from 'app/features/scopes';
 import { VariablesChanged } from 'app/features/variables/types';
+import type { WallDocument } from 'app/features/wall-modern/workspace/wallDocument';
 import { DashboardDTO, DashboardMeta, KioskMode, SaveDashboardResponseDTO } from 'app/types';
 import { ShowConfirmModalEvent } from 'app/types/events';
 
@@ -73,7 +74,17 @@ import { setupKeyboardShortcuts } from './keyboardShortcuts';
 import { DefaultGridLayoutManager } from './layout-default/DefaultGridLayoutManager';
 import { DashboardLayoutManager } from './types';
 
-export const PERSISTED_PROPS = ['title', 'description', 'tags', 'editable', 'graphTooltip', 'links', 'meta', 'preload'];
+export const PERSISTED_PROPS = [
+  'title',
+  'description',
+  'tags',
+  'editable',
+  'graphTooltip',
+  'links',
+  'meta',
+  'preload',
+  'wallModern',
+];
 export const PANEL_SEARCH_VAR = 'systemPanelFilterVar';
 export const PANELS_PER_ROW_VAR = 'systemDynamicRowSizeVar';
 
@@ -102,6 +113,8 @@ export interface DashboardSceneState extends SceneObjectState {
   controls?: DashboardControls;
   /** True when editing */
   isEditing?: boolean;
+  /** Exact Wall 48-column presentation; serialized separately from native gridPos. */
+  wallModern?: WallDocument;
   /** True when user made a change */
   isDirty?: boolean;
   /** meta flags */
@@ -241,6 +254,9 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
   }
 
   public onEnterEditMode = () => {
+    if (this.state.uid === 'aec03x1adsi68f' && this.state.isEditing) {
+      return; // Native panel/settings entry must not overwrite the direct-edit baseline.
+    }
     // Save this state
     this._initialState = sceneUtils.cloneSceneObjectState(this.state);
     this._initialUrlState = locationService.getLocation();
@@ -282,6 +298,14 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
       },
     });
 
+    if (this.state.uid === 'aec03x1adsi68f') {
+      this._initialState = sceneUtils.cloneSceneObjectState({
+        ...this.state,
+        overlay: undefined,
+        editPanel: undefined,
+        editview: undefined,
+      });
+    }
     this.state.editPanel?.dashboardSaved();
     this._changeTracker.startTrackingChanges();
   }

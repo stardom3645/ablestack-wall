@@ -1,0 +1,162 @@
+/* Presentation roles are provided only for the representative dashboard's overview. */
+.wall-dashboard-workspace [data-wall-overview-role] {
+  --wall-overview-accent: var(--wall-primary);
+}
+.wall-dashboard-workspace [data-wall-overview-role='resources'] {
+  background: var(--wall-surface);
+  border: 1px solid var(--wall-card-border);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-dashboard-workspace .wall-workspace-resource-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--wall-kpi-min-width)), var(--wall-kpi-width)));
+  justify-content: start;
+  gap: var(--wall-kpi-gap);
+}
+.wall-overview-header-resources.wall-ui-card-header {
+  padding: 0 var(--wall-kpi-padding);
+}
+.wall-dashboard-workspace [data-wall-overview-role='trends'] {
+  background: var(--wall-surface);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-dashboard-workspace [data-wall-overview-role='usage'] {
+  background: transparent;
+  border: none;
+}
+.wall-workspace-usage-card:has([data-wall-overview-role='usage']) {
+  background: var(--wall-surface);
+  border-color: var(--wall-card-border);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-workspace-usage-card > .wall-ui-card-header {
+  padding-bottom: 8px;
+}
+.wall-dashboard-workspace [data-wall-overview-role='services'] {
+  background: var(--wall-soft);
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+}
+.wall-dashboard-workspace [data-wall-overview-role='storage'] {
+  background: var(--wall-surface);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-overview-panel-header.wall-ui-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--wall-card-padding);
+}
+.wall-overview-panel-symbol {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--wall-overview-accent);
+}
+.wall-overview-panel-title.wall-ui-card-title {
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+  line-height: var(--wall-type-panel-line);
+  color: var(--wall-panel-text, var(--wall-text));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.wall-overview-panel-actions {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+}
+.wall-overview-panel-actions > :last-child {
+  margin-left: auto;
+}
+[data-wall-panel-chrome='overview'] .wall-overview-panel-menu.wall-button {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  color: var(--wall-muted);
+  opacity: 0.6;
+  position: static;
+  background: transparent;
+  visibility: visible;
+}
+[data-wall-panel-chrome='overview']:hover .wall-overview-panel-menu,
+[data-wall-panel-chrome='overview']:focus-within .wall-overview-panel-menu {
+  opacity: 1;
+}
+.wall-overview-panel-menu:hover {
+  background: var(--wall-primary-soft);
+  color: var(--wall-primary);
+}
+.wall-overview-header-services.wall-ui-card-header {
+  padding: 0 var(--wall-card-padding);
+  gap: 5px;
+}
+.wall-overview-header-services .wall-overview-panel-symbol {
+  color: var(--wall-muted);
+}
+.wall-overview-header-services .wall-overview-panel-title {
+  font-size: var(--wall-type-compactPanel-size);
+}
+.wall-overview-header-usage .wall-overview-panel-symbol {
+  display: none;
+}
+.wall-overview-header-usage.wall-ui-card-header {
+  gap: 0;
+  padding: 0 var(--wall-card-padding);
+}
+.wall-overview-gauge-value {
+  text-align: center;
+  font-weight: var(--wall-type-gauge-weight);
+  line-height: var(--wall-type-gauge-line);
+  letter-spacing: var(--wall-type-gauge-tracking);
+  font-variant-numeric: tabular-nums;
+}
+.wall-overview-gauge-value span + span {
+  color: var(--wall-muted);
+  margin-left: 2px;
+  letter-spacing: 0;
+  font-weight: var(--wall-type-unit-weight);
+}
+/* Preserve approved Stat values/badges, giving service tiles a compact inset surface. */
+[data-wall-overview-role='services'] [data-viz-presentation='wall-stat-card'] {
+  background: transparent;
+}
+
+[data-wall-panel-chrome='overview'] > [data-testid='header-container'] {
+  background: transparent;
+}
+
+.wall-dashboard-workspace [data-wall-panel-chrome='overview'] [data-testid='title-items-container'] {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  background: transparent;
+}
+
+/* Surface states share one inherited token set, including the existing native Grid.
+   Do not alias chart text tokens: Canvas axes, legends and tooltips stay unchanged. */
+.wall-dashboard-workspace .wall-kpi-layout-item:hover {
+  --wall-card-border: var(--wall-card-border-hover);
+  --wall-card-shadow: var(--wall-card-shadow-hover);
+}
+.wall-dashboard-workspace .wall-kpi-layout-item[data-marked='true'] {
+  --wall-card-border: var(--wall-primary);
+  --wall-card-shadow: var(--wall-card-shadow-selected);
+}
+.wall-dashboard-workspace .wall-workspace-panel:not([data-wall-panel-type='timeseries']),
+.wall-dashboard-workspace .wall-text-panel,
+.wall-dashboard-workspace .wall-workspace-section-heading {
+  --wall-text: var(--wall-panel-text);
+  --wall-muted: var(--wall-panel-muted);
+}
+
+/* Reserve grip/menu space inside the existing native header height. */
+.wall-overview-panel-header.wall-ui-card-header {
+  padding: 0 var(--wall-card-padding-compact);
+}

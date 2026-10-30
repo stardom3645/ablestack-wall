@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const CorsWorkerPlugin = require('./plugins/CorsWorkerPlugin');
 
@@ -70,6 +71,27 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /wall-modern[\\/]modern\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                config: false,
+                plugins: [
+                  require('tailwindcss')(
+                    path.resolve(__dirname, '../../public/app/features/wall-modern/tailwind.config.cjs')
+                  ),
+                  require('autoprefixer'),
+                ],
+              },
+            },
+          },
+        ],
+      },
       {
         test: require.resolve('jquery'),
         loader: 'expose-loader',

@@ -20,6 +20,10 @@ import { optMinMax } from './UPlotScaleBuilder';
 export interface AxisProps {
   scaleKey: string;
   theme: GrafanaTheme2;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: number;
+  gridDash?: number[];
   label?: string;
   show?: boolean;
   size?: number | null;
@@ -84,6 +88,7 @@ export class UPlotAxisBuilder extends PlotConfigBuilder<AxisProps, Axis> {
       isTime,
       timeZone,
       theme,
+      fontSize = UPLOT_AXIS_FONT_SIZE,
       tickLabelRotation,
       size,
       color,
@@ -92,7 +97,9 @@ export class UPlotAxisBuilder extends PlotConfigBuilder<AxisProps, Axis> {
       distr = ScaleDistribution.Linear,
     } = this.props;
 
-    const font = `${UPLOT_AXIS_FONT_SIZE}px ${theme.typography.fontFamily}`;
+    const font = this.props.fontFamily
+      ? `${this.props.fontWeight ?? 400} ${fontSize}px ${this.props.fontFamily}`
+      : `${fontSize}px ${theme.typography.fontFamily}`;
 
     const gridColor = theme.isDark ? 'rgba(240, 250, 255, 0.09)' : 'rgba(0, 10, 23, 0.09)';
 
@@ -123,7 +130,8 @@ export class UPlotAxisBuilder extends PlotConfigBuilder<AxisProps, Axis> {
 
       grid: {
         show: grid.show,
-        stroke: gridColor,
+        stroke: grid.stroke ?? gridColor,
+        ...(this.props.gridDash ? { dash: this.props.gridDash } : {}),
         width: 1 / devicePixelRatio,
       },
       ticks: Object.assign(

@@ -21,6 +21,13 @@ describe('DashboardPrompt', () => {
       getTestContext();
     });
 
+    it('protects an anonymous Wall user with an actual save capability and pending changes', () => {
+      const { contextSrv } = getTestContext();
+      contextSrv.isSignedIn = false;
+      const scene = buildTestScene({ uid: 'aec03x1adsi68f', isDirty: true, meta: { canSave: true } });
+      expect(ignoreChanges(scene, { ...scene.getInitialSaveModel()!, version: 1 })).toBe(false);
+    });
+
     describe('when called without original dashboard', () => {
       it('then it should return true', () => {
         const scene = buildTestScene();

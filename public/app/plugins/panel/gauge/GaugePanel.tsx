@@ -5,6 +5,7 @@ import { BarGaugeSizing, VizOrientation } from '@grafana/schema';
 import { DataLinksContextMenu, Gauge, VizRepeater, VizRepeaterRenderValueProps } from '@grafana/ui';
 import { DataLinksContextMenuApi } from '@grafana/ui/src/components/DataLinks/DataLinksContextMenu';
 import { config } from 'app/core/config';
+import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
 
 import { clearNameForSingleSeries } from '../bargauge/BarGaugePanel';
 
@@ -99,18 +100,20 @@ export class GaugePanel extends PureComponent<PanelProps<Options>> {
     const { minVizHeight, minVizWidth } = this.calculateGaugeSize();
 
     return (
-      <VizRepeater
-        getValues={this.getValues}
-        renderValue={this.renderValue}
-        width={width}
-        height={height}
-        source={data}
-        autoGrid={true}
-        renderCounter={renderCounter}
-        orientation={options.orientation}
-        minVizHeight={minVizHeight}
-        minVizWidth={minVizWidth}
-      />
+      <WallPanelContent panel={this.props}>
+        <VizRepeater
+          getValues={this.getValues}
+          renderValue={this.renderValue}
+          width={width}
+          height={height}
+          source={data}
+          autoGrid={true}
+          renderCounter={renderCounter}
+          orientation={options.orientation}
+          minVizHeight={minVizHeight}
+          minVizWidth={minVizWidth}
+        />
+      </WallPanelContent>
     );
   }
 }

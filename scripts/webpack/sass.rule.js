@@ -6,6 +6,7 @@ const path = require('path');
 module.exports = function (options) {
   return {
     test: /\.(sa|sc|c)ss$/,
+    exclude: /wall-modern[\\/]modern\.css$/,
     use: [
       MiniCssExtractPlugin.loader,
       {

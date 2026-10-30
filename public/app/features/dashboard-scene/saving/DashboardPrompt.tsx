@@ -164,6 +164,18 @@ export function ignoreChanges(current: DashboardScene | null, original?: Dashboa
     return true;
   }
 
+  // The local/anonymous Admin preview can save Wall dashboards too. Protect its
+  // direct-edit transaction by the existing canSave capability, not login UI state.
+  if (
+    current?.state.uid === 'aec03x1adsi68f' &&
+    current.state.isDirty &&
+    current.state.meta.canSave &&
+    !current.state.meta.fromScript &&
+    !current.state.meta.fromFile
+  ) {
+    return false;
+  }
+
   // Ignore changes if the user has been signed out
   if (!contextSrv.isSignedIn) {
     return true;

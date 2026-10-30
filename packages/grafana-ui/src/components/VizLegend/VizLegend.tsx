@@ -1,10 +1,13 @@
-import { useCallback } from 'react';
+import { css, cx } from '@emotion/css';
+import { useCallback, useContext } from 'react';
 import * as React from 'react';
 
 import { DataHoverClearEvent, DataHoverEvent } from '@grafana/data';
 import { LegendDisplayMode } from '@grafana/schema';
 
 import { SeriesVisibilityChangeMode, usePanelContext } from '../PanelChrome';
+import { TimeSeriesPresentationContext, timeSeriesLegendStyles } from '../VizPresentation/TimeSeriesPresentation';
+import { VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 import { VizLegendList } from './VizLegendList';
 import { VizLegendTable } from './VizLegendTable';
@@ -30,6 +33,13 @@ export function VizLegend<T>({
   readonly,
   isSortable,
 }: LegendProps<T>) {
+  const presentation = useContext(VizPresentationContext);
+  const timeSeriesPresentation = useContext(TimeSeriesPresentationContext);
+  className = cx(
+    className,
+    presentation && 'wall-viz-legend',
+    timeSeriesPresentation && css(timeSeriesLegendStyles(timeSeriesPresentation))
+  );
   const { eventBus, onToggleSeriesVisibility, onToggleLegendSort } = usePanelContext();
 
   const onMouseOver = useCallback(

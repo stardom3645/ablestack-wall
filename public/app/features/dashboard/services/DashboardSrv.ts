@@ -5,6 +5,7 @@ import { appEvents } from 'app/core/app_events';
 import { t } from 'app/core/internationalization';
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { getDashboardAPI } from 'app/features/dashboard/api/dashboard_api';
+import { WallDashboardStarredEvent } from 'app/features/wall-modern/events';
 import { DashboardMeta } from 'app/types';
 
 import { RemovePanelEvent } from '../../../types/events';
@@ -93,6 +94,7 @@ export class DashboardSrv {
         : t('notifications.unstarred-dashboard', 'Dashboard unstarred');
 
       appEvents.emit(AppEvents.alertSuccess, [message]);
+      appEvents.publish(new WallDashboardStarredEvent({ uid: dashboardUid, isStarred: newIsStarred }));
 
       return newIsStarred;
     });

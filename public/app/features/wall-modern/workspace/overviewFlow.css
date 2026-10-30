@@ -1,0 +1,17 @@
+.wall-overview-flow {
+  margin-bottom: var(--wall-kpi-gap);
+}
+.wall-overview-flow-usage {
+  height: 100%;
+  overflow: auto;
+  border-radius: var(--wall-radius);
+}
+.wall-overview-flow-usage > .wall-workspace-usage-card {
+  min-height: 100%;
+  margin-bottom: 0;
+}
+/* Child usage-row handles belong to their existing inner Grid, not its group tile. */
+.wall-overview-flow .wall-kpi-layout-item:has(.wall-kpi-layout-item:hover) > .wall-panel-context-toolbar {
+  opacity: 0;
+  pointer-events: none;
+}

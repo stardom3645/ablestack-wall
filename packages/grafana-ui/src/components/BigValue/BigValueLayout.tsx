@@ -3,7 +3,7 @@ import * as React from 'react';
 import tinycolor from 'tinycolor2';
 
 import { formattedValueToString, DisplayValue, FieldConfig, FieldType, ThemeVisualizationColors } from '@grafana/data';
-import { GraphDrawStyle, GraphFieldConfig, PercentChangeColorMode } from '@grafana/schema';
+import { GraphDrawStyle, GraphFieldConfig, GraphGradientMode, PercentChangeColorMode } from '@grafana/schema';
 
 import { getTextColorForAlphaBackground } from '../../utils';
 import { calculateFontSize } from '../../utils/measureText';
@@ -256,7 +256,8 @@ export abstract class BigValueLayout {
     const config: FieldConfig<GraphFieldConfig> = {
       custom: {
         drawStyle: GraphDrawStyle.Line,
-        lineWidth: 1,
+        lineWidth: this.props.presentation ? 1.8 : 1,
+        ...(this.props.presentation ? { fillOpacity: 10, gradientMode: GraphGradientMode.Opacity } : {}),
         fillColor,
         lineColor,
       },

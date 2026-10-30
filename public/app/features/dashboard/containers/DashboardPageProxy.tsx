@@ -5,6 +5,7 @@ import { config } from '@grafana/runtime';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import DashboardScenePage from 'app/features/dashboard-scene/pages/DashboardScenePage';
 import { getDashboardScenePageStateManager } from 'app/features/dashboard-scene/pages/DashboardScenePageStateManager';
+import { usesStorageWorkspaceRenderer } from 'app/features/wall-modern/workspace/model';
 import { DashboardRoutes } from 'app/types';
 
 import DashboardPage, { DashboardPageParams } from './DashboardPage';
@@ -18,6 +19,18 @@ export type DashboardPageProxyProps = Omit<
 // This proxy component is used for Dashboard -> Scenes migration.
 // It will render DashboardScenePage if the user is only allowed to view the dashboard.
 function DashboardPageProxy(props: DashboardPageProxyProps) {
+  const { uid } = useParams<DashboardPageParams>();
+  // A separate child keeps the legacy async hook's lifetime stable across UID navigation.
+  if (
+    props.route.routeName === DashboardRoutes.Normal &&
+    usesStorageWorkspaceRenderer(uid, props.queryParams.scenes === false)
+  ) {
+    return <DashboardScenePage {...props} />;
+  }
+  return <GrafanaDashboardPageProxy {...props} />;
+}
+
+function GrafanaDashboardPageProxy(props: DashboardPageProxyProps) {
   const forceScenes = props.queryParams.scenes === true;
   const forceOld = props.queryParams.scenes === false;
   const params = useParams<DashboardPageParams>();

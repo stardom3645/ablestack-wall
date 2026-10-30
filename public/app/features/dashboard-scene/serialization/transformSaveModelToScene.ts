@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash';
+import { cloneDeep, uniqueId } from 'lodash';
 
 import { DataFrameDTO, DataFrameJSON } from '@grafana/data';
 import { config } from '@grafana/runtime';
@@ -21,6 +21,7 @@ import {
   UserActionEvent,
 } from '@grafana/scenes';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
+import { wallDocument } from 'app/features/wall-modern/workspace/wallDocument';
 import { DashboardDTO, DashboardDataDTO } from 'app/types';
 
 import { addPanelsOnLoadBehavior } from '../addToDashboard/addPanelsOnLoadBehavior';
@@ -62,12 +63,15 @@ export interface SaveModelToSceneOptions {
 }
 
 export function transformSaveModelToScene(rsp: DashboardDTO): DashboardScene {
+  // Wall layout-only saves need the wire model, before PanelModel normalizes
+  // collapsed Row fields in-place (for example the threshold base to NaN).
+  const wallBaseline = rsp.dashboard.uid === 'aec03x1adsi68f' ? cloneDeep(rsp.dashboard) : undefined;
   // Just to have migrations run
   const oldModel = new DashboardModel(rsp.dashboard, rsp.meta);
 
   const scene = createDashboardSceneFromDashboardModel(oldModel, rsp.dashboard);
   // TODO: refactor createDashboardSceneFromDashboardModel to work on Dashboard schema model
-  scene.setInitialSaveModel(rsp.dashboard);
+  scene.setInitialSaveModel(wallBaseline ?? rsp.dashboard);
 
   return scene;
 }
@@ -224,6 +228,7 @@ export function createDashboardSceneFromDashboardModel(oldModel: DashboardModel,
     title: oldModel.title,
     uid: oldModel.uid,
     version: oldModel.version,
+    wallModern: wallDocument((dto as typeof dto & { wallModern?: unknown }).wallModern),
     body: new DefaultGridLayoutManager({
       grid: new SceneGridLayout({
         isLazy: dto.preload ? false : true,

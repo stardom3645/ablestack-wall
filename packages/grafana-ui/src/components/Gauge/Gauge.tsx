@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { PureComponent } from 'react';
+import { ContextType, PureComponent } from 'react';
 import * as React from 'react';
 
 import {
@@ -15,6 +15,7 @@ import { VizTextDisplayOptions, VizOrientation } from '@grafana/schema';
 
 import { calculateFontSize } from '../../utils/measureText';
 import { clearButtonStyles } from '../Button';
+import { presentValueColor, VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 import { calculateGaugeAutoProps, DEFAULT_THRESHOLDS, getFormattedThresholds } from './utils';
 
@@ -33,6 +34,8 @@ export interface Props {
 }
 
 export class Gauge extends PureComponent<Props> {
+  static contextType = VizPresentationContext;
+  declare context: ContextType<typeof VizPresentationContext>;
   canvasElement: HTMLDivElement | null = null;
 
   static defaultProps: Partial<Props> = {
@@ -60,9 +63,12 @@ export class Gauge extends PureComponent<Props> {
     // If the gauge is in vertical layout, we need to set the width of the gauge to the height of the gauge
     const calculatedGaugeWidth = orientation === VizOrientation.Vertical ? autoProps.gaugeHeight : width;
     const dimension = Math.min(calculatedGaugeWidth, autoProps.gaugeHeight);
-    const backgroundColor = theme.colors.background.secondary;
+    const presentation = this.context;
+    const backgroundColor = presentation?.track ?? theme.colors.background.secondary;
     const gaugeWidthReduceRatio = showThresholdLabels ? 1.5 : 1;
-    const gaugeWidth = Math.min(dimension / 5.5, 40) / gaugeWidthReduceRatio;
+    const gaugeWidth =
+      (presentation ? Math.min(dimension / 11, presentation.gaugeThickness ?? 14) : Math.min(dimension / 5.5, 40)) /
+      gaugeWidthReduceRatio;
     const thresholdMarkersWidth = gaugeWidth / 5;
     const text = formattedValueToString(value);
     // This not 100% accurate as I am unsure of flot's calculations here
@@ -72,7 +78,10 @@ export class Gauge extends PureComponent<Props> {
     const valueWidth =
       valueWidthBase -
       ((gaugeWidth + (showThresholdMarkers ? thresholdMarkersWidth : 0) + (showThresholdLabels ? 10 : 0)) * 2 + 10);
-    const fontSize = this.props.text?.valueSize ?? calculateFontSize(text, valueWidth, dimension, 1, gaugeWidth * 1.7);
+    const autoFontSize = calculateFontSize(text, valueWidth, dimension, 1, gaugeWidth * 1.7);
+    const fontSize =
+      this.props.text?.valueSize ??
+      (presentation ? Math.min(autoFontSize, presentation.gaugeValueMaxSize ?? 32) : autoFontSize);
     const thresholdLabelFontSize = Math.max(fontSize / 2.5, 12);
 
     let min = field.min ?? GAUGE_DEFAULT_MINIMUM;
@@ -123,11 +132,14 @@ export class Gauge extends PureComponent<Props> {
             width: thresholdMarkersWidth,
           },
           value: {
-            color: value.color,
+            color: presentation ? presentValueColor(value.color, presentation) : value.color,
             formatter: () => {
-              return text;
+              return presentation?.renderGaugeValue ? '' : text;
             },
-            font: { size: fontSize, family: theme.typography.fontFamily },
+            font: {
+              size: fontSize,
+              family: presentation?.fontFamily ?? theme.typography.fontFamily,
+            },
           },
           show: true,
         },
@@ -155,11 +167,21 @@ export class Gauge extends PureComponent<Props> {
     // If the gauge is in vertical layout, we need to set the width of the gauge to the height of the gauge
     const gaugeWidth = orientation === VizOrientation.Vertical ? `${autoProps.gaugeHeight}px` : '100%';
 
-    const gaugeElement = (
+    const nativeGauge = (
       <div
         style={{ height: `${autoProps.gaugeHeight}px`, width: gaugeWidth }}
         ref={(element) => (this.canvasElement = element)}
       />
+    );
+    const gaugeElement = this.context?.renderGaugeValue ? (
+      <div style={{ position: 'relative', width: gaugeWidth, height: autoProps.gaugeHeight }}>
+        {nativeGauge}
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: '12%', pointerEvents: 'none' }}>
+          {this.context.renderGaugeValue(value, text?.valueSize)}
+        </div>
+      </div>
+    ) : (
+      nativeGauge
     );
 
     return (
@@ -175,7 +197,14 @@ export class Gauge extends PureComponent<Props> {
           <div
             style={{
               textAlign: 'center',
-              fontSize: text?.titleSize ?? autoProps.titleFontSize,
+              fontSize:
+                text?.titleSize ??
+                (this.context
+                  ? Math.min(autoProps.titleFontSize, this.context.gaugeLabelSize ?? 12)
+                  : autoProps.titleFontSize),
+              ...(this.context
+                ? { color: this.context.muted, fontFamily: this.context.fontFamily, fontWeight: 500 }
+                : {}),
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -202,8 +231,10 @@ export class Gauge extends PureComponent<Props> {
           flexDirection: 'column',
           justifyContent: 'center',
           overflow: 'hidden',
+          ...(this.context ? { fontWeight: 600, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' } : {}),
         }}
         className={this.props.className}
+        data-viz-presentation={this.context ? 'wall-gauge' : undefined}
       >
         {this.renderVisualization()}
       </div>

@@ -21,6 +21,8 @@ import { dashboardWatcher } from 'app/features/live/dashboard/dashboardWatcher';
 import { AngularDeprecationNotice } from 'app/features/plugins/angularDeprecation/AngularDeprecationNotice';
 import { AngularMigrationNotice } from 'app/features/plugins/angularDeprecation/AngularMigrationNotice';
 import { getPageNavFromSlug, getRootContentNavModel } from 'app/features/storage/StorageFolderPage';
+import { WallDashboardHeading } from 'app/features/wall-modern/WallDashboardHeading';
+import { isWallModernRoute } from 'app/features/wall-modern/model';
 import { DashboardRoutes, KioskMode, StoreState } from 'app/types';
 import { PanelEditEnteredEvent, PanelEditExitedEvent } from 'app/types/events';
 
@@ -437,6 +439,9 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
           className={pageClassName}
           onSetScrollRef={this.setScrollRef}
         >
+          {isWallModernRoute(this.props.location.pathname, this.props.location.search) && (
+            <WallDashboardHeading title={dashboard.title} description={dashboard.description} />
+          )}
           {showToolbar && (
             <header data-testid={selectors.pages.Dashboard.DashNav.navV2}>
               <DashNav

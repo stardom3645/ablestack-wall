@@ -1,7 +1,12 @@
-import { ReactNode } from 'react';
+import { css } from '@emotion/css';
+import { ReactNode, useContext } from 'react';
 
 import { DataFrame, Field, FieldType, formattedValueToString, InterpolateFunction } from '@grafana/data';
 import { SortOrder, TooltipDisplayMode } from '@grafana/schema/dist/esm/common/common.gen';
+import {
+  TimeSeriesPresentationContext,
+  timeSeriesTooltipContent,
+} from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import { VizTooltipContent } from '@grafana/ui/src/components/VizTooltip/VizTooltipContent';
 import { VizTooltipFooter } from '@grafana/ui/src/components/VizTooltip/VizTooltipFooter';
 import { VizTooltipHeader } from '@grafana/ui/src/components/VizTooltip/VizTooltipHeader';
@@ -51,6 +56,7 @@ export const TimeSeriesTooltip = ({
   maxHeight,
   replaceVariables,
 }: TimeSeriesTooltipProps) => {
+  const presentation = useContext(TimeSeriesPresentationContext);
   const xField = series.fields[0];
   const xVal = formattedValueToString(xField.display!(xField.values[dataIdxs[0]!]));
 
@@ -91,15 +97,19 @@ export const TimeSeriesTooltip = ({
         value: xVal,
       };
 
+  const header = headerItem != null && <VizTooltipHeader item={headerItem} isPinned={isPinned} />;
+  const rows = (
+    <VizTooltipContent
+      items={contentItems}
+      isPinned={isPinned}
+      scrollable={isTooltipScrollable({ mode, maxHeight })}
+      maxHeight={maxHeight}
+    />
+  );
   return (
-    <VizTooltipWrapper>
-      {headerItem != null && <VizTooltipHeader item={headerItem} isPinned={isPinned} />}
-      <VizTooltipContent
-        items={contentItems}
-        isPinned={isPinned}
-        scrollable={isTooltipScrollable({ mode, maxHeight })}
-        maxHeight={maxHeight}
-      />
+    <VizTooltipWrapper className={presentation ? css(timeSeriesTooltipContent(presentation)) : undefined}>
+      {presentation && header ? <div data-wall-chart-slot="tooltip-heading">{header}</div> : header}
+      {presentation ? <div data-wall-chart-slot="tooltip-rows">{rows}</div> : rows}
       {footer}
     </VizTooltipWrapper>
   );

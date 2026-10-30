@@ -1,12 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 
 import { PanelProps, DataFrameType, DashboardCursorSync } from '@grafana/data';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { TooltipDisplayMode, VizOrientation } from '@grafana/schema';
 import { EventBusPlugin, KeyboardPlugin, TooltipPlugin2, usePanelContext } from '@grafana/ui';
+import {
+  TimeSeriesPresentationContext,
+  TimeSeriesStyleConfigContext,
+} from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import { TimeRange2, TooltipHoverMode } from '@grafana/ui/src/components/uPlot/plugins/TooltipPlugin2';
 import { TimeSeries } from 'app/core/components/TimeSeries/TimeSeries';
 import { config } from 'app/core/config';
+import { presentTimeSeriesFrames } from 'app/features/wall-modern/timeSeriesPresentation';
 
 import { TimeSeriesTooltip } from './TimeSeriesTooltip';
 import { Options } from './panelcfg.gen';
@@ -44,7 +49,13 @@ export const TimeSeriesPanel = ({
   // Vertical orientation is not available for users through config.
   // It is simplified version of horizontal time series panel and it does not support all plugins.
   const isVerticallyOriented = options.orientation === VizOrientation.Vertical;
-  const frames = useMemo(() => prepareGraphableFields(data.series, config.theme2, timeRange), [data.series, timeRange]);
+  const chartPresentation = useContext(TimeSeriesStyleConfigContext);
+  const frames = useMemo(() => {
+    const prepared = prepareGraphableFields(data.series, config.theme2, timeRange);
+    return prepared && chartPresentation
+      ? presentTimeSeriesFrames(prepared, fieldConfig, config.theme2, chartPresentation)
+      : prepared;
+  }, [data.series, timeRange, chartPresentation, fieldConfig]);
   const timezones = useMemo(() => getTimezones(options.timezone, timeZone), [options.timezone, timeZone]);
   const suggestions = useMemo(() => {
     if (frames?.length && frames.every((df) => df.meta?.type === DataFrameType.TimeSeriesLong)) {
@@ -76,98 +87,101 @@ export const TimeSeriesPanel = ({
   }
 
   return (
-    <TimeSeries
-      frames={frames}
-      structureRev={data.structureRev}
-      timeRange={timeRange}
-      timeZone={timezones}
-      width={width}
-      height={height}
-      legend={options.legend}
-      options={options}
-      replaceVariables={replaceVariables}
-      dataLinkPostProcessor={dataLinkPostProcessor}
-      cursorSync={cursorSync}
-    >
-      {(uplotConfig, alignedFrame) => {
-        return (
-          <>
-            <KeyboardPlugin config={uplotConfig} />
-            {cursorSync !== DashboardCursorSync.Off && (
-              <EventBusPlugin config={uplotConfig} eventBus={eventBus} frame={alignedFrame} />
-            )}
-            {options.tooltip.mode !== TooltipDisplayMode.None && (
-              <TooltipPlugin2
-                config={uplotConfig}
-                hoverMode={
-                  options.tooltip.mode === TooltipDisplayMode.Single ? TooltipHoverMode.xOne : TooltipHoverMode.xAll
-                }
-                queryZoom={onChangeTimeRange}
-                clientZoom={true}
-                syncMode={cursorSync}
-                syncScope={eventsScope}
-                render={(u, dataIdxs, seriesIdx, isPinned = false, dismiss, timeRange2, viaSync) => {
-                  if (enableAnnotationCreation && timeRange2 != null) {
-                    setNewAnnotationRange(timeRange2);
-                    dismiss();
-                    return;
-                  }
-
-                  const annotate = () => {
-                    let xVal = u.posToVal(u.cursor.left!, 'x');
-
-                    setNewAnnotationRange({ from: xVal, to: xVal });
-                    dismiss();
-                  };
-
-                  return (
-                    // not sure it header time here works for annotations, since it's taken from nearest datapoint index
-                    <TimeSeriesTooltip
-                      series={alignedFrame}
-                      dataIdxs={dataIdxs}
-                      seriesIdx={seriesIdx}
-                      mode={viaSync ? TooltipDisplayMode.Multi : options.tooltip.mode}
-                      sortOrder={options.tooltip.sort}
-                      isPinned={isPinned}
-                      annotate={enableAnnotationCreation ? annotate : undefined}
-                      maxHeight={options.tooltip.maxHeight}
-                      replaceVariables={replaceVariables}
-                    />
-                  );
-                }}
-                maxWidth={options.tooltip.maxWidth}
-              />
-            )}
-            {!isVerticallyOriented && (
-              <>
-                <AnnotationsPlugin2
-                  annotations={data.annotations ?? []}
+    <TimeSeriesPresentationContext.Provider value={chartPresentation}>
+      <TimeSeries
+        wallPresentation={chartPresentation}
+        frames={frames}
+        structureRev={data.structureRev}
+        timeRange={timeRange}
+        timeZone={timezones}
+        width={width}
+        height={height}
+        legend={options.legend}
+        options={options}
+        replaceVariables={replaceVariables}
+        dataLinkPostProcessor={dataLinkPostProcessor}
+        cursorSync={cursorSync}
+      >
+        {(uplotConfig, alignedFrame) => {
+          return (
+            <>
+              <KeyboardPlugin config={uplotConfig} />
+              {cursorSync !== DashboardCursorSync.Off && (
+                <EventBusPlugin config={uplotConfig} eventBus={eventBus} frame={alignedFrame} />
+              )}
+              {options.tooltip.mode !== TooltipDisplayMode.None && (
+                <TooltipPlugin2
                   config={uplotConfig}
-                  timeZone={timeZone}
-                  newRange={newAnnotationRange}
-                  setNewRange={setNewAnnotationRange}
+                  hoverMode={
+                    options.tooltip.mode === TooltipDisplayMode.Single ? TooltipHoverMode.xOne : TooltipHoverMode.xAll
+                  }
+                  queryZoom={onChangeTimeRange}
+                  clientZoom={true}
+                  syncMode={cursorSync}
+                  syncScope={eventsScope}
+                  render={(u, dataIdxs, seriesIdx, isPinned = false, dismiss, timeRange2, viaSync) => {
+                    if (enableAnnotationCreation && timeRange2 != null) {
+                      setNewAnnotationRange(timeRange2);
+                      dismiss();
+                      return;
+                    }
+
+                    const annotate = () => {
+                      let xVal = u.posToVal(u.cursor.left!, 'x');
+
+                      setNewAnnotationRange({ from: xVal, to: xVal });
+                      dismiss();
+                    };
+
+                    return (
+                      // not sure it header time here works for annotations, since it's taken from nearest datapoint index
+                      <TimeSeriesTooltip
+                        series={alignedFrame}
+                        dataIdxs={dataIdxs}
+                        seriesIdx={seriesIdx}
+                        mode={viaSync ? TooltipDisplayMode.Multi : options.tooltip.mode}
+                        sortOrder={options.tooltip.sort}
+                        isPinned={isPinned}
+                        annotate={enableAnnotationCreation ? annotate : undefined}
+                        maxHeight={options.tooltip.maxHeight}
+                        replaceVariables={replaceVariables}
+                      />
+                    );
+                  }}
+                  maxWidth={options.tooltip.maxWidth}
                 />
-                <OutsideRangePlugin config={uplotConfig} onChangeTimeRange={onChangeTimeRange} />
-                {data.annotations && (
-                  <ExemplarsPlugin
-                    visibleSeries={getVisibleLabels(uplotConfig, frames)}
+              )}
+              {!isVerticallyOriented && (
+                <>
+                  <AnnotationsPlugin2
+                    annotations={data.annotations ?? []}
                     config={uplotConfig}
-                    exemplars={data.annotations}
                     timeZone={timeZone}
+                    newRange={newAnnotationRange}
+                    setNewRange={setNewAnnotationRange}
                   />
-                )}
-                {((canEditThresholds && onThresholdsChange) || showThresholds) && (
-                  <ThresholdControlsPlugin
-                    config={uplotConfig}
-                    fieldConfig={fieldConfig}
-                    onThresholdsChange={canEditThresholds ? onThresholdsChange : undefined}
-                  />
-                )}
-              </>
-            )}
-          </>
-        );
-      }}
-    </TimeSeries>
+                  <OutsideRangePlugin config={uplotConfig} onChangeTimeRange={onChangeTimeRange} />
+                  {data.annotations && (
+                    <ExemplarsPlugin
+                      visibleSeries={getVisibleLabels(uplotConfig, frames)}
+                      config={uplotConfig}
+                      exemplars={data.annotations}
+                      timeZone={timeZone}
+                    />
+                  )}
+                  {((canEditThresholds && onThresholdsChange) || showThresholds) && (
+                    <ThresholdControlsPlugin
+                      config={uplotConfig}
+                      fieldConfig={fieldConfig}
+                      onThresholdsChange={canEditThresholds ? onThresholdsChange : undefined}
+                    />
+                  )}
+                </>
+              )}
+            </>
+          );
+        }}
+      </TimeSeries>
+    </TimeSeriesPresentationContext.Provider>
   );
 };

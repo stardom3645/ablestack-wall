@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { useLayoutEffect, useRef, useReducer, CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useReducer, CSSProperties, useContext } from 'react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import uPlot from 'uplot';
@@ -10,6 +10,8 @@ import { DashboardCursorSync } from '@grafana/schema';
 import { useStyles2 } from '../../../themes';
 import { RangeSelection1D, RangeSelection2D, OnSelectRangeCallback } from '../../PanelChrome';
 import { getPortalContainer } from '../../Portal/Portal';
+import { TimeSeriesPresentationContext, timeSeriesTooltipSurface } from '../../VizPresentation/TimeSeriesPresentation';
+import { VizPresentationContext } from '../../VizPresentation/VizPresentation';
 import { UPlotConfigBuilder } from '../config/UPlotConfigBuilder';
 
 import { CloseButton } from './CloseButton';
@@ -127,6 +129,8 @@ export const TooltipPlugin2 = ({
 
   const sizeRef = useRef<TooltipContainerSize>();
   const styles = useStyles2(getStyles, maxWidth);
+  const presentation = useContext(VizPresentationContext);
+  const timeSeriesPresentation = useContext(TimeSeriesPresentationContext);
 
   const renderRef = useRef(render);
   renderRef.current = render;
@@ -653,7 +657,26 @@ export const TooltipPlugin2 = ({
   if (plot && isHovering) {
     return createPortal(
       <div
-        className={cx(styles.tooltipWrapper, isPinned && styles.pinned)}
+        data-viz-presentation={
+          timeSeriesPresentation ? 'wall-timeseries-tooltip' : presentation ? 'wall-tooltip' : undefined
+        }
+        className={cx(
+          styles.tooltipWrapper,
+          isPinned && styles.pinned,
+          presentation &&
+            css({
+              background: presentation.surface,
+              color: presentation.text,
+              border: `1px solid ${presentation.border}`,
+              borderRadius: presentation.radius,
+              boxShadow: presentation.shadow,
+              fontFamily: presentation.fontFamily,
+              fontSize: 12,
+              padding: 4,
+              fontVariantNumeric: 'tabular-nums',
+            }),
+          timeSeriesPresentation && css(timeSeriesTooltipSurface(timeSeriesPresentation, maxWidth))
+        )}
         style={style}
         aria-live="polite"
         aria-atomic="true"

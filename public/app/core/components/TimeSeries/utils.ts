@@ -59,6 +59,9 @@ for (let i = 0; i < BIN_INCRS.length; i++) {
   BIN_INCRS[i] = 2 ** i;
 }
 
+import { TimeSeriesPresentation } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
+import { presentGraphConfig, VizPresentation } from '@grafana/ui/src/components/VizPresentation/VizPresentation';
+import { AxisProps } from '@grafana/ui/src/components/uPlot/config/UPlotAxisBuilder';
 import { UPlotConfigBuilder, UPlotConfigPrepFn } from '@grafana/ui/src/components/uPlot/config/UPlotConfigBuilder';
 import { getScaleGradientFn } from '@grafana/ui/src/components/uPlot/config/gradientFills';
 import { buildScaleKey } from '@grafana/ui/src/components/uPlot/internal';
@@ -72,7 +75,10 @@ const defaultConfig: GraphFieldConfig = {
   axisPlacement: AxisPlacement.Auto,
 };
 
-export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
+export const preparePlotConfigBuilder: UPlotConfigPrepFn<{
+  presentation?: VizPresentation;
+  timeSeriesPresentation?: TimeSeriesPresentation;
+}> = ({
   frame,
   theme,
   timeZones,
@@ -83,10 +89,50 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
   tweakAxis = (opts) => opts,
   hoverProximity,
   orientation = VizOrientation.Horizontal,
+  presentation,
+  timeSeriesPresentation,
 }) => {
   // we want the Auto and Horizontal orientation to default to Horizontal
   const isHorizontal = orientation !== VizOrientation.Vertical;
   const builder = new UPlotConfigBuilder(timeZones[0]);
+  if (timeSeriesPresentation) {
+    builder.setCursor({
+      points: {
+        size: (u, seriesIndex) =>
+          Math.max(timeSeriesPresentation.hoverPointSize, u.series[seriesIndex].points?.size ?? 0),
+        width: timeSeriesPresentation.lineWidth,
+      },
+    });
+  }
+  if (timeSeriesPresentation?.plotPaddingRight !== undefined) {
+    // Reserve half a tabular time label at the edge without changing the native scales or ticks.
+    builder.setPadding([null, timeSeriesPresentation.plotPaddingRight, null, null]);
+  }
+  const style = timeSeriesPresentation ?? presentation;
+  const addAxis = (axis: AxisProps) => {
+    builder.addAxis(
+      style
+        ? {
+            ...axis,
+            fontSize: timeSeriesPresentation?.axisFontSize ?? 11,
+            fontFamily: timeSeriesPresentation?.fontFamily,
+            fontWeight: timeSeriesPresentation?.axisFontWeight,
+            gap: axis.gap ?? timeSeriesPresentation?.axisGap,
+            ...(timeSeriesPresentation ? { gridDash: timeSeriesPresentation.gridDash } : {}),
+            color: !axis.color || axis.color === theme.colors.text.primary ? style.muted : axis.color,
+            grid: {
+              ...axis.grid,
+              stroke: style.grid,
+              ...(timeSeriesPresentation
+                ? {
+                    ...(axis.isTime && axis.grid?.show === undefined ? { show: false } : {}),
+                  }
+                : {}),
+            },
+          }
+        : axis
+    );
+  };
 
   let alignedFrame: DataFrame;
 
@@ -139,7 +185,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
 
     for (let i = 0; i < timeZones.length; i++) {
       const timeZone = timeZones[i];
-      builder.addAxis({
+      addAxis({
         scaleKey: xScaleKey,
         isTime: true,
         placement: xFieldAxisPlacement,
@@ -181,7 +227,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
       range: (u, dataMin, dataMax) => [xField.config.min ?? dataMin, xField.config.max ?? dataMax],
     });
 
-    builder.addAxis({
+    addAxis({
       scaleKey: xScaleKey,
       placement: xFieldAxisPlacement,
       show: xFieldAxisShow,
@@ -208,7 +254,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
       },
     };
 
-    const customConfig: GraphFieldConfig = config.custom!;
+    const customConfig: GraphFieldConfig =
+      presentation && !timeSeriesPresentation ? presentGraphConfig(config.custom!) : config.custom!;
 
     if (field === xField || (field.type !== FieldType.number && field.type !== FieldType.enum)) {
       continue;
@@ -317,7 +364,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
         values = text;
       }
 
-      builder.addAxis(
+      addAxis(
         tweakAxis(
           {
             scaleKey,
@@ -493,6 +540,13 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn = ({
       theme,
       dynamicSeriesColor,
       drawStyle: customConfig.drawStyle!,
+      // uPlot defaults to integer pixel snapping. Keep fractional vertices for continuous Wall lines,
+      // especially at DPR=1; preserve point/bar and explicitly dashed/dotted rendering.
+      ...(timeSeriesPresentation &&
+      customConfig.drawStyle === GraphDrawStyle.Line &&
+      (!customConfig.lineStyle || customConfig.lineStyle.fill === 'solid')
+        ? { pxAlign: timeSeriesPresentation.linePixelAlign }
+        : {}),
       lineColor: customConfig.lineColor ?? seriesColor,
       lineWidth: customConfig.lineWidth,
       lineInterpolation: customConfig.lineInterpolation,

@@ -1,5 +1,5 @@
 import { cx } from '@emotion/css';
-import { PureComponent } from 'react';
+import { ContextType, PureComponent } from 'react';
 import * as React from 'react';
 
 import { DisplayValue, DisplayValueAlignmentFactors, FieldSparkline } from '@grafana/data';
@@ -8,9 +8,11 @@ import { PercentChangeColorMode, VizTextDisplayOptions } from '@grafana/schema';
 import { Themeable2 } from '../../types';
 import { clearButtonStyles } from '../Button';
 import { FormattedValueDisplay } from '../FormattedValueDisplay/FormattedValueDisplay';
+import { presentValueColor, VizPresentation, VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 import { buildLayout } from './BigValueLayout';
 import { PercentChange } from './PercentChange';
+import { getStatCardPresentation, StatCardPresentation } from './StatCardPresentation';
 
 export enum BigValueColorMode {
   Background = 'background',
@@ -42,6 +44,10 @@ export enum BigValueTextMode {
 }
 
 export interface Props extends Themeable2 {
+  presentation?: VizPresentation;
+  /** Optional application skin. Unset keeps the existing Stat presentation. */
+  statPresentation?: StatCardPresentation;
+  isValueMapped?: boolean;
   /** Height of the component */
   height: number;
   /** Width of the component */
@@ -84,18 +90,70 @@ export interface Props extends Themeable2 {
 }
 
 export class BigValue extends PureComponent<Props> {
+  static contextType = VizPresentationContext;
+  declare context: ContextType<typeof VizPresentationContext>;
   static defaultProps: Partial<Props> = {
     justifyMode: BigValueJustifyMode.Auto,
   };
 
   render() {
     const { onClick, className, hasLinks, theme } = this.props;
-    const layout = buildLayout(this.props);
+    const layout = buildLayout(this.context ? { ...this.props, presentation: this.context } : this.props);
+    if (this.context) {
+      // Keep the native fit calculation and explicit user font sizes as upper priorities.
+      if (!this.props.text?.valueSize) {
+        layout.valueFontSize = Math.min(layout.valueFontSize, 44);
+      }
+      if (!this.props.text?.titleSize) {
+        layout.titleFontSize = Math.min(layout.titleFontSize, 12);
+      }
+    }
     const panelStyles = layout.getPanelStyles();
     const valueAndTitleContainerStyles = layout.getValueAndTitleContainerStyles();
     const valueStyles = layout.getValueStyles();
     const titleStyles = layout.getTitleStyles();
+    if (this.context) {
+      Object.assign(panelStyles, { fontFamily: this.context.fontFamily });
+      Object.assign(valueStyles, { fontWeight: 600, letterSpacing: '-0.035em', fontVariantNumeric: 'tabular-nums' });
+      Object.assign(titleStyles, { fontWeight: 500 });
+      // Background color modes keep Grafana's contrast-aware foreground colors.
+      if (this.props.colorMode === BigValueColorMode.Value || this.props.colorMode === BigValueColorMode.None) {
+        titleStyles.color = this.context.muted;
+        if (this.props.colorMode === BigValueColorMode.None) {
+          valueStyles.color = this.context.text;
+        } else {
+          valueStyles.color = presentValueColor(this.props.value.color, this.context);
+        }
+      }
+    }
     const textValues = layout.textValues;
+    const statCard = this.props.statPresentation
+      ? getStatCardPresentation(this.props.statPresentation, {
+          width: this.props.width,
+          height: this.props.height,
+          valueSize: layout.valueFontSize,
+          labelSize: layout.titleFontSize,
+          explicitValueSize: this.props.text?.valueSize,
+          explicitLabelSize: this.props.text?.titleSize,
+          isMapped: Boolean(
+            this.props.isValueMapped &&
+              this.props.textMode !== BigValueTextMode.Name &&
+              this.props.textMode !== BigValueTextMode.None
+          ),
+          isColored: this.props.colorMode === BigValueColorMode.Value && this.props.textMode !== BigValueTextMode.None,
+          hasBackground:
+            this.props.colorMode === BigValueColorMode.Background ||
+            this.props.colorMode === BigValueColorMode.BackgroundSolid,
+          isEmpty: Number.isNaN(this.props.value.numeric) && !this.props.isValueMapped,
+          color: valueStyles.color,
+        })
+      : undefined;
+    if (statCard) {
+      Object.assign(panelStyles, statCard.panel);
+      Object.assign(valueAndTitleContainerStyles, statCard.stack);
+      Object.assign(valueStyles, statCard.value);
+      Object.assign(titleStyles, statCard.label);
+    }
     const percentChange = this.props.value.percentChange;
     const percentChangeColorMode = this.props.percentChangeColorMode;
     const showPercentChange = percentChange != null && !Number.isNaN(percentChange);
@@ -105,10 +163,29 @@ export class BigValue extends PureComponent<Props> {
 
     if (!onClick) {
       return (
-        <div className={className} style={panelStyles} title={tooltip}>
+        <div
+          className={className}
+          style={panelStyles}
+          title={tooltip}
+          data-viz-presentation={statCard ? 'wall-stat-card' : this.context ? 'wall-stat' : undefined}
+        >
           <div style={valueAndTitleContainerStyles}>
             {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
-            <FormattedValueDisplay value={textValues} style={valueStyles} />
+            <FormattedValueDisplay
+              value={textValues}
+              unitStyle={
+                this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
+                  ? {
+                      fontSize: this.props.statPresentation.unitSize,
+                      fontWeight: this.props.statPresentation.unitWeight,
+                    }
+                  : undefined
+              }
+              style={valueStyles}
+              className={statCard ? 'wall-stat-card-value' : undefined}
+              data-wall-stat-kind={statCard?.kind}
+              data-wall-stat-indicator={statCard?.indicator || undefined}
+            />
             {showPercentChange && (
               <PercentChange
                 percentChange={percentChange}
@@ -128,10 +205,22 @@ export class BigValue extends PureComponent<Props> {
         style={panelStyles}
         onClick={onClick}
         title={tooltip}
+        data-viz-presentation={statCard ? 'wall-stat-card' : this.context ? 'wall-stat' : undefined}
       >
         <div style={valueAndTitleContainerStyles}>
           {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
-          <FormattedValueDisplay value={textValues} style={valueStyles} />
+          <FormattedValueDisplay
+            value={textValues}
+            unitStyle={
+              this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
+                ? { fontSize: this.props.statPresentation.unitSize, fontWeight: this.props.statPresentation.unitWeight }
+                : undefined
+            }
+            style={valueStyles}
+            className={statCard ? 'wall-stat-card-value' : undefined}
+            data-wall-stat-kind={statCard?.kind}
+            data-wall-stat-indicator={statCard?.indicator || undefined}
+          />
         </div>
         {layout.renderChart()}
       </button>
