@@ -145,3 +145,247 @@
   display: flex;
   flex-direction: column;
 }
+.wall-editor-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-section-gap);
+  min-width: 0;
+}
+.wall-panel-editor .wall-dashboard-toolbar {
+  padding: 0;
+}
+.wall-options-tools {
+  display: grid;
+  gap: var(--wall-card-content-gap);
+  padding: var(--wall-card-padding);
+}
+.wall-option-search {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+  padding: 0 var(--wall-card-padding-compact);
+  min-height: 34px;
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  color: var(--wall-panel-muted);
+  margin: 0;
+}
+.wall-option-search input {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  min-width: 0;
+  outline: none;
+  color: var(--wall-panel-text);
+  font-size: var(--wall-type-control-size);
+}
+.wall-option-search:focus-within {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 2px;
+}
+.wall-option-navigator {
+  gap: var(--wall-card-content-gap);
+}
+.wall-option-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 var(--wall-card-padding);
+  padding: 3px;
+  background: var(--wall-soft);
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+}
+.wall-option-navigation .wall-ui-tabs-trigger {
+  justify-content: center;
+  padding: 6px 2px;
+  min-width: 0;
+  gap: 4px;
+  font-size: var(--wall-type-caption-size);
+}
+.wall-option-navigation .wall-ui-tabs-trigger[data-active] {
+  background: var(--wall-surface);
+  color: var(--wall-panel-text);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-option-groups {
+  padding: 0 var(--wall-card-padding);
+}
+.wall-option-group {
+  border-top: 1px solid var(--wall-card-border);
+}
+.wall-option-group-trigger.wall-button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: var(--wall-card-content-gap);
+  min-height: 40px;
+  height: auto;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 0;
+  font-size: var(--wall-type-panel-size);
+  color: var(--wall-panel-text);
+  font-weight: var(--wall-type-panel-weight);
+  text-align: left;
+  white-space: normal;
+}
+.wall-option-group-trigger > span {
+  flex: 1;
+  min-width: 0;
+}
+.wall-option-group-trigger[data-panel-open] > svg {
+  transform: rotate(180deg);
+}
+.wall-option-group-content {
+  padding: 0 0 var(--wall-card-padding);
+}
+.wall-option-group-nested {
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  padding: 0 var(--wall-card-padding-compact);
+  margin: var(--wall-card-padding-compact) 0;
+}
+.wall-query-operation {
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  overflow: hidden;
+}
+.wall-query-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--wall-card-padding-compact);
+  min-height: 44px;
+  background: var(--wall-soft);
+  border-bottom: 1px solid var(--wall-card-border);
+}
+.wall-query-header .wall-button {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+.wall-query-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+  min-width: 0;
+  flex: 1;
+}
+.wall-query-title {
+  font-weight: var(--wall-type-panel-weight);
+  color: var(--wall-panel-text);
+  font-size: var(--wall-type-control-size);
+}
+.wall-query-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+.wall-query-actions .wall-button[aria-pressed='true'] {
+  color: var(--wall-primary);
+  background: var(--wall-primary-soft);
+}
+.wall-query-grip {
+  display: flex;
+  padding: 6px;
+  color: var(--wall-panel-muted);
+  cursor: grab;
+}
+.wall-query-operation > .wall-query-content {
+  margin: 0;
+  padding: var(--wall-card-padding);
+}
+.wall-query-header[data-disabled] .wall-query-identity {
+  opacity: 0.55;
+}
+.wall-query-source-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+  margin-bottom: var(--wall-card-padding);
+  flex-wrap: wrap;
+}
+.wall-query-source-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+}
+.wall-query-source-picker > label {
+  margin: 0;
+  color: var(--wall-panel-muted);
+  font-size: var(--wall-type-control-size);
+  white-space: nowrap;
+}
+.wall-query-source-options {
+  min-width: 240px;
+  flex: 1;
+}
+.wall-query-source-options .wall-query-operation {
+  margin: 0;
+}
+.wall-query-source-options .wall-query-header {
+  border: 0;
+}
+.wall-query-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+}
+.wall-editor-data > .wall-ui-tabs-list {
+  justify-content: flex-start;
+  padding: var(--wall-card-padding-compact);
+  gap: 4px;
+  background: var(--wall-surface);
+}
+.wall-editor-data > .wall-ui-tabs-list .wall-ui-tabs-trigger {
+  min-height: 30px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 6px;
+}
+.wall-editor-data > .wall-ui-tabs-list .wall-ui-tabs-trigger[data-active] {
+  background: var(--wall-soft);
+  box-shadow: inset 0 0 0 1px var(--wall-card-border);
+}
+.wall-editor-data > .wall-ui-tabs-list .wall-ui-tabs-trigger::after,
+.wall-option-navigation .wall-ui-tabs-trigger::after {
+  display: none;
+}
+.wall-panel-editor input:not([type='checkbox']):not([type='radio']),
+.wall-panel-editor textarea:not(.inputarea) {
+  border-color: var(--wall-card-border);
+  border-radius: 6px;
+  color: var(--wall-panel-text);
+}
+.wall-panel-editor .monaco-editor {
+  border-radius: 6px;
+  overflow: hidden;
+}
+.wall-option-group-heading {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  gap: var(--wall-card-content-gap);
+}
+.wall-option-native-title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+}
+.wall-option-custom-trigger.wall-button {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.wall-option-custom-trigger[data-panel-open] > svg {
+  transform: rotate(180deg);
+}

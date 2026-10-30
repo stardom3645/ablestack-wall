@@ -90,3 +90,6 @@
 - 콘텐츠 높이는 DESIGN_SYSTEM.md REF-66을 따른다. 서버/legacy/draft/Undo 기준점과 진행 중 조작이 없는 미조작 기본 배치만 데이터 도착 후 높이를 갱신한다. WallEntityList는 행당 고정 추정 대신 실제 콘텐츠+공통 chrome 높이를 측정하고 기존 한도/큰 목록 스크롤을 유지한다. 자동 높이 측정은 Dirty를 만들거나 사용자 저장·Resize 크기를 덮어쓰지 않는다.
 
 - 05번 긴 대시보드의 스크롤은 DESIGN_SYSTEM.md REF-67을 따른다. NativeScrollbar.scrollContainer opt-in으로 본문만 스크롤하며 같은 요소를 native 스크롤 저장/복원에 연결한다. 기존 다른 caller는 wrapper 없는 document 스크롤을 유지한다. Wall Shell overflow 제한은 승인 UID에만 적용하며 사이드바/공통 헤더와 키오스크 geometry를 유지한다.
+
+- 편집·설정 화면의 최신 기준은 DESIGN_SYSTEM.md REF-68이다. 05번의 WallManagement 헤더/설정 왼쪽 탐색, 옵션 4영역과 Base UI Collapsible, 쿼리 작업부, 일반 폼 및 변수·주석·링크·버전 collection 구조를 사용한다. 외곽 Card만 추가한 이전 편집기로 되돌리지 않는다. native query/Transform/Field/Override/picker/권한·저장·복원 로직은 재사용하고 다른 UID는 native UI를 유지한다. 최초 편집 baseline에도 overlay/editPanel/editview를 넣지 않는다. 기능 테스트 통과를 전체 디자인 완성도 90점의 근거로 사용하지 않으며 실제 화면과 native로 남은 부분을 구분해 기록한다.
+- 로컬 preview의 설정 원본은 `~/Library/Application Support/ABLESTACK/WallPreview/grafana.ini`에 보존하고 기존 launchd preview 서비스가 이 파일을 사용한다. 2026-10-31 임시 폴더 설정 파일 소실로 재시작 실패가 재현되어 기존 설정 그대로 위치만 보존했다. 런타임/DB/로그·3317/3318·localhost 바인딩·기존 인증 정책은 유지하며 새 환경 전환이나 운영 설정으로 사용하지 않는다.

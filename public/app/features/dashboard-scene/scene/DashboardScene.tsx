@@ -258,7 +258,11 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
       return; // Native panel/settings entry must not overwrite the direct-edit baseline.
     }
     // Save this state
-    this._initialState = sceneUtils.cloneSceneObjectState(this.state);
+    this._initialState = sceneUtils.cloneSceneObjectState(
+      this.state.uid === 'aec03x1adsi68f'
+        ? { ...this.state, overlay: undefined, editPanel: undefined, editview: undefined }
+        : this.state
+    );
     this._initialUrlState = locationService.getLocation();
 
     // Switch to edit mode

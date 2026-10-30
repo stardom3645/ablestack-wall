@@ -4,6 +4,8 @@ import * as React from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { Checkbox, Button, Tag, ModalsController, useStyles2 } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import { WallVersionHistory } from 'app/features/wall-modern/management/WallVersionHistory';
 
 import { DecoratedRevisionModel } from '../VersionsEditView';
 
@@ -18,6 +20,10 @@ type VersionsTableProps = {
 
 export const VersionHistoryTable = ({ versions, canCompare, onCheck, onRestore }: VersionsTableProps) => {
   const styles = useStyles2(getStyles);
+  const wallSettings = useWallSettings();
+  if (wallSettings) {
+    return <WallVersionHistory versions={versions} canCompare={canCompare} onCheck={onCheck} onRestore={onRestore} />;
+  }
 
   return (
     <div className={styles.margin}>

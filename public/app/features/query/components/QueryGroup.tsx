@@ -1,5 +1,6 @@
 import { css } from '@emotion/css';
-import { PureComponent, useEffect, useState } from 'react';
+import { CircleHelp, ScanSearch } from 'lucide-react';
+import { PureComponent, useContext, useEffect, useState } from 'react';
 import * as React from 'react';
 import { Unsubscribable } from 'rxjs';
 
@@ -19,12 +20,15 @@ import { DataQuery } from '@grafana/schema';
 import { Button, CustomScrollbar, HorizontalGroup, InlineFormLabel, Modal, stylesFactory } from '@grafana/ui';
 import { PluginHelp } from 'app/core/components/PluginHelp/PluginHelp';
 import config from 'app/core/config';
+import { t, Trans } from 'app/core/internationalization';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { addQuery, queryIsEmpty } from 'app/core/utils/query';
 import { DataSourceModal } from 'app/features/datasources/components/picker/DataSourceModal';
 import { DataSourcePicker } from 'app/features/datasources/components/picker/DataSourcePicker';
 import { dataSource as expressionDatasource } from 'app/features/expressions/ExpressionDatasource';
 import { AngularDeprecationPluginNotice } from 'app/features/plugins/angularDeprecation/AngularDeprecationPluginNotice';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 import { isSharedDashboardQuery } from 'app/plugins/datasource/dashboard';
 import { GrafanaQuery } from 'app/plugins/datasource/grafana/types';
 import { QueryGroupOptions } from 'app/types';
@@ -404,57 +408,105 @@ export function QueryGroupTopSection({
 }: QueryGroupTopSectionProps) {
   const styles = getStyles();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const wallEditor = useContext(editorPresentationContext);
   return (
     <>
       <div data-testid={selectors.components.QueryTab.queryGroupTopSection}>
-        <div className={styles.dataSourceRow}>
-          <InlineFormLabel htmlFor="data-source-picker" width={'auto'}>
-            Data source
-          </InlineFormLabel>
-          <div className={styles.dataSourceRowItem}>
-            <DataSourcePickerWithPrompt
-              options={options}
-              onChange={async (ds, defaultQueries) => {
-                return await onDataSourceChange?.(ds, defaultQueries);
-              }}
-              isDataSourceModalOpen={Boolean(locationService.getSearchObject().firstPanel)}
-            />
-          </div>
-          {dataSource && (
-            <>
-              <div className={styles.dataSourceRowItem}>
-                <Button
-                  variant="secondary"
-                  icon="question-circle"
-                  title="Open data source help"
+        {wallEditor ? (
+          <div className="wall-query-source-bar">
+            <div className="wall-query-source-picker">
+              <label htmlFor="data-source-picker">
+                <Trans i18nKey="wall.editor.datasource">데이터 소스</Trans>
+              </label>
+              <DataSourcePickerWithPrompt
+                options={options}
+                onChange={async (ds, defaultQueries) => await onDataSourceChange?.(ds, defaultQueries)}
+                isDataSourceModalOpen={Boolean(locationService.getSearchObject().firstPanel)}
+              />
+            </div>
+            {dataSource && (
+              <>
+                <WallButton
+                  size="icon"
+                  variant="ghost"
+                  aria-label={t('wall.editor.datasource-help', '데이터 소스 도움말')}
+                  title={t('wall.editor.datasource-help', '데이터 소스 도움말')}
                   onClick={() => setIsHelpOpen(true)}
                   data-testid="query-tab-help-button"
-                />
-              </div>
-              <div className={styles.dataSourceRowItemOptions}>
-                <QueryGroupOptionsEditor
-                  options={options}
-                  dataSource={dataSource}
-                  data={data}
-                  onChange={(opts) => {
-                    onOptionsChange?.(opts);
-                  }}
-                />
-              </div>
-              {onOpenQueryInspector && (
+                >
+                  <CircleHelp size={15} />
+                </WallButton>
+                <div className="wall-query-source-options">
+                  <QueryGroupOptionsEditor
+                    options={options}
+                    dataSource={dataSource}
+                    data={data}
+                    onChange={(opts) => onOptionsChange?.(opts)}
+                  />
+                </div>
+                {onOpenQueryInspector && (
+                  <WallButton
+                    size="sm"
+                    onClick={onOpenQueryInspector}
+                    data-testid={selectors.components.QueryTab.queryInspectorButton}
+                  >
+                    <ScanSearch size={15} />
+                    <Trans i18nKey="wall.editor.query-inspector">쿼리 검사</Trans>
+                  </WallButton>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          <div className={styles.dataSourceRow}>
+            <InlineFormLabel htmlFor="data-source-picker" width={'auto'}>
+              Data source
+            </InlineFormLabel>
+            <div className={styles.dataSourceRowItem}>
+              <DataSourcePickerWithPrompt
+                options={options}
+                onChange={async (ds, defaultQueries) => {
+                  return await onDataSourceChange?.(ds, defaultQueries);
+                }}
+                isDataSourceModalOpen={Boolean(locationService.getSearchObject().firstPanel)}
+              />
+            </div>
+            {dataSource && (
+              <>
                 <div className={styles.dataSourceRowItem}>
                   <Button
                     variant="secondary"
-                    onClick={onOpenQueryInspector}
-                    aria-label={selectors.components.QueryTab.queryInspectorButton}
-                  >
-                    Query inspector
-                  </Button>
+                    icon="question-circle"
+                    title="Open data source help"
+                    onClick={() => setIsHelpOpen(true)}
+                    data-testid="query-tab-help-button"
+                  />
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className={styles.dataSourceRowItemOptions}>
+                  <QueryGroupOptionsEditor
+                    options={options}
+                    dataSource={dataSource}
+                    data={data}
+                    onChange={(opts) => {
+                      onOptionsChange?.(opts);
+                    }}
+                  />
+                </div>
+                {onOpenQueryInspector && (
+                  <div className={styles.dataSourceRowItem}>
+                    <Button
+                      variant="secondary"
+                      onClick={onOpenQueryInspector}
+                      aria-label={selectors.components.QueryTab.queryInspectorButton}
+                    >
+                      Query inspector
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
         {dataSource && isAngularDatasourcePluginAndNotHidden(dataSource.uid) && (
           <AngularDeprecationPluginNotice
             pluginId={dataSource.type}

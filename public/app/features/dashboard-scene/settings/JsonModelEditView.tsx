@@ -8,6 +8,8 @@ import { Alert, Box, Button, CodeEditor, Stack, useStyles2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { Trans } from 'app/core/internationalization';
 import { getPrettyJSON } from 'app/features/inspector/utils/utils';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 import { DashboardDTO, SaveDashboardResponseDTO } from 'app/types';
 
 import {
@@ -82,6 +84,7 @@ export class JsonModelEditView extends SceneObjectBase<JsonModelEditViewState> i
   static Component = ({ model }: SceneComponentProps<JsonModelEditView>) => {
     const { state, onSaveDashboard } = useSaveDashboard(false);
     const [isSaving, setIsSaving] = useState(false);
+    const wallSettings = useWallSettings();
 
     const dashboard = model.getDashboard();
 
@@ -104,21 +107,34 @@ export class JsonModelEditView extends SceneObjectBase<JsonModelEditViewState> i
       }
     };
 
-    const saveButton = (overwrite: boolean) => (
-      <Button
-        type="submit"
-        onClick={() => {
-          onSave(overwrite);
-        }}
-        variant={overwrite ? 'destructive' : 'primary'}
-      >
-        {overwrite ? (
-          'Save and overwrite'
-        ) : (
-          <Trans i18nKey="dashboard-settings.json-editor.save-button">Save changes</Trans>
-        )}
-      </Button>
-    );
+    const saveButton = (overwrite: boolean) =>
+      wallSettings ? (
+        <WallButton
+          onClick={() => onSave(overwrite)}
+          variant="default"
+          className={overwrite ? 'wall-management-danger' : undefined}
+        >
+          {overwrite ? (
+            <Trans i18nKey="wall.settings.json-overwrite">JSON 적용 및 덮어쓰기</Trans>
+          ) : (
+            <Trans i18nKey="wall.settings.json-save">JSON 적용 및 저장</Trans>
+          )}
+        </WallButton>
+      ) : (
+        <Button
+          type="submit"
+          onClick={() => {
+            onSave(overwrite);
+          }}
+          variant={overwrite ? 'destructive' : 'primary'}
+        >
+          {overwrite ? (
+            'Save and overwrite'
+          ) : (
+            <Trans i18nKey="dashboard-settings.json-editor.save-button">Save changes</Trans>
+          )}
+        </Button>
+      );
 
     const cancelButton = (
       <Button variant="secondary" onClick={() => setIsSaving(false)} fill="outline">
@@ -176,7 +192,7 @@ export class JsonModelEditView extends SceneObjectBase<JsonModelEditViewState> i
     return (
       <Page navModel={navModel} pageNav={pageNav} layout={PageLayoutType.Standard}>
         <NavToolbarActions dashboard={dashboard} />
-        <div className={styles.wrapper}>
+        <div className={wallSettings ? 'wall-json-workspace' : styles.wrapper}>
           <Trans i18nKey="dashboard-settings.json-editor.subtitle">
             The JSON model below is the data structure that defines the dashboard. This includes dashboard settings,
             panel settings, layout, queries, and so on.
@@ -187,7 +203,7 @@ export class JsonModelEditView extends SceneObjectBase<JsonModelEditViewState> i
             language="json"
             showLineNumbers={true}
             showMiniMap={true}
-            containerStyles={styles.codeEditor}
+            containerStyles={wallSettings ? 'wall-json-editor' : styles.codeEditor}
             onBlur={model.onCodeEditorBlur}
           />
           {canSave && <Box paddingTop={2}>{renderSaveButtonAndError(state.error)}</Box>}

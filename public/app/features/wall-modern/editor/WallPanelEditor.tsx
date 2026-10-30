@@ -1,12 +1,5 @@
 import { ChevronDown, Database, SlidersHorizontal } from 'lucide-react';
-import {
-  createContext,
-  useContext,
-  useEffect,
-  type ComponentProps,
-  type PropsWithChildren,
-  type ReactNode,
-} from 'react';
+import { useContext, type ComponentProps, type PropsWithChildren, type ReactNode } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { useTheme2, Tab } from '@grafana/ui';
@@ -14,14 +7,18 @@ import { Trans, t } from 'app/core/internationalization';
 
 import { Card } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { WallManagementBack } from '../management/WallManagement';
 import { wallSurfaceVariables } from '../surfaceTokens';
 import { wallTypographyVariables, useWallTypographyFonts } from '../typography';
 import { Button } from '../ui';
+
 import '../modern.css';
 import '../typography.css';
+import { editorPresentationContext } from './EditorPresentationContext';
+import { useWallMonacoTheme } from './useWallMonacoTheme';
 import './panelEditor.css';
 
-export const WallPanelEditorContext = createContext(false);
+export const WallPanelEditorContext = editorPresentationContext;
 
 export function WallEditorVisualizationButton({
   name,
@@ -51,29 +48,12 @@ export function WallPanelEditorFrame({
   enabled,
   title,
   dirty,
+  actions,
   children,
-}: PropsWithChildren<{ enabled: boolean; title: string; dirty?: boolean }>) {
+}: PropsWithChildren<{ enabled: boolean; title: string; dirty?: boolean; actions?: ReactNode }>) {
   const theme = useTheme2();
   const fontStatus = useWallTypographyFonts(enabled);
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-    let active = true;
-    // Grafana registers both Monaco themes with mount-time colors. Re-register
-    // on a live Wall theme change without remounting or losing the code buffer.
-    Promise.all([import('monaco-editor'), import('@grafana/ui/src/components/Monaco/theme')]).then(
-      ([monaco, nativeTheme]) => {
-        if (active) {
-          nativeTheme.default(monaco, theme);
-          monaco.editor.setTheme(theme.isDark ? 'grafana-dark' : 'grafana-light');
-        }
-      }
-    );
-    return () => {
-      active = false;
-    };
-  }, [enabled, theme]);
+  useWallMonacoTheme(enabled);
   if (!enabled) {
     return <>{children}</>;
   }
@@ -87,15 +67,20 @@ export function WallPanelEditorFrame({
         style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark) }}
       >
         <header className="wall-editor-heading">
-          <div className="wall-editor-title">
-            <span>
-              <Trans i18nKey="wall.editor.label">패널 편집</Trans>
-            </span>
-            <h1 title={title}>{title}</h1>
+          <div className="wall-editor-identity">
+            <WallManagementBack />
+            <div className="wall-editor-title">
+              <span>
+                <Trans i18nKey="wall.editor.label">패널 편집</Trans>
+              </span>
+              <h1 title={title}>{title}</h1>
+            </div>
           </div>
-          <span className="wall-editor-status" data-dirty={dirty || undefined} role="status">
-            {dirty ? t('wall.editor.dirty', '저장 전 변경 사항') : t('wall.editor.preview', '미리보기')}
-          </span>
+          {actions ?? (
+            <span className="wall-editor-status" data-dirty={dirty || undefined} role="status">
+              {dirty ? t('wall.editor.dirty', '저장 전 변경 사항') : t('wall.editor.preview', '미리보기')}
+            </span>
+          )}
         </header>
         <div className="wall-editor-workspace">{children}</div>
       </section>

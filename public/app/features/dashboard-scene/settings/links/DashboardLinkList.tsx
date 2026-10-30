@@ -1,9 +1,16 @@
 import { css } from '@emotion/css';
+import { Copy, ExternalLink } from 'lucide-react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { DashboardLink } from '@grafana/schema';
 import { Button, DeleteButton, EmptyState, Icon, IconButton, Stack, TagList, TextLink, useStyles2 } from '@grafana/ui';
 import { Trans, t } from 'app/core/internationalization';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import {
+  WallSettingsCollection,
+  WallCollectionOrder,
+} from 'app/features/wall-modern/management/WallSettingsCollection';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 interface DashboardLinkListProps {
   links: DashboardLink[];
@@ -23,8 +30,58 @@ export function DashboardLinkList({
   onDelete,
 }: DashboardLinkListProps) {
   const styles = useStyles2(getStyles);
+  const wallSettings = useWallSettings();
   const isEmptyList = links.length === 0;
 
+  if (wallSettings) {
+    return (
+      <WallSettingsCollection
+        title={t('wall.settings.links', '대시보드 링크')}
+        description={t('wall.settings.links-help', '대시보드와 외부 서비스로 이어지는 링크입니다.')}
+        count={links.length}
+        onAdd={onNew}
+        addLabel={t('ablestack-wall.dashboard.new-link', 'New link')}
+      >
+        {links.map((link, idx) => (
+          <div className="wall-collection-row" key={`${link.title}-${idx}`}>
+            <span className="wall-collection-symbol">
+              <ExternalLink size={17} />
+            </span>
+            <WallButton variant="ghost" className="wall-collection-row-main" onClick={() => onEdit(idx)}>
+              <span className="wall-collection-row-title">
+                {link.title || link.type}
+                <code>{link.type}</code>
+              </span>
+              <span className="wall-collection-row-description">
+                {link.type === 'link' ? link.url : (link.tags ?? []).join(', ')}
+              </span>
+            </WallButton>
+            <div className="wall-collection-row-actions">
+              <WallCollectionOrder
+                index={idx}
+                count={links.length}
+                onMove={(direction) => onOrderChange(idx, direction)}
+              />
+              <WallButton
+                size="icon"
+                variant="ghost"
+                aria-label={t('wall.settings.duplicate-link', '링크 복제')}
+                title={t('wall.settings.duplicate-link', '링크 복제')}
+                onClick={() => onDuplicate(link)}
+              >
+                <Copy size={15} />
+              </WallButton>
+              <DeleteButton
+                aria-label={`Delete link with title "${link.title}"`}
+                size="sm"
+                onConfirm={() => onDelete(idx)}
+              />
+            </div>
+          </div>
+        ))}
+      </WallSettingsCollection>
+    );
+  }
   if (isEmptyList) {
     return (
       <Stack direction="column">

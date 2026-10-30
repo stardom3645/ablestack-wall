@@ -16,6 +16,8 @@ import { VariableTextAreaField } from 'app/features/dashboard-scene/settings/var
 import { VariableTextField } from 'app/features/dashboard-scene/settings/variables/components/VariableTextField';
 import { VariableValuesPreview } from 'app/features/dashboard-scene/settings/variables/components/VariableValuesPreview';
 import { VariableNameConstraints } from 'app/features/variables/editor/types';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import { WallSettingsColumns, WallSettingsRegion } from 'app/features/wall-modern/management/WallSettingsCollection';
 
 import { VariableTypeSelect } from './components/VariableTypeSelect';
 import { EditableVariableType, getVariableEditor, hasVariableOptions, isEditableVariableType } from './utils';
@@ -35,6 +37,7 @@ export function VariableEditorForm({
   onValidateVariableName,
 }: VariableEditorFormProps) {
   const styles = useStyles2(getStyles);
+  const wallSettings = Boolean(useWallSettings());
   const [nameError, setNameError] = useState<string | null>(null);
   const { name, type, label, description, hide, key } = variable.useState();
   const EditorToRender = isEditableVariableType(type) ? getVariableEditor(type) : undefined;
@@ -78,47 +81,51 @@ export function VariableEditorForm({
 
   return (
     <form aria-label="Variable editor Form">
-      <VariableTypeSelect onChange={onVariableTypeChange} type={type} />
+      <WallSettingsColumns enabled={wallSettings}>
+        <WallSettingsRegion enabled={wallSettings}>
+          <VariableTypeSelect onChange={onVariableTypeChange} type={type} />
 
-      <VariableLegend>{t('ablestack-wall.common.general', 'General')}</VariableLegend>
-      <VariableTextField
-        name={t('ablestack-wall.common.name', 'Name')}
-        description={t(
-          'ablestack-wall.dashboard.template-variable-name',
-          'The name of the template variable. (Max. 50 characters)'
-        )}
-        placeholder="Variable name"
-        defaultValue={name ?? ''}
-        onChange={onNameChange}
-        onBlur={onNameBlur}
-        testId={selectors.pages.Dashboard.Settings.Variables.Edit.General.generalNameInputV2}
-        maxLength={VariableNameConstraints.MaxSize}
-        required
-        invalid={!!nameError}
-        error={nameError}
-      />
-      <VariableTextField
-        name={t('ablestack-wall.common.label', 'Label')}
-        description={t('ablestack-wall.dashboard.optional-display-name', 'Optional display name')}
-        placeholder="Label name"
-        defaultValue={label ?? ''}
-        onBlur={onLabelBlur}
-        testId={selectors.pages.Dashboard.Settings.Variables.Edit.General.generalLabelInputV2}
-      />
-      <VariableTextAreaField
-        name={t('ablestack-wall.common.description', 'Description')}
-        defaultValue={description ?? ''}
-        placeholder="Descriptive text"
-        onBlur={onDescriptionBlur}
-        width={52}
-      />
+          <VariableLegend>{t('ablestack-wall.common.general', 'General')}</VariableLegend>
+          <VariableTextField
+            name={t('ablestack-wall.common.name', 'Name')}
+            description={t(
+              'ablestack-wall.dashboard.template-variable-name',
+              'The name of the template variable. (Max. 50 characters)'
+            )}
+            placeholder="Variable name"
+            defaultValue={name ?? ''}
+            onChange={onNameChange}
+            onBlur={onNameBlur}
+            testId={selectors.pages.Dashboard.Settings.Variables.Edit.General.generalNameInputV2}
+            maxLength={VariableNameConstraints.MaxSize}
+            required
+            invalid={!!nameError}
+            error={nameError}
+          />
+          <VariableTextField
+            name={t('ablestack-wall.common.label', 'Label')}
+            description={t('ablestack-wall.dashboard.optional-display-name', 'Optional display name')}
+            placeholder="Label name"
+            defaultValue={label ?? ''}
+            onBlur={onLabelBlur}
+            testId={selectors.pages.Dashboard.Settings.Variables.Edit.General.generalLabelInputV2}
+          />
+          <VariableTextAreaField
+            name={t('ablestack-wall.common.description', 'Description')}
+            defaultValue={description ?? ''}
+            placeholder="Descriptive text"
+            onBlur={onDescriptionBlur}
+            width={52}
+          />
 
-      <VariableHideSelect onChange={onHideChange} hide={hide || defaultVariableModel.hide!} type={type} />
+          <VariableHideSelect onChange={onHideChange} hide={hide || defaultVariableModel.hide!} type={type} />
+        </WallSettingsRegion>
+        <WallSettingsRegion enabled={wallSettings}>
+          {EditorToRender && <EditorToRender variable={variable} onRunQuery={onRunQuery} />}
 
-      {EditorToRender && <EditorToRender variable={variable} onRunQuery={onRunQuery} />}
-
-      {isHasVariableOptions && <VariableValuesPreview options={variable.getOptionsForSelect()} />}
-
+          {isHasVariableOptions && <VariableValuesPreview options={variable.getOptionsForSelect()} />}
+        </WallSettingsRegion>
+      </WallSettingsColumns>
       <div className={styles.buttonContainer}>
         <Stack gap={2}>
           <ModalsController>

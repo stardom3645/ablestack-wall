@@ -13,6 +13,7 @@ import { EntityNotFound } from 'app/core/components/PageNotFound/EntityNotFound'
 import { getNavModel } from 'app/core/selectors/navModel';
 import DashboardEmpty from 'app/features/dashboard/dashgrid/DashboardEmpty';
 import { WallDashboardHeading } from 'app/features/wall-modern/WallDashboardHeading';
+import { WallSettingsContext } from 'app/features/wall-modern/management/WallManagement';
 import { isWallModernRoute } from 'app/features/wall-modern/model';
 import { isStorageStatPilot } from 'app/features/wall-modern/statPresentation';
 import { WallDashboardToolbar } from 'app/features/wall-modern/toolbar/WallDashboardToolbar';
@@ -87,7 +88,9 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
   if (editview) {
     return (
       <>
-        <editview.Component model={editview} />
+        <WallSettingsContext.Provider value={model.state.uid === 'aec03x1adsi68f' ? model : undefined}>
+          <editview.Component model={editview} />
+        </WallSettingsContext.Provider>
         {overlay && <overlay.Component model={overlay} />}
       </>
     );

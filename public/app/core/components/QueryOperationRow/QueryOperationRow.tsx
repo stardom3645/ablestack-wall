@@ -1,12 +1,13 @@
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { Draggable } from '@hello-pangea/dnd';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useUpdateEffect } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ReactUtils, useStyles2 } from '@grafana/ui';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 
 import { QueryOperationRowHeader, ExpanderMessages } from './QueryOperationRowHeader';
 
@@ -51,6 +52,7 @@ export function QueryOperationRow({
 }: QueryOperationRowProps) {
   const [isContentVisible, setIsContentVisible] = useState(isOpen !== undefined ? isOpen : true);
   const styles = useStyles2(getQueryOperationRowStyles);
+  const wallEditor = useContext(editorPresentationContext);
   const onRowToggle = useCallback(() => {
     setIsContentVisible(!isContentVisible);
   }, [isContentVisible, setIsContentVisible]);
@@ -112,7 +114,11 @@ export function QueryOperationRow({
         {(provided) => {
           return (
             <>
-              <div ref={provided.innerRef} className={styles.wrapper} {...provided.draggableProps}>
+              <div
+                ref={provided.innerRef}
+                className={cx(styles.wrapper, wallEditor && 'wall-query-operation')}
+                {...provided.draggableProps}
+              >
                 <div>
                   <QueryOperationRowHeader
                     id={id}
@@ -129,7 +135,9 @@ export function QueryOperationRow({
                     expanderMessages={expanderMessages}
                   />
                 </div>
-                {isContentVisible && <div className={styles.content}>{children}</div>}
+                {isContentVisible && (
+                  <div className={cx(styles.content, wallEditor && 'wall-query-content')}>{children}</div>
+                )}
               </div>
             </>
           );
@@ -139,7 +147,7 @@ export function QueryOperationRow({
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={cx(styles.wrapper, wallEditor && 'wall-query-operation')}>
       <QueryOperationRowHeader
         id={id}
         actionsElement={actionsElement}
@@ -153,7 +161,7 @@ export function QueryOperationRow({
         title={title}
         expanderMessages={expanderMessages}
       />
-      {isContentVisible && <div className={styles.content}>{children}</div>}
+      {isContentVisible && <div className={cx(styles.content, wallEditor && 'wall-query-content')}>{children}</div>}
     </div>
   );
 }

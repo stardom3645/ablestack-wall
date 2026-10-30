@@ -7,6 +7,8 @@ import { reportInteraction } from '@grafana/runtime';
 import { SceneVariable, SceneVariableState } from '@grafana/scenes';
 import { useStyles2, Stack, Button, EmptyState, TextLink } from '@grafana/ui';
 import { t, Trans } from 'app/core/internationalization';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import { WallSettingsCollection } from 'app/features/wall-modern/management/WallSettingsCollection';
 
 import { VariablesDependenciesButton } from '../../variables/VariablesDependenciesButton';
 
@@ -30,6 +32,7 @@ export function VariableEditorList({
   onEdit,
 }: Props): ReactElement {
   const styles = useStyles2(getStyles);
+  const wallSettings = useWallSettings();
   const onDragEnd = (result: DropResult) => {
     if (!result.destination || !result.source) {
       return;
@@ -38,6 +41,41 @@ export function VariableEditorList({
     onChangeOrder(result.source.index, result.destination.index);
   };
 
+  if (wallSettings) {
+    return (
+      <WallSettingsCollection
+        title={t('wall.settings.variables', '대시보드 변수')}
+        description={t(
+          'wall.settings.variables-help',
+          '선택 조건과 쿼리 변수를 관리합니다. 순서는 핸들로 조정할 수 있습니다.'
+        )}
+        count={variables.length}
+        onAdd={onAdd}
+        addLabel={t('ablestack-wall.dashboard.new-variable', 'New variable')}
+        footer={<VariablesDependenciesButton variables={variables} />}
+      >
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="variables-list" direction="vertical">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {variables.map((variable, index) => (
+                  <VariableEditorListRow
+                    index={index}
+                    key={`${variable.state.name}-${index}`}
+                    variable={variable}
+                    onDelete={onDelete}
+                    onDuplicate={onDuplicate}
+                    onEdit={onEdit}
+                  />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </WallSettingsCollection>
+    );
+  }
   return (
     <div>
       <div>

@@ -22,6 +22,7 @@ import { t, Trans } from 'app/core/internationalization';
 import { TimePickerSettings } from 'app/features/dashboard/components/DashboardSettings/TimePickerSettings';
 import { GenAIDashDescriptionButton } from 'app/features/dashboard/components/GenAI/GenAIDashDescriptionButton';
 import { GenAIDashTitleButton } from 'app/features/dashboard/components/GenAI/GenAIDashTitleButton';
+import { WallGeneralSettings } from 'app/features/wall-modern/management/WallGeneralSettings';
 
 import { updateNavModel } from '../pages/utils';
 import { DashboardScene } from '../scene/DashboardScene';
@@ -177,6 +178,15 @@ export class GeneralSettingsEditView
     const { intervals } = model.getRefreshPicker().useState();
     const { hideTimeControls } = model.getDashboardControls().useState();
     const { enabled: liveNow } = model.getLiveNowTimer().useState();
+
+    if (dashboard.state.uid === 'aec03x1adsi68f') {
+      return (
+        <Page navModel={navModel} pageNav={pageNav} layout={PageLayoutType.Standard}>
+          <NavToolbarActions dashboard={dashboard} />
+          <WallGeneralSettings model={model} />
+        </Page>
+      );
+    }
 
     return (
       <Page navModel={navModel} pageNav={pageNav} layout={PageLayoutType.Standard}>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import * as React from 'react';
 
 import { PanelData } from '@grafana/data';
@@ -9,6 +9,8 @@ import {
   getLibraryVizPanelOptionsCategory,
   getVisualizationOptions2,
 } from 'app/features/dashboard/components/PanelEditor/getVisualizationOptions';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallOptionNavigator } from 'app/features/wall-modern/editor/WallOptionNavigator';
 
 import { LibraryPanelBehavior } from '../scene/LibraryPanelBehavior';
 import { getLibraryPanelBehavior, isLibraryPanel } from '../utils/utils';
@@ -24,6 +26,7 @@ interface Props {
 
 export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, data }) => {
   const { options, fieldConfig, _pluginInstanceState } = panel.useState();
+  const wallEditor = useContext(editorPresentationContext);
   const layoutElement = panel.parent!;
   const layoutElementState = layoutElement.useState();
 
@@ -113,6 +116,26 @@ export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, d
     }
   }
 
+  if (wallEditor) {
+    const plugin = panel.getPlugin();
+    const fieldCategories = new Set(
+      plugin?.fieldConfigRegistry
+        .list()
+        .filter((option) => !option.isCustom)
+        .map((option) => option.category?.[0] ?? plugin.meta.name)
+    );
+    return (
+      <WallOptionNavigator
+        general={[...(libraryPanelOptions ? [libraryPanelOptions] : []), panelFrameOptions]}
+        visualization={(visualizationOptions ?? []).filter((group) => !fieldCategories.has(group.props.id))}
+        fields={(visualizationOptions ?? []).filter((group) => fieldCategories.has(group.props.id))}
+        overrides={justOverrides}
+        overrideCount={fieldConfig.overrides.length}
+        searching={isSearching}
+        searchResults={isSearching ? mainBoxElements : undefined}
+      />
+    );
+  }
   return mainBoxElements;
 });
 

@@ -25,6 +25,7 @@ import { Trans, t } from 'app/core/internationalization';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 import { ScopesSelector } from 'app/features/scopes';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
 
 import { shareDashboardType } from '../../dashboard/components/ShareModal/utils';
 import { PanelEditor, buildPanelEditScene } from '../panel-edit/PanelEditor';
@@ -43,6 +44,10 @@ interface Props {
 
 export const NavToolbarActions = React.memo<Props>(({ dashboard }) => {
   const id = useId();
+  const wallSettings = useWallSettings();
+  if (wallSettings) {
+    return <AppChromeUpdate />;
+  }
 
   const actions = <ToolbarActions dashboard={dashboard} key={id} />;
   return <AppChromeUpdate actions={actions} />;

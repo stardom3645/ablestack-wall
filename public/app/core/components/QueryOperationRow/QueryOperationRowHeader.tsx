@@ -1,11 +1,14 @@
 import { css, cx } from '@emotion/css';
 import { DraggableProvided } from '@hello-pangea/dnd';
-import { MouseEventHandler } from 'react';
+import { ChevronDown, ChevronRight, GripVertical } from 'lucide-react';
+import { MouseEventHandler, useContext } from 'react';
 import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Icon, IconButton, useStyles2, Stack } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 export interface QueryOperationRowHeaderProps {
   actionsElement?: React.ReactNode;
@@ -42,6 +45,7 @@ export const QueryOperationRowHeader = ({
   expanderMessages,
 }: QueryOperationRowHeaderProps) => {
   const styles = useStyles2(getStyles);
+  const wallEditor = useContext(editorPresentationContext);
 
   let tooltipMessage = isContentVisible
     ? t('query-operation.header.collapse-row', 'Collapse query row')
@@ -54,6 +58,37 @@ export const QueryOperationRowHeader = ({
 
   const dragAndDropLabel = t('query-operation.header.drag-and-drop', 'Drag and drop to reorder');
 
+  if (wallEditor) {
+    return (
+      <header className="wall-query-header" data-disabled={disabled || undefined}>
+        {collapsable && (
+          <WallButton
+            size="icon"
+            variant="ghost"
+            onClick={onRowToggle}
+            aria-label={tooltipMessage}
+            title={tooltipMessage}
+            aria-expanded={isContentVisible}
+            aria-controls={id}
+          >
+            {isContentVisible ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+          </WallButton>
+        )}
+        <div className="wall-query-identity">
+          {title && <span className="wall-query-title">{title}</span>}
+          {headerElement}
+        </div>
+        <div className="wall-query-actions">
+          {actionsElement}
+          {draggable && (
+            <div className="wall-query-grip" onMouseMove={reportDragMousePosition} {...dragHandleProps}>
+              <GripVertical size={15} aria-label={dragAndDropLabel} />
+            </div>
+          )}
+        </div>
+      </header>
+    );
+  }
   return (
     <div className={styles.header}>
       <div className={styles.column}>

@@ -109,7 +109,7 @@
 
 브라우저 로그에는 빠른 대시보드 재진입 중 native Metrics의 `loadDashboardScene_started` mark 누락 오류1건이 기록됐다. 해당 native 계측 코드는 수정하지 않았으며 패널 렌더링/쿼리/저장 예외로 관찰되지는 않았다. 장시간 실운영 성능/실제 권한 조합 검증은 남아 있다.
 
-### 90점 자체 평가의 범위
+### 이전 90점 자체 평가 (2026-10-31 사용자 재평가로 전체 완성도 기준에서 철회)
 
 | 평가 항목                  | 자체 점수  | 근거/한계                                                                                                                                             |
 | -------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -127,3 +127,48 @@
 ### 보존·커밋 검사
 
 원본의 index/기존 미커밋 작업은 유지하고, 마지막 반영 hash와 같은 파일만 원본 preview에 동기화한다. 개발 커밋은 이 Worktree에만 존재한다. 정상 frontend-lint hook은 모든 기능 커밋에서 통과했다. 이전 실행과 동일한 기존 Betterer 기준선 제약 때문에 해당 hook만 동일 strict 규칙의 전후 비교로 대체했고 신규 진단0을 확인했다. 기존 DESIGN_SYSTEM 전체 재정렬을 피하도록 새 기록 조각을 직접 포맷 검사했다. hook/config/Betterer baseline은 변경하지 않았다.
+## 2026-10-31 — 편집·설정 UI 구조 재작업 (REF-68)
+
+사용자가 예약 지시서 P3/P4와 실제 화면의 차이를 지적했다. 기존 프레임 중심 변경과 기능 안정성 위주의 90/100 평가는 전체 디자인 완성도 판정으로 사용하지 않는다. 점수를 다시 붙이는 대신 화면별 실제 교체 범위와 남은 native 영역을 구분했다. 다른 UID·Grid·차트 스타일·데이터 모델은 이번 작업에서 확대/변경하지 않았다.
+
+### 구현과 반복 검토
+
+1. 첫 시각 검토: 기존 회색 AppChrome 작업 바, 끝없이 이어진 native 옵션 목록, native Query row chrome이 남아 있었다. Wall 편집 헤더에 뒤로/취소/저장·복사본 저장을 통합하고 별도 native 작업 바를 제거했다. 기존 Wall 분석 Toolbar를 재사용했다. 패널/시각화/필드/재정의와 Base UI Collapsible로 옵션 탐색을 실제 교체했다. query runner와 plugin editor를 바꾸지 않고 쿼리 행·작업 버튼·datasource/options/inspector bar·추가 footer를 교체했다.
+2. 두 번째 시각 검토: 설정의 외곽만 바꾸면 변수/주석/링크/버전이 여전히 기존 Grafana table로 보였다. native Page의 상단/가로 탭 대신 권한 필터가 적용된 모델을 이용한 좌측 탐색과 작업 본문을 렌더했다. 일반 폼은 4개 의미 영역과 실제 Base UI Input/Switch/Tabs/Buttons로 재구성했다. 변수·주석·링크 collection과 변수 편집 2영역, 버전 table/선택/복원 작업을 실제 새 컴포넌트로 교체했다. 일반 태그도 색이 섞인 native Tag 대신 중립 칩/입력으로 바꾸되 add/remove/중복 의미는 유지했다.
+3. 검토 중 수정: 새 설정 본문에서 native JSON 편집기 높이가 5px로 축소되었다. 별도 높이 컨테이너로 수정하여 1730×873 데스크톱에서 Monaco 407px/23행을 확인했다. 공유 theme hook은 JSON 화면에서만 로드하고 문서 buffer를 재마운트하지 않는다. Override custom title에 포함된 삭제 버튼을 disclosure button 밖으로 분리하여 중첩 버튼과 의도하지 않은 toggle을 방지했다.
+4. 실제 취소 검증 중 수정: 설정 URL로 첫 진입한 native initial baseline에 editview가 포함되어 취소 후 이전 JSON 설정 화면이 되살아났다. 05번 최초 onEnterEditMode에서도 overlay/editPanel/editview를 제외하도록 저장 성공 baseline과 맞췄다. native 확인 절차 후 URL과 UI가 모두 일반 대시보드로 복원되는 것을 확인했다.
+
+### 주요 변경 파일
+
+| 범위                    | 파일                                                                                                                                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wall 실제 컴포넌트      | `management/WallManagement.tsx`, `WallGeneralSettings.tsx`, `WallSettingsCollection.tsx`, `WallVersionHistory.tsx`, `SettingsPresentationContext.ts`, `management.css`                                                                |
+| 패널 옵션·편집          | `editor/WallPanelEditor.tsx`, `WallOptionNavigator.tsx`, `EditorPresentationContext.ts`, `useWallMonacoTheme.ts`, `panelEditor.css`, `PanelEditorRenderer.tsx`, `PanelOptions.tsx`, `PanelOptionsPane.tsx`, `OptionsPaneCategory.tsx` |
+| 쿼리 조작 UI            | `core/components/QueryOperationRow/{QueryOperationRow,QueryOperationRowHeader,QueryOperationAction}.tsx`, `query/components/QueryGroup.tsx`, `PanelDataPane/PanelDataQueriesTab.tsx`                                                  |
+| 설정 연결·native 재사용 | `Page.tsx`, `DashboardSceneRenderer.tsx`, `NavToolbarActions.tsx`, `GeneralSettingsEditView.tsx`, `JsonModelEditView.tsx`, 변수 목록/행/폼/텍스트 필드·영역·제목, 주석/링크 목록, 버전 table/buttons                                  |
+| 취소·기록               | `DashboardScene.tsx` 최초 baseline의 UID 한정 임시 UI 제외, AGENTS.md, DESIGN_SYSTEM.md REF-68, 이 진행 기록                                                                                                                          |
+
+위 Wall 경로는 `public/app/features/wall-modern/`, native Scene 경로는 `public/app/features/dashboard-scene/` 기준이다. native DnD/state/validation/callback/권한 확인을 그대로 재사용하며 새로운 편집기나 패키지를 설치하지 않았다. 폰트·색·Surface는 기존 토큰이고 남겨 둔 native 도메인 컨트롤의 테두리·여백은 scoped CSS 마감이다. CSS 변경과 실제 Base UI primitive/로컬 shadcn 구조 교체를 REF-68에 구분했다.
+
+### 검증 결과
+
+- 관련 19개 suite에서 중복 제외 **197개 통과, 기존 skip 1개**. 새 Wall 컴포넌트 4개 suite는 별도 보정 없는 기본 Jest 실행으로 8개 검사를 통과했다. native Scenes·쿼리·Transform·옵션·변수/주석/링크·버전·초기 복원 상태와 새로운 입력/선택/태그/접기 및 native 삭제 확인 연결을 포함한다.
+- 기존 `PanelOptions`/`QueryVariableForm` 계열은 설치된 jsdom/nwsapi가 native Select의 `:has(+ [role=option])` 장식 CSS를 처리하지 못해 실패했다. HEAD의 원래 옵션 코드로도 동일한 2개 실패가 재현됐다. 관련 호환 실행은 `/tmp/wall-jest-selector-compat.cjs`에서 해당 장식 CSS만 제외한 조건이다. 제품 CSS/의존성/Jest 설정은 바꾸지 않았다. 새 일반 폼 단위 검사는 native folder/time/delete를 분리하여 새 컨트롤과 실제 Scene state 연결을 검증하며, native picker의 실제 동작은 브라우저로 구분해 확인했다.
+- production webpack 빌드 성공, 기존 경고 2개 유지. 변경 TS/TSX ESLint/Prettier/공백 검사와 Betterer strict 규칙 전후 비교 신규 진단 0. 전체 tsc는 기존 React type/legacy/plugin 진단으로 실패하며 이번 변경 파일 진단은 0이다. 전체 tsc 통과로 보고하지 않는다.
+- 실제 사용 탭의 미저장 0을 확인하고 빌드를 반영했다. 설정 7개 경로 진입, 변수 목록→기존 쿼리 변수 편집, 일반 설명 임시 변경→변수 이동→일반 복귀 시 내용/dirty 보존, native 취소 확인→대시보드 복귀, Wall 저장 액션→native Save Drawer(변경 없음/저장 disabled)를 확인했다.
+- 버전 30/29 선택 시 비교 활성화, 해제 시 비활성화를 확인했다. 복원/권한 변경/새 JSON 저장은 실행하지 않았다.
+- 패널 Command Menu의 보기/편집/복제 구성을 유지하고 실제 편집 진입, Wall 옵션 4영역, 원래 Percent(0–100)·min0/max100·threshold75/85·override decimals2를 확인했다. native Transform/테이블 미리보기/쿼리 코드는 재사용한다.
+- Light/Dark의 설정·폼·편집기·Monaco를 실제 데스크톱에서 확인했다. 실제 화면 캡처는 같은 시각화 폴더의 `settings-general-light-v2.png`, `settings-general-dark-v2.png`, `settings-variables-dark-v2.png`, `settings-history-light-v2.png`, `settings-json-dark-v2.png`, `editor-workspace-light-v2.png`, `editor-workspace-dark-v2.png`이다.
+- 이번 검증은 기존3318 fixture/3317 로컬 preview이며 실제 SCVM/고객/운영 데이터 검증이 아니다. 저장된 05번 문서는 기존 최종 QA baseline의 **version30과 정확히 동일**하고 임시 설명은 native 취소로 제거했다. 기존 59개 패널·wallModern·쿼리·UID·단위·배치는 서버 문서에서 바뀌지 않았다.
+
+### 로컬 연결 복구
+
+첫 재시작에서 `/tmp/wall-modern-lite-runtime/grafana.ini`가 사라져 preview가 다시 뜨지 않는 문제를 확인했다. 이전 세션에서 사용한 원래 로컬 설정을 복구하고 `~/Library/Application Support/ABLESTACK/WallPreview/grafana.ini`에 보존해 기존 launchd service의 config 인수만 연결했다. binary/DB/logs/fixture·HTTP3317/3318·localhost 바인딩·기존 인증/조직 설정·backend 버전은 그대로다. 재시작과 health/dashboard/fixture 응답으로 확인하며 이 경로를 운영 설정으로 사용하지 않는다.
+
+### 남은 범위와 완료 판단
+
+전문적인 datasource별 Builder/Code, Transform 편집기, 표준 필드의 unit/color/mapping picker와 native Permissions의 내부 폼은 유지한다. 이들까지 모두 독립 Wall 구현이 되었다고 표현하지 않는다. 실제 SCVM 값/고객 권한/장시간 성능과 모든 플러그인 조합은 검증하지 않았다. 이번 완료 범위는 편집/설정의 공통 화면 구조·탐색·조작부·주요 폼/목록 교체와 그 연결 안정성이다. 사용자 재평가 없이 기능 테스트만으로 새 전체 완성도 점수를 붙이지 않는다.
+
+### 커밋 검사 방식
+
+원본 사용자 index tree는 `363312b24e976cc838035e769a3b2e0ff62aa015`로 유지했다. Worktree의 변경 TS/TSX38개에 Betterer와 같은 strict 규칙을 HEAD 대비 적용하여 신규 진단0을 확인했다. 기존 WIP/legacy Betterer 기준선 제약은 이전 기록과 같으므로 이 기능 커밋에서만 해당 hook을 이 전후 비교로 대체한다. 정상 frontend-lint(ESLint/Prettier) hook은 실행한다. DESIGN_SYSTEM 전체 표의 불필요한 재정렬을 피하도록 other-format hook은 새 REF-68/진행 기록 조각과 AGENTS의 직접 포맷 검사로 대체한다. hook/config/baseline 자체는 수정하지 않는다.

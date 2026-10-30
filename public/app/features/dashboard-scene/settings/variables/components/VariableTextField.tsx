@@ -1,8 +1,10 @@
+import { Input as BaseInput } from '@base-ui/react/input';
 import { useId } from '@react-aria/utils';
 import { FormEvent, PropsWithChildren } from 'react';
 import * as React from 'react';
 
 import { Field, Input } from '@grafana/ui';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
 
 interface VariableTextFieldProps {
   value?: string;
@@ -38,6 +40,34 @@ export function VariableTextField({
   maxLength,
 }: PropsWithChildren<VariableTextFieldProps>) {
   const id = useId(name);
+  const wallSettings = useWallSettings();
+  if (wallSettings) {
+    return (
+      <div className="wall-form-field">
+        <label htmlFor={id}>{name}</label>
+        <BaseInput
+          className="wall-form-input"
+          id={id}
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          defaultValue={defaultValue}
+          onChange={onChange}
+          onBlur={onBlur}
+          data-testid={testId}
+          maxLength={maxLength}
+          required={required}
+          aria-invalid={!!invalid}
+          aria-describedby={description || error ? `${id}-help` : undefined}
+        />
+        {(description || error) && (
+          <p id={`${id}-help`} role={invalid ? 'alert' : undefined}>
+            {error || description}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <Field label={name} description={description} invalid={invalid} error={error} htmlFor={id}>

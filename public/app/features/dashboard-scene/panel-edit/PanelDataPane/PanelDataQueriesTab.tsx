@@ -1,3 +1,6 @@
+import { Plus } from 'lucide-react';
+import { useContext as usePresentationContext } from 'react';
+
 import { CoreApp, DataSourceApi, DataSourceInstanceSettings, getDataSourceRef } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { config, getDataSourceSrv, locationService } from '@grafana/runtime';
@@ -13,6 +16,7 @@ import {
 } from '@grafana/scenes';
 import { DataQuery } from '@grafana/schema';
 import { Button, Stack } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 import { addQuery } from 'app/core/utils/query';
 import { getLastUsedDatasourceFromStorage } from 'app/features/dashboard/utils/dashboard';
 import { storeLastUsedDataSourceInLocalStorage } from 'app/features/datasources/components/picker/utils';
@@ -21,7 +25,9 @@ import { GroupActionComponents } from 'app/features/query/components/QueryAction
 import { QueryEditorRows } from 'app/features/query/components/QueryEditorRows';
 import { QueryGroupTopSection } from 'app/features/query/components/QueryGroup';
 import { updateQueries } from 'app/features/query/state/updateQueries';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 import { WallEditorDataTab } from 'app/features/wall-modern/editor/WallPanelEditor';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 import { isSharedDashboardQuery } from 'app/plugins/datasource/dashboard';
 import { QueryGroupOptions } from 'app/types';
 
@@ -311,6 +317,7 @@ export class PanelDataQueriesTab extends SceneObjectBase<PanelDataQueriesTabStat
 
 export function PanelDataQueriesTabRendered({ model }: SceneComponentProps<PanelDataQueriesTab>) {
   const { datasource, dsSettings } = model.useState();
+  const wallEditor = usePresentationContext(editorPresentationContext);
   const { data, queries } = model.queryRunner.useState();
 
   if (!datasource || !dsSettings || !data) {
@@ -340,29 +347,51 @@ export function PanelDataQueriesTabRendered({ model }: SceneComponentProps<Panel
         onRunQueries={model.onRunQueries}
       />
 
-      <Stack gap={2}>
-        {showAddButton && (
-          <Button
-            icon="plus"
-            onClick={model.addQueryClick}
-            variant="secondary"
-            data-testid={selectors.components.QueryTab.addQuery}
-          >
-            Add query
-          </Button>
-        )}
-        {config.expressionsEnabled && model.isExpressionsSupported(dsSettings) && (
-          <Button
-            icon="plus"
-            onClick={model.onAddExpressionClick}
-            variant="secondary"
-            data-testid={selectors.components.QueryTab.addExpression}
-          >
-            <span>Expression&nbsp;</span>
-          </Button>
-        )}
-        {model.renderExtraActions()}
-      </Stack>
+      {wallEditor ? (
+        <div className="wall-query-footer">
+          {showAddButton && (
+            <WallButton size="sm" onClick={model.addQueryClick} data-testid={selectors.components.QueryTab.addQuery}>
+              <Plus size={15} />
+              <Trans i18nKey="wall.editor.add-query">쿼리 추가</Trans>
+            </WallButton>
+          )}
+          {config.expressionsEnabled && model.isExpressionsSupported(dsSettings) && (
+            <WallButton
+              size="sm"
+              onClick={model.onAddExpressionClick}
+              data-testid={selectors.components.QueryTab.addExpression}
+            >
+              <Plus size={15} />
+              <Trans i18nKey="wall.editor.add-expression">표현식 추가</Trans>
+            </WallButton>
+          )}
+          {model.renderExtraActions()}
+        </div>
+      ) : (
+        <Stack gap={2}>
+          {showAddButton && (
+            <Button
+              icon="plus"
+              onClick={model.addQueryClick}
+              variant="secondary"
+              data-testid={selectors.components.QueryTab.addQuery}
+            >
+              Add query
+            </Button>
+          )}
+          {config.expressionsEnabled && model.isExpressionsSupported(dsSettings) && (
+            <Button
+              icon="plus"
+              onClick={model.onAddExpressionClick}
+              variant="secondary"
+              data-testid={selectors.components.QueryTab.addExpression}
+            >
+              <span>Expression&nbsp;</span>
+            </Button>
+          )}
+          {model.renderExtraActions()}
+        </Stack>
+      )}
     </div>
   );
 }

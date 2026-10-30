@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import { MessageSquare } from 'lucide-react';
 
 import { AnnotationQuery } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -6,6 +7,12 @@ import { getDataSourceSrv } from '@grafana/runtime';
 import { Button, DeleteButton, EmptyState, IconButton, Stack, TextLink, useStyles2 } from '@grafana/ui';
 import { t, Trans } from 'app/core/internationalization';
 import { ListNewButton } from 'app/features/dashboard/components/DashboardSettings/ListNewButton';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import {
+  WallSettingsCollection,
+  WallCollectionOrder,
+} from 'app/features/wall-modern/management/WallSettingsCollection';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 import { MoveDirection } from '../AnnotationsEditView';
 
@@ -21,6 +28,7 @@ export const BUTTON_TITLE = 'Add annotation query';
 
 export const AnnotationSettingsList = ({ annotations, onNew, onEdit, onMove, onDelete }: Props) => {
   const styles = useStyles2(getStyles);
+  const wallSettings = useWallSettings();
 
   const showEmptyListCTA = annotations.length === 0 || (annotations.length === 1 && annotations[0].builtIn);
 
@@ -37,6 +45,45 @@ export const AnnotationSettingsList = ({ annotations, onNew, onEdit, onMove, onD
   };
 
   const dataSourceSrv = getDataSourceSrv();
+  if (wallSettings) {
+    return (
+      <WallSettingsCollection
+        title={t('wall.settings.annotations', '주석 쿼리')}
+        description={t('wall.settings.annotations-help', '그래프 위에 표시할 이벤트와 주석 데이터입니다.')}
+        count={annotations.length}
+        onAdd={onNew}
+        addLabel={t('ablestack-wall.dashboard.new-query', 'New query')}
+      >
+        {annotations.map((annotation, idx) => (
+          <div className="wall-collection-row" key={`${annotation.name}-${idx}`}>
+            <span className="wall-collection-symbol">
+              <MessageSquare size={17} />
+            </span>
+            <WallButton variant="ghost" className="wall-collection-row-main" onClick={() => onEdit(idx)}>
+              <span className="wall-collection-row-title">{getAnnotationName(annotation)}</span>
+              <span className="wall-collection-row-description">
+                {dataSourceSrv.getInstanceSettings(annotation.datasource)?.name || annotation.datasource?.uid}
+              </span>
+            </WallButton>
+            <div className="wall-collection-row-actions">
+              <WallCollectionOrder
+                index={idx}
+                count={annotations.length}
+                onMove={(direction) => onMove(idx, direction < 0 ? MoveDirection.UP : MoveDirection.DOWN)}
+              />
+              {!annotation.builtIn && (
+                <DeleteButton
+                  size="sm"
+                  aria-label={`Delete query with title "${annotation.name}"`}
+                  onConfirm={() => onDelete(idx)}
+                />
+              )}
+            </div>
+          </div>
+        ))}
+      </WallSettingsCollection>
+    );
+  }
   return (
     <Stack direction="column">
       {annotations.length > 0 && (

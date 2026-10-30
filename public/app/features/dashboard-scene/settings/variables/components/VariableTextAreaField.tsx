@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Field, TextArea, useStyles2 } from '@grafana/ui';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
 
 interface VariableTextAreaFieldProps {
   name: string;
@@ -35,6 +36,29 @@ export function VariableTextAreaField({
 }: PropsWithChildren<VariableTextAreaFieldProps>): ReactElement {
   const styles = useStyles2(getStyles);
   const id = useId();
+  const wallSettings = useWallSettings();
+  if (wallSettings) {
+    return (
+      <div className="wall-form-field">
+        <label htmlFor={id}>{name}</label>
+        <textarea
+          className="wall-form-input"
+          id={id}
+          rows={2}
+          value={value}
+          defaultValue={defaultValue}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          required={required}
+          aria-label={ariaLabel}
+          data-testid={testId}
+          aria-describedby={description ? `${id}-help` : undefined}
+        />
+        {description && <p id={`${id}-help`}>{description}</p>}
+      </div>
+    );
+  }
 
   return (
     <Field label={name} description={description} htmlFor={id}>

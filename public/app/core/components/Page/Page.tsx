@@ -14,6 +14,8 @@ import { GrafanaTheme2, PageLayoutType } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { useStyles2 } from '@grafana/ui';
 import { useGrafana } from 'app/core/context/GrafanaContext';
+import { useWallSettings } from 'app/features/wall-modern/management/SettingsPresentationContext';
+import { WallSettingsPage } from 'app/features/wall-modern/management/WallManagement';
 
 import { TOP_BAR_LEVEL_HEIGHT } from '../AppChrome/types';
 import NativeScrollbar from '../NativeScrollbar';
@@ -69,6 +71,7 @@ export const Page: PageType = ({
   onSetScrollRef,
   ...otherProps
 }) => {
+  const wallSettings = useWallSettings();
   const isSingleTopNav = config.featureToggles.singleTopNav;
   const [toolbar, setToolbar] = useState(toolbarProp);
   const styles = useStyles2(getStyles, Boolean(isSingleTopNav && toolbar));
@@ -90,6 +93,16 @@ export const Page: PageType = ({
       });
     }
   }, [navModel, pageNav, chrome, layout]);
+
+  if (wallSettings) {
+    return (
+      <PageContext.Provider value={{ setToolbar }}>
+        <WallSettingsPage dashboard={wallSettings} pageNav={pageNav}>
+          {children}
+        </WallSettingsPage>
+      </PageContext.Provider>
+    );
+  }
 
   return (
     <PageContext.Provider value={{ setToolbar }}>

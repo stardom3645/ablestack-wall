@@ -1,9 +1,12 @@
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
+import { useContext } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
-import { IconButton, IconName, useStyles2 } from '@grafana/ui';
+import { Icon, IconButton, IconName, useStyles2 } from '@grafana/ui';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 interface BaseQueryOperationActionProps {
   icon: IconName;
@@ -15,6 +18,23 @@ interface BaseQueryOperationActionProps {
 
 function BaseQueryOperationAction(props: QueryOperationActionProps | QueryOperationToggleActionProps) {
   const styles = useStyles2(getStyles);
+  const wallEditor = useContext(editorPresentationContext);
+  if (wallEditor) {
+    return (
+      <WallButton
+        size="icon"
+        variant="ghost"
+        title={props.title}
+        aria-label={props.title}
+        disabled={!!props.disabled}
+        onClick={props.onClick}
+        data-testid={props.dataTestId ?? selectors.components.QueryEditorRow.actionButton(props.title)}
+        {...('active' in props && { 'aria-pressed': props.active })}
+      >
+        <Icon name={props.icon} size="sm" />
+      </WallButton>
+    );
+  }
 
   return (
     <div className={cx(styles.icon, 'active' in props && props.active && styles.active)}>

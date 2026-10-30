@@ -53,9 +53,11 @@ export function retainedToolbarLinks(links: DashboardLink[]) {
 export function WallDashboardToolbar({
   dashboard,
   controls,
+  analysisOnly = false,
 }: {
   dashboard: DashboardScene;
   controls: DashboardControls;
+  analysisOnly?: boolean;
 }) {
   const typography = useContext(WallTypographyContext);
   const { uid, links, meta, kioskMode } = dashboard.useState();
@@ -162,111 +164,113 @@ export function WallDashboardToolbar({
           </PopoverContent>
         </Popover>
       </div>
-      <div className="wall-toolbar-secondary" role="group" aria-label="대시보드 작업">
-        {canAdjustLayout && <WallLayoutHistoryControls />}
-        {!hideLinksControls && netdive && anchor && (
-          <Button
-            render={
-              <a
-                href={sanitizeUrl(anchor.href)}
-                target={netdive.targetBlank ? '_blank' : undefined}
-                rel="noreferrer"
-                aria-label="Netdive"
-              />
-            }
-            nativeButton={false}
-            role="link"
-            variant="ghost"
-          >
-            <ExternalLink size={16} />
-            Netdive
-          </Button>
-        )}
-        {!hideLinksControls && remainingLinks.length > 0 && (
-          <DashboardLinksControls links={remainingLinks} dashboard={dashboard} />
-        )}
-        {uid && meta.canStar && (
-          <Button
-            size="icon"
-            variant="ghost"
-            aria-label={meta.isStarred ? '즐겨찾기 해제' : '즐겨찾기 추가'}
-            aria-pressed={Boolean(meta.isStarred)}
-            onClick={() => {
-              DashboardInteractions.toolbarFavoritesClick();
-              dashboard.onStarDashboard();
-            }}
-          >
-            <Star size={17} fill={meta.isStarred ? 'currentColor' : 'none'} />
-          </Button>
-        )}
-        <DynamicActions />
-        {canShare && (
-          <>
-            <Button variant="ghost" onClick={openShare}>
-              <Share2 size={16} />
-              공유
-            </Button>
-            {config.featureToggles.newDashboardSharingComponent && (
-              <Popover>
-                <PopoverTrigger render={<Button size="icon" variant="ghost" />} aria-label="추가 공유 및 내보내기">
-                  <ChevronDown size={14} />
-                </PopoverTrigger>
-                <PopoverContent aria-label="추가 공유 및 내보내기">
-                  <ShareMenu dashboard={dashboard} />
-                  <ExportMenu dashboard={dashboard} />
-                </PopoverContent>
-              </Popover>
-            )}
-          </>
-        )}
-        {canEdit && (
-          <>
+      {!analysisOnly && (
+        <div className="wall-toolbar-secondary" role="group" aria-label="대시보드 작업">
+          {canAdjustLayout && <WallLayoutHistoryControls />}
+          {!hideLinksControls && netdive && anchor && (
             <Button
-              variant="outline"
+              render={
+                <a
+                  href={sanitizeUrl(anchor.href)}
+                  target={netdive.targetBlank ? '_blank' : undefined}
+                  rel="noreferrer"
+                  aria-label="Netdive"
+                />
+              }
+              nativeButton={false}
+              role="link"
+              variant="ghost"
+            >
+              <ExternalLink size={16} />
+              Netdive
+            </Button>
+          )}
+          {!hideLinksControls && remainingLinks.length > 0 && (
+            <DashboardLinksControls links={remainingLinks} dashboard={dashboard} />
+          )}
+          {uid && meta.canStar && (
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label={meta.isStarred ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+              aria-pressed={Boolean(meta.isStarred)}
               onClick={() => {
-                dashboard.onEnterEditMode();
-                dashboard.urlSync?.updateFromUrl({ editview: 'settings' });
-                dashboard.onOpenSettings();
+                DashboardInteractions.toolbarFavoritesClick();
+                dashboard.onStarDashboard();
               }}
             >
-              <Settings size={15} />
-              대시보드 설정
+              <Star size={17} fill={meta.isStarred ? 'currentColor' : 'none'} />
             </Button>
-            <Menu.Root>
-              <Menu.Trigger render={<Button variant="outline" size="icon" />} aria-label="대시보드 관리">
-                <ChevronDown size={14} />
-              </Menu.Trigger>
-              <Menu.Portal>
-                <Menu.Positioner className="wall-toolbar-positioner">
-                  <Menu.Popup
-                    className="wall-modern wall-toolbar-popover wall-interval-menu"
-                    data-wall-theme={theme.isDark ? 'dark' : 'light'}
-                  >
-                    <Menu.Item
-                      className="wall-toolbar-menu-item"
-                      onClick={() => {
-                        dashboard.onEnterEditMode();
-                        dashboard.setState({ editPanel: buildPanelEditScene(dashboard.onCreateNewPanel(), true) });
-                      }}
+          )}
+          <DynamicActions />
+          {canShare && (
+            <>
+              <Button variant="ghost" onClick={openShare}>
+                <Share2 size={16} />
+                공유
+              </Button>
+              {config.featureToggles.newDashboardSharingComponent && (
+                <Popover>
+                  <PopoverTrigger render={<Button size="icon" variant="ghost" />} aria-label="추가 공유 및 내보내기">
+                    <ChevronDown size={14} />
+                  </PopoverTrigger>
+                  <PopoverContent aria-label="추가 공유 및 내보내기">
+                    <ShareMenu dashboard={dashboard} />
+                    <ExportMenu dashboard={dashboard} />
+                  </PopoverContent>
+                </Popover>
+              )}
+            </>
+          )}
+          {canEdit && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  dashboard.onEnterEditMode();
+                  dashboard.urlSync?.updateFromUrl({ editview: 'settings' });
+                  dashboard.onOpenSettings();
+                }}
+              >
+                <Settings size={15} />
+                대시보드 설정
+              </Button>
+              <Menu.Root>
+                <Menu.Trigger render={<Button variant="outline" size="icon" />} aria-label="대시보드 관리">
+                  <ChevronDown size={14} />
+                </Menu.Trigger>
+                <Menu.Portal>
+                  <Menu.Positioner className="wall-toolbar-positioner">
+                    <Menu.Popup
+                      className="wall-modern wall-toolbar-popover wall-interval-menu"
+                      data-wall-theme={theme.isDark ? 'dark' : 'light'}
                     >
-                      패널 추가
-                    </Menu.Item>
-                    <Menu.Item
-                      className="wall-toolbar-menu-item"
-                      onClick={() => {
-                        dashboard.onEnterEditMode();
-                        dashboard.onShowAddLibraryPanelDrawer();
-                      }}
-                    >
-                      라이브러리에서 추가
-                    </Menu.Item>
-                  </Menu.Popup>
-                </Menu.Positioner>
-              </Menu.Portal>
-            </Menu.Root>
-          </>
-        )}
-      </div>
+                      <Menu.Item
+                        className="wall-toolbar-menu-item"
+                        onClick={() => {
+                          dashboard.onEnterEditMode();
+                          dashboard.setState({ editPanel: buildPanelEditScene(dashboard.onCreateNewPanel(), true) });
+                        }}
+                      >
+                        패널 추가
+                      </Menu.Item>
+                      <Menu.Item
+                        className="wall-toolbar-menu-item"
+                        onClick={() => {
+                          dashboard.onEnterEditMode();
+                          dashboard.onShowAddLibraryPanelDrawer();
+                        }}
+                      >
+                        라이브러리에서 추가
+                      </Menu.Item>
+                    </Menu.Popup>
+                  </Menu.Positioner>
+                </Menu.Portal>
+              </Menu.Root>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

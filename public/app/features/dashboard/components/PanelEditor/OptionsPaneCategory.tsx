@@ -1,5 +1,7 @@
+import { Collapsible } from '@base-ui/react/collapsible';
 import { css, cx } from '@emotion/css';
-import { ReactNode, useCallback, useEffect, useState, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { ReactNode, useContext, useCallback, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
 import { useLocalStorage } from 'react-use';
 
@@ -7,6 +9,8 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Button, Counter, useStyles2 } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 import { PANEL_EDITOR_UI_STATE_STORAGE_KEY } from './state/reducers';
 
@@ -38,6 +42,7 @@ export const OptionsPaneCategory = React.memo(
     isNested = false,
     sandboxId,
   }: OptionsPaneCategoryProps) => {
+    const wallEditor = useContext(editorPresentationContext);
     const [savedState, setSavedState] = useLocalStorage(getOptionGroupStorageKey(id), {
       isExpanded: isOpenDefault,
     });
@@ -77,6 +82,7 @@ export const OptionsPaneCategory = React.memo(
       setIsExpanded(!isExpanded);
     }, [setSavedState, setIsExpanded, updateQueryParams, isExpanded, id]);
 
+    const hasCustomTitle = Boolean(renderTitle);
     if (!renderTitle) {
       renderTitle = function defaultTitle(isExpanded: boolean) {
         if (isExpanded || itemsCount === undefined || itemsCount === 0) {
@@ -109,6 +115,47 @@ export const OptionsPaneCategory = React.memo(
       [styles.bodyNested]: isNested,
     });
 
+    if (wallEditor) {
+      return (
+        <Collapsible.Root
+          open={isExpanded}
+          onOpenChange={onToggle}
+          className={cx('wall-option-group', isNested && 'wall-option-group-nested', className)}
+          data-plugin-sandbox={sandboxId}
+          data-testid={selectors.components.OptionsGroup.group(id)}
+          ref={ref}
+        >
+          {hasCustomTitle ? (
+            <div className="wall-option-group-heading">
+              <div id={`button-${id}`} className="wall-option-native-title">
+                {renderTitle(isExpanded)}
+              </div>
+              <Collapsible.Trigger
+                render={<WallButton variant="ghost" size="icon" />}
+                aria-label={title ?? id}
+                data-testid={selectors.components.OptionsGroup.toggle(id)}
+                className="wall-option-custom-trigger"
+              >
+                <ChevronDown size={14} aria-hidden="true" />
+              </Collapsible.Trigger>
+            </div>
+          ) : (
+            <Collapsible.Trigger
+              render={<WallButton variant="ghost" />}
+              className="wall-option-group-trigger"
+              data-testid={selectors.components.OptionsGroup.toggle(id)}
+              id={`button-${id}`}
+            >
+              <span>{renderTitle(isExpanded)}</span>
+              <ChevronDown size={14} aria-hidden="true" />
+            </Collapsible.Trigger>
+          )}
+          <Collapsible.Panel className="wall-option-group-content" id={id} aria-labelledby={`button-${id}`}>
+            {children}
+          </Collapsible.Panel>
+        </Collapsible.Root>
+      );
+    }
     return (
       <div
         className={boxStyles}

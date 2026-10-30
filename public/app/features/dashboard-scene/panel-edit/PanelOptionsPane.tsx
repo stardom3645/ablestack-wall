@@ -1,4 +1,6 @@
+import { Input as BaseInput } from '@base-ui/react/input';
 import { css } from '@emotion/css';
+import { Search } from 'lucide-react';
 import { useContext, useMemo } from 'react';
 
 import {
@@ -22,7 +24,7 @@ import {
   sceneGraph,
 } from '@grafana/scenes';
 import { Button, Card, FilterInput, Stack, ToolbarButton, useStyles2 } from '@grafana/ui';
-import { Trans } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
 import { OptionFilter } from 'app/features/dashboard/components/PanelEditor/OptionsPaneOptions';
 import { getPanelPluginNotFound } from 'app/features/panel/components/PanelPluginError';
 import { VizTypeChangeDetails } from 'app/features/panel/components/VizTypePicker/types';
@@ -112,18 +114,31 @@ export class PanelOptionsPane extends SceneObjectBase<PanelOptionsPaneState> {
     const { data } = sceneGraph.getData(panel).useState();
     const styles = useStyles2(getStyles);
     const isAngularPanel = isUsingAngularPanelPlugin(panel);
+    const wallEditor = useContext(WallPanelEditorContext);
     return (
       <>
         {!isVizPickerOpen && (
           <>
-            <div className={styles.top}>
+            <div className={wallEditor ? 'wall-options-tools' : styles.top}>
               <VisualizationButton pluginId={pluginId} onOpen={model.onToggleVizPicker} />
-              <FilterInput
-                className={styles.searchOptions}
-                value={searchQuery}
-                placeholder="Search options"
-                onChange={model.onSetSearchQuery}
-              />
+              {wallEditor ? (
+                <div className="wall-option-search">
+                  <Search size={15} aria-hidden="true" />
+                  <BaseInput
+                    value={searchQuery}
+                    placeholder={t('wall.editor.option-search', '설정 검색')}
+                    aria-label={t('wall.editor.option-search', '설정 검색')}
+                    onValueChange={model.onSetSearchQuery}
+                  />
+                </div>
+              ) : (
+                <FilterInput
+                  className={styles.searchOptions}
+                  value={searchQuery}
+                  placeholder="Search options"
+                  onChange={model.onSetSearchQuery}
+                />
+              )}
             </div>
             {isAngularPanel && (
               <div className={styles.angularDeprecationContainer}>

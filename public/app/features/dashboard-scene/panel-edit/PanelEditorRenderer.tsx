@@ -4,13 +4,17 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { SceneComponentProps, VizPanel } from '@grafana/scenes';
 import { Button, Spinner, ToolbarButton, useStyles2 } from '@grafana/ui';
+import { AppChromeUpdate } from 'app/core/components/AppChrome/AppChromeUpdate';
 import {
   WallEditorOptions,
   WallEditorPreview,
   WallPanelEditorFrame,
 } from 'app/features/wall-modern/editor/WallPanelEditor';
+import { WallManagementActions } from 'app/features/wall-modern/management/WallManagement';
 import { STORAGE_VM_DASHBOARD_UID } from 'app/features/wall-modern/statPresentation';
+import { WallDashboardToolbar } from 'app/features/wall-modern/toolbar/WallDashboardToolbar';
 
+import { DashboardControls } from '../scene/DashboardControls';
 import { NavToolbarActions } from '../scene/NavToolbarActions';
 import { UnlinkModal } from '../scene/UnlinkModal';
 import { getDashboardSceneFor, getLibraryPanelBehavior } from '../utils/utils';
@@ -39,8 +43,19 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
 
   return (
     <>
-      <NavToolbarActions dashboard={dashboard} />
-      <WallPanelEditorFrame enabled={wallEditor} title={title} dirty={isDirty}>
+      {wallEditor ? <AppChromeUpdate /> : <NavToolbarActions dashboard={dashboard} />}
+      <WallPanelEditorFrame
+        enabled={wallEditor}
+        title={title}
+        dirty={isDirty}
+        actions={
+          <WallManagementActions
+            dashboard={dashboard}
+            editor={model}
+            library={Boolean(getLibraryPanelBehavior(model.getPanel()))}
+          />
+        }
+      >
         <div
           {...containerProps}
           className={cx(containerProps.className, styles.content)}
@@ -107,7 +122,11 @@ function VizAndDataPane({ model }: SceneComponentProps<PanelEditor>) {
     <div className={cx(styles.pageContainer, controls && styles.pageContainerWithControls)}>
       {controls && (
         <div className={styles.controlsWrapper}>
-          <controls.Component model={controls} />
+          {dashboard.state.uid === STORAGE_VM_DASHBOARD_UID && controls instanceof DashboardControls ? (
+            <WallDashboardToolbar dashboard={dashboard} controls={controls} analysisOnly />
+          ) : (
+            <controls.Component model={controls} />
+          )}
         </div>
       )}
       <div {...containerProps}>
