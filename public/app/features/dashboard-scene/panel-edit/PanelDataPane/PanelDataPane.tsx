@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import { useContext } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -16,6 +17,7 @@ import { getConfig } from 'app/core/config';
 import { contextSrv } from 'app/core/core';
 import { getRulesPermissions } from 'app/features/alerting/unified/utils/access-control';
 import { GRAFANA_RULES_SOURCE_NAME } from 'app/features/alerting/unified/utils/datasource';
+import { WallEditorDataTabs, WallPanelEditorContext } from 'app/features/wall-modern/editor/WallPanelEditor';
 
 import { PanelDataAlertingTab } from './PanelDataAlertingTab';
 import { PanelDataQueriesTab } from './PanelDataQueriesTab';
@@ -70,6 +72,7 @@ export class PanelDataPane extends SceneObjectBase<PanelDataPaneState> {
 
 function PanelDataPaneRendered({ model }: SceneComponentProps<PanelDataPane>) {
   const { tab, tabs } = model.useState();
+  const wallEditor = useContext(WallPanelEditorContext);
   const styles = useStyles2(getStyles);
 
   if (!tabs || !tabs.length) {
@@ -77,6 +80,29 @@ function PanelDataPaneRendered({ model }: SceneComponentProps<PanelDataPane>) {
   }
 
   const currentTab = tabs.find((t) => t.tabId === tab);
+
+  if (wallEditor) {
+    return (
+      <div className={styles.dataPane} data-testid={selectors.components.PanelEditor.DataPane.content}>
+        <WallEditorDataTabs
+          value={tab}
+          onValueChange={(value) => {
+            const nextTab = tabs.find((item) => item.tabId === value);
+            if (nextTab) {
+              model.onChangeTab(nextTab);
+            }
+          }}
+          tabs={tabs.map((item) => item.renderTab({ active: item.tabId === tab }))}
+        >
+          <CustomScrollbar className={styles.scroll}>
+            <div className={styles.wallTabContent}>
+              <Container>{currentTab && <currentTab.Component model={currentTab} />}</Container>
+            </div>
+          </CustomScrollbar>
+        </WallEditorDataTabs>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.dataPane} data-testid={selectors.components.PanelEditor.DataPane.content}>
@@ -115,6 +141,10 @@ function getStyles(theme: GrafanaTheme2) {
       minHeight: 0,
       height: '100%',
       width: '100%',
+    }),
+    wallTabContent: css({
+      padding: 'var(--wall-card-padding)',
+      flexGrow: 1,
     }),
     tabContent: css({
       padding: theme.spacing(2),

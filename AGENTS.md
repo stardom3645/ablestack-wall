@@ -82,3 +82,5 @@
 - 미리보기/놓기 최신 기준은 DESIGN_SYSTEM.md REF-62다. 파란 선·빗금·크기 안내는 panelPixelRect가 계산한 **최종 실제 카드 border box**를 예측한다. REF-61의 간격 포함 셀 크기 외곽선을 복원하지 않는다. native outer 셀/gutter와 실제 카드 rect를 혼동하지 않는다. mouseup에서 배치를 다시 계산하지 않고 마지막 화면의 gesture.preview를 native items와 draft/Undo에 동일하게 확정한다. 실측은 drop 직전 렌더된 preview DOM rect와 drop 후 실제 카드 DOM rect의 x/y/w/h를 비교한다. data-wall-drop-preview는 다음 조작에서 지우는 단일 패널 DOM 진단이며 저장/전송하지 않는다. 기존 Grid·모션·데이터·일괄 저장/취소는 유지한다.
 
 - 조작 중 키오스크/읽기 전용 전환은 DESIGN_SYSTEM.md REF-63을 따른다. readOnly 전환 시 진행 중 Drag/Resize와 pending 입력·Grid/footprint만 기존 abort 경로로 취소하고 이전 완료 draft/Undo는 보존한다. 전환을 drop·저장으로 처리하지 않는다. 자율 개발은 기존 사용자 index/미커밋 작업을 보존하는 관리 Worktree를 재사용하고 진행/커밋/검증은 docs/WALL_AUTODEV_PROGRESS.md에 기록한다.
+
+- 05번 패널 편집 Workspace는 DESIGN_SYSTEM.md REF-64를 따른다. WallPanelEditor 프레임/로컬 shadcn Card·Base UI Tabs/Button을 사용하되 native Query/Transform/옵션/권한/저장·취소 모델을 유지한다. 다른 UID는 native fallback이다. Monaco 테마는 프레임 안에서 native 정의 함수와 setTheme로 동기화하고 편집 버퍼를 remount하지 않는다. 기존 48열/대시보드 배치/차트 스타일은 변경하지 않는다.

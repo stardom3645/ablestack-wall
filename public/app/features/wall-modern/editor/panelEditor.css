@@ -1,0 +1,147 @@
+.wall-panel-editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--wall-bg);
+  color: var(--wall-panel-text);
+}
+.wall-editor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wall-card-gap);
+  padding: var(--wall-card-padding);
+  border-bottom: 1px solid var(--wall-card-border);
+  background: var(--wall-surface);
+  flex-shrink: 0;
+}
+.wall-editor-title {
+  min-width: 0;
+}
+.wall-editor-title > span,
+.wall-editor-status {
+  color: var(--wall-panel-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+}
+.wall-editor-title h1 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--wall-type-section-size);
+  font-weight: var(--wall-type-section-weight);
+  line-height: var(--wall-type-section-line);
+}
+.wall-editor-status {
+  flex-shrink: 0;
+  padding: var(--wall-card-padding-compact);
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+}
+.wall-editor-status[data-dirty] {
+  color: var(--wall-panel-text);
+  background: var(--wall-soft);
+}
+.wall-editor-workspace {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: var(--wall-card-gap);
+}
+.wall-editor-preview,
+.wall-editor-options {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  box-shadow: var(--wall-card-shadow);
+  overflow: hidden;
+}
+.wall-editor-visualization-button {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: var(--wall-editor-heading-height);
+  border-radius: var(--wall-radius);
+  text-align: left;
+}
+.wall-editor-visualization-button img {
+  width: var(--wall-card-padding);
+  height: var(--wall-card-padding);
+}
+.wall-editor-visualization-button span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wall-editor-region-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+  min-height: var(--wall-editor-heading-height);
+  padding: var(--wall-card-padding-compact) var(--wall-card-padding);
+  border-bottom: 1px solid var(--wall-card-border);
+  color: var(--wall-panel-text);
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+  line-height: var(--wall-type-panel-line);
+  flex-shrink: 0;
+}
+.wall-editor-region-heading > .wall-button {
+  margin-left: auto;
+  font-size: var(--wall-type-control-size);
+}
+.wall-editor-preview-content,
+.wall-editor-options-content {
+  flex: 1;
+  min-height: 0;
+}
+.wall-editor-options-content {
+  display: flex;
+  flex-direction: column;
+}
+.wall-editor-data {
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  overflow: hidden;
+}
+.wall-editor-data > .wall-ui-tabs-list {
+  min-height: var(--wall-editor-heading-height);
+  gap: var(--wall-card-content-gap);
+  padding: 0 var(--wall-card-padding-compact);
+  border-bottom: 1px solid var(--wall-card-border);
+  flex-shrink: 0;
+}
+.wall-editor-data .wall-ui-tabs-trigger {
+  padding: var(--wall-card-padding-compact);
+  font-size: var(--wall-type-control-size);
+  line-height: var(--wall-type-control-line);
+  color: var(--wall-panel-muted);
+  border-radius: var(--wall-radius);
+}
+.wall-editor-data .wall-ui-tabs-trigger[data-active] {
+  color: var(--wall-panel-text);
+  background: var(--wall-soft);
+}
+.wall-editor-tab-count {
+  color: var(--wall-panel-muted);
+  font-size: var(--wall-type-caption-size);
+  font-variant-numeric: tabular-nums;
+}
+.wall-editor-data-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}

@@ -15,6 +15,7 @@ import {
 } from '@grafana/scenes';
 import { Button, ButtonGroup, ConfirmModal, Tab, useStyles2 } from '@grafana/ui';
 import { TransformationOperationRows } from 'app/features/dashboard/components/TransformationsEditor/TransformationOperationRows';
+import { WallEditorDataTab } from 'app/features/wall-modern/editor/WallPanelEditor';
 
 import { getQueryRunnerFor } from '../../utils/utils';
 
@@ -209,7 +210,8 @@ function TransformationsTab(props: TransformationsTabProps) {
   const transformerState = model.getDataTransformer().useState();
 
   return (
-    <Tab
+    <WallEditorDataTab
+      value={model.tabId}
       label={model.getTabLabel()}
       icon="process"
       counter={transformerState.transformations.length}

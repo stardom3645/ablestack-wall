@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import {
   FieldConfigSource,
@@ -28,6 +28,7 @@ import { getPanelPluginNotFound } from 'app/features/panel/components/PanelPlugi
 import { VizTypeChangeDetails } from 'app/features/panel/components/VizTypePicker/types';
 import { getAllPanelPluginMeta } from 'app/features/panel/state/util';
 import { AngularDeprecationPluginNotice } from 'app/features/plugins/angularDeprecation/AngularDeprecationPluginNotice';
+import { WallEditorVisualizationButton, WallPanelEditorContext } from 'app/features/wall-modern/editor/WallPanelEditor';
 
 import { isUsingAngularPanelPlugin } from '../scene/angular/AngularDeprecation';
 
@@ -218,6 +219,7 @@ interface VisualizationButtonProps {
 
 export function VisualizationButton({ pluginId, onOpen }: VisualizationButtonProps) {
   const styles = useStyles2(getVizButtonStyles);
+  const wallEditor = useContext(WallPanelEditorContext);
   let pluginMeta: PanelPluginMeta | undefined = useMemo(
     () => getAllPanelPluginMeta().filter((p) => p.id === pluginId)[0],
     [pluginId]
@@ -226,6 +228,10 @@ export function VisualizationButton({ pluginId, onOpen }: VisualizationButtonPro
   if (!pluginMeta) {
     const notFound = getPanelPluginNotFound(`Panel plugin not found (${pluginId})`, true);
     pluginMeta = notFound.meta;
+  }
+
+  if (wallEditor) {
+    return <WallEditorVisualizationButton name={pluginMeta.name} logo={pluginMeta.info.logos.small} onOpen={onOpen} />;
   }
 
   return (

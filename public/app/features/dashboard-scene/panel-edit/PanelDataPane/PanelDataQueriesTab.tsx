@@ -12,7 +12,7 @@ import {
   SceneDataQuery,
 } from '@grafana/scenes';
 import { DataQuery } from '@grafana/schema';
-import { Button, Stack, Tab } from '@grafana/ui';
+import { Button, Stack } from '@grafana/ui';
 import { addQuery } from 'app/core/utils/query';
 import { getLastUsedDatasourceFromStorage } from 'app/features/dashboard/utils/dashboard';
 import { storeLastUsedDataSourceInLocalStorage } from 'app/features/datasources/components/picker/utils';
@@ -21,6 +21,7 @@ import { GroupActionComponents } from 'app/features/query/components/QueryAction
 import { QueryEditorRows } from 'app/features/query/components/QueryEditorRows';
 import { QueryGroupTopSection } from 'app/features/query/components/QueryGroup';
 import { updateQueries } from 'app/features/query/state/updateQueries';
+import { WallEditorDataTab } from 'app/features/wall-modern/editor/WallPanelEditor';
 import { isSharedDashboardQuery } from 'app/plugins/datasource/dashboard';
 import { QueryGroupOptions } from 'app/types';
 
@@ -376,7 +377,8 @@ function QueriesTab(props: QueriesTabProps) {
   const queryRunnerState = model.queryRunner.useState();
 
   return (
-    <Tab
+    <WallEditorDataTab
+      value={model.tabId}
       label={model.getTabLabel()}
       icon="database"
       counter={queryRunnerState.queries.length}

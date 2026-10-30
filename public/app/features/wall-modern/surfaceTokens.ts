@@ -56,6 +56,7 @@ export function wallSurfaceVariables(isDark: boolean): CSSProperties {
     '--wall-card-padding': `${wallSurfaceTokens.padding}px`,
     '--wall-card-padding-compact': `${wallSurfaceTokens.compactPadding}px`,
     '--wall-card-content-gap': `${wallSurfaceTokens.contentGap}px`,
+    '--wall-editor-heading-height': `${wallSurfaceTokens.headerHeight}px`,
     '--wall-card-gap': `${wallSurfaceTokens.cardGap}px`,
     '--wall-section-gap': `${wallSurfaceTokens.sectionGap}px`,
   } as CSSProperties;

@@ -4,6 +4,12 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { SceneComponentProps, VizPanel } from '@grafana/scenes';
 import { Button, Spinner, ToolbarButton, useStyles2 } from '@grafana/ui';
+import {
+  WallEditorOptions,
+  WallEditorPreview,
+  WallPanelEditorFrame,
+} from 'app/features/wall-modern/editor/WallPanelEditor';
+import { STORAGE_VM_DASHBOARD_UID } from 'app/features/wall-modern/statPresentation';
 
 import { NavToolbarActions } from '../scene/NavToolbarActions';
 import { UnlinkModal } from '../scene/UnlinkModal';
@@ -15,7 +21,9 @@ import { useSnappingSplitter } from './splitter/useSnappingSplitter';
 
 export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>) {
   const dashboard = getDashboardSceneFor(model);
-  const { optionsPane } = model.useState();
+  const { optionsPane, isDirty } = model.useState();
+  const { title } = model.getPanel().useState();
+  const wallEditor = dashboard.state.uid === STORAGE_VM_DASHBOARD_UID;
   const styles = useStyles2(getStyles);
 
   const { containerProps, primaryProps, secondaryProps, splitterProps, splitterState, onToggleCollapse } =
@@ -32,32 +40,41 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
   return (
     <>
       <NavToolbarActions dashboard={dashboard} />
-      <div
-        {...containerProps}
-        className={cx(containerProps.className, styles.content)}
-        data-testid={selectors.components.PanelEditor.General.content}
-      >
-        <div {...primaryProps} className={cx(primaryProps.className, styles.body)}>
-          <VizAndDataPane model={model} />
+      <WallPanelEditorFrame enabled={wallEditor} title={title} dirty={isDirty}>
+        <div
+          {...containerProps}
+          className={cx(containerProps.className, styles.content)}
+          data-testid={selectors.components.PanelEditor.General.content}
+        >
+          <div {...primaryProps} className={cx(primaryProps.className, styles.body)}>
+            <VizAndDataPane model={model} />
+          </div>
+          <div {...splitterProps} />
+          <div
+            {...secondaryProps}
+            className={cx(secondaryProps.className, wallEditor ? styles.wallOptionsPane : styles.optionsPane)}
+          >
+            {splitterState.collapsed && (
+              <div className={styles.expandOptionsWrapper}>
+                <ToolbarButton
+                  tooltip={'Open options pane'}
+                  icon={'arrow-to-right'}
+                  onClick={onToggleCollapse}
+                  variant="canvas"
+                  className={styles.rotate180}
+                  aria-label={'Open options pane'}
+                />
+              </div>
+            )}
+            {!splitterState.collapsed && optionsPane && (
+              <WallEditorOptions>
+                <optionsPane.Component model={optionsPane} />
+              </WallEditorOptions>
+            )}
+            {!splitterState.collapsed && !optionsPane && <Spinner />}
+          </div>
         </div>
-        <div {...splitterProps} />
-        <div {...secondaryProps} className={cx(secondaryProps.className, styles.optionsPane)}>
-          {splitterState.collapsed && (
-            <div className={styles.expandOptionsWrapper}>
-              <ToolbarButton
-                tooltip={'Open options pane'}
-                icon={'arrow-to-right'}
-                onClick={onToggleCollapse}
-                variant="canvas"
-                className={styles.rotate180}
-                aria-label={'Open options pane'}
-              />
-            </div>
-          )}
-          {!splitterState.collapsed && optionsPane && <optionsPane.Component model={optionsPane} />}
-          {!splitterState.collapsed && !optionsPane && <Spinner />}
-        </div>
-      </div>
+      </WallPanelEditorFrame>
     </>
   );
 }
@@ -95,7 +112,13 @@ function VizAndDataPane({ model }: SceneComponentProps<PanelEditor>) {
       )}
       <div {...containerProps}>
         <div {...primaryProps}>
-          <VizWrapper panel={panel} tableView={tableView} />
+          <WallEditorPreview
+            tableView={Boolean(tableView)}
+            hasData={Boolean(dataPane)}
+            onToggleTableView={model.onToggleTableView}
+          >
+            <VizWrapper panel={panel} tableView={tableView} />
+          </WallEditorPreview>
         </div>
         {showLibraryPanelSaveModal && libraryPanel && (
           <SaveLibraryVizPanelModal
@@ -194,6 +217,9 @@ function getStyles(theme: GrafanaTheme2) {
       display: 'flex',
       flexDirection: 'column',
       minHeight: 0,
+    }),
+    wallOptionsPane: css({
+      flexDirection: 'column',
     }),
     optionsPane: css({
       flexDirection: 'column',

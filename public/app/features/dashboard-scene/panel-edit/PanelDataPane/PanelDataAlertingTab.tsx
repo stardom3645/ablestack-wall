@@ -9,6 +9,7 @@ import { RulesTable } from 'app/features/alerting/unified/components/rules/Rules
 import { usePanelCombinedRules } from 'app/features/alerting/unified/hooks/usePanelCombinedRules';
 import { getRulesPermissions } from 'app/features/alerting/unified/utils/access-control';
 import { stringifyErrorLike } from 'app/features/alerting/unified/utils/misc';
+import { WallEditorDataTab } from 'app/features/wall-modern/editor/WallPanelEditor';
 
 import { getDashboardSceneFor, getPanelIdForVizPanel } from '../../utils/utils';
 
@@ -119,7 +120,8 @@ function AlertingTab(props: PanelDataAlertingTabHeaderProps) {
   });
 
   return (
-    <Tab
+    <WallEditorDataTab
+      value={model.tabId}
       label={model.getTabLabel()}
       icon="bell"
       counter={rules.length}
