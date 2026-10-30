@@ -1,0 +1,99 @@
+.wall-text-panel-region {
+  min-width: 0;
+  margin-bottom: var(--wall-kpi-gap);
+}
+.wall-text-panel.wall-ui-card {
+  position: relative;
+  min-width: 0;
+  padding: var(--wall-card-padding-compact) var(--wall-card-padding);
+  overflow: visible;
+  /* Retain the existing 1px geometry/hit area, without a decorative card surface. */
+  border: 1px solid transparent;
+  border-radius: var(--wall-radius);
+  background: transparent;
+  box-shadow: none;
+}
+/* Reveal the whole text tile during interaction without changing its geometry. */
+.wall-kpi-layout-item:hover > .wall-text-panel.wall-ui-card,
+.wall-text-panel.wall-ui-card:hover,
+.wall-text-panel.wall-ui-card:focus-within,
+.wall-text-panel.wall-ui-card:has([aria-expanded='true']) {
+  background: var(--wall-surface);
+  border-color: var(--wall-card-border-hover);
+  box-shadow: none;
+}
+.wall-text-panel-content {
+  display: flex;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: baseline;
+  gap: 2px var(--wall-card-gap);
+  height: 100%;
+  overflow: hidden;
+}
+.wall-text-panel-content h2 {
+  margin: 0;
+  color: var(--wall-text);
+  font-size: var(--wall-type-section-size);
+  font-weight: var(--wall-type-section-weight);
+  line-height: var(--wall-type-section-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wall-text-panel-content p {
+  margin: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wall-text-panel-edit.wall-button {
+  color: var(--wall-muted);
+}
+.wall-text-panel-popover {
+  width: min(360px, calc(100vw - 32px));
+}
+.wall-text-panel-popover h3 {
+  margin: 0 0 12px;
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+}
+.wall-text-panel-popover label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: var(--wall-text);
+  font-size: var(--wall-type-body-size);
+}
+.wall-text-panel-popover input,
+.wall-text-panel-popover textarea {
+  width: 100%;
+  border: 1px solid var(--wall-border);
+  border-radius: calc(var(--wall-radius) / 2);
+  padding: 8px 10px;
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  font: inherit;
+}
+.wall-text-panel-popover input:focus,
+.wall-text-panel-popover textarea:focus {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 1px;
+}
+.wall-text-panel-hint {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-text-panel-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.wall-text-panel-content h2 {
+  flex: 0 1 auto;
+  min-width: 0;
+}

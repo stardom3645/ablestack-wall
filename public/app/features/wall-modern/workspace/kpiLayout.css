@@ -1,0 +1,299 @@
+.wall-kpi-pilot {
+  display: flex;
+  flex-direction: column;
+}
+.wall-kpi-pilot[data-has-selection='true']:focus {
+  /* Focus scopes shortcuts; only marked panels, not the entire workspace, are outlined. */
+  outline: none;
+}
+.wall-kpi-pilot[data-has-selection='true'] {
+  /* Reserve the fixed action strip at the scroll end so it cannot cover Save/Cancel. */
+  padding-bottom: calc(var(--wall-section-gap) + 48px);
+}
+.wall-kpi-layout-toolbar {
+  order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-kpi-layout {
+  max-width: 100%;
+  position: relative;
+  border-radius: var(--wall-radius);
+  isolation: isolate;
+}
+.wall-kpi-layout[data-interacting='false'] {
+  background-image: none;
+  outline: none;
+}
+.wall-kpi-layout[data-interacting='true'] {
+  outline: none;
+  /* Paint the guide behind the native Grid, never over panel content or charts. */
+  background-image: radial-gradient(
+    circle,
+    var(--wall-layout-grid-dot) var(--wall-layout-grid-dot-radius),
+    transparent 1.8px
+  );
+  background-size: var(--wall-kpi-grid-step) var(--wall-layout-grid-row, 18px);
+  background-position: calc(var(--wall-kpi-grid-step) / -2) calc(var(--wall-layout-grid-row, 18px) / -2);
+}
+.wall-kpi-layout .react-grid-layout {
+  margin-bottom: calc(-1 * var(--wall-kpi-gutter-y, var(--wall-kpi-gutter)));
+}
+.wall-kpi-layout .wall-kpi-layout-item {
+  padding: 0 var(--wall-kpi-gutter) var(--wall-kpi-gutter-y, var(--wall-kpi-gutter)) 0;
+  border-radius: var(--wall-radius);
+  transition: none;
+}
+.wall-kpi-layout > .react-grid-layout--enable-move-animations > .wall-kpi-layout-item {
+  transition: transform var(--wall-layout-move-duration) var(--wall-layout-move-easing);
+}
+.wall-kpi-layout[data-interacting='true'] > .react-grid-layout > .react-draggable-dragging {
+  will-change: transform;
+}
+.wall-kpi-layout[data-interacting='true'] .wall-workspace-panel {
+  /* A chart passing under the pointer must not open a tooltip during a layout gesture. */
+  pointer-events: none;
+}
+.wall-kpi-layout .wall-kpi-layout-item[data-selected='true']::before,
+.wall-kpi-layout .wall-kpi-layout-item[data-marked='true']::before {
+  content: '';
+  position: absolute;
+  inset: 0 var(--wall-kpi-gutter) var(--wall-kpi-gutter-y, var(--wall-kpi-gutter)) 0;
+  border-radius: var(--wall-radius);
+  pointer-events: none;
+  z-index: 3;
+  outline: var(--wall-selection-stroke) solid var(--wall-primary);
+  outline-offset: calc(-1 * var(--wall-selection-stroke));
+}
+.wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item::before {
+  /* The drop footprint is the only accent contour during move/resize. */
+  content: none;
+}
+.wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-marked='true'] > .wall-workspace-panel,
+.wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-marked='true'] > .wall-text-panel {
+  border-color: transparent;
+  box-shadow: none;
+}
+.wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-marked='true'] {
+  transition-duration: 0s !important;
+}
+.wall-panel-selection-controls {
+  position: fixed;
+  right: var(--wall-section-gap);
+  bottom: var(--wall-section-gap);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--wall-card-content-gap);
+  max-width: calc(100vw - 32px);
+  padding: var(--wall-card-padding-compact);
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  font-size: var(--wall-type-control-size);
+  font-variant-numeric: tabular-nums;
+}
+.wall-panel-selection-hint {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}
+@media (max-width: 1000px) {
+  .wall-panel-selection-hint {
+    display: none;
+  }
+}
+.wall-kpi-layout .react-grid-item.react-grid-placeholder {
+  padding: 0 var(--wall-kpi-gutter) var(--wall-kpi-gutter-y, var(--wall-kpi-gutter)) 0;
+  border-radius: var(--wall-radius);
+  /* Grafana GlobalStyles paints a blue fill/glow with !important. Keep the engine
+     placeholder in the DOM, but let only Wall's correctly inset footprint paint. */
+  visibility: hidden;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
+  background-clip: content-box;
+  border: none;
+  opacity: 1;
+}
+.wall-layout-footprint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  border: 1px solid var(--wall-primary);
+  border-radius: var(--wall-radius);
+  background: repeating-linear-gradient(135deg, var(--wall-layout-preview-stripe) 0 2px, transparent 2px 9px),
+    var(--wall-layout-preview-fill);
+  pointer-events: none;
+}
+.wall-layout-footprint[data-wall-footprint-group='true'] {
+  /* A sparse selection's hull may include unselected charts; keep them readable. */
+  background: transparent;
+}
+.wall-layout-footprint-label {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding: 4px 8px;
+  max-width: calc(100% - 16px);
+  border: 1px solid var(--wall-border);
+  border-radius: calc(var(--wall-radius) / 2);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+  font-variant-numeric: tabular-nums;
+}
+.wall-layout-footprint-label strong {
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-layout-footprint-label span {
+  color: var(--wall-muted);
+}
+.wall-kpi-layout[data-interacting='false'] .react-grid-placeholder {
+  display: none;
+}
+.wall-kpi-layout .react-grid-item.react-draggable-dragging,
+.wall-kpi-layout .react-grid-item.resizing {
+  transition: none;
+}
+.wall-kpi-layout .wall-kpi-move.wall-button {
+  position: static;
+  padding: 0;
+  background: var(--wall-surface);
+  color: var(--wall-muted);
+  cursor: grab;
+  z-index: 4;
+}
+.wall-kpi-layout .wall-kpi-move.wall-button:active {
+  cursor: grabbing;
+}
+.wall-dashboard-workspace .wall-kpi-layout .wall-kpi-resize {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--wall-resize-color);
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  bottom: var(--wall-kpi-gutter-y, var(--wall-kpi-gutter));
+  transform: none;
+  z-index: 4;
+}
+.wall-kpi-layout .wall-kpi-resize::after {
+  display: none;
+}
+.wall-kpi-layout .wall-kpi-resize.react-resizable-handle-se {
+  right: var(--wall-kpi-gutter);
+  left: auto;
+}
+.wall-kpi-layout .wall-kpi-resize.react-resizable-handle-sw {
+  left: 0;
+  right: auto;
+}
+.wall-kpi-corner-grip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.wall-kpi-corner-grip::before,
+.wall-kpi-corner-grip::after {
+  content: '';
+  position: absolute;
+  border-right: var(--wall-resize-stroke) solid currentColor;
+  border-bottom: var(--wall-resize-stroke) solid currentColor;
+}
+.wall-kpi-corner-grip::before {
+  width: 12px;
+  height: 12px;
+  right: var(--wall-resize-inset);
+  bottom: var(--wall-resize-inset);
+}
+.wall-kpi-corner-grip::after {
+  width: 7px;
+  height: 7px;
+  right: calc(var(--wall-resize-inset) + 4px);
+  bottom: calc(var(--wall-resize-inset) + 4px);
+}
+.wall-kpi-resize.react-resizable-handle-sw .wall-kpi-corner-grip {
+  transform: scaleX(-1);
+}
+.wall-dashboard-workspace .wall-kpi-layout .wall-kpi-resize {
+  opacity: 0;
+  visibility: visible;
+  pointer-events: none;
+  transition: opacity 100ms ease;
+}
+.wall-dashboard-workspace .wall-kpi-layout-item:hover > .wall-kpi-resize,
+.wall-dashboard-workspace .wall-kpi-layout-item:focus-within > .wall-kpi-resize,
+.wall-dashboard-workspace .wall-kpi-layout-item[data-selected='true'] > .wall-kpi-resize {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.wall-kpi-layout-feedback {
+  order: 3;
+  color: var(--wall-text);
+  font-size: var(--wall-type-body-size);
+}
+.wall-kpi-layout-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-kpi-layout .react-grid-item,
+  .wall-kpi-layout .wall-kpi-move,
+  .wall-dashboard-workspace .wall-kpi-layout .wall-kpi-resize {
+    transition: none;
+  }
+}
+
+/* Managed geometry owns panel size; content/formatter/query rendering stays native. */
+.wall-dashboard-workspace [data-wall-managed-layout] .wall-workspace-panel[data-wall-panel-id] {
+  width: 100%;
+  max-width: none;
+}
+.wall-dashboard-workspace [data-wall-managed-layout] .wall-kpi-layout {
+  --wall-layout-grid-row: 12px;
+}
+
+/* Presentation correction only; native pointer accumulation remains untouched. */
+.wall-kpi-layout [data-wall-magnet] {
+  transform: translate3d(var(--wall-snap-left), var(--wall-snap-top), 0) !important;
+  transition: none !important;
+}
+.wall-kpi-layout .wall-kpi-layout-item[data-wall-settling] {
+  transition: none;
+}
+.wall-kpi-layout [data-wall-magnet='resize'] {
+  width: var(--wall-snap-width) !important;
+  height: var(--wall-snap-height) !important;
+}
+.wall-layout-alignment-guide {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.wall-layout-alignment-guide[data-axis='x'] {
+  border-left: 1px dashed var(--wall-primary);
+}
+.wall-layout-alignment-guide[data-axis='y'] {
+  border-top: 1px dashed var(--wall-primary);
+}

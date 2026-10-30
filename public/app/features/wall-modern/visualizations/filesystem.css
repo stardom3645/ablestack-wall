@@ -1,0 +1,74 @@
+/* Only the representative dashboard's filesystem display consumes these styles. */
+.wall-filesystem-info {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  padding: 0;
+  font-size: var(--wall-type-body-size);
+  line-height: var(--wall-type-body-line);
+  color: var(--wall-text);
+}
+.wall-filesystem-information {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--wall-card-gap) var(--wall-section-gap);
+  margin: 0;
+  padding: 0;
+}
+.wall-filesystem-information dt {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+}
+.wall-filesystem-information dd {
+  margin: 4px 0 0;
+  font-size: var(--wall-type-section-size);
+  font-weight: var(--wall-type-panel-weight);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.wall-dashboard-workspace [data-wall-panel-id='244']:has([data-wall-filesystem-mode='information']) {
+  width: 100%;
+  max-width: 560px;
+  justify-self: start;
+}
+.wall-dashboard-workspace
+  [data-wall-panel-id='244']:has([data-wall-filesystem-mode='information'][data-wall-filesystem-fields='1']) {
+  max-width: 280px;
+}
+.wall-filesystem-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+.wall-filesystem-table th,
+.wall-filesystem-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--wall-border);
+  white-space: nowrap;
+}
+.wall-filesystem-table th {
+  background: var(--wall-soft);
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  font-weight: var(--wall-type-panel-weight);
+}
+.wall-filesystem-table th .wall-button {
+  height: auto;
+  min-height: 20px;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+.wall-filesystem-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.wall-filesystem-table tbody tr:hover {
+  background: var(--wall-soft);
+}
+.wall-filesystem-notice {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  white-space: normal;
+}

@@ -1,0 +1,271 @@
+/* A-Hybrid: reserved, internal header slots; no floating panel toolbar. */
+.wall-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-panel-control-gap);
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+.wall-panel-header-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-panel-header-title > .wall-ui-card-title {
+  display: block;
+}
+.wall-panel-header-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--wall-card-content-gap);
+  flex-shrink: 0;
+}
+.wall-panel-header-grip,
+.wall-panel-header-menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--wall-panel-control-size);
+  width: var(--wall-panel-control-size);
+  height: var(--wall-panel-control-size);
+  opacity: 0;
+  pointer-events: none;
+}
+.wall-kpi-layout-item:hover .wall-panel-header-grip,
+.wall-kpi-layout-item:hover .wall-panel-header-menu,
+.wall-workspace-panel:hover .wall-panel-header-menu,
+.wall-text-panel:hover .wall-panel-header-menu,
+.wall-panel-header:focus-within .wall-panel-header-grip,
+.wall-panel-header:focus-within .wall-panel-header-menu,
+.wall-kpi-layout-item[data-selected='true'] .wall-panel-header-grip,
+.wall-kpi-layout-item[data-selected='true'] .wall-panel-header-menu,
+.wall-panel-header:has([aria-expanded='true']) .wall-panel-header-menu {
+  opacity: 1;
+  pointer-events: auto;
+}
+.wall-panel-header .wall-button.wall-kpi-move,
+.wall-panel-header .wall-panel-more.wall-button,
+.wall-panel-header .wall-text-panel-edit.wall-button {
+  position: static;
+  display: inline-flex;
+  width: var(--wall-panel-control-size);
+  height: var(--wall-panel-control-size);
+  min-height: var(--wall-panel-control-size);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--wall-radius) / 2);
+  background: transparent;
+  color: var(--wall-muted);
+  box-shadow: none;
+  opacity: 1;
+}
+.wall-panel-header .wall-button:hover,
+.wall-panel-header .wall-button[data-popup-open] {
+  color: var(--wall-text);
+  background: var(--wall-hover);
+}
+.wall-panel-header .wall-button:focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: -2px;
+}
+.wall-panel-header-indicators:empty {
+  display: none;
+}
+.wall-panel-native-actions {
+  display: flex;
+  align-items: center;
+}
+.wall-kpi-layout .wall-kpi-layout-item:focus-within,
+.wall-kpi-layout .wall-kpi-layout-item:has([aria-expanded='true']) {
+  z-index: 5;
+}
+.wall-panel-actions-menu {
+  min-width: 210px;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 5px;
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  outline: none;
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-type-body-size);
+  line-height: var(--wall-type-body-line);
+}
+.wall-panel-actions-heading {
+  padding: 7px 9px 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--wall-type-panel-weight);
+  border-bottom: 1px solid var(--wall-border);
+  margin-bottom: 4px;
+}
+.wall-panel-actions-label,
+.wall-panel-actions-empty {
+  padding: 5px 9px;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-panel-actions-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 32px;
+  padding: 6px 9px;
+  border-radius: calc(var(--wall-radius) / 2);
+  color: var(--wall-text);
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+.wall-panel-actions-item > span {
+  flex: 1;
+}
+.wall-panel-actions-item[data-highlighted],
+.wall-panel-actions-item[data-popup-open] {
+  background: var(--wall-hover);
+  color: var(--wall-text);
+}
+.wall-panel-actions-separator {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--wall-border);
+}
+
+.wall-panel-a11y-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.wall-panel-header .wall-data-title {
+  margin: 0;
+  font: inherit;
+  font-weight: var(--wall-type-panel-weight);
+}
+
+/* One dashboard transaction, reachable even at the end of a long workspace. */
+.wall-document-savebar {
+  position: fixed;
+  bottom: var(--wall-section-gap);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-gap);
+  padding: var(--wall-card-padding-compact) var(--wall-card-padding);
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  box-shadow: var(--wall-card-shadow);
+}
+
+/* Command Menu: fixed envelope keeps Drill-in navigation at the same anchor. */
+.wall-panel-actions-menu.wall-panel-command {
+  width: var(--wall-command-width);
+  min-width: 0;
+  height: min(var(--wall-command-height), var(--available-height, calc(100dvh - 24px)));
+  max-width: calc(100vw - 24px);
+  padding: var(--wall-card-padding-compact, 8px);
+  border-color: var(--wall-command-border);
+  border-radius: var(--wall-command-radius);
+  box-shadow: var(--wall-command-shadow);
+  overflow: hidden;
+}
+.wall-command-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.wall-command-title {
+  flex-shrink: 0;
+  padding: 4px 4px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wall-text);
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+}
+.wall-command-quick {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: var(--wall-soft);
+}
+.wall-panel-command .wall-panel-actions-item {
+  min-height: var(--wall-command-item-height);
+  flex-shrink: 0;
+  gap: 8px;
+  border-radius: 6px;
+  font-size: var(--wall-type-control-size);
+  line-height: var(--wall-type-control-line);
+}
+.wall-panel-command .wall-panel-actions-item svg {
+  flex-shrink: 0;
+}
+.wall-panel-command .wall-panel-actions-item > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-panel-command .wall-panel-actions-item.wall-command-quick-item {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 50px;
+  padding: 5px 2px;
+}
+.wall-panel-command .wall-panel-actions-item[data-highlighted] {
+  color: var(--wall-text);
+  background: var(--wall-command-hover);
+}
+.wall-command-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.wall-command-danger {
+  flex-shrink: 0;
+}
+.wall-panel-command .wall-panel-actions-item[data-danger='true'] {
+  color: var(--wall-command-danger);
+}
+.wall-command-back {
+  margin-bottom: 6px;
+  background: var(--wall-soft);
+  font-weight: var(--wall-type-panel-weight);
+}
+
+/* Dense lower commands only; the three quick actions keep their exact dimensions. */
+.wall-panel-command .wall-panel-actions-item:not(.wall-command-quick-item) {
+  padding-block: 4px;
+}
+.wall-panel-command .wall-panel-actions-separator {
+  margin-block: 3px;
+}
+.wall-panel-command .wall-command-back {
+  margin-bottom: 4px;
+}
+.wall-command-shortcut {
+  margin-left: auto;
+  flex-shrink: 0;
+  font: inherit;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}

@@ -1,0 +1,299 @@
+/* Shared semantic display primitives. Colors and typography use the Wall design system. */
+.wall-data-empty {
+  color: var(--wall-muted);
+  padding: 12px;
+  font-size: var(--wall-type-body-size);
+}
+.wall-data-metrics {
+  display: flex;
+  gap: var(--wall-card-padding);
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+.wall-data-metric {
+  min-width: 0;
+  flex: 1;
+}
+.wall-data-label,
+.wall-entity-list-heading,
+.wall-data-note {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+}
+.wall-data-label {
+  display: block;
+  margin-bottom: 6px;
+}
+.wall-data-title {
+  color: var(--wall-text);
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+}
+.wall-data-value {
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-type-section-size);
+  font-weight: var(--wall-type-panel-weight);
+  font-variant-numeric: tabular-nums;
+}
+.wall-data-value > div {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.wall-data-value-kpi {
+  font-size: var(--wall-type-kpi-size);
+  font-weight: var(--wall-type-kpi-weight);
+  line-height: var(--wall-type-kpi-line);
+  letter-spacing: var(--wall-type-kpi-tracking);
+  color: var(--wall-text);
+}
+.wall-data-value span[style] {
+  color: var(--wall-muted);
+  letter-spacing: var(--wall-type-unit-tracking);
+  line-height: var(--wall-type-unit-line);
+}
+.wall-data-kpi {
+  padding: 0;
+}
+.wall-data-usage {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px var(--wall-card-padding);
+  align-content: center;
+  align-items: baseline;
+  padding: 0;
+}
+.wall-data-usage > .wall-data-metric {
+  display: contents;
+}
+.wall-data-usage .wall-data-value {
+  text-align: right;
+}
+.wall-data-value-usage {
+  font-size: var(--wall-type-gauge-size);
+  font-weight: var(--wall-type-gauge-weight);
+  line-height: var(--wall-type-gauge-line);
+  letter-spacing: var(--wall-type-gauge-tracking);
+}
+.wall-data-usage .wall-capacity-track {
+  height: var(--wall-usage-track-height);
+}
+.wall-capacity-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--wall-border);
+  overflow: visible;
+  position: relative;
+  width: 100%;
+}
+.wall-capacity-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--wall-primary);
+}
+.wall-data-usage .wall-capacity-track,
+.wall-data-usage .wall-data-note {
+  grid-column: 1 / -1;
+}
+.wall-capacity-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: var(--wall-card-gap);
+  padding: 0;
+}
+.wall-capacity-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wall-card-gap) var(--wall-section-gap);
+}
+.wall-capacity-values > div {
+  flex: 1;
+  min-width: 80px;
+}
+.wall-data-service {
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0;
+}
+.wall-data-service .wall-data-metric {
+  flex: 0 0 auto;
+}
+/* Overview's Glue status summary only; NIC counts and the Root capacity card stay unchanged. */
+.wall-dashboard-workspace .wall-workspace-panel[data-wall-panel-id='138'] {
+  width: 100%;
+  max-width: 360px;
+  justify-self: start;
+  background: var(--wall-surface);
+  box-shadow: var(--wall-card-shadow);
+}
+.wall-dashboard-workspace [data-wall-panel-id='138'] .wall-data-counts {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+  gap: var(--wall-card-gap);
+  padding: 0;
+}
+.wall-dashboard-workspace [data-wall-panel-id='138'] .wall-data-value {
+  font-size: var(--wall-type-gauge-size);
+  font-weight: var(--wall-type-gauge-weight);
+  line-height: var(--wall-type-gauge-line);
+  letter-spacing: var(--wall-type-gauge-tracking);
+}
+.wall-service-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--wall-type-control-size);
+  font-weight: var(--wall-type-panel-weight);
+  white-space: nowrap;
+}
+.wall-state-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+}
+.wall-entity-list {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  padding: 0;
+}
+.wall-entity-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.wall-entity-row {
+  border-top: 1px solid var(--wall-border);
+  padding: var(--wall-card-gap) 0;
+}
+.wall-entity-title {
+  font-weight: var(--wall-type-panel-weight);
+  font-size: var(--wall-type-body-size);
+  color: var(--wall-text);
+  margin-bottom: var(--wall-card-content-gap);
+  overflow-wrap: anywhere;
+}
+.wall-entity-row dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wall-card-content-gap) var(--wall-section-gap);
+  margin: var(--wall-card-gap) 0 0;
+}
+.wall-entity-row dl > div {
+  min-width: 100px;
+  flex: 1;
+}
+.wall-entity-row dt {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  font-weight: var(--wall-type-caption-weight);
+}
+.wall-entity-row dd {
+  margin: 4px 0 0;
+  color: var(--wall-text);
+  font-size: var(--wall-type-body-size);
+  font-weight: var(--wall-type-panel-weight);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.wall-data-note {
+  margin: var(--wall-card-content-gap) 0 0;
+}
+.wall-data-counts .wall-data-label {
+  margin-bottom: calc(var(--wall-card-content-gap) / 2);
+}
+.wall-dashboard-workspace .wall-workspace-usage-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.wall-dashboard-workspace .wall-workspace-service-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 24px;
+  padding: 4px 12px;
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+}
+.wall-dashboard-workspace [data-wall-panel-id][data-wall-display-kind='service'],
+.wall-dashboard-workspace [data-wall-panel-id][data-wall-display-kind='usage'] {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--wall-border);
+  overflow: visible;
+}
+@media (max-width: 1200px) {
+  .wall-dashboard-workspace .wall-workspace-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.wall-entity-sort {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.wall-dashboard-workspace [data-wall-panel-id][data-wall-display-kind='kpi'] {
+  border: 1px solid var(--wall-card-border);
+  background: var(--wall-surface);
+}
+.wall-dashboard-workspace [data-wall-display-kind='kpi'] .wall-overview-panel-symbol {
+  display: none;
+}
+.wall-dashboard-workspace [data-wall-display-kind] .wall-overview-panel-menu.wall-button {
+  opacity: 0;
+}
+.wall-entity-record {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) minmax(120px, 2fr);
+  gap: 16px;
+  align-items: center;
+}
+.wall-entity-record .wall-entity-title {
+  margin-bottom: 0;
+}
+.wall-entity-record .wall-data-label {
+  margin-bottom: 0;
+}
+.wall-entity-record dl {
+  margin: 0;
+}
+.wall-data-warning {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.wall-data-warning svg {
+  flex-shrink: 0;
+}
+.wall-capacity-threshold {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  top: -2px;
+  box-shadow: 0 0 0 1px var(--wall-surface);
+  border-radius: 2px;
+}
+.wall-dashboard-workspace [data-wall-display-kind]:hover .wall-overview-panel-menu.wall-button,
+.wall-dashboard-workspace [data-wall-display-kind]:focus-within .wall-overview-panel-menu.wall-button {
+  opacity: 1;
+}
+
+.wall-data-usage .wall-panel-header {
+  grid-column: 1 / -1;
+}
+.wall-data-usage .wall-panel-header-title,
+.wall-data-service .wall-panel-header-title {
+  font-size: var(--wall-type-panel-size);
+}
+.wall-data-service > .wall-panel-header {
+  min-width: 0;
+}

@@ -1,0 +1,90 @@
+/* Representative dashboard motion contract. Portaled Base UI popups carry the same scope. */
+.wall-modern[data-wall-typography='storage-vm'] {
+  --wall-motion-feedback-duration: 120ms;
+  --wall-motion-enter-duration: 160ms;
+  --wall-motion-exit-duration: 100ms;
+  --wall-motion-layout-duration: 200ms;
+  --wall-motion-grid-duration: 180ms;
+  --wall-motion-settle-duration: 140ms;
+  --wall-motion-grid-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --wall-motion-feedback-easing: cubic-bezier(0.2, 0, 0, 1);
+  --wall-motion-layout-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --wall-motion-popup-offset: 3px;
+  --wall-motion-popup-scale: 0.985;
+  --wall-layout-move-duration: var(--wall-motion-grid-duration);
+  --wall-layout-move-easing: var(--wall-motion-grid-easing);
+}
+
+/* Reserved slots only fade: title geometry and hit areas never move on hover. */
+.wall-dashboard-workspace .wall-panel-header-grip,
+.wall-dashboard-workspace .wall-panel-header-menu,
+.wall-dashboard-workspace .wall-kpi-layout .wall-kpi-resize {
+  transition: opacity var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+.wall-dashboard-workspace .wall-panel-header:focus-within .wall-panel-header-grip,
+.wall-dashboard-workspace .wall-panel-header:focus-within .wall-panel-header-menu {
+  /* Keyboard focus must be immediately discoverable, even during a pointer fade. */
+  transition-duration: 0s;
+}
+.wall-dashboard-workspace .wall-panel-header .wall-button,
+.wall-dashboard-workspace .wall-panel-actions-item {
+  transition:
+    background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+.wall-dashboard-workspace .wall-workspace-panel {
+  transition:
+    border-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    box-shadow var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+
+/* Base UI owns mount/unmount, focus return and popup placement. Only its visual states animate. */
+.wall-panel-actions-menu[data-wall-typography='storage-vm'],
+.wall-toolbar-popover[data-wall-typography='storage-vm'] {
+  transform-origin: var(--transform-origin);
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--wall-motion-enter-duration) var(--wall-motion-feedback-easing),
+    transform var(--wall-motion-enter-duration) var(--wall-motion-layout-easing);
+}
+.wall-panel-actions-menu[data-wall-typography='storage-vm'][data-starting-style],
+.wall-toolbar-popover[data-wall-typography='storage-vm'][data-starting-style] {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--wall-motion-popup-offset))) scale(var(--wall-motion-popup-scale));
+}
+.wall-panel-actions-menu[data-wall-typography='storage-vm'][data-ending-style],
+.wall-toolbar-popover[data-wall-typography='storage-vm'][data-ending-style] {
+  opacity: 0;
+  /* Exit without spatial travel; preserve submenu alignment and focus-return timing. */
+  transform: translateY(0) scale(1);
+  transition-duration: var(--wall-motion-exit-duration);
+}
+.wall-panel-actions-menu[data-wall-typography='storage-vm'] .wall-panel-actions-item {
+  transition:
+    background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+
+/* Native Grid height follows settled geometry. Never animate first measurement or the grabbed tile. */
+.wall-dashboard-workspace .wall-kpi-layout > .react-grid-layout {
+  transition: none;
+}
+.wall-dashboard-workspace .wall-kpi-layout > .react-grid-layout--enable-move-animations {
+  transition: height var(--wall-motion-layout-duration) var(--wall-motion-layout-easing);
+}
+.wall-dashboard-workspace .wall-kpi-layout .react-draggable-dragging,
+.wall-dashboard-workspace .wall-kpi-layout .resizing,
+.wall-dashboard-workspace .wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-marked='true'],
+.wall-dashboard-workspace .wall-kpi-layout[data-interacting='true'] .wall-workspace-panel {
+  /* Cursor tracking and chart dimensions must never trail a gesture. */
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wall-modern[data-wall-typography='storage-vm'],
+  .wall-modern[data-wall-typography='storage-vm'] * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
