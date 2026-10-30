@@ -1,6 +1,6 @@
 import { Menu } from '@base-ui/react/menu';
 import { TriangleAlert } from 'lucide-react';
-import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
+import { createContext, ReactNode, useContext, useState, useEffect, useLayoutEffect, useRef } from 'react';
 
 import {
   FieldDisplay,
@@ -18,6 +18,7 @@ import { DataLinksContextMenu, useTheme2 } from '@grafana/ui';
 import { FormattedValueDisplay } from '@grafana/ui/src/components/FormattedValueDisplay/FormattedValueDisplay';
 import { presentValueColor } from '@grafana/ui/src/components/VizPresentation/VizPresentation';
 
+import { wallSurfaceTokens } from '../surfaceTokens';
 import { wallTypography, wallTypographyVariables } from '../typography';
 import { Button } from '../ui';
 import { wallVisualization } from '../visualization';
@@ -352,10 +353,22 @@ function WallEntityList({
   const rows = panel.data.series.flatMap((frame, frameIndex) =>
     Array.from({ length: frame.length }, (_, row) => ({ frame, row, frameIndex }))
   );
-  useEffect(
-    () => onHeight?.(Math.min(560, Math.max(150, 100 + rows.length * (kind === 'records' ? 60 : 134)))),
-    [rows.length, kind, onHeight]
-  );
+  const content = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = content.current;
+    if (!element) {
+      return;
+    }
+    const chrome = wallSurfaceTokens.headerHeight + wallSurfaceTokens.padding * 2 + 2;
+    const measure = () => onHeight?.(Math.min(560, Math.max(150, element.scrollHeight + chrome)));
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [rows.length, kind, onHeight]);
   const ordered = sortField
     ? [...rows].sort((a, b) => {
         const av = a.frame.fields.find((f) => f.name === sortField)?.values[a.row];
@@ -376,95 +389,97 @@ function WallEntityList({
   ];
   return (
     <div className="wall-entity-list" data-wall-display={kind}>
-      <div className="wall-entity-list-heading">
-        <span>{rows.length}개 항목</span>
-        <div className="wall-entity-sort">
-          <Menu.Root>
-            <Menu.Trigger render={<Button size="sm" variant="ghost" />} aria-label="정렬 필드 선택">
-              정렬: {sortFields.find(([name]) => name === sortField)?.[1] ?? '기본 순서'}
-            </Menu.Trigger>
-            <Menu.Portal>
-              <Menu.Positioner className="wall-toolbar-positioner">
-                <Menu.Popup
-                  className="wall-modern wall-toolbar-popover wall-interval-menu"
-                  data-wall-theme={theme.isDark ? 'dark' : 'light'}
-                  data-wall-typography="storage-vm"
-                  style={wallTypographyVariables}
-                >
-                  <Menu.RadioGroup value={sortField} onValueChange={setSortField}>
-                    {[['', '기본 순서'], ...sortFields].map(([key, label]) => (
-                      <Menu.RadioItem className="wall-toolbar-menu-item" key={key} value={key} closeOnClick>
-                        {label}
-                      </Menu.RadioItem>
-                    ))}
-                  </Menu.RadioGroup>
-                </Menu.Popup>
-              </Menu.Positioner>
-            </Menu.Portal>
-          </Menu.Root>
-          {sortField && (
-            <Button size="sm" variant="ghost" onClick={() => setSortDescending(!sortDescending)}>
-              {sortDescending ? '내림차순' : '오름차순'}
-            </Button>
-          )}
+      <div ref={content} className="wall-entity-content">
+        <div className="wall-entity-list-heading">
+          <span>{rows.length}개 항목</span>
+          <div className="wall-entity-sort">
+            <Menu.Root>
+              <Menu.Trigger render={<Button size="sm" variant="ghost" />} aria-label="정렬 필드 선택">
+                정렬: {sortFields.find(([name]) => name === sortField)?.[1] ?? '기본 순서'}
+              </Menu.Trigger>
+              <Menu.Portal>
+                <Menu.Positioner className="wall-toolbar-positioner">
+                  <Menu.Popup
+                    className="wall-modern wall-toolbar-popover wall-interval-menu"
+                    data-wall-theme={theme.isDark ? 'dark' : 'light'}
+                    data-wall-typography="storage-vm"
+                    style={wallTypographyVariables}
+                  >
+                    <Menu.RadioGroup value={sortField} onValueChange={setSortField}>
+                      {[['', '기본 순서'], ...sortFields].map(([key, label]) => (
+                        <Menu.RadioItem className="wall-toolbar-menu-item" key={key} value={key} closeOnClick>
+                          {label}
+                        </Menu.RadioItem>
+                      ))}
+                    </Menu.RadioGroup>
+                  </Menu.Popup>
+                </Menu.Positioner>
+              </Menu.Portal>
+            </Menu.Root>
+            {sortField && (
+              <Button size="sm" variant="ghost" onClick={() => setSortDescending(!sortDescending)}>
+                {sortDescending ? '내림차순' : '오름차순'}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-      {ordered.map(({ frame, row, frameIndex }) => {
-        const a = metricField(frame, 'A');
-        const b = metricField(frame, 'B');
-        const c = metricField(frame, 'C');
-        const relation = capacityRelation(a?.values[row], b?.values[row]);
-        const ratio = c ? usageFraction(c.values[row], c.config.unit) : undefined;
-        const inconsistent = ratio !== undefined && relation !== undefined && Math.abs(ratio - relation.ratio) > 1e-6;
-        const identityField =
-          frame.fields.find((field) => field.name === 'ceph_daemon' || field.name === 'mountpoint') ??
-          frame.fields.find((field) => field.type === FieldType.string);
-        return (
-          <article
-            className={`wall-entity-row ${kind === 'records' ? 'wall-entity-record' : ''}`}
-            key={`${frameIndex}-${row}`}
-          >
-            <div className="wall-entity-identity">
-              {panel.data.series.length > 1 && (
-                <div className="wall-data-label">{frame.name ?? frame.refId ?? `데이터 ${frameIndex + 1}`}</div>
-              )}
-              {identityField && <div className="wall-data-label">{getFieldDisplayName(identityField, frame)}</div>}
-              <div className="wall-entity-title">
-                {identityField ? <EntityValue field={identityField} row={row} /> : rowIdentity(frame, row)}
+        {ordered.map(({ frame, row, frameIndex }) => {
+          const a = metricField(frame, 'A');
+          const b = metricField(frame, 'B');
+          const c = metricField(frame, 'C');
+          const relation = capacityRelation(a?.values[row], b?.values[row]);
+          const ratio = c ? usageFraction(c.values[row], c.config.unit) : undefined;
+          const inconsistent = ratio !== undefined && relation !== undefined && Math.abs(ratio - relation.ratio) > 1e-6;
+          const identityField =
+            frame.fields.find((field) => field.name === 'ceph_daemon' || field.name === 'mountpoint') ??
+            frame.fields.find((field) => field.type === FieldType.string);
+          return (
+            <article
+              className={`wall-entity-row ${kind === 'records' ? 'wall-entity-record' : ''}`}
+              key={`${frameIndex}-${row}`}
+            >
+              <div className="wall-entity-identity">
+                {panel.data.series.length > 1 && (
+                  <div className="wall-data-label">{frame.name ?? frame.refId ?? `데이터 ${frameIndex + 1}`}</div>
+                )}
+                {identityField && <div className="wall-data-label">{getFieldDisplayName(identityField, frame)}</div>}
+                <div className="wall-entity-title">
+                  {identityField ? <EntityValue field={identityField} row={row} /> : rowIdentity(frame, row)}
+                </div>
               </div>
-            </div>
-            {(kind === 'devices' || kind === 'filesystem') && (
-              <CapacityTrack
-                ratio={inconsistent ? undefined : c ? ratio : relation?.ratio}
-                color={c?.display?.(c.values[row]).color}
-                field={c?.config}
-              />
-            )}
-            {c && ratio === undefined && <DataNotice>원본 사용률이 유효 범위를 벗어났습니다.</DataNotice>}
-            {inconsistent && <DataNotice>원본 사용률과 용량 관계가 일치하지 않습니다.</DataNotice>}
-            <dl>
-              {frame.fields
-                .filter((field) => field !== identityField)
-                .map((field, index) => {
-                  return (
-                    <div
-                      className={field.type === FieldType.number ? 'wall-entity-metric' : 'wall-entity-detail'}
-                      key={index}
-                    >
-                      <dt>{getFieldDisplayName(field, frame)}</dt>
-                      <dd>
-                        <EntityValue field={field} row={row} />
-                      </dd>
-                    </div>
-                  );
-                })}
-            </dl>
-            {(kind === 'devices' || kind === 'filesystem') && !relation && (
-              <DataNotice>용량 합계 또는 사용량 관계 확인 필요</DataNotice>
-            )}
-          </article>
-        );
-      })}
+              {(kind === 'devices' || kind === 'filesystem') && (
+                <CapacityTrack
+                  ratio={inconsistent ? undefined : c ? ratio : relation?.ratio}
+                  color={c?.display?.(c.values[row]).color}
+                  field={c?.config}
+                />
+              )}
+              {c && ratio === undefined && <DataNotice>원본 사용률이 유효 범위를 벗어났습니다.</DataNotice>}
+              {inconsistent && <DataNotice>원본 사용률과 용량 관계가 일치하지 않습니다.</DataNotice>}
+              <dl>
+                {frame.fields
+                  .filter((field) => field !== identityField)
+                  .map((field, index) => {
+                    return (
+                      <div
+                        className={field.type === FieldType.number ? 'wall-entity-metric' : 'wall-entity-detail'}
+                        key={index}
+                      >
+                        <dt>{getFieldDisplayName(field, frame)}</dt>
+                        <dd>
+                          <EntityValue field={field} row={row} />
+                        </dd>
+                      </div>
+                    );
+                  })}
+              </dl>
+              {(kind === 'devices' || kind === 'filesystem') && !relation && (
+                <DataNotice>용량 합계 또는 사용량 관계 확인 필요</DataNotice>
+              )}
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

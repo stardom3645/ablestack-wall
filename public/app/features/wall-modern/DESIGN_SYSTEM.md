@@ -1280,3 +1280,14 @@ REF-58 최종 확인: 전체 TypeScript 검사는 기존130개 외 이번 변경
 | 회귀 / 범위 | native serialize→remove→cancel 검사에서 다른 배치/텍스트 보존·매핑 제거·패널 복원을 확인하며 비대상 UID의 메타데이터는 변경하지 않는다. CSS·shadcn/Base UI·쿼리·48열 계산·저장 API/버전 구현 변경은 없다                                                                                                                                                                                                                                                |
 
 변경 파일: DashboardScene.tsx, workspace/wallDocument.ts·wallDocument.test.ts. 이 삭제 정리는 새 복제/그룹/편집 기능 추가가 아니다.
+### REF-66 데이터 도착 후 기본 높이와 정보 카드 밀도 (2026-10-30)
+
+| 항목      | 원인 / 구현 / 검증                                                                                                                                                                                                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 원인      | 첫 Grid 측정 때 데이터가 아직 없으면 WallEditingProvider가 큰 초기 높이를 defaults에 고정했다. 후속 Filesystem/Entity의 onHeight가 바뀌어도 같은 지역의 기본 배치가 갱신되지 않았다. records는 행당60px 추정으로 NIC/PG의 마지막 행에 불필요한 내부 스크롤이 생겼다                         |
+| 기본 배치 | 저장된 서버 배치·이전 로컬 배치·현재 draft·Undo/Redo baseline·진행 중 gesture가 없는 **미조작 기본값만** 최신 콘텐츠 높이를 반영한다. 이 과정은 Dirty/서버 저장을 만들지 않는다. 저장/수동 Resize한 크기를 데이터 갱신 때문에 덮어쓰지 않는다                                               |
+| 정보 카드 | 기존 WallEntityList의 내용 wrapper에 ResizeObserver를 연결하여 실제 scrollHeight에 공통 headerHeight/padding을 더한다. 기존150~560px 한도와 큰 목록의 내부 스크롤은 유지한다. 행의 수치·필드·순서·DataLink/정렬은 그대로다. 신규 primitive/엔진/CSS 변경 없이 기존 Wall 컴포넌트를 수정했다 |
+| 실제 화면 | 로컬 fixture의 파일시스템2행 카드는318→190px, NIC2행 카드246px, Glue PG3행 카드312px이다. NIC 내부 clientHeight/scrollHeight=170/170, PG=236/236으로 마지막 eth1/osd.2·PG96까지 보인다. Light/Dark에서 확인했으며 사용자 저장 배치는 강제로 줄이거나 늘리지 않았다                          |
+| 회귀      | untouched/server/legacy/draft4개 조건의 높이 baseline 보존 검사 통과. records 실측 높이 검사 및 기존 모든 field/단위/링크/상태 검사17개 통과. 변경된 폰트/화면폭의 자연스러운 줄바꿈도 내용 observer로 측정한다                                                                             |
+
+변경 파일: workspace/WallEditContext.tsx·WallEditContext.test.tsx, visualizations/WallPanelContent.tsx·WallPanelContent.test.tsx. 48열 좌표 계산·수동 배치·데이터 의미는 유지한다.

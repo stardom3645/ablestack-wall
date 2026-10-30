@@ -307,3 +307,30 @@ it('does not combine capacity measurements from separate frames even when the de
   expect(screen.getAllByText(/다른 프레임과 임의로 결합하지/)).toHaveLength(3);
   expect(screen.queryByRole('meter')).not.toBeInTheDocument();
 });
+
+it('sizes record cards from measured content instead of assuming every row is 60px tall', () => {
+  const height = jest.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function (
+    this: HTMLElement
+  ) {
+    return this.classList.contains('wall-entity-content') ? 270 : 0;
+  });
+  const onHeight = jest.fn();
+  const panel = props([
+    { name: 'Field', type: FieldType.string, values: ['osd.0', 'osd.1', 'osd.2'] },
+    { name: 'PG', type: FieldType.number, values: [64, 80, 96] },
+  ]);
+  try {
+    render(
+      <WallPanelContentContext.Provider value={{ kind: 'records', onHeight }}>
+        <WallPanelContent panel={panel}>
+          <div>Native fallback</div>
+        </WallPanelContent>
+      </WallPanelContentContext.Provider>
+    );
+    expect(onHeight).toHaveBeenLastCalledWith(348);
+    expect(screen.getByText('osd.2')).toBeInTheDocument();
+    expect(screen.getByText('96')).toBeInTheDocument();
+  } finally {
+    height.mockRestore();
+  }
+});

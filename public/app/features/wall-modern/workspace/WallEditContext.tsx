@@ -33,6 +33,7 @@ export function WallEditingProvider({ dashboard, children }: { dashboard: Dashbo
   const state = dashboard.useState();
   const history = useLayoutHistory();
   const defaults = useRef<WallDocument>({ version: 1, layouts: {}, texts: {} });
+  const legacyLayouts = useRef(new Set<string>());
   const initial = () => wallDocument((dashboard.getInitialSaveModel() as { wallModern?: unknown })?.wallModern);
   const readOnly = Boolean(state.kioskMode) || !dashboard.canEditDashboard();
   const updateDocument = (next: WallDocument) => {
@@ -71,7 +72,21 @@ export function WallEditingProvider({ dashboard, children }: { dashboard: Dashbo
         } catch {
           /* optional migration */
         }
+        if (legacy) {
+          legacyLayouts.current.add(region);
+        }
         defaults.current.layouts[region] = initial()?.layouts[region] ?? legacy ?? fallback;
+      }
+      // Data arrives after the first Grid measurement. Let untouched defaults
+      // follow content height, while every user/saved/legacy/Undo baseline stays fixed.
+      if (
+        !initial()?.layouts[region] &&
+        !state.wallModern?.layouts[region] &&
+        !legacyLayouts.current.has(region) &&
+        !history?.getBaseline(key) &&
+        !history?.getSnapshot().blocked
+      ) {
+        defaults.current.layouts[region] = fallback;
       }
       return initial()?.layouts[region] ?? defaults.current.layouts[region];
     },
