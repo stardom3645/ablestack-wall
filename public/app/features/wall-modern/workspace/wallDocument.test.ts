@@ -1,4 +1,4 @@
-import { SceneTimeRange } from '@grafana/scenes';
+import { SceneTimeRange, VizPanel } from '@grafana/scenes';
 import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
 import { DefaultGridLayoutManager } from 'app/features/dashboard-scene/scene/layout-default/DefaultGridLayoutManager';
 import { transformSaveModelToScene } from 'app/features/dashboard-scene/serialization/transformSaveModelToScene';
@@ -84,3 +84,44 @@ it('keeps existing odd coordinates while native panel IDs are added or removed',
   expect(next.map((item) => item.i)).toEqual(['28', '901']);
   expect(next[1]).toMatchObject({ x: 0, y: 120, w: 24 });
 });
+
+it.each(['aec03x1adsi68f', 'another-dashboard'])(
+  'removes deleted Wall metadata only in the opted-in dashboard and restores it on cancel: %s',
+  (uid) => {
+    const doc: WallDocument = {
+      version: 1,
+      layouts: {
+        network: [
+          { i: '252', x: 1, y: 63, w: 11, h: 57 },
+          { i: '28', x: 12, y: 0, w: 12, h: 54 },
+        ],
+        overview: [{ i: '-1001', x: 0, y: 0, w: 48, h: 24 }],
+      },
+      panelSources: { 252: 28 },
+      texts: { heading: { title: 'Heading', description: '' } },
+    };
+    const panel = new VizPanel({ key: 'panel-252', pluginId: 'stat', title: 'Temporary copy' });
+    const scene = new DashboardScene({
+      uid,
+      title: 'Wall',
+      wallModern: doc,
+      body: DefaultGridLayoutManager.fromVizPanels([panel]),
+    });
+    scene.setInitialSaveModel(transformSceneToSaveModel(scene));
+    scene.onEnterEditMode();
+    scene.removePanel(panel);
+    const saved = transformSceneToSaveModel(scene);
+    expect(saved.panels).toEqual([]);
+    if (uid === 'aec03x1adsi68f') {
+      expect(scene.state.wallModern?.layouts.network).toEqual([doc.layouts.network[1]]);
+      expect(scene.state.wallModern?.layouts.overview).toEqual(doc.layouts.overview);
+      expect(scene.state.wallModern?.texts).toEqual(doc.texts);
+      expect(scene.state.wallModern?.panelSources).toBeUndefined();
+    } else {
+      expect(scene.state.wallModern).toEqual(doc);
+    }
+    scene.exitEditMode({ skipConfirm: true, restoreInitialState: true });
+    expect(scene.state.wallModern).toEqual(doc);
+    expect(scene.state.body.getVizPanels().map((item) => item.state.key)).toEqual(['panel-252']);
+  }
+);

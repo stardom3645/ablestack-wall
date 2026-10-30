@@ -84,3 +84,5 @@
 - 조작 중 키오스크/읽기 전용 전환은 DESIGN_SYSTEM.md REF-63을 따른다. readOnly 전환 시 진행 중 Drag/Resize와 pending 입력·Grid/footprint만 기존 abort 경로로 취소하고 이전 완료 draft/Undo는 보존한다. 전환을 drop·저장으로 처리하지 않는다. 자율 개발은 기존 사용자 index/미커밋 작업을 보존하는 관리 Worktree를 재사용하고 진행/커밋/검증은 docs/WALL_AUTODEV_PROGRESS.md에 기록한다.
 
 - 05번 패널 편집 Workspace는 DESIGN_SYSTEM.md REF-64를 따른다. WallPanelEditor 프레임/로컬 shadcn Card·Base UI Tabs/Button을 사용하되 native Query/Transform/옵션/권한/저장·취소 모델을 유지한다. 다른 UID는 native fallback이다. Monaco 테마는 프레임 안에서 native 정의 함수와 setTheme로 동기화하고 편집 버퍼를 remount하지 않는다. 기존 48열/대시보드 배치/차트 스타일은 변경하지 않는다.
+
+- 05번 native 패널 삭제는 DESIGN_SYSTEM.md REF-65를 따른다. DashboardScene.removePanel이 삭제한 ID의 Wall layouts/panelSources만 함께 정리한다. 다른 좌표·텍스트·복제본의 표시 원본 ID 값은 보존하며 native 취소는 패널과 메타데이터를 함께 복원한다. 다른 UID의 삭제와 쿼리/저장 API는 변경하지 않는다.

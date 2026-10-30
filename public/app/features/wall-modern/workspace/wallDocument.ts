@@ -21,6 +21,23 @@ export function wallDocument(value: unknown): WallDocument | undefined {
 }
 export const wallRegionKey = (key: string) => key.replace(/^wall-modern:kpi-layout:v1:[^:]+:[^:]+:[^:]+/, '') || 'kpi';
 
+/** Native removal must also remove the deleted ID's presentation, never its neighbours. */
+export function removeWallPanel(document: WallDocument, id: number): WallDocument {
+  const panelSources = { ...document.panelSources };
+  delete panelSources[id];
+  const next: WallDocument = {
+    ...document,
+    layouts: Object.fromEntries(
+      Object.entries(document.layouts).map(([key, items]) => [key, items.filter((item) => item.i !== String(id))])
+    ),
+    panelSources,
+  };
+  if (!Object.keys(panelSources).length) {
+    delete next.panelSources;
+  }
+  return next;
+}
+
 /** Empty transactions / Undo to the saved baseline must not manufacture metadata dirtiness. */
 export function normalizeWallDocument(next: WallDocument, saved: WallDocument | undefined, defaults: WallDocument) {
   const layoutsChanged = Object.entries(next.layouts).some(

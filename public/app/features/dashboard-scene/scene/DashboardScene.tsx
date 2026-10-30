@@ -35,7 +35,7 @@ import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { dashboardWatcher } from 'app/features/live/dashboard/dashboardWatcher';
 import { getClosestScopesFacade, ScopesFacade } from 'app/features/scopes';
 import { VariablesChanged } from 'app/features/variables/types';
-import type { WallDocument } from 'app/features/wall-modern/workspace/wallDocument';
+import { removeWallPanel, type WallDocument } from 'app/features/wall-modern/workspace/wallDocument';
 import { DashboardDTO, DashboardMeta, KioskMode, SaveDashboardResponseDTO } from 'app/types';
 import { ShowConfirmModalEvent } from 'app/types/events';
 
@@ -550,6 +550,9 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
   public removePanel(panel: VizPanel) {
     this.state.body.removePanel(panel);
+    if (this.state.uid === 'aec03x1adsi68f' && this.state.wallModern) {
+      this.setState({ wallModern: removeWallPanel(this.state.wallModern, getPanelIdForVizPanel(panel)) });
+    }
   }
 
   public unlinkLibraryPanel(panel: VizPanel) {
