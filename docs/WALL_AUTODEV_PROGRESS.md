@@ -195,3 +195,39 @@
 다음 검토 범위는 기존에 남겨 둔 native 전문 폼의 마감과 실제 환경 검증이다. 확인되지 않은 디자인 완성도 점수나 크레딧 사용량을 추정하지 않는다. 이번 예약 실행을 이유로 다른 UID·새 편집 기능으로 확대하지 않았다. 정상 frontend-lint hook을 실행하고 기존 Betterer 기준선 제약은 앞선 기록과 동일하게 strict 전후 비교로 대체한다. DESIGN_SYSTEM 전체 재정렬을 피하도록 새 기록 조각/AGENTS를 직접 검사하고 other-format hook만 제외한다. hook/config/baseline은 수정하지 않는다.
 
 예약 실행 기능 커밋: **1bc7641ff4** `fix(wall): align editor navigation and setting choice accessibility`. 정상 frontend-lint hook 통과 및 Worktree clean 확인. 최종3317 health/database ok·대시보드 HTTP200·3318 fixture query success, API 문서 version30 불변·원본 index 불변을 확인했다. 사용자 탭은 Light/패널 편집/Dirty0으로 유지한다. 이번 결과는 즉시 사용자 조치가 필요한 변경이 아니므로 정기 알림은 생략한다.
+## 2026-11-01 수동 요청 — Canvas + 단일 Inspector 패널 스튜디오 (REF-70)
+
+예약 개발 기간 이후 사용자가 직접 “링크 다이나처럼 편집 화면을 그라파나말고 아예 새로운 느낌”으로 변경하라고 요청했다. 기존 REF-68/69 기능을 읽고, 예약 실행의 무제한 연장으로 해석하지 않고 이 UI 요청만 진행했다. 시작은 `fec9ce5c40`, 첨부 개발 Worktree clean이었다. 코드 변경 전 실제 Dynatrace 링크의 Gauge 선택 및 Details(데이터/표현/타일) Inspector를 관찰했다.
+
+### 실제 변경
+
+- UID `aec03x1adsi68f`에서 미리보기 위/쿼리 아래/옵션 오른쪽의 영구 3분할을 **큰 Canvas + 단일 Inspector**로 교체했다. 단순 프레임 CSS 추가가 아니다. 새 `WallPanelStudio`가 표현·데이터·패널 정보의 실제 탐색/본문을 렌더하고 데이터 작업에서는 Inspector 폭을 416→760px까지 넓힌다. Canvas는 계속 표시한다. native splitter는 이 경로에서 렌더하지 않는다.
+- native data/options pane은 keepMounted로 유지하고 Inspector 전환 시 검색/모델/쿼리 입력 버퍼를 불필요하게 remount하지 않는다. native Query/Transform 탭과 URL 모델은 그대로다. 일반 속성은 패널 정보로, 시각화/표준 필드/Override는 표현으로 분리했다. 검색도 해당 속성 범위의 기존 descriptor를 사용한다.
+- `WallVisualizationGallery`는 실제 플러그인 목록/필터/feature toggle과 native `onChangePanelPlugin` 및 캐시·modifier 계약을 재사용한다. 로컬 shadcn Tabs/Base UI Input/Button으로 전체 유형/데이터 기반 추천/검색/선택 갤러리를 새로 렌더한다. 플러그인 엔진/추천 로직은 재개발하지 않았다.
+- `WallPanelDetails`의 제목·설명·투명 배경 폼은 실제 Base UI Input/Switch 및 연결된 label/textarea를 사용한다. 값은 원래 VizPanel.setState의 title+hoverHeader, description, displayMode에 직접 전달한다. native title/description AI addon·library·links/repeat 설정은 보존했다.
+- 미리보기는 기존 `OverviewPanelPresentation`과 폰트 로딩 Context를 재사용해 Wall의 제목·수치·차트 표현을 적용한다. 옵션/저장 값이나 native 시각화 엔진은 변경하지 않는다. Studio 바깥의 Dashboard 차트는 그대로다.
+- editor 전용 geometry는 surfaceTokens.ts, 색/간격/폰트는 기존 토큰을 사용한다. CSS는 Canvas/Inspector의 geometry·스크롤·갤러리/폼 Surface와 native segmented 입력의 중립적 마감이다. 미리보기 native border를 겹쳐 그리지 않는다.
+
+변경 파일은 `dashboard-scene/panel-edit/{PanelEditorRenderer,PanelOptions,PanelOptionsPane,PanelVizTypePicker}.tsx`, `wall-modern/editor/{WallPanelStudio,WallPanelDetails,WallVisualizationGallery,WallPanelEditor,WallOptionNavigator,EditorPresentationContext}` 및 관련 검사/CSS, `surfaceTokens.ts`, AGENTS/DESIGN_SYSTEM REF-70이다. 쿼리/배치/대시보드 설정 화면·다른 UID는 수정하지 않았다.
+
+### 검증
+
+| 항목           | 실제 결과                                                                                                                                                                                                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 새 UI 검사     | 기본 Jest 4 suites 12 tests 통과. Inspector tab/tabpanel 연결·native 쿼리/속성 입력 DOM 및 버퍼 유지·Transform 진입 intent·옵션 분류/검색/접기/Override·제목/설명/boolean 전달·native addon 보존·Monaco 테마 전환 포함                                                                        |
+| native 회귀    | PanelOptions/PanelOptionsPane/PanelEditor 3 suites 19 tests 통과. 기존 jsdom/nwsapi의 `:has(+ [role=option])` CSS 문제는 이전 REF-68과 같은 임시 Jest 호환 setup에서 장식 selector만 제외했다. 제품/의존성/Jest 설정은 수정하지 않았다                                                        |
+| 빌드/정적 검사 | production webpack 성공, 기존 경고2개. 변경 TS/TSX ESLint/Prettier·공백 검사 통과. Betterer 동일 strict 전후 비교 신규 진단0. 전체 tsc/전체 회귀를 반복하거나 통과했다고 주장하지 않는다                                                                                                      |
+| 실제 브라우저  | 기존 사용자 탭 미저장0 확인 후 갱신. 1730×873px에서 Studio와 Inspector의 top153/bottom861/height708, native splitter0 확인. 초기 검사에서 긴 옵션 때문에 Canvas가 아래로 밀리는 min-content 문제를 발견해 editor 자체 높이와 Inspector 스크롤을 분리했다                                      |
+| 편집 동작      | 패널32 제목 임시 변경→표현/패널 정보 이동→제목 유지→native 변경 취소→원래 제목/조회 화면/Dirty0 복원. 처음 복귀 직후 Dirty는 native debounce 후 해제됐다. 사용자 변경을 강제 새로고침으로 없애지 않았다                                                                                       |
+| 시각화/데이터  | 기존 Command Menu에서 패널140 편집 진입, Time series→Stat→Time series와 캐시 복원, table 미리보기/원복, Query/Transform·Monaco 표시·원래 쿼리 확인. 갤러리 검색 time은 Time series/State timeline을 표시한다. 단위·field·threshold·native 전문 편집기와 모델 재사용                           |
+| 저장/문서 보존 | 기존 저장 Drawer 진입/변경 없음·저장 disabled 확인 후 닫았다. 새 DB 저장은 수행하지 않았다. Dashboard API 문서는 최종 QA baseline의 version30과 정확히 동일하다. 59개 패널·wallModern·query/field/options/UID/좌표를 저장소에서 바꾸지 않았다                                                 |
+| Light/Dark     | 실제 테마 전환 후 DOM/computed style과 시각화를 확인했다. theme 반영 직후 이전 Emotion 스타일이 보이는 중간 paint를 최종 결과로 사용하지 않았다. Base UI Switch의 보조 checkbox는 aria-hidden=true/화면 밖1px이고, Switch는 명명된 컨트롤이다. 마지막 사용자 탭은 Light/표현 Inspector/Dirty0 |
+| 로컬 연결      | 기존 launchd preview/fixture 모두 running,3317 health database ok·dashboard HTTP200·3318 query success. 기존 서비스만 사용하며 운영 배포/포트/인증/백엔드 버전을 변경하지 않았다                                                                                                              |
+
+실제 화면 캡처는 기존 시각화 폴더의 `panel-studio-visual-light-20261101.png`, `panel-studio-visual-dark-20261101.png`, `panel-studio-data-dark-20261101.png`, `panel-studio-details-light-20261101.png`, `panel-studio-gallery-light-20261101.png`다. 이는3318 fixture/3317 로컬 미리보기이며 실제 SCVM/고객 권한·장시간 성능 검증은 아니다.
+
+### 유지할 차이와 제약
+
+Dynatrace는 전체 대시보드 옆 Details이고 이번 Wall은 단일 패널 미리보기 Canvas/Inspector다. 동일한 기능·외형으로 복제했다고 표현하지 않는다. datasource별 Builder/Code, Transform, plugin field/override picker의 내부 전문 컨트롤은 native를 유지하며, 이 내부까지 모두 새 Wall 구현이라고 보고하지 않는다. 새로운 라이브러리·편집 엔진·전역 편집 모드를 추가하지 않았고 Grid/48열/REF-62 저장·놓기 경로는 손대지 않았다. 기능 검사 개수를 디자인 완성도 점수로 환산하지 않는다.
+
+기능 커밋: **5b8b62a873** `feat(wall): replace panel editor splits with canvas and inspector`. 정상 frontend-lint hook 통과. 기존 Betterer 기준선 제약은 앞선 실행과 같이 strict 전후 비교 신규0으로 대체했고, 다른 format hook은 새 REF 조각/AGENTS를 직접 검사해 전체 표의 불필요한 reflow를 피했다. hook/config/baseline 자체는 변경하지 않았다. 원본 사용자 index tree `363312b24e976cc838035e769a3b2e0ff62aa015`를 보존하고, 이 개발 Worktree에서만 커밋했다. merge/push/새 자동화/운영 배포는 없다.
