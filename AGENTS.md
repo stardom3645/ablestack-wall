@@ -95,3 +95,5 @@
 - 로컬 preview의 설정 원본은 `~/Library/Application Support/ABLESTACK/WallPreview/grafana.ini`에 보존하고 기존 launchd preview 서비스가 이 파일을 사용한다. 2026-10-31 임시 폴더 설정 파일 소실로 재시작 실패가 재현되어 기존 설정 그대로 위치만 보존했다. 런타임/DB/로그·3317/3318·localhost 바인딩·기존 인증 정책은 유지하며 새 환경 전환이나 운영 설정으로 사용하지 않는다.
 
 - 편집 컨트롤의 접근성 기준은 DESIGN_SYSTEM.md REF-69다. 옵션 탐색은 local TabsContent로 실제 tab–tabpanel ID를 연결하고 현재 그룹이 없으면 사용 가능한 영역을 표시한다. 일반 설정의 툴팁 동기화·편집 허용 선택은 Base UI RadioGroup/Radio로 숫자·boolean native 값을 그대로 전달한다. 이 값 선택을 tabpanel 없는 Tabs로 되돌리지 않는다. 기존 Surface·타이포그래피·저장·Grid·다른 UID의 경로를 보존한다.
+
+- 패널 편집 화면의 최신 구조는 DESIGN_SYSTEM.md REF-70이다. 사용자의 2026-11-01 직접 요청으로 05번 편집기는 큰 Canvas와 단일 Inspector(표현·데이터·패널 정보)로 변경한다. REF-68의 상하 preview/query 3분할을 이 UID에 복원하지 않는다. native data/options pane의 버퍼·descriptor·플러그인 캐시·저장/취소/권한을 재사용하고, 다른 UID와 대시보드 Grid는 변경하지 않는다. Dynatrace의 인컨텍스트 전체 대시보드 Details를 동일하게 구현했다고 표현하지 않는다.

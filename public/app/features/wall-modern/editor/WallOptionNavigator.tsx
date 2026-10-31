@@ -1,9 +1,11 @@
-import { useState, type ReactNode } from 'react';
+import { useContext, useState, type ReactNode } from 'react';
 
 import { t } from 'app/core/internationalization';
 import type { OptionsPaneCategoryDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneCategoryDescriptor';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+
+import { editorInspectorContext } from './EditorPresentationContext';
 
 interface Props {
   general: OptionsPaneCategoryDescriptor[];
@@ -26,6 +28,7 @@ export function WallOptionNavigator({
   searchResults,
 }: Props) {
   const [active, setActive] = useState('general');
+  const inspector = useContext(editorInspectorContext);
   const sections = [
     { id: 'general', label: t('wall.editor.option-general', '패널'), groups: general },
     { id: 'visualization', label: t('wall.editor.option-visualization', '시각화'), groups: visualization },
@@ -38,6 +41,20 @@ export function WallOptionNavigator({
     sections.find((section) => section.id === active && section.groups.length) ??
     sections.find((section) => section.groups.length);
   const selectedId = selected?.id ?? 'general';
+  if (inspector) {
+    const groups = inspector === 'panel' ? general : [...visualization, ...fields, ...overrides];
+    return (
+      <div className="wall-studio-option-groups">
+        {searching ? (
+          <div role="region" aria-label={t('wall.editor.option-results', '설정 검색 결과')}>
+            {searchResults}
+          </div>
+        ) : (
+          groups.map((group) => group.render())
+        )}
+      </div>
+    );
+  }
   return (
     <Tabs
       className="wall-option-navigator"

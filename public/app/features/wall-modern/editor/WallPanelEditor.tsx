@@ -9,7 +9,7 @@ import { Card } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { WallManagementBack } from '../management/WallManagement';
 import { wallSurfaceVariables } from '../surfaceTokens';
-import { wallTypographyVariables, useWallTypographyFonts } from '../typography';
+import { WallFontStatusContext, wallTypographyVariables, useWallTypographyFonts } from '../typography';
 import { Button } from '../ui';
 
 import '../modern.css';
@@ -71,7 +71,7 @@ export function WallPanelEditorFrame({
             <WallManagementBack />
             <div className="wall-editor-title">
               <span>
-                <Trans i18nKey="wall.editor.label">패널 편집</Trans>
+                <Trans i18nKey="wall.editor.studio-label">Wall 패널 스튜디오</Trans>
               </span>
               <h1 title={title}>{title}</h1>
             </div>
@@ -82,7 +82,9 @@ export function WallPanelEditorFrame({
             </span>
           )}
         </header>
-        <div className="wall-editor-workspace">{children}</div>
+        <WallFontStatusContext.Provider value={fontStatus}>
+          <div className="wall-editor-workspace">{children}</div>
+        </WallFontStatusContext.Provider>
       </section>
     </WallPanelEditorContext.Provider>
   );

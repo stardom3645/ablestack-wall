@@ -30,6 +30,7 @@ import { getPanelPluginNotFound } from 'app/features/panel/components/PanelPlugi
 import { VizTypeChangeDetails } from 'app/features/panel/components/VizTypePicker/types';
 import { getAllPanelPluginMeta } from 'app/features/panel/state/util';
 import { AngularDeprecationPluginNotice } from 'app/features/plugins/angularDeprecation/AngularDeprecationPluginNotice';
+import { editorInspectorContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 import { WallEditorVisualizationButton, WallPanelEditorContext } from 'app/features/wall-modern/editor/WallPanelEditor';
 
 import { isUsingAngularPanelPlugin } from '../scene/angular/AngularDeprecation';
@@ -115,12 +116,13 @@ export class PanelOptionsPane extends SceneObjectBase<PanelOptionsPaneState> {
     const styles = useStyles2(getStyles);
     const isAngularPanel = isUsingAngularPanelPlugin(panel);
     const wallEditor = useContext(WallPanelEditorContext);
+    const inspector = useContext(editorInspectorContext);
     return (
       <>
-        {!isVizPickerOpen && (
+        {(!isVizPickerOpen || inspector === 'panel') && (
           <>
             <div className={wallEditor ? 'wall-options-tools' : styles.top}>
-              <VisualizationButton pluginId={pluginId} onOpen={model.onToggleVizPicker} />
+              {inspector !== 'panel' && <VisualizationButton pluginId={pluginId} onOpen={model.onToggleVizPicker} />}
               {wallEditor ? (
                 <div className="wall-option-search">
                   <Search size={15} aria-hidden="true" />
@@ -178,7 +180,7 @@ export class PanelOptionsPane extends SceneObjectBase<PanelOptionsPaneState> {
             </div>
           </>
         )}
-        {isVizPickerOpen && (
+        {isVizPickerOpen && inspector !== 'panel' && (
           <PanelVizTypePicker
             panel={panel}
             onChange={model.onChangePanelPlugin}

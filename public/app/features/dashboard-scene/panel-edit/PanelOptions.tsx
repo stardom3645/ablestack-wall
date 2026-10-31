@@ -9,8 +9,12 @@ import {
   getLibraryVizPanelOptionsCategory,
   getVisualizationOptions2,
 } from 'app/features/dashboard/components/PanelEditor/getVisualizationOptions';
-import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import {
+  editorInspectorContext,
+  editorPresentationContext,
+} from 'app/features/wall-modern/editor/EditorPresentationContext';
 import { WallOptionNavigator } from 'app/features/wall-modern/editor/WallOptionNavigator';
+import { WallPanelDetails } from 'app/features/wall-modern/editor/WallPanelDetails';
 
 import { LibraryPanelBehavior } from '../scene/LibraryPanelBehavior';
 import { getLibraryPanelBehavior, isLibraryPanel } from '../utils/utils';
@@ -27,6 +31,7 @@ interface Props {
 export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, data }) => {
   const { options, fieldConfig, _pluginInstanceState } = panel.useState();
   const wallEditor = useContext(editorPresentationContext);
+  const inspector = useContext(editorInspectorContext);
   const layoutElement = panel.parent!;
   const layoutElementState = layoutElement.useState();
 
@@ -117,6 +122,23 @@ export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, d
   }
 
   if (wallEditor) {
+    if (inspector === 'panel' && !isSearching) {
+      return (
+        <WallPanelDetails
+          title={panel.state.title}
+          description={panel.state.description}
+          transparent={panel.state.displayMode === 'transparent'}
+          onTitle={(title) => panel.setState({ title, hoverHeader: title === '' })}
+          onDescription={(description) => panel.setState({ description })}
+          onTransparent={(transparent) => panel.setState({ displayMode: transparent ? 'transparent' : 'default' })}
+          titleAddon={panelFrameOptions.items.find((item) => item.props.title === 'Title')?.props.addon}
+          descriptionAddon={panelFrameOptions.items.find((item) => item.props.title === 'Description')?.props.addon}
+        >
+          {libraryPanelOptions?.render()}
+          {panelFrameOptions.categories.map((group) => group.render())}
+        </WallPanelDetails>
+      );
+    }
     const plugin = panel.getPlugin();
     const fieldCategories = new Set(
       plugin?.fieldConfigRegistry
@@ -132,7 +154,19 @@ export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, d
         overrides={justOverrides}
         overrideCount={fieldConfig.overrides.length}
         searching={isSearching}
-        searchResults={isSearching ? mainBoxElements : undefined}
+        searchResults={
+          isSearching
+            ? inspector
+              ? renderSearchHits(
+                  inspector === 'panel'
+                    ? [...(libraryPanelOptions ? [libraryPanelOptions] : []), panelFrameOptions]
+                    : (visualizationOptions ?? []),
+                  inspector === 'panel' ? [] : justOverrides,
+                  searchQuery
+                )
+              : mainBoxElements
+            : undefined
+        }
       />
     );
   }

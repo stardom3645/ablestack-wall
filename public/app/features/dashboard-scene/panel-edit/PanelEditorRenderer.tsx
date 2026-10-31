@@ -10,9 +10,11 @@ import {
   WallEditorPreview,
   WallPanelEditorFrame,
 } from 'app/features/wall-modern/editor/WallPanelEditor';
+import { WallPanelStudio } from 'app/features/wall-modern/editor/WallPanelStudio';
 import { WallManagementActions } from 'app/features/wall-modern/management/WallManagement';
 import { STORAGE_VM_DASHBOARD_UID } from 'app/features/wall-modern/statPresentation';
 import { WallDashboardToolbar } from 'app/features/wall-modern/toolbar/WallDashboardToolbar';
+import { OverviewPanelPresentation } from 'app/features/wall-modern/workspace/overviewPresentation';
 
 import { DashboardControls } from '../scene/DashboardControls';
 import { NavToolbarActions } from '../scene/NavToolbarActions';
@@ -40,6 +42,28 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
         snapOpenToPixels: 400,
       },
     });
+
+  if (wallEditor) {
+    return (
+      <>
+        <AppChromeUpdate />
+        <WallPanelEditorFrame
+          enabled
+          title={title}
+          dirty={isDirty}
+          actions={
+            <WallManagementActions
+              dashboard={dashboard}
+              editor={model}
+              library={Boolean(getLibraryPanelBehavior(model.getPanel()))}
+            />
+          }
+        >
+          <WallPanelStudioRenderer model={model} />
+        </WallPanelEditorFrame>
+      </>
+    );
+  }
 
   return (
     <>
@@ -90,6 +114,57 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
           </div>
         </div>
       </WallPanelEditorFrame>
+    </>
+  );
+}
+
+function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
+  const dashboard = getDashboardSceneFor(model);
+  const { controls } = dashboard.useState();
+  const { dataPane, optionsPane, tableView, showLibraryPanelSaveModal, showLibraryPanelUnlinkModal } = model.useState();
+  const panel = model.getPanel();
+  const libraryPanel = getLibraryPanelBehavior(panel);
+  return (
+    <>
+      <WallPanelStudio
+        initialData={dataPane?.state.tab === 'transformations'}
+        controls={
+          controls &&
+          (controls instanceof DashboardControls ? (
+            <WallDashboardToolbar dashboard={dashboard} controls={controls} analysisOnly />
+          ) : (
+            <controls.Component model={controls} />
+          ))
+        }
+        preview={
+          <WallEditorPreview
+            tableView={Boolean(tableView)}
+            hasData={Boolean(dataPane)}
+            onToggleTableView={model.onToggleTableView}
+          >
+            <OverviewPanelPresentation id={model.getPanelId()}>
+              <VizWrapper panel={panel} tableView={tableView} />
+            </OverviewPanelPresentation>
+          </WallEditorPreview>
+        }
+        options={optionsPane ? <optionsPane.Component model={optionsPane} /> : <Spinner />}
+        data={dataPane && <dataPane.Component model={dataPane} />}
+      />
+      {showLibraryPanelSaveModal && libraryPanel && (
+        <SaveLibraryVizPanelModal
+          libraryPanel={libraryPanel}
+          onDismiss={model.onDismissLibraryPanelSaveModal}
+          onConfirm={model.onConfirmSaveLibraryPanel}
+          onDiscard={model.onDiscard}
+        />
+      )}
+      {showLibraryPanelUnlinkModal && libraryPanel && (
+        <UnlinkModal
+          onDismiss={model.onDismissUnlinkLibraryPanelModal}
+          onConfirm={model.onConfirmUnlinkLibraryPanel}
+          isOpen
+        />
+      )}
     </>
   );
 }

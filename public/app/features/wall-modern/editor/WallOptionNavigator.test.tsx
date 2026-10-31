@@ -3,7 +3,7 @@ import { render } from 'test/test-utils';
 
 import { OptionsPaneCategoryDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneCategoryDescriptor';
 
-import { editorPresentationContext } from './EditorPresentationContext';
+import { editorInspectorContext, editorPresentationContext } from './EditorPresentationContext';
 import { WallOptionNavigator } from './WallOptionNavigator';
 
 const category = (id: string, value: string) =>
@@ -107,4 +107,31 @@ it('falls back to an available section when a visualization change removes the s
   expect(screen.getByRole('tab', { name: '필드' })).toHaveAttribute('aria-disabled', 'true');
   expect(screen.getByRole('tab', { name: '패널' })).toHaveAttribute('aria-selected', 'true');
   expect(screen.getByRole('tabpanel', { name: '패널' })).toHaveTextContent('native title editor');
+});
+
+it('projects native properties into studio visual and panel inspectors without duplicating general settings', () => {
+  const props = {
+    general: [category('Panel', 'native title editor')],
+    visualization: [category('Graph', 'native line editor')],
+    fields: [category('Unit', 'native unit editor')],
+    overrides: [category('Override', 'native override editor')],
+    overrideCount: 1,
+    searching: false,
+  };
+  const { rerender } = render(
+    <editorInspectorContext.Provider value="visual">
+      <WallOptionNavigator {...props} />
+    </editorInspectorContext.Provider>
+  );
+  expect(screen.getByText('native line editor')).toBeInTheDocument();
+  expect(screen.getByText('native unit editor')).toBeInTheDocument();
+  expect(screen.getByText('native override editor')).toBeInTheDocument();
+  expect(screen.queryByText('native title editor')).not.toBeInTheDocument();
+  rerender(
+    <editorInspectorContext.Provider value="panel">
+      <WallOptionNavigator {...props} />
+    </editorInspectorContext.Provider>
+  );
+  expect(screen.getByText('native title editor')).toBeInTheDocument();
+  expect(screen.queryByText('native line editor')).not.toBeInTheDocument();
 });

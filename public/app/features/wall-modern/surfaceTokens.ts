@@ -77,3 +77,12 @@ export function wallCommandVariables(isDark: boolean, height: number = wallComma
     '--wall-command-shadow': isDark ? '0 6px 18px rgb(0 0 0 / 24%)' : '0 6px 18px rgb(16 24 40 / 12%)',
   } as CSSProperties;
 }
+
+/** Editor geometry only; dashboard card and chart geometry remain unchanged. */
+export const wallStudioTokens = { inspectorWidth: 416, dataWidth: 760, previewWidth: 960, previewHeight: 420 } as const;
+export const wallStudioVariables: CSSProperties = Object.fromEntries([
+  ['--wall-studio-inspector-width', `${wallStudioTokens.inspectorWidth}px`],
+  ['--wall-studio-data-width', `${wallStudioTokens.dataWidth}px`],
+  ['--wall-studio-preview-width', `${wallStudioTokens.previewWidth}px`],
+  ['--wall-studio-preview-height', `${wallStudioTokens.previewHeight}px`],
+]);
