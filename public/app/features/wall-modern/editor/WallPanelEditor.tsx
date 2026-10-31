@@ -73,7 +73,7 @@ export function WallPanelEditorFrame({
               <span>
                 <Trans i18nKey="wall.editor.studio-label">Wall 패널 스튜디오</Trans>
               </span>
-              <h1 title={title}>{title}</h1>
+              <h1 title={title}>{title.trim() ? title : t('wall.editor.untitled', '제목 없는 패널')}</h1>
             </div>
           </div>
           {actions ?? (

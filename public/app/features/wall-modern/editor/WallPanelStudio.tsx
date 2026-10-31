@@ -20,8 +20,11 @@ interface Props {
 export function WallPanelStudio({ preview, controls, options, data, initialData = false }: Props) {
   const [surface, setSurface] = useState(initialData && data ? 'data' : 'visual');
   const [properties, setProperties] = useState<'visual' | 'panel'>('visual');
+  // Text and other query-free plugins can remove their data pane after plugin loading.
+  // Never leave a disabled Data tab selected with an empty inspector.
+  const selectedSurface = surface === 'data' && !data ? properties : surface;
   return (
-    <div className="wall-panel-studio" data-surface={surface} style={wallStudioVariables}>
+    <div className="wall-panel-studio" data-surface={selectedSurface} style={wallStudioVariables}>
       <section className="wall-studio-canvas" aria-label={t('wall.studio.canvas', '패널 미리보기 캔버스')}>
         {controls && <div className="wall-studio-controls">{controls}</div>}
         <div className="wall-studio-stage">{preview}</div>
@@ -32,7 +35,7 @@ export function WallPanelStudio({ preview, controls, options, data, initialData 
       </section>
       <Tabs
         className="wall-studio-inspector"
-        value={surface}
+        value={selectedSurface}
         onValueChange={(value) => {
           if (value === 'visual' || value === 'panel' || value === 'data') {
             setSurface(value);

@@ -36,7 +36,7 @@ it('replaces the actual panel header with shadcn slots and keeps native title it
   expect(screen.getAllByText('CPU')).toHaveLength(1);
   expect(container.querySelector('[data-slot="card-title"]')).toHaveTextContent('CPU');
   expect(screen.getByText('Native annotation')).toBeInTheDocument();
-  expect(screen.getByTestId('dimensions')).toHaveTextContent('382×218');
+  expect(screen.getByTestId('dimensions')).toHaveTextContent('366×202');
   fireEvent.click(screen.getByLabelText('Panel status'));
   expect(inspect).toHaveBeenCalled();
   expect(screen.queryByRole('button', { name: 'CPU 메뉴' })).not.toBeInTheDocument();
@@ -92,4 +92,20 @@ it('assigns information roles independently of panel type, and only provides an 
   expect(overviewPanelRole(32)).toBe('usage');
   expect(overviewPanelRole(901)).toBe('additional');
   expect(overviewChartTokens(createTheme()).gridDash).toEqual([]);
+});
+
+it('uses a generic preview header without inheriting a 05 semantic role from another dashboard panel ID', () => {
+  render(
+    <OverviewPanelPresentation>
+      <PanelChrome title="Other dashboard panel 32" width={400} height={280} loadingState={LoadingState.Done}>
+        {(width, height) => (
+          <div data-testid="generic-preview-dimensions">
+            {width}×{height}
+          </div>
+        )}
+      </PanelChrome>
+    </OverviewPanelPresentation>
+  );
+  expect(screen.getByRole('heading', { name: 'Other dashboard panel 32' })).toBeVisible();
+  expect(screen.getByTestId('generic-preview-dimensions')).toHaveTextContent('366×202');
 });

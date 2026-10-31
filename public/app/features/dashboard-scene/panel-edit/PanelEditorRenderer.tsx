@@ -29,7 +29,8 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
   const dashboard = getDashboardSceneFor(model);
   const { optionsPane, isDirty } = model.useState();
   const { title } = model.getPanel().useState();
-  const wallEditor = dashboard.state.uid === STORAGE_VM_DASHBOARD_UID;
+  // Shared editor for every regular dashboard. Query/model/permission ownership stays native.
+  const wallEditor = !dashboard.state.meta.isSnapshot && !dashboard.state.meta.dashboardNotFound;
   const styles = useStyles2(getStyles);
 
   const { containerProps, primaryProps, secondaryProps, splitterProps, splitterState, onToggleCollapse } =
@@ -120,13 +121,14 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
 
 function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
   const dashboard = getDashboardSceneFor(model);
-  const { controls } = dashboard.useState();
+  const { controls, wallModern } = dashboard.useState();
   const { dataPane, optionsPane, tableView, showLibraryPanelSaveModal, showLibraryPanelUnlinkModal } = model.useState();
   const panel = model.getPanel();
   const libraryPanel = getLibraryPanelBehavior(panel);
   return (
     <>
       <WallPanelStudio
+        key={`${dashboard.state.uid ?? 'new'}:${model.getPanelId()}`}
         initialData={dataPane?.state.tab === 'transformations'}
         controls={
           controls &&
@@ -142,7 +144,13 @@ function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
             hasData={Boolean(dataPane)}
             onToggleTableView={model.onToggleTableView}
           >
-            <OverviewPanelPresentation id={model.getPanelId()}>
+            <OverviewPanelPresentation
+              id={
+                dashboard.state.uid === STORAGE_VM_DASHBOARD_UID
+                  ? (wallModern?.panelSources?.[model.getPanelId()] ?? model.getPanelId())
+                  : undefined
+              }
+            >
               <VizWrapper panel={panel} tableView={tableView} />
             </OverviewPanelPresentation>
           </WallEditorPreview>

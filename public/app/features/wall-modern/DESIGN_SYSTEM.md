@@ -1350,3 +1350,19 @@ REF-58 최종 확인: 전체 TypeScript 검사는 기존130개 외 이번 변경
 | 토큰/CSS       | `surfaceTokens.ts`의 editor 전용 geometry + 기존 Soft Depth/typography/spacing 재사용. `panelEditor.css`는 Canvas/Inspector 높이·폭·스크롤·gallery/form 배치와 Surface 마감이다            | 저장 데이터·시각화 엔진/그래프 스타일·배치·모션은 변경하지 않는다. 별도 Card/Section 패키지나 새 라이브러리를 설치하지 않는다                                                               |
 
 검증과 실제 캡처는 `docs/WALL_AUTODEV_PROGRESS.md`의 REF-70 수동 요청 기록을 따른다. 기존 query·Transform·field·override 모델과 native 저장/취소/권한 경로는 유지한다.
+## REF-71 — 사용 중인 모든 대시보드의 공통 패널 편집기 (2026-11-01)
+
+사용자의 “한 패널뿐 아니라 사용되는 패널 모두” 요청을 공통 패널 편집기로 확대 적용한다. REF-70의 편집기 한정05 UID 조건을 해제하며, 대시보드 조회/Workspace/레이아웃/설정의 UID 제한은 그대로다.
+
+| 대상           | 실제 적용 / 보존                                                                                                                                                                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 범위           | PanelEditorRenderer에서 특정 UID/패널 ID/타입에 종속되지 않는 공통 Studio를 사용한다. 일반 대시보드는 같은 편집기이며 snapshot/not-found의 기존 native fallback은 유지한다. 저장/권한/쿼리 모델이나 조회 화면은 변경하지 않는다                                      |
+| 조사           | 로컬 저장소 API에서19개 대시보드·498개 패널·10유형 확인. Stat122/Gauge38/Time series288/Bar gauge4/Table31/Logs1/Bar chart1/Alert list5/Text7/Clock1이다. 타입 목록을 제품 코드에 하드코딩하지 않는다                                                                |
+| ID 분리        | 05번만 wallModern.panelSources 및 의미별 원본 ID를 미리보기에 사용한다. 다른 UID는 ID 없는 generic OverviewPanelPresentation을 사용하므로 다른 대시보드의32/38/242 등이05의 사용률/서비스 역할로 바뀌지 않는다. 실제 패널 ID·데이터는 보존한다                       |
+| 상태 격리      | Studio key를 dashboard UID+native panel ID로 구분한다. 같은 패널 안에서는 기존 native pane/buffer를 유지한다. skipDataQuery 유형으로 데이터 pane이 없어지면 비활성 데이터 탭을 선택한 빈 화면 대신 기존 속성 화면을 표시한다                                         |
+| 쿼리 없는 유형 | 실제 Text/Alert list는 native skipDataQuery를 따라 데이터 탭을 비활성화하고 해당 플러그인의 옵션을 표시한다. 제목 없는 Text는 화면 제목만 “제목 없는 패널”로 안내하며 원래 빈 제목을 저장 모델에서 바꾸지 않는다                                                     |
+| primitive/CSS  | REF-70의 실제 local shadcn Tabs/Card/Button 및 Base UI1.0.0 Input/Switch/Collapsible, native descriptor·plugin/query/editor를 그대로 재사용한다. 새 primitive/패키지/엔진/CSS 체계를 추가하지 않았다                                                                 |
+| 검증           | 다른 UID의9개 설치 유형에서 편집 진입·표현/패널 정보 전환, Table의 Query/Transform·제목 변경/취소·native 전체 취소를 확인했다. Light/Dark 및 실제 사용05 탭의 미저장0 확인 후 갱신.19개 저장 문서의 SHA/버전은 검증 전후 동일하다                                    |
+| 환경 제약      | Clock1개는 로컬에 grafana-clock-panel 플러그인이 없어 native “Panel plugin not found”를 표시한다. 공통 Studio 틀은 적용됐지만 시계 렌더링 검증은 제외한다. 기존 일부 문서는 native 정규화(pluginVersion/threshold null)로 초기 Dirty가 생기며 저장하지 않고 검증했다 |
+
+498개 모든 패널을 개별 조작했다고 표현하지 않는다. 공통 경로 적용과 실제 사용10유형 중 설치된9유형의 대표 검증을 구분한다. 새 라이브러리·운영 배포·Grafana/백엔드 변경·대시보드 저장은 수행하지 않았다. 상세 증거는 `docs/WALL_AUTODEV_PROGRESS.md`의 REF-71 기록을 따른다.

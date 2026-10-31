@@ -72,21 +72,25 @@ export function OverviewPanelPresentation({
   children,
   preserveTimeSeries = false,
 }: {
-  id: number;
+  id?: number;
   children: ReactNode;
   preserveTimeSeries?: boolean;
 }) {
   const theme = useTheme2();
   const fontStatus = useContext(WallFontStatusContext);
-  const role = overviewPanelRole(id);
+  // Generic editor previews have no dashboard-specific semantic ID.
+  // An ID such as 32 in another dashboard must not inherit the 05 usage-card role.
+  const role = id === undefined ? 'additional' : overviewPanelRole(id);
+  const displayKind = id === undefined ? undefined : displayKinds[id];
   const chrome = useMemo(
     () => ({
       hideMenu: true,
       contentPadding: {
         horizontal: wallSurfaceTokens.padding,
-        vertical: ['kpi', 'usage', 'service', 'counts'].includes(displayKinds[id])
-          ? wallSurfaceTokens.compactPadding
-          : wallSurfaceTokens.padding,
+        vertical:
+          displayKind && ['kpi', 'usage', 'service', 'counts'].includes(displayKind)
+            ? wallSurfaceTokens.compactPadding
+            : wallSurfaceTokens.padding,
       },
       headerHeight:
         role === 'services' || role === 'usage'
@@ -118,7 +122,7 @@ export function OverviewPanelPresentation({
           </CardHeader>
         ),
     }),
-    [id, role]
+    [displayKind, role]
   );
   const viz = useMemo(
     () => ({

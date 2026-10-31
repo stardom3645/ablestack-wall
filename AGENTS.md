@@ -97,3 +97,5 @@
 - 편집 컨트롤의 접근성 기준은 DESIGN_SYSTEM.md REF-69다. 옵션 탐색은 local TabsContent로 실제 tab–tabpanel ID를 연결하고 현재 그룹이 없으면 사용 가능한 영역을 표시한다. 일반 설정의 툴팁 동기화·편집 허용 선택은 Base UI RadioGroup/Radio로 숫자·boolean native 값을 그대로 전달한다. 이 값 선택을 tabpanel 없는 Tabs로 되돌리지 않는다. 기존 Surface·타이포그래피·저장·Grid·다른 UID의 경로를 보존한다.
 
 - 패널 편집 화면의 최신 구조는 DESIGN_SYSTEM.md REF-70이다. 사용자의 2026-11-01 직접 요청으로 05번 편집기는 큰 Canvas와 단일 Inspector(표현·데이터·패널 정보)로 변경한다. REF-68의 상하 preview/query 3분할을 이 UID에 복원하지 않는다. native data/options pane의 버퍼·descriptor·플러그인 캐시·저장/취소/권한을 재사용하고, 다른 UID와 대시보드 Grid는 변경하지 않는다. Dynatrace의 인컨텍스트 전체 대시보드 Details를 동일하게 구현했다고 표현하지 않는다.
+
+- 패널 편집기의 적용 범위는 DESIGN_SYSTEM.md REF-71이 우선한다. 사용자의 모든 사용 패널 요청에 따라 일반 대시보드의 native Scenes 패널 편집기는 공통 Wall Studio를 사용한다. 이 확대는 편집 화면에만 해당하며 다른 UID의 조회/Workspace/레이아웃/설정 제한을 해제하지 않는다.05의 의미별 패널 ID/복제 원본 매핑은 다른 UID에 적용하지 않고 generic preview를 사용한다. UID+패널 ID별 편집 UI 상태, query-free 유형의 데이터 탭, native 권한/저장/모델 및 기존05 배치를 보존한다. 로컬 Clock 플러그인 미설치를 해결한 것으로 보고하지 않는다.

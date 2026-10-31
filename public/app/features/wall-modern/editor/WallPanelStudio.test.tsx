@@ -48,3 +48,16 @@ it('links the selected inspector tab and panel and retains native data URL entry
   const visual = screen.getByRole('tab', { name: '표현' });
   expect(visual).toHaveAttribute('aria-controls', screen.getByRole('tabpanel', { name: '표현' }).id);
 });
+
+it('shows properties for query-free plugins and recovers when native plugin loading removes the selected data pane', () => {
+  const { rerender } = render(
+    <WallPanelStudio initialData preview="Preview" options="Native Text options" data="Native data" />
+  );
+  expect(screen.getByRole('tab', { name: '데이터' })).toHaveAttribute('aria-selected', 'true');
+  rerender(<WallPanelStudio preview="Preview" options="Native Text options" />);
+  expect(screen.getByRole('tab', { name: '데이터' })).toHaveAttribute('aria-disabled', 'true');
+  expect(screen.getByRole('tab', { name: '표현' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByRole('tabpanel', { name: '표현' })).toHaveTextContent('Native Text options');
+  fireEvent.click(screen.getByRole('tab', { name: '패널 정보' }));
+  expect(screen.getByRole('tabpanel', { name: '패널 정보' })).toHaveTextContent('Native Text options');
+});
