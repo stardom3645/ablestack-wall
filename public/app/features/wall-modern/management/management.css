@@ -334,21 +334,28 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--wall-card-gap);
 }
-.wall-form-field .wall-ui-tabs-list {
+.wall-form-choice-list {
+  display: flex;
   width: 100%;
   padding: 4px;
   background: var(--wall-soft);
   border: 1px solid var(--wall-card-border);
   border-radius: var(--wall-radius);
 }
-.wall-form-field .wall-ui-tabs-trigger {
+.wall-form-choice-item {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--wall-card-padding-compact);
+  cursor: pointer;
+  font-size: var(--wall-type-control-size);
+  font-weight: var(--wall-type-control-weight);
   flex: 1;
   min-height: 28px;
   justify-content: center;
   border-radius: calc(var(--wall-radius) - 3px);
   color: var(--wall-panel-muted);
 }
-.wall-form-field .wall-ui-tabs-trigger[data-active] {
+.wall-form-choice-item[data-checked] {
   background: var(--wall-surface);
   color: var(--wall-panel-text);
   box-shadow: var(--wall-card-shadow);
@@ -636,4 +643,9 @@
   padding: 0;
   border-radius: 3px;
   color: var(--wall-panel-muted);
+}
+
+.wall-form-choice-item:focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 2px;
 }

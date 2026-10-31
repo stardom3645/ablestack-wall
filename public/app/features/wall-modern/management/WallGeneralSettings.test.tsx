@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { render } from 'test/test-utils';
 
 import { config } from '@grafana/runtime';
@@ -52,8 +52,13 @@ it('connects new inputs, switches and choices to native dashboard settings and r
   expect(dashboard.state.tags).toEqual([]);
   fireEvent.click(screen.getByRole('switch', { name: '시간 선택기 숨기기' }));
   expect(settings.getDashboardControls().state.hideTimeControls).toBe(true);
-  fireEvent.click(screen.getByText('십자선', { exact: true }));
+  const tooltipChoices = screen.getByRole('radiogroup', { name: '패널 간 툴팁 동기화' });
+  fireEvent.click(within(tooltipChoices).getByRole('radio', { name: '십자선' }));
   expect(settings.getCursorSync()?.state.sync).toBe(1);
+  expect(within(tooltipChoices).getByRole('radio', { name: '십자선' })).toHaveAttribute('aria-checked', 'true');
+  fireEvent.click(screen.getByRole('radio', { name: '읽기 전용' }));
+  expect(dashboard.state.editable).toBe(false);
+  expect(screen.getByRole('radio', { name: '읽기 전용' })).toHaveAttribute('aria-checked', 'true');
   const intervals = screen.getByLabelText('자동 갱신 간격', { exact: true });
   const original = settings.getRefreshPicker().state.intervals;
   fireEvent.change(intervals, { target: { value: 'invalid' } });

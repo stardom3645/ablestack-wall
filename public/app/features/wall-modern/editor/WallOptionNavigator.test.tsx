@@ -71,3 +71,40 @@ it('keeps native override title actions outside the disclosure button', () => {
   fireEvent.click(trigger);
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
+
+it('associates the selected option tab with its visible panel for assistive navigation', () => {
+  render(
+    <WallOptionNavigator
+      general={[category('Panel', 'native title editor')]}
+      visualization={[category('Graph', 'native line editor')]}
+      fields={[]}
+      overrides={[]}
+      overrideCount={0}
+      searching={false}
+    />
+  );
+  const tab = screen.getByRole('tab', { name: '패널' });
+  const panel = screen.getByRole('tabpanel', { name: '패널' });
+  expect(tab).toHaveAttribute('aria-controls', panel.id);
+  expect(panel).toHaveAttribute('aria-labelledby', tab.id);
+  fireEvent.click(screen.getByRole('tab', { name: '시각화' }));
+  expect(screen.getByRole('tabpanel', { name: '시각화' })).toHaveTextContent('native line editor');
+});
+
+it('falls back to an available section when a visualization change removes the selected section', () => {
+  const props = {
+    general: [category('Panel', 'native title editor')],
+    visualization: [category('Graph', 'native line editor')],
+    fields: [category('Unit', 'native unit editor')],
+    overrides: [],
+    overrideCount: 0,
+    searching: false,
+  };
+  const { rerender } = render(<WallOptionNavigator {...props} />);
+  fireEvent.click(screen.getByRole('tab', { name: '필드' }));
+  expect(screen.getByText('native unit editor')).toBeInTheDocument();
+  rerender(<WallOptionNavigator {...props} fields={[]} />);
+  expect(screen.getByRole('tab', { name: '필드' })).toHaveAttribute('aria-disabled', 'true');
+  expect(screen.getByRole('tab', { name: '패널' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByRole('tabpanel', { name: '패널' })).toHaveTextContent('native title editor');
+});

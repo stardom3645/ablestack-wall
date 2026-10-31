@@ -1,4 +1,6 @@
 import { Input as InputPrimitive } from '@base-ui/react/input';
+import { Radio } from '@base-ui/react/radio';
+import { RadioGroup } from '@base-ui/react/radio-group';
 import { Switch as SwitchPrimitive } from '@base-ui/react/switch';
 import { Clock3, LayoutDashboard, MousePointer2, ShieldCheck, X } from 'lucide-react';
 import { useEffect, useId, useState, type ReactNode } from 'react';
@@ -17,7 +19,6 @@ import { GenAIDashTitleButton } from 'app/features/dashboard/components/GenAI/Ge
 import { DeleteDashboardButton } from 'app/features/dashboard-scene/settings/DeleteDashboardButton';
 import type { GeneralSettingsEditView } from 'app/features/dashboard-scene/settings/GeneralSettingsEditView';
 
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Button } from '../ui';
 
 /** Same add/remove semantics as native TagsInput; only the display composition changes. */
@@ -136,23 +137,29 @@ function Choice<T extends string | number | boolean>({
   onChange: (value: T) => void;
 }) {
   return (
-    <Tabs
-      value={String(value)}
-      onValueChange={(v) => {
-        const next = options.find((o) => String(o.value) === v);
+    <RadioGroup
+      className="wall-form-choice-list"
+      aria-label={label}
+      aria-orientation="horizontal"
+      value={value}
+      onValueChange={(nextValue) => {
+        const next = options.find((option) => option.value === nextValue);
         if (next) {
           onChange(next.value);
         }
       }}
     >
-      <TabsList aria-label={label}>
-        {options.map((o) => (
-          <TabsTrigger key={String(o.value)} value={String(o.value)}>
-            {o.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
+      {options.map((option) => (
+        <Radio.Root
+          key={String(option.value)}
+          value={option.value}
+          className="wall-form-choice-item"
+          aria-label={option.label}
+        >
+          {option.label}
+        </Radio.Root>
+      ))}
+    </RadioGroup>
   );
 }
 export function WallGeneralSettings({ model }: { model: GeneralSettingsEditView }) {

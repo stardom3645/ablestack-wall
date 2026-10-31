@@ -93,3 +93,5 @@
 
 - 편집·설정 화면의 최신 기준은 DESIGN_SYSTEM.md REF-68이다. 05번의 WallManagement 헤더/설정 왼쪽 탐색, 옵션 4영역과 Base UI Collapsible, 쿼리 작업부, 일반 폼 및 변수·주석·링크·버전 collection 구조를 사용한다. 외곽 Card만 추가한 이전 편집기로 되돌리지 않는다. native query/Transform/Field/Override/picker/권한·저장·복원 로직은 재사용하고 다른 UID는 native UI를 유지한다. 최초 편집 baseline에도 overlay/editPanel/editview를 넣지 않는다. 기능 테스트 통과를 전체 디자인 완성도 90점의 근거로 사용하지 않으며 실제 화면과 native로 남은 부분을 구분해 기록한다.
 - 로컬 preview의 설정 원본은 `~/Library/Application Support/ABLESTACK/WallPreview/grafana.ini`에 보존하고 기존 launchd preview 서비스가 이 파일을 사용한다. 2026-10-31 임시 폴더 설정 파일 소실로 재시작 실패가 재현되어 기존 설정 그대로 위치만 보존했다. 런타임/DB/로그·3317/3318·localhost 바인딩·기존 인증 정책은 유지하며 새 환경 전환이나 운영 설정으로 사용하지 않는다.
+
+- 편집 컨트롤의 접근성 기준은 DESIGN_SYSTEM.md REF-69다. 옵션 탐색은 local TabsContent로 실제 tab–tabpanel ID를 연결하고 현재 그룹이 없으면 사용 가능한 영역을 표시한다. 일반 설정의 툴팁 동기화·편집 허용 선택은 Base UI RadioGroup/Radio로 숫자·boolean native 값을 그대로 전달한다. 이 값 선택을 tabpanel 없는 Tabs로 되돌리지 않는다. 기존 Surface·타이포그래피·저장·Grid·다른 UID의 경로를 보존한다.

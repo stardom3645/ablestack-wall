@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { t } from 'app/core/internationalization';
 import type { OptionsPaneCategoryDescriptor } from 'app/features/dashboard/components/PanelEditor/OptionsPaneCategoryDescriptor';
 
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
 interface Props {
   general: OptionsPaneCategoryDescriptor[];
@@ -32,10 +32,16 @@ export function WallOptionNavigator({
     { id: 'fields', label: t('wall.editor.option-fields', '필드'), groups: fields },
     { id: 'overrides', label: t('wall.editor.option-overrides', '재정의'), groups: overrides },
   ];
+  // Plugin changes can remove an option group while this navigator stays mounted.
+  // Keep a real, available tab selected without mutating the native editor model.
+  const selected =
+    sections.find((section) => section.id === active && section.groups.length) ??
+    sections.find((section) => section.groups.length);
+  const selectedId = selected?.id ?? 'general';
   return (
     <Tabs
       className="wall-option-navigator"
-      value={active}
+      value={selectedId}
       onValueChange={(value) => typeof value === 'string' && setActive(value)}
     >
       <TabsList aria-label={t('wall.editor.option-sections', '표시 설정 영역')} className="wall-option-navigation">
@@ -48,19 +54,18 @@ export function WallOptionNavigator({
           </TabsTrigger>
         ))}
       </TabsList>
-      <div
-        className="wall-option-groups"
-        role="region"
-        aria-label={
-          searching
-            ? t('wall.editor.option-results', '설정 검색 결과')
-            : sections.find((section) => section.id === active)?.label
-        }
-      >
-        {searching
-          ? searchResults
-          : sections.find((section) => section.id === active)?.groups.map((group) => group.render())}
-      </div>
+      {sections.map((section) => (
+        <TabsContent key={section.id} value={section.id} className="wall-option-groups">
+          {section.id === selectedId &&
+            (searching ? (
+              <div role="region" aria-label={t('wall.editor.option-results', '설정 검색 결과')}>
+                {searchResults}
+              </div>
+            ) : (
+              section.groups.map((group) => group.render())
+            ))}
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }
