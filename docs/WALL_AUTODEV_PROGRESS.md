@@ -231,3 +231,34 @@
 Dynatrace는 전체 대시보드 옆 Details이고 이번 Wall은 단일 패널 미리보기 Canvas/Inspector다. 동일한 기능·외형으로 복제했다고 표현하지 않는다. datasource별 Builder/Code, Transform, plugin field/override picker의 내부 전문 컨트롤은 native를 유지하며, 이 내부까지 모두 새 Wall 구현이라고 보고하지 않는다. 새로운 라이브러리·편집 엔진·전역 편집 모드를 추가하지 않았고 Grid/48열/REF-62 저장·놓기 경로는 손대지 않았다. 기능 검사 개수를 디자인 완성도 점수로 환산하지 않는다.
 
 기능 커밋: **5b8b62a873** `feat(wall): replace panel editor splits with canvas and inspector`. 정상 frontend-lint hook 통과. 기존 Betterer 기준선 제약은 앞선 실행과 같이 strict 전후 비교 신규0으로 대체했고, 다른 format hook은 새 REF 조각/AGENTS를 직접 검사해 전체 표의 불필요한 reflow를 피했다. hook/config/baseline 자체는 변경하지 않았다. 원본 사용자 index tree `363312b24e976cc838035e769a3b2e0ff62aa015`를 보존하고, 이 개발 Worktree에서만 커밋했다. merge/push/새 자동화/운영 배포는 없다.
+## 2026-11-01 수동 후속 요청 — 모든 사용 패널의 공통 편집기 (REF-71)
+
+사용자가 “한 패널뿐 아니라 사용되는 패널 모두” 적용하라고 요청했다.05번의 기존59개 데이터 패널은 이미 UID 단위 공통 경로여서 개별 ID 조건이 없었다. 이번 요청을 다른 대시보드의 사용 패널까지 포함하는 공통 편집기로 해석하고 작업 중 범위를 고지했다. 조회/배치/대시보드 설정까지 확대하지 않았다. 시작은 `b8c0b92e84`, 개발 Worktree clean이었다.
+
+### 적용 및 조사
+
+- 로컬 API 전수 조사: **19개 대시보드,498개 데이터 패널,10유형**. Stat122·Gauge38·Time series288·Bar gauge4·Table31·Logs1·Bar chart1·Alert list5·Text7·Clock1이다. 제품 코드에 이 목록/개수를 하드코딩하지 않았다.
+- PanelEditorRenderer의05 UID 제한을 일반 대시보드 공통 Studio로 변경했다. snapshot/not-found는 기존 native fallback이다. native plugin 옵션/Query/Transform/field/override/저장·권한 모델은 그대로다.
+- 다른 대시보드의 동일한 ID가05의 사용률/서비스 역할을 이어받지 않도록 OverviewPanelPresentation의 generic preview 경로를 분리했다.05는 기존 panelSources 매핑을 재사용해 복제 패널도 원본 표시 역할을 유지한다.
+- 편집 UI key는 UID+native panel ID로 구분한다. 동일 패널 내부의 Inspector 전환은 계속 native pane/buffer를 유지한다. query-free plugin이 데이터 pane을 제거하면 비활성 데이터 탭을 선택한 빈 화면이 남지 않도록 속성 화면으로 fallback한다.
+- 제목 없는 Text도 화면 헤더에 “제목 없는 패널”을 표시한다. 실제 빈 title과 hoverHeader 및 저장 값은 변경하지 않는다.
+- 수정: `PanelEditorRenderer.tsx`, `editor/WallPanelStudio.tsx·test`, `editor/WallPanelEditor.tsx`, `workspace/overviewPresentation.tsx·test`, AGENTS/REF-71. 새 라이브러리·CSS 체계·편집 엔진을 추가하지 않았다.
+
+### 검증
+
+| 항목             | 결과                                                                                                                                                                                                                                                                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 실제 유형        | 05 외부 UID의 Stat/Gauge/Time series/Bar gauge/Table/Logs/Bar chart/Alert list/Text 대표 패널에서 Studio와 native 플러그인 옵션을 확인했다. 표현↔패널 정보 전환과 실제 제목 폼을 확인했다.498개를 개별 조작했다고 표현하지 않는다                                                                                                             |
+| query-free       | Text/Alert list에서 데이터 탭 aria-disabled=true, 각 플러그인의 기존 옵션/Monaco 유지 확인. Text의 원래 빈 제목은 그대로이고 화면 헤더만 fallback한다                                                                                                                                                                                          |
+| 데이터/취소      | 03번 NIC Table에서 Query1/Transform2 확인, 제목 임시 변경→Inspector 이동→값 유지→native 패널 취소→원래 제목/대시보드 복귀 확인. native 편집 종료/변경 폐기도 검증하고 시험 상태를 정리했다                                                                                                                                                     |
+| Clock 제약       | Clock의 공통 편집기 틀은 표시되나 플러그인이 없다. `/api/plugins`에 grafana-clock-panel 미등록, settings404, native Panel plugin not found를 실제 확인했다. 플러그인을 설치하거나 시계 기능을 새로 만들지 않았으며 실제 시계 렌더링 검증에서 제외한다                                                                                          |
+| 초기 Dirty       | 일부 기존 문서는 입력을 바꾸지 않아도 native Dirty가 생겼다. native 저장 Drawer의 실제 diff에서 pluginVersion11.4.0-pre→9.2.0 및 threshold base value:null 제거를 확인했다. 현재 로컬9.2 backend/11.4 frontend와 native 정규화에 관련된 기존 경로이며 이를 UI에서 숨기거나 문서를 저장해 없애지 않았다. 본 작업으로 해결했다고 보고하지 않는다 |
+| 자동 검사        | Studio/Frame/Presentation 3 suites10 tests 통과. native data/options 버퍼 유지·Query/Transform 선택/URL·테마·query-free fallback·generic header·게이지 값/임계치/링크 포함. 기존 presentation 검사의8px padding 기대값이 REF-43의 실제16px와 맞지 않아382×218→366×202로 기대값만 정정했다. 제품 geometry를 변경한 것은 아니다                  |
+| 정적/빌드        | ESLint/Prettier/공백 검사 통과. Betterer 동일 strict 전후 비교 신규0(기존 진단 유지). production webpack 성공, 기존 경고2개. 전체 tsc/전체 회귀는 반복하지 않았다                                                                                                                                                                              |
+| Light/Dark       | 다른 UID의 Table 편집기에서 Light/Dark Surface·native 옵션·제목/숫자 확인. QA는 별도 임시 탭에서 진행하고 닫았다. 실제 사용자05 탭은 미저장0을 확인 후 최신 빌드로 갱신, Light/표현 Inspector로 유지했다                                                                                                                                       |
+| 저장 문서        | 19개 저장 문서의 JSON SHA256/버전을 검증 전후 비교해 모두 동일했다. 실제 저장 버튼은 실행하지 않았다. 기존 쿼리/threshold/단위/패널 ID/레이아웃을 DB에서 변경하지 않았다                                                                                                                                                                       |
+| 로컬/사용자 소스 | 3317 health database ok·3318 fixture query success. 사용자 원본 index tree는363312b24e976cc838035e769a3b2e0ff62aa015 그대로다. 기존 preview launchd를 재사용하며 운영 배포·포트·인증/백엔드 버전·새 자동화·merge/push는 없다                                                                                                                   |
+
+실제 캡처: 기존 시각화 폴더의 `panel-studio-all-table-light-20261101.png`, `panel-studio-all-table-dark-20261101.png`, `panel-studio-all-text-light-20261101.png`. 유형별 DOM 검사 기록은 `panel-studio-all-types-qa-20261101.json`이다. 모두 로컬 fixture 검증이며 고객 데이터/권한/모든 플러그인 조합을 검증한 결과로 확대하지 않는다.
+
+기능 커밋: **293573eb03** `feat(wall): share panel studio across all dashboard panel types`. 정상 frontend-lint hook 통과. 기존 Betterer 기준선은 strict 전후 신규0 검사로 대체하고, 새 REF/AGENTS 조각을 직접 포맷 검사하여 전체 표의 불필요한 reflow를 피했다. hook/config/baseline 자체는 수정하지 않았다.
