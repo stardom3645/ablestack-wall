@@ -7,7 +7,7 @@ import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
 import { LinkButton, RadioButtonGroup, useStyles2, FilterInput, EmptyState } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/core';
-import {t, Trans} from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
 
 import { AccessControlAction, StoreState, UserFilter } from '../../types';
 
@@ -75,15 +75,21 @@ const UserListAdminPageUnConnected = ({
       <div className={styles.actionBar} data-testid={selectors.container}>
         <div className={styles.row}>
           <FilterInput
-            placeholder={t("ablestack-wall.administration.service-and-access.search-bar-user-by-login-email-name", "Search user by login, email or name")}
+            placeholder={t(
+              'ablestack-wall.administration.service-and-access.search-bar-user-by-login-email-name',
+              'Search user by login, email or name'
+            )}
             autoFocus={true}
             value={query}
             onChange={changeQuery}
           />
           <RadioButtonGroup
             options={[
-              { label: t("ablestack-wall.administration.service-and-access.all-user", "All users"), value: false },
-              { label: t("ablestack-wall.administration.service-and-access.active-last-30-days", "Active last 30 days"), value: true },
+              { label: t('ablestack-wall.administration.service-and-access.all-user', 'All users'), value: false },
+              {
+                label: t('ablestack-wall.administration.service-and-access.active-last-30-days', 'Active last 30 days'),
+                value: true,
+              },
             ]}
             onChange={(value) => changeFilter({ name: 'activeLast30Days', value })}
             value={filters.find((f) => f.name === 'activeLast30Days')?.value}

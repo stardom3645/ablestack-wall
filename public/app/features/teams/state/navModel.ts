@@ -24,7 +24,10 @@ export function buildNavModel(team: Team): NavModelItem {
   const navModel: NavModelItem = {
     img: team.avatarUrl,
     id: 'team-' + team.uid,
-    subTitle: t("ablestack-wall.administration.service-and-access.manage-members-and-settings", "Manage members and settings"),
+    subTitle: t(
+      'ablestack-wall.administration.service-and-access.manage-members-and-settings',
+      'Manage members and settings'
+    ),
     url: `org/teams/edit/${team.uid}`,
     text: team.name,
     children: [
@@ -34,7 +37,7 @@ export function buildNavModel(team: Team): NavModelItem {
         active: false,
         icon: 'sliders-v-alt',
         id: `team-settings-${team.uid}`,
-        text: t("ablestack-wall.common.settings", "Settings"),
+        text: t('ablestack-wall.common.settings', 'Settings'),
         url: `org/teams/edit/${team.uid}/settings`,
       },
     ],
@@ -51,7 +54,7 @@ export function buildNavModel(team: Team): NavModelItem {
       active: false,
       icon: 'users-alt',
       id: `team-members-${team.uid}`,
-      text: t("ablestack-wall.common.members", "Members"),
+      text: t('ablestack-wall.common.members', 'Members'),
       url: `org/teams/edit/${team.uid}/members`,
     });
   }

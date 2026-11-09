@@ -13,7 +13,6 @@ import { OrgUser, AccessControlAction, OrgRole } from 'app/types';
 import { OrgUsersTable } from './Users/OrgUsersTable';
 import { getOrg, getOrgUsers, getUsersRoles, removeOrgUser, updateOrgName, updateOrgUserRole } from './api';
 
-
 interface OrgNameDTO {
   orgName: string;
 }
@@ -84,17 +83,30 @@ const AdminEditOrgPage = () => {
   };
 
   return (
-    <Page navId="global-orgs" pageNav={pageNav} subTitle={
-      <Trans i18nKey="ablestack-wall.administration.general.manage-org-settings">
-        Manage settings for this specific org.
-      </Trans>
-    }>
+    <Page
+      navId="global-orgs"
+      pageNav={pageNav}
+      subTitle={
+        <Trans i18nKey="ablestack-wall.administration.general.manage-org-settings">
+          Manage settings for this specific org.
+        </Trans>
+      }
+    >
       <Page.Contents>
         <>
-          <Legend><Trans i18nKey="ablestack-wall.administration.general.manage-org-edit-organization">Edit organization</Trans></Legend>
+          <Legend>
+            <Trans i18nKey="ablestack-wall.administration.general.manage-org-edit-organization">
+              Edit organization
+            </Trans>
+          </Legend>
           {orgState.value && (
             <form onSubmit={handleSubmit(onUpdateOrgName)} style={{ maxWidth: '600px' }}>
-              <Field label={<Trans i18nKey="ablestack-wall.administration.general.manage-org-edit-name">Name</Trans>} invalid={!!errors.orgName} error="Name is required" disabled={!canWriteOrg}>
+              <Field
+                label={<Trans i18nKey="ablestack-wall.administration.general.manage-org-edit-name">Name</Trans>}
+                invalid={!!errors.orgName}
+                error="Name is required"
+                disabled={!canWriteOrg}
+              >
                 <Input
                   {...register('orgName', { required: true })}
                   id="org-name-input"
@@ -108,7 +120,11 @@ const AdminEditOrgPage = () => {
           )}
 
           <div style={{ marginTop: '20px' }}>
-            <Legend><Trans i18nKey="ablestack-wall.administration.general.manage-org-organization-users">Organization users</Trans></Legend>
+            <Legend>
+              <Trans i18nKey="ablestack-wall.administration.general.manage-org-organization-users">
+                Organization users
+              </Trans>
+            </Legend>
             {!canReadUsers && renderMissingPermissionMessage()}
             {canReadUsers && !!users.length && (
               <OrgUsersTable

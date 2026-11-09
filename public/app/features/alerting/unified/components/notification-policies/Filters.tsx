@@ -69,7 +69,7 @@ const NotificationPoliciesFilter = ({
         label={
           <Label>
             <Stack gap={0.5}>
-              <span>{t("ablestack-wall.alert.search-by-matchers", "Search by matchers")}</span>
+              <span>{t('ablestack-wall.alert.search-by-matchers', 'Search by matchers')}</span>
               <Tooltip
                 content={
                   <div>
@@ -89,7 +89,7 @@ const NotificationPoliciesFilter = ({
         <Input
           ref={searchInputRef}
           data-testid="search-query-input"
-          placeholder={t("ablestack-wall.common.search", "Search")}
+          placeholder={t('ablestack-wall.common.search', 'Search')}
           width={46}
           prefix={<Icon name="search" />}
           onChange={(event) => {
@@ -98,7 +98,10 @@ const NotificationPoliciesFilter = ({
           defaultValue={queryString}
         />
       </Field>
-      <Field label={t("ablestack-wall.alert.search-by-contact-point", "Search by contact point")} style={{ marginBottom: 0 }}>
+      <Field
+        label={t('ablestack-wall.alert.search-by-contact-point', 'Search by contact point')}
+        style={{ marginBottom: 0 }}
+      >
         <ContactPointSelector
           selectProps={{
             id: 'receiver',

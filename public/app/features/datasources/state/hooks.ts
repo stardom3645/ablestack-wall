@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { DataSourcePluginMeta, DataSourceSettings } from '@grafana/data';
 import { cleanUpAction } from 'app/core/actions/cleanUp';
@@ -8,6 +8,7 @@ import { t } from 'app/core/internationalization';
 import { AccessControlAction, useDispatch, useSelector } from 'app/types';
 import { ShowConfirmModalEvent } from 'app/types/events';
 
+import { ROUTES } from '../../connections/constants';
 import { DataSourceRights } from '../types';
 import { constructDataSourceExploreUrl } from '../utils';
 
@@ -21,7 +22,6 @@ import {
   updateDataSource,
   deleteLoadedDataSource,
 } from './actions';
-import { DataSourcesRoutesContext } from './contexts';
 import { initialDataSourceSettingsState } from './reducers';
 import { getDataSource, getDataSourceMeta } from './selectors';
 
@@ -43,9 +43,8 @@ export const useInitDataSourceSettings = (uid: string) => {
 
 export const useTestDataSource = (uid: string) => {
   const dispatch = useDispatch();
-  const dataSourcesRoutes = useDataSourcesRoutes();
 
-  return () => dispatch(testDataSource(uid, dataSourcesRoutes.Edit));
+  return () => dispatch(testDataSource(uid, ROUTES.DataSourcesEdit));
 };
 
 export const useLoadDataSources = () => {
@@ -78,10 +77,9 @@ export const useLoadDataSourcePlugins = () => {
 
 export const useAddDatasource = () => {
   const dispatch = useDispatch();
-  const dataSourcesRoutes = useDataSourcesRoutes();
 
   return (plugin: DataSourcePluginMeta) => {
-    dispatch(addDataSource(plugin, dataSourcesRoutes.Edit));
+    dispatch(addDataSource(plugin, ROUTES.DataSourcesEdit));
   };
 };
 
@@ -141,8 +139,4 @@ export const useDataSourceRights = (uid: string): DataSourceRights => {
     hasWriteRights,
     hasDeleteRights,
   };
-};
-
-export const useDataSourcesRoutes = () => {
-  return useContext(DataSourcesRoutesContext);
 };

@@ -5,7 +5,6 @@ import { getDefaultSilenceFormValues } from 'app/features/alerting/unified/compo
 import { GRAFANA_RULES_SOURCE_NAME } from 'app/features/alerting/unified/utils/datasource';
 import { RulerGrafanaRuleDTO } from 'app/types/unified-alerting-dto';
 
-
 type Props = {
   rulerRule: RulerGrafanaRuleDTO;
   onClose: () => void;
@@ -21,8 +20,11 @@ const SilenceGrafanaRuleDrawer = ({ rulerRule, onClose }: Props) => {
 
   return (
     <Drawer
-      title={t("ablestack-wall.alert.silence-alert-rule", "Silence alert rule")}
-      subtitle={t("ablestack-wall.alert.silence-alert-rule-subtitle", "Configure silences to stop notifications from a particular alert rule.")}
+      title={t('ablestack-wall.alert.silence-alert-rule', 'Silence alert rule')}
+      subtitle={t(
+        'ablestack-wall.alert.silence-alert-rule-subtitle',
+        'Configure silences to stop notifications from a particular alert rule.'
+      )}
       onClose={onClose}
       size="md"
     >

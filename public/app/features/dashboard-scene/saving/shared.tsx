@@ -39,7 +39,7 @@ export interface NameAlreadyExistsErrorProps {
 }
 
 export function NameAlreadyExistsError({ cancelButton, saveButton }: NameAlreadyExistsErrorProps) {
-  const isRestoreDashboardsEnabled = config.featureToggles.dashboardRestore && config.featureToggles.dashboardRestoreUI;
+  const isRestoreDashboardsEnabled = config.featureToggles.dashboardRestore;
   return isRestoreDashboardsEnabled ? (
     <Alert title={t('save-dashboards.name-exists.title', 'Dashboard name already exists')} severity="error">
       <p>
@@ -84,7 +84,11 @@ export function SaveButton({ overwrite, isLoading, isValid, onSave }: SaveButton
       variant={overwrite ? 'destructive' : 'primary'}
       data-testid={selectors.components.Drawer.DashboardSaveDrawer.saveButton}
     >
-      {isLoading ? t("ablestack-wall.common.saving", "Saving...") : overwrite ? t("ablestack-wall.common.save-and-overwrite", "Save and overwrite") : t("ablestack-wall.common.save", "Save")}
+      {isLoading
+        ? t('ablestack-wall.common.saving', 'Saving...')
+        : overwrite
+          ? t('ablestack-wall.common.save-and-overwrite', 'Save and overwrite')
+          : t('ablestack-wall.common.save', 'Save')}
     </Button>
   );
 }

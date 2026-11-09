@@ -48,9 +48,9 @@ export const TeamSettings = ({ team, updateTeam }: Props) => {
   return (
     <Stack direction={'column'} gap={3}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '600px' }}>
-        <FieldSet label={t("ablestack-wall.administration.service-and-access.team-details", "Team details")}>
+        <FieldSet label={t('ablestack-wall.administration.service-and-access.team-details', 'Team details')}>
           <Field
-            label={t("ablestack-wall.common.name", "Name")}
+            label={t('ablestack-wall.common.name', 'Name')}
             disabled={!canWriteTeamSettings}
             required
             invalid={!!errors.name}
@@ -66,14 +66,17 @@ export const TeamSettings = ({ team, updateTeam }: Props) => {
           )}
 
           <Field
-            label={t("ablestack-wall.common.email", "Email")}
-            description={t("ablestack-wall.administration.service-and-access.team-email-description-gravatar", "This is optional and is primarily used to set the team profile avatar (via gravatar service).")}
+            label={t('ablestack-wall.common.email', 'Email')}
+            description={t(
+              'ablestack-wall.administration.service-and-access.team-email-description-gravatar',
+              'This is optional and is primarily used to set the team profile avatar (via gravatar service).'
+            )}
             disabled={!canWriteTeamSettings}
           >
             <Input {...register('email')} placeholder="team@email.com" type="email" id="email-input" />
           </Field>
           <Button type="submit" disabled={!canWriteTeamSettings}>
-            {t("ablestack-wall.common.update", "Update")}
+            {t('ablestack-wall.common.update', 'Update')}
           </Button>
         </FieldSet>
       </form>

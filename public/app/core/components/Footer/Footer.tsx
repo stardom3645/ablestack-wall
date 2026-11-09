@@ -93,7 +93,7 @@ export interface Props {
 }
 
 export const Footer = memo(({ customLinks, hideEdition }: Props) => {
-  const links = (customLinks || getFooterLinks());
+  const links = customLinks || getFooterLinks();
   const styles = useStyles2(getStyles);
 
   return (
@@ -102,17 +102,14 @@ export const Footer = memo(({ customLinks, hideEdition }: Props) => {
         <ul className={styles.list}>
           {links.map((link, index) => (
             <li className={styles.listItem} key={index}>
-              <FooterItem item={link}/>
+              <FooterItem item={link} />
             </li>
           ))}
         </ul>
-        <ul className={styles.list}>
-          Copyright (c) 2021-2024, ABLECLOUD.Co.Ltd
-          ABLESTACK Diplo v4.0.0
-        </ul>
+        <ul className={styles.list}>Copyright (c) 2021-2024, ABLECLOUD.Co.Ltd ABLESTACK Diplo v4.0.0</ul>
       </div>
     </footer>
-);
+  );
 });
 
 Footer.displayName = 'Footer';

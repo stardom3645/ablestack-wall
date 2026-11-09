@@ -132,7 +132,7 @@ export function OperationList<T extends QueryWithOperations>({
             />
           ) : (
             <Button icon={'plus'} variant={'secondary'} onClick={() => setCascaderOpen(true)} title={'Add operation'}>
-              {t("ablestack-wall.common.operations", "Operations")}
+              {t('ablestack-wall.common.operations', 'Operations')}
             </Button>
           )}
         </div>

@@ -10,7 +10,6 @@ import { AccessControlAction, Organization } from 'app/types';
 
 import { AdminOrgsTable } from './AdminOrgsTable';
 
-
 const deleteOrg = async (orgId: number) => {
   return await getBackendSrv().delete('/api/orgs/' + orgId);
 };

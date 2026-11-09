@@ -29,7 +29,7 @@ export const CloudDataSourceSelector = ({ disabled, onChangeCloudDatasource }: C
         {(ruleFormType === RuleFormType.cloudAlerting || ruleFormType === RuleFormType.cloudRecording) && (
           <Field
             className={styles.formInput}
-            label={disabled ? 'Data source' : t("ablestack-wall.alert.select-data-source", "Select data source")}
+            label={disabled ? 'Data source' : t('ablestack-wall.alert.select-data-source', 'Select data source')}
             error={errors.dataSourceName?.message}
             invalid={!!errors.dataSourceName?.message}
           >

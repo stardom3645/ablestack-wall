@@ -24,7 +24,7 @@ export const GroupBy = ({ groups, groupBy, onGroupingChange }: Props) => {
   return (
     <div data-testid={'group-by-container'}>
       <Label>
-        <span>{t("ablestack-wall.alert.custom-group-by", "Custom group by")}&nbsp;</span>
+        <span>{t('ablestack-wall.alert.custom-group-by', 'Custom group by')}&nbsp;</span>
         <Tooltip
           content={
             <div>
@@ -39,7 +39,7 @@ export const GroupBy = ({ groups, groupBy, onGroupingChange }: Props) => {
       <MultiSelect
         aria-label={'group by label keys'}
         value={groupBy}
-        placeholder={t("ablestack-wall.alert.group-by", "Group by")}
+        placeholder={t('ablestack-wall.alert.group-by', 'Group by')}
         prefix={<Icon name={'tag-alt'} />}
         onChange={(items) => {
           onGroupingChange(items.map(({ value }) => value as string));

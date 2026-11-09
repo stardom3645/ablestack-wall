@@ -18,9 +18,12 @@ const TeamPermissions = (props: TeamPermissionsProps) => {
   return (
     <Permissions
       title=""
-      addPermissionTitle={t("ablestack-wall.administration.service-and-access.add-member", "Add member")}
-      buttonLabel={t("ablestack-wall.administration.service-and-access.add-member", "Add member")}
-      emptyLabel={t("ablestack-wall.administration.service-and-access.no-members", "There are no members in this team or you do not have the permissions to list the current members.")}
+      addPermissionTitle={t('ablestack-wall.administration.service-and-access.add-member', 'Add member')}
+      buttonLabel={t('ablestack-wall.administration.service-and-access.add-member', 'Add member')}
+      emptyLabel={t(
+        'ablestack-wall.administration.service-and-access.no-members',
+        'There are no members in this team or you do not have the permissions to list the current members.'
+      )}
       resource="teams"
       resourceId={props.team.id}
       canSetPermissions={canSetPermissions}

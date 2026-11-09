@@ -67,7 +67,7 @@ export const LibraryPanelsSearch = ({
             <FilterInput
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder={t("ablestack-wall.dashboard.search-by-name-or-description", "Search by name or description")}
+              placeholder={t('ablestack-wall.dashboard.search-by-name-or-description', 'Search by name or description')}
               width={0}
               escapeRegex={false}
             />
