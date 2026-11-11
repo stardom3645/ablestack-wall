@@ -1,7 +1,9 @@
+import { HTMLAttributes, isValidElement, useContext } from 'react';
 import { Cell } from 'react-table';
 
 import { TimeRange, DataFrame } from '@grafana/data';
 
+import { TablePresentationContext } from './TablePresentation';
 import { TableStyles } from './styles';
 import { GetActionsFunction, GrafanaTableColumn, TableFilterActionCallback } from './types';
 
@@ -34,6 +36,7 @@ export const TableCell = ({
   height,
   getActions,
 }: Props) => {
+  const presentation = useContext(TablePresentationContext);
   const cellProps = cell.getCellProps();
   const field = (cell.column as unknown as GrafanaTableColumn).field;
 
@@ -60,23 +63,33 @@ export const TableCell = ({
 
   const actions = getActions ? getActions(frame, field) : [];
 
+  const nativeProps = {
+    field,
+    tableStyles,
+    onCellFilterAdded,
+    cellProps,
+    innerWidth,
+    timeRange,
+    userProps,
+    frame,
+    rowStyled,
+    rowExpanded,
+    textWrapped,
+    height,
+    actions,
+  };
+  const renderNative = (extra?: HTMLAttributes<HTMLDivElement>) => {
+    const node = cell.render('Cell', {
+      ...nativeProps,
+      cellProps: { ...cellProps, ...extra, style: { ...cellProps.style, ...extra?.style } },
+    });
+    return isValidElement(node) ? node : <>{node}</>;
+  };
   return (
     <>
-      {cell.render('Cell', {
-        field,
-        tableStyles,
-        onCellFilterAdded,
-        cellProps,
-        innerWidth,
-        timeRange,
-        userProps,
-        frame,
-        rowStyled,
-        rowExpanded,
-        textWrapped,
-        height,
-        actions,
-      })}
+      {(cell.column.id !== 'expander' &&
+        presentation?.renderCell({ ...nativeProps, cell, row: cell.row }, renderNative)) ||
+        renderNative()}
     </>
   );
 };

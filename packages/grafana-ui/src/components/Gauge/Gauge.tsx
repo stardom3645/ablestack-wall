@@ -15,11 +15,12 @@ import { VizTextDisplayOptions, VizOrientation } from '@grafana/schema';
 
 import { calculateFontSize } from '../../utils/measureText';
 import { clearButtonStyles } from '../Button';
-import { presentValueColor, VizPresentationContext } from '../VizPresentation/VizPresentation';
+import { MeterAppearance, presentValueColor, VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 import { calculateGaugeAutoProps, DEFAULT_THRESHOLDS, getFormattedThresholds } from './utils';
 
 export interface Props {
+  wallAppearance?: MeterAppearance;
   height: number;
   field: FieldConfig;
   showThresholdMarkers: boolean;
@@ -57,6 +58,13 @@ export class Gauge extends PureComponent<Props> {
   }
 
   draw() {
+    if (
+      this.context?.renderGauge &&
+      this.props.field.custom?.neutral === undefined &&
+      !this.props.showThresholdLabels
+    ) {
+      return;
+    }
     const { field, showThresholdLabels, showThresholdMarkers, width, height, theme, value, orientation } = this.props;
 
     const autoProps = calculateGaugeAutoProps(width, height, value.title);
@@ -161,6 +169,25 @@ export class Gauge extends PureComponent<Props> {
   }
 
   renderVisualization = () => {
+    if (
+      this.context?.renderGauge &&
+      this.props.field.custom?.neutral === undefined &&
+      !this.props.showThresholdLabels
+    ) {
+      const content = this.context.renderGauge(this.props);
+      return this.props.onClick ? (
+        <button
+          type="button"
+          className={clearButtonStyles(this.props.theme)}
+          style={{ width: '100%', height: '100%' }}
+          onClick={this.props.onClick}
+        >
+          {content}
+        </button>
+      ) : (
+        content
+      );
+    }
     const { width, value, height, onClick, text, theme, orientation } = this.props;
     const autoProps = calculateGaugeAutoProps(width, height, value.title, orientation);
 

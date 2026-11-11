@@ -67,9 +67,9 @@ it('keeps native override title actions outside the disclosure button', () => {
   const trigger = screen.getByRole('button', { name: 'Override header' });
   fireEvent.click(screen.getByRole('button', { name: 'Remove override rule' }));
   expect(remove).toHaveBeenCalledTimes(1);
-  expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  fireEvent.click(trigger);
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  fireEvent.click(trigger);
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
 });
 
 it('associates the selected option tab with its visible panel for assistive navigation', () => {

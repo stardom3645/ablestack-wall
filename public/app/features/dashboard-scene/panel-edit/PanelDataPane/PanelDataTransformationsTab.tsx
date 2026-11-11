@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { DragDropContext, DropResult, Droppable } from '@hello-pangea/dnd';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { DataTransformerConfig, GrafanaTheme2, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -14,8 +14,11 @@ import {
   SceneObjectState,
 } from '@grafana/scenes';
 import { Button, ButtonGroup, ConfirmModal, Tab, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 import { TransformationOperationRows } from 'app/features/dashboard/components/TransformationsEditor/TransformationOperationRows';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 import { WallEditorDataTab } from 'app/features/wall-modern/editor/WallPanelEditor';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 import { getQueryRunnerFor } from '../../utils/utils';
 
@@ -64,6 +67,7 @@ export class PanelDataTransformationsTab
 
 export function PanelDataTransformationsTabRendered({ model }: SceneComponentProps<PanelDataTransformationsTab>) {
   const styles = useStyles2(getStyles);
+  const wall = useContext(editorPresentationContext);
   const sourceData = model.getQueryRunner().useState();
   const { data, transformations: transformsWrongType } = model.getDataTransformer().useState();
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -94,7 +98,7 @@ export function PanelDataTransformationsTabRendered({ model }: SceneComponentPro
     ></TransformationsDrawer>
   );
 
-  if (transformations.length < 1) {
+  if (!wall && transformations.length < 1) {
     return (
       <>
         <EmptyTransformationsMessage onShowPicker={openDrawer}></EmptyTransformationsMessage>
@@ -105,26 +109,50 @@ export function PanelDataTransformationsTabRendered({ model }: SceneComponentPro
 
   return (
     <>
-      <TransformationsEditor data={sourceData.data} transformations={transformations} model={model} />
-      <ButtonGroup>
-        <Button
-          icon="plus"
-          variant="secondary"
-          onClick={openDrawer}
-          data-testid={selectors.components.Transforms.addTransformationButton}
-        >
-          Add another transformation
-        </Button>
-        <Button
-          data-testid={selectors.components.Transforms.removeAllTransformationsButton}
-          className={styles.removeAll}
-          icon="times"
-          variant="secondary"
-          onClick={() => setConfirmModalOpen(true)}
-        >
-          Delete all transformations
-        </Button>
-      </ButtonGroup>
+      {wall && (
+        <div className="wall-transform-heading">
+          <span>
+            <Trans i18nKey="wall.panel-data-transformations-tab.text-dd8033a8">데이터 변환 </Trans>
+            <small>
+              <Trans i18nKey="wall.panel-data-transformations-tab.text-1fdf0d90">· </Trans>
+              {transformations.length}
+              <Trans i18nKey="wall.panel-data-transformations-tab.text-11600c9a">개</Trans>
+            </small>
+          </span>
+          <WallButton size="sm" variant="ghost" onClick={openDrawer}>
+            <Trans i18nKey="wall.panel-data-transformations-tab.text-4f7bd7e0">변환 추가</Trans>
+          </WallButton>
+          {transformations.length > 0 && (
+            <WallButton size="sm" variant="ghost" onClick={() => setConfirmModalOpen(true)}>
+              <Trans i18nKey="wall.panel-data-transformations-tab.text-05234f1b">모두 삭제</Trans>
+            </WallButton>
+          )}
+        </div>
+      )}
+      <div className={wall ? 'wall-transform-list' : undefined}>
+        <TransformationsEditor data={sourceData.data} transformations={transformations} model={model} />
+      </div>
+      {!wall && (
+        <ButtonGroup>
+          <Button
+            icon="plus"
+            variant="secondary"
+            onClick={openDrawer}
+            data-testid={selectors.components.Transforms.addTransformationButton}
+          >
+            <Trans i18nKey="wall.panel-data-transformations-tab.text-0e095f9a">Add another transformation</Trans>
+          </Button>
+          <Button
+            data-testid={selectors.components.Transforms.removeAllTransformationsButton}
+            className={styles.removeAll}
+            icon="times"
+            variant="secondary"
+            onClick={() => setConfirmModalOpen(true)}
+          >
+            <Trans i18nKey="wall.panel-data-transformations-tab.text-b2a81d9c">Delete all transformations</Trans>
+          </Button>
+        </ButtonGroup>
+      )}
       <ConfirmModal
         isOpen={confirmModalOpen}
         title="Delete all transformations?"

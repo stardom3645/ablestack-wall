@@ -1,0 +1,346 @@
+/* Wall datasource surfaces reuse the shell/modal tokens. Plugin forms retain their own engines. */
+.wall-modern.wall-modal.wall-datasource-modal {
+  width: min(680px, calc(100vw - 2 * var(--wall-modal-gutter)));
+  height: fit-content;
+}
+.wall-modal .wall-modal-content.wall-datasource-modal-content {
+  overflow: hidden;
+  display: flex;
+  padding-top: var(--wall-card-padding);
+}
+.wall-datasource-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wall-card-gap);
+  width: 100%;
+  min-height: 0;
+}
+.wall-datasource-picker > [data-testid='input-wrapper'] {
+  flex-shrink: 0;
+}
+.wall-datasource-picker [data-testid='input-wrapper']:focus-within {
+  box-shadow: none;
+}
+.wall-modal .wall-datasource-picker input:focus {
+  border-color: var(--wall-border);
+  outline: none;
+  box-shadow: none;
+}
+.wall-modal .wall-datasource-picker [data-testid='input-wrapper']:focus-within {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 2px;
+}
+.wall-datasource-choices {
+  max-height: min(520px, calc(100dvh - 2 * var(--wall-modal-gutter) - 192px));
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+  padding: 2px 6px 2px 2px;
+}
+.wall-datasource-group-title,
+.wall-datasource-list-label {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-padding-compact);
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  font-weight: var(--wall-type-control-weight);
+  margin: var(--wall-card-gap) 0 var(--wall-card-padding-compact);
+}
+.wall-datasource-group-title span {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.wall-datasource-choices section:first-child h3 {
+  margin-top: 0;
+}
+.wall-datasource-picker .wall-datasource-choice {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  min-height: 58px;
+  padding: var(--wall-card-padding-compact) var(--wall-card-gap);
+  gap: var(--wall-card-gap);
+  border: 1px solid transparent;
+  color: var(--wall-text);
+  text-align: left;
+  border-radius: var(--wall-radius);
+  background: transparent;
+  font-weight: var(--wall-type-body-weight);
+}
+.wall-datasource-picker .wall-datasource-choice:hover {
+  background: var(--wall-hover);
+}
+.wall-datasource-picker .wall-datasource-choice[aria-pressed='true'] {
+  background: var(--wall-primary-soft);
+  color: var(--wall-primary);
+}
+.wall-datasource-choice:focus-visible {
+  outline-offset: -2px !important;
+}
+.wall-datasource-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+}
+.wall-datasource-logo img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.wall-datasource-identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wall-datasource-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-datasource-type {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  font-weight: var(--wall-type-caption-weight);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.wall-datasource-default {
+  flex-shrink: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  padding: 2px 6px;
+  border: 1px solid var(--wall-border);
+  border-radius: calc(var(--wall-radius) - 2px);
+}
+.wall-datasource-selected {
+  flex: 0 0 18px;
+  display: inline-flex;
+  align-items: center;
+}
+.wall-datasource-picker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wall-card-gap);
+  padding-top: var(--wall-card-gap);
+  border-top: 1px solid var(--wall-border);
+  flex-wrap: wrap;
+}
+.wall-datasource-empty {
+  padding: var(--wall-section-gap) var(--wall-card-padding);
+  color: var(--wall-muted);
+  text-align: center;
+}
+.wall-datasource-management {
+  min-width: 0;
+}
+.wall-datasource-management .wall-datasource-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wall-datasource-row {
+  display: flex;
+  gap: var(--wall-card-gap);
+  align-items: center;
+  padding: var(--wall-card-padding) 0;
+  border-bottom: 1px solid var(--wall-border);
+}
+.wall-datasource-row:first-child {
+  border-top: 1px solid var(--wall-border);
+}
+.wall-datasource-row h3 {
+  margin: 0;
+  font-size: var(--wall-type-body-size);
+  line-height: var(--wall-type-body-line);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-datasource-row h3 a {
+  color: var(--wall-text);
+}
+.wall-datasource-row h3 a:hover {
+  color: var(--wall-primary);
+}
+.wall-datasource-row-actions {
+  display: flex;
+  gap: var(--wall-card-padding-compact);
+  flex-shrink: 0;
+}
+.wall-datasource-configuration {
+  max-width: 100%;
+  min-width: 0;
+}
+.wall-datasource-section {
+  margin-bottom: var(--wall-section-gap);
+}
+.wall-datasource-section > h2 {
+  font-size: var(--wall-type-section-size);
+  margin: 0 0 var(--wall-card-padding);
+}
+.wall-datasource-basic {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--wall-section-gap);
+  align-items: end;
+  max-width: 760px;
+}
+.wall-datasource-basic label {
+  font-size: var(--wall-type-body-size);
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-datasource-basic small {
+  display: block;
+  color: var(--wall-muted);
+  margin-top: var(--wall-card-padding-compact);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-datasource-basic-default {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-gap);
+  min-height: 36px;
+  padding-bottom: 2px;
+}
+.wall-datasource-plugin-settings {
+  min-width: 0;
+  border-top: 1px solid var(--wall-border);
+  padding-top: var(--wall-section-gap);
+}
+.wall-datasource-plugin-settings > h2 {
+  margin-bottom: var(--wall-card-padding);
+}
+.wall-datasource-configuration input,
+.wall-datasource-configuration textarea {
+  max-width: 100%;
+}
+.wall-datasource-test-result {
+  margin-block: var(--wall-section-gap);
+  overflow-wrap: anywhere;
+}
+.wall-datasource-test-result h3 {
+  font-size: var(--wall-type-body-size);
+  margin: 0 0 var(--wall-card-padding-compact);
+}
+.wall-datasource-test-result [role='alert'] {
+  margin-bottom: 0;
+}
+.wall-datasource-test-result details {
+  margin-top: var(--wall-card-padding-compact);
+  white-space: pre-wrap;
+  max-height: 35vh;
+  overflow: auto;
+}
+.wall-datasource-test-result summary {
+  cursor: pointer;
+  color: var(--wall-muted);
+}
+.wall-datasource-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wall-card-gap);
+  padding: var(--wall-card-padding) 0;
+  background: var(--wall-surface);
+  border-top: 1px solid var(--wall-border);
+}
+.wall-datasource-actions > div {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-gap);
+}
+.wall-datasource-actions [role='status'] {
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-datasource-add .page-action-bar {
+  gap: var(--wall-card-gap);
+}
+.wall-datasource-add .card-parent {
+  margin: 0;
+  padding: var(--wall-card-gap) 0;
+  border-width: 0 0 1px;
+  border-color: var(--wall-border);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.wall-datasource-add .card-parent img {
+  width: 28px;
+  height: 28px;
+  margin-inline: var(--wall-card-padding-compact);
+  object-fit: contain;
+}
+.wall-datasource-add .card-parent:hover,
+.wall-datasource-add .card-parent:focus-within {
+  background: var(--wall-hover);
+}
+@media (max-width: 800px) {
+  .wall-datasource-row {
+    flex-wrap: wrap;
+  }
+  .wall-datasource-row-actions {
+    flex-basis: 100%;
+    padding-left: 44px;
+    flex-wrap: wrap;
+  }
+  .wall-datasource-basic {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--wall-card-gap);
+  }
+  .wall-datasource-actions > div {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+.wall-datasource-save-area {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: var(--wall-surface);
+}
+.wall-datasource-save-area .wall-datasource-test-result {
+  margin: 0;
+  padding-block: var(--wall-card-gap);
+  max-height: 35vh;
+  overflow: auto;
+}
+.wall-datasource-plugin-settings h3 {
+  font-size: var(--wall-type-section-size);
+  line-height: var(--wall-type-section-line);
+  font-weight: var(--wall-type-section-weight);
+}
+.wall-datasource-plugin-settings h6 {
+  font-size: var(--wall-type-body-size);
+  line-height: var(--wall-type-body-line);
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-datasource-plugin-settings hr {
+  margin-block: var(--wall-section-gap);
+  border-color: var(--wall-border);
+}
+
+.wall-datasource-plugin-viewport {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (max-width: 800px) {
+  .wall-datasource-plugin-viewport {
+    overflow-x: auto;
+  }
+}
+
+/* Only horizontal overflow belongs to the plugin viewport; page wheel must keep flowing. */
+.wall-datasource-plugin-settings .wall-datasource-plugin-viewport {
+  overscroll-behavior-y: auto;
+}

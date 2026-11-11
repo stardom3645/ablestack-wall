@@ -5,11 +5,14 @@ import { DataSourceSettings as DataSourceSettingsType, GrafanaTheme2 } from '@gr
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { TestingStatus, config } from '@grafana/runtime';
 import { AlertVariant, Alert, useTheme2, Link, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
+import { safeQueryError } from 'app/features/wall-modern/panels/safeQueryError';
 
 import { contextSrv } from '../../../core/core';
 import { trackCreateDashboardClicked } from '../tracking';
 
 export type Props = {
+  saveFailed?: boolean;
   testingStatus?: TestingStatus;
   exploreUrl: string;
   dataSource: DataSourceSettingsType;
@@ -46,16 +49,16 @@ const AlertSuccessMessage = ({ title, exploreUrl, dataSourceId, onDashboardLinkC
 
   return (
     <div className={styles.content}>
-      Next, you can start to visualize data by{' '}
+      <Trans i18nKey="wall.data-source-testing-status.text-73d017b9">Next, you can start to visualize data by</Trans>{' '}
       <Link
         aria-label={`Create a dashboard`}
         href={`/dashboard/new-with-ds/${dataSourceId}`}
         className="external-link"
         onClick={onDashboardLinkClicked}
       >
-        building a dashboard
+        <Trans i18nKey="wall.data-source-testing-status.text-6dd971ff">building a dashboard</Trans>
       </Link>
-      , or by querying data in the{' '}
+      <Trans i18nKey="wall.data-source-testing-status.text-9e30fa70">, or by querying data in the</Trans>{' '}
       <Link
         aria-label={`Explore data`}
         className={cx('external-link', {
@@ -64,9 +67,9 @@ const AlertSuccessMessage = ({ title, exploreUrl, dataSourceId, onDashboardLinkC
         })}
         href={exploreUrl}
       >
-        Explore view
+        <Trans i18nKey="wall.data-source-testing-status.text-ea091d26">Explore view</Trans>
       </Link>
-      .
+      <Trans i18nKey="wall.data-source-testing-status.text-3a52ce78">.</Trans>
     </div>
   );
 };
@@ -82,9 +85,9 @@ const getAlertVariant = (status: string): AlertVariant => {
   return isAlertVariant(status) ? status : 'info';
 };
 
-export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource }: Props) {
+export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource, saveFailed }: Props) {
   const severity = getAlertVariant(testingStatus?.status ?? 'error');
-  const message = testingStatus?.message;
+  const message = testingStatus?.message ? safeQueryError(testingStatus.message) : undefined;
   const detailsMessage = testingStatus?.details?.message;
   const detailsVerboseMessage = testingStatus?.details?.verboseMessage;
   const onDashboardLinkClicked = () => {
@@ -99,11 +102,23 @@ export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource 
 
   if (message) {
     return (
-      <div className={cx('gf-form-group', styles.container)}>
+      <div
+        className={cx('wall-datasource-test-result', styles.container)}
+        aria-live={severity === 'error' ? 'assertive' : 'polite'}
+      >
+        <h3>
+          {saveFailed
+            ? '설정 저장 실패'
+            : severity === 'success'
+              ? '연결 성공'
+              : severity === 'error'
+                ? '연결 실패'
+                : '연결 확인'}
+        </h3>
         <Alert severity={severity} title={message} data-testid={e2eSelectors.pages.DataSource.alert}>
           {testingStatus?.details && (
             <>
-              {detailsMessage}
+              {detailsMessage ? safeQueryError(String(detailsMessage)) : null}
               {severity === 'success' ? (
                 <AlertSuccessMessage
                   title={message}
@@ -113,7 +128,12 @@ export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource 
                 />
               ) : null}
               {detailsVerboseMessage ? (
-                <details style={{ whiteSpace: 'pre-wrap' }}>{String(detailsVerboseMessage)}</details>
+                <details>
+                  <summary>
+                    <Trans i18nKey="wall.data-source-testing-status.text-4c3f41ee">상세 메시지</Trans>
+                  </summary>
+                  {safeQueryError(String(detailsVerboseMessage))}
+                </details>
               ) : null}
             </>
           )}

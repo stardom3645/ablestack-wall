@@ -3,6 +3,7 @@ import { css, cx } from '@emotion/css';
 import { PureComponent, ReactNode } from 'react';
 
 import {
+  CoreApp,
   isDataFrame,
   LocalStorageValueProvider,
   QueryEditorProps,
@@ -15,6 +16,7 @@ import { reportInteraction } from '@grafana/runtime';
 import { clearButtonStyles, Icon, Themeable2, withTheme2 } from '@grafana/ui';
 
 import { t } from '../../../../public/app/core/internationalization';
+import { editorPresentationContext } from '../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
 import { PrometheusDatasource } from '../datasource';
 import { roundMsToMin } from '../language_utils';
 import { PromOptions, PromQuery } from '../types';
@@ -43,6 +45,7 @@ function getChooserText(metricsLookupDisabled: boolean, hasSyntax: boolean, hasM
 
 interface PromQueryFieldProps extends QueryEditorProps<PrometheusDatasource, PromQuery, PromOptions>, Themeable2 {
   ExtraFieldElement?: ReactNode;
+  editorMinHeight?: number;
   'data-testid'?: string;
 }
 
@@ -53,6 +56,8 @@ interface PromQueryFieldState {
 }
 
 class PromQueryFieldClass extends PureComponent<PromQueryFieldProps, PromQueryFieldState> {
+  static contextType = editorPresentationContext;
+  declare context: boolean;
   declare languageProviderInitializationPromise: CancelablePromise<any>;
 
   constructor(props: PromQueryFieldProps) {
@@ -216,6 +221,7 @@ class PromQueryFieldClass extends PureComponent<PromQueryFieldProps, PromQueryFi
       theme,
     } = this.props;
 
+    const wallEditor = this.context && this.props.app === CoreApp.PanelEditor;
     const { labelBrowserVisible, syntaxLoaded, hint } = this.state;
     const hasMetrics = languageProvider.metrics.length > 0;
     const chooserText = getChooserText(datasource.lookupsDisabled, syntaxLoaded, hasMetrics);
@@ -227,21 +233,25 @@ class PromQueryFieldClass extends PureComponent<PromQueryFieldProps, PromQueryFi
           return (
             <>
               <div
-                className="gf-form-inline gf-form-inline--xs-view-flex-column flex-grow-1"
+                className={
+                  wallEditor ? 'wall-prom-code-field' : 'gf-form-inline gf-form-inline--xs-view-flex-column flex-grow-1'
+                }
                 data-testid={this.props['data-testid']}
               >
-                <button
-                  className="gf-form-label query-keyword pointer"
-                  onClick={this.onClickChooserButton}
-                  disabled={buttonDisabled}
-                  type="button"
-                  data-testid={selectors.components.DataSource.Prometheus.queryEditor.code.metricsBrowser.openButton}
-                >
-                  {chooserText}
-                  <Icon name={labelBrowserVisible ? 'angle-down' : 'angle-right'} />
-                </button>
+                {!wallEditor && (
+                  <button
+                    className="gf-form-label query-keyword pointer"
+                    onClick={this.onClickChooserButton}
+                    disabled={buttonDisabled}
+                    type="button"
+                    data-testid={selectors.components.DataSource.Prometheus.queryEditor.code.metricsBrowser.openButton}
+                  >
+                    {chooserText}
+                    <Icon name={labelBrowserVisible ? 'angle-down' : 'angle-right'} />
+                  </button>
+                )}
 
-                <div className="flex-grow-1 min-width-15">
+                <div className={wallEditor ? 'wall-prom-code-input' : 'flex-grow-1 min-width-15'}>
                   <MonacoQueryFieldWrapper
                     languageProvider={languageProvider}
                     history={history}
@@ -249,11 +259,12 @@ class PromQueryFieldClass extends PureComponent<PromQueryFieldProps, PromQueryFi
                     onRunQuery={this.props.onRunQuery}
                     initialValue={query.expr ?? ''}
                     placeholder="Enter a PromQL query…"
+                    minimumHeight={this.props.editorMinHeight}
                     datasource={datasource}
                   />
                 </div>
               </div>
-              {labelBrowserVisible && (
+              {!wallEditor && labelBrowserVisible && (
                 <div className="gf-form">
                   <PrometheusMetricsBrowser
                     languageProvider={languageProvider}

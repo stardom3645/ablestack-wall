@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { StandardEditorProps, SelectableValue } from '@grafana/data';
 import { LineStyle } from '@grafana/schema';
 import { HorizontalGroup, IconButton, RadioButtonGroup, Select } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 type LineFill = 'solid' | 'dash' | 'dot';
 
@@ -55,6 +56,7 @@ const dotOptions: Array<SelectableValue<string>> = [
 type Props = StandardEditorProps<LineStyle, unknown>;
 
 export const LineStyleEditor = ({ value, onChange }: Props) => {
+  const text = useWallOptionText();
   const options = useMemo(() => (value?.fill === 'dash' ? dashOptions : dotOptions), [value]);
   const current = useMemo(() => {
     if (!value?.dash?.length) {
@@ -75,7 +77,7 @@ export const LineStyleEditor = ({ value, onChange }: Props) => {
     <HorizontalGroup>
       <RadioButtonGroup
         value={value?.fill || 'solid'}
-        options={lineFillOptions}
+        options={lineFillOptions.map((option) => ({ ...option, label: text(option.label) }))}
         onChange={(v) => {
           let dash: number[] | undefined = undefined;
           if (v === 'dot') {

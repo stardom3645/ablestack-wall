@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 import { isArray, negate } from 'lodash';
-import { ComponentProps, useCallback, useEffect, useRef, useState } from 'react';
+import { ComponentProps, useContext, useCallback, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import {
   default as ReactSelect,
@@ -21,6 +21,7 @@ import { Spinner } from '../Spinner/Spinner';
 
 import { CustomInput } from './CustomInput';
 import { DropdownIndicator } from './DropdownIndicator';
+import { EmbeddedSelectContext } from './EmbeddedSelectContext';
 import { IndicatorsContainer } from './IndicatorsContainer';
 import { InputControl } from './InputControl';
 import { MultiValueContainer, MultiValueRemove } from './MultiValue';
@@ -36,6 +37,7 @@ import { ActionMeta, InputActionMeta, SelectBaseProps, ToggleAllState } from './
 import { cleanValue, findSelectedValue, omitDescriptions } from './utils';
 
 const CustomControl = (props: any) => {
+  const embedded = useContext(EmbeddedSelectContext);
   const {
     children,
     innerProps,
@@ -62,7 +64,7 @@ const CustomControl = (props: any) => {
   return (
     <InputControl
       ref={innerRef}
-      innerProps={innerProps}
+      innerProps={{ ...innerProps, 'data-wall-embedded-control': embedded ? true : undefined }}
       prefix={selectProps.prefix}
       focused={isFocused}
       invalid={!!selectProps.invalid}
@@ -155,6 +157,7 @@ export function SelectBase<T, Rest = {}>({
   hideSelectedOptions,
   ...rest
 }: SelectBaseProps<T> & Rest) {
+  const embedded = useContext(EmbeddedSelectContext);
   const theme = useTheme2();
   const styles = getSelectStyles(theme);
 
@@ -222,7 +225,7 @@ export function SelectBase<T, Rest = {}>({
   const commonSelectProps = {
     'aria-label': ariaLabel,
     'data-testid': dataTestid,
-    autoFocus,
+    autoFocus: embedded ? true : autoFocus,
     backspaceRemovesValue,
     blurInputOnSelect,
     captureMenuScroll: onMenuScrollToBottom || onMenuScrollToTop,
@@ -249,14 +252,14 @@ export function SelectBase<T, Rest = {}>({
     inputId,
     isOptionDisabled,
     isSearchable,
-    maxMenuHeight,
+    maxMenuHeight: embedded ? Math.min(embedded.maxHeight, maxMenuHeight) : maxMenuHeight,
     minMenuHeight,
     maxVisibleValues,
-    menuIsOpen: isOpen,
+    menuIsOpen: embedded ? true : isOpen,
     menuPlacement: menuPlacement === 'auto' && closeToBottom ? 'top' : menuPlacement,
     menuPosition,
-    menuShouldBlockScroll: true,
-    menuPortalTarget: menuShouldPortal && typeof document !== 'undefined' ? document.body : undefined,
+    menuShouldBlockScroll: !embedded,
+    menuPortalTarget: !embedded && menuShouldPortal && typeof document !== 'undefined' ? document.body : undefined,
     menuShouldScrollIntoView: false,
     onBlur,
     onChange: onChangeWithEmpty,
@@ -269,7 +272,15 @@ export function SelectBase<T, Rest = {}>({
 
       return newValue;
     },
-    onKeyDown,
+    onKeyDown: embedded
+      ? (event: React.KeyboardEvent) => {
+          onKeyDown?.(event);
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            embedded.onClose();
+          }
+        }
+      : onKeyDown,
     onMenuClose: onCloseMenu,
     onMenuOpen: onOpenMenu,
     onMenuScrollToBottom: onMenuScrollToBottom,

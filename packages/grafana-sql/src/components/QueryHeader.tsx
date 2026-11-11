@@ -16,6 +16,7 @@ import { isSqlDatasourceDatabaseSelectionFeatureFlagEnabled } from './QueryEdito
 import { TableSelector } from './TableSelector';
 
 export interface QueryHeaderProps {
+  codeOnly?: boolean;
   db: DB;
   dialect: SQLDialect;
   isQueryRunnable: boolean;
@@ -34,6 +35,7 @@ const editorModes = [
 
 export function QueryHeader({
   db,
+  codeOnly,
   dialect,
   isQueryRunnable,
   onChange,
@@ -121,6 +123,21 @@ export function QueryHeader({
 
     return true;
   };
+
+  if (codeOnly) {
+    return (
+      <>
+        <InlineSelect
+          label="결과 형식"
+          value={query.format}
+          placeholder="Select format"
+          menuShouldPortal
+          onChange={onFormatChange}
+          options={QUERY_FORMAT_OPTIONS}
+        />
+      </>
+    );
+  }
 
   return (
     <>

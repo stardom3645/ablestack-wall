@@ -1,0 +1,58 @@
+/* Native management pages retain their forms, actions and access checks. */
+.wall-management-nav .wall-nav-section {
+  padding-top: 16px;
+}
+.wall-management-nav .wall-nav-group-trigger {
+  justify-content: space-between;
+}
+.wall-shell .wall-admin-content {
+  background: var(--wall-app-background);
+  color: var(--wall-app-text);
+  font-family: var(--wall-type-family);
+  padding: 0;
+  min-width: 0;
+  overflow: auto;
+}
+.wall-admin-content h1 {
+  color: var(--wall-app-text);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.wall-admin-content h2,
+.wall-admin-content h3 {
+  color: var(--wall-app-text);
+  font-weight: 600;
+}
+.wall-admin-content input:not([type='checkbox']):not([type='radio']),
+.wall-admin-content textarea {
+  background-color: var(--wall-app-surface);
+  border-color: var(--wall-app-border);
+  color: var(--wall-app-text);
+  border-radius: var(--wall-radius);
+  font-family: inherit;
+}
+.wall-admin-content table {
+  font-variant-numeric: tabular-nums;
+}
+.wall-admin-content th {
+  color: var(--wall-app-muted);
+  font-weight: 500;
+}
+.wall-admin-content td {
+  border-color: var(--wall-app-border);
+}
+.wall-admin-content [data-ui-button] {
+  font-family: inherit;
+  border-radius: var(--wall-radius);
+}
+.wall-admin-content [role='tab'] {
+  transition: color var(--wall-motion-hover-duration) var(--wall-motion-feedback-easing);
+}
+.wall-admin-content [role='tab'][aria-selected='true'] {
+  color: var(--wall-app-primary);
+}
+.wall-admin-content [role='tab'][aria-selected='true']::before {
+  background-image: none;
+  background-color: var(--wall-app-primary);
+  height: 2px;
+}

@@ -38,6 +38,25 @@ const LABEL_OFFSET_MAX_HZ = 10;
 // this is a cheap fudge factor that skips expensive and inconsistent cross-browser measuring
 const MIDDLE_BASELINE_SHIFT = 0.1;
 
+export interface BarHit {
+  sidx: number;
+  didx: number;
+}
+export interface BarAppearance {
+  fontFamily: string;
+  valueSize: number;
+  categorySpacing: number;
+  text: string;
+  hoverStroke: string;
+  selectionWidth: number;
+  measure: (text: string, size: number) => TextMetrics;
+  formatCategory: (text: string) => string;
+}
+export interface BarInteraction {
+  pick: (hit: BarHit, event: MouseEvent, context: boolean) => void;
+  selected: () => BarHit | undefined;
+}
+
 /**
  * @internal
  */
@@ -62,6 +81,8 @@ export interface BarsOptions {
   xTimeAuto?: boolean;
   negY?: boolean[];
   fullHighlight?: boolean;
+  appearance?: BarAppearance;
+  interaction?: BarInteraction;
 }
 
 /**
@@ -99,10 +120,11 @@ function calculateFontSizeWithMetrics(
   width: number,
   height: number,
   lineHeight: number,
-  maxSize?: number
+  maxSize?: number,
+  measure = measureText
 ) {
   // calculate width in 14px
-  const textSize = measureText(text, 14);
+  const textSize = measure(text, 14);
   // how much bigger than 14px can we make it while staying within our width constraints
   const fontSizeBasedOnWidth = (width / (textSize.width + 2)) * 14;
   const fontSizeBasedOnHeight = height / lineHeight;
@@ -132,6 +154,8 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
     hoverMulti = false,
     timeZone = 'browser',
   } = opts;
+  const valueMaxSize = opts.appearance ? opts.appearance.valueSize * uPlot.pxRatio : VALUE_MAX_FONT_SIZE;
+  const measure = opts.appearance?.measure ?? measureText;
   const isXHorizontal = xOri === ScaleOrientation.Horizontal;
   const hasAutoValueSize = !Boolean(opts.text?.valueSize);
   const isStacked = opts.stacking !== StackingMode.None;
@@ -156,7 +180,7 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
       ? undefined
       : (u, splits) => {
           // hSpacing?
-          const dim = u.bbox.width;
+          const dim = opts.appearance && !isXHorizontal ? u.bbox.height : u.bbox.width;
           const _dir = dir * (isXHorizontal ? 1 : -1);
 
           let dataLen = splits.length;
@@ -201,7 +225,10 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
       return splits.map((v) => (v == null ? '' : dateTimeFormat(v, { format, timeZone })));
     }
 
-    return splits.map((v) => (isXHorizontal ? formatShortValue(0, v) : formatValue(0, v)));
+    return splits.map((v) => {
+      const value = isXHorizontal ? formatShortValue(0, v) : formatValue(0, v);
+      return opts.appearance?.formatCategory(value) ?? value;
+    });
   };
 
   // this expands the distr: 2 scale so that the indicies of each data[0] land at the proper justified positions
@@ -271,7 +298,7 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
   let barsColors: Array<null | { fill: Array<string | null>; stroke: Array<string | null> }> = [];
   let scaleFactor = 1;
   let labels: ValueLabelTable;
-  let fontSize = opts.text?.valueSize ?? VALUE_MAX_FONT_SIZE;
+  let fontSize = opts.text?.valueSize ?? valueMaxSize;
   let labelOffset = LABEL_OFFSET_MAX;
 
   // minimum available space for labels between bar end and plotting area bound (in canvas pixels)
@@ -368,14 +395,16 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
             labels[dataIdx][seriesIdx].text,
             hSpace * (isXHorizontal ? BAR_FONT_SIZE_RATIO : 1) - (isXHorizontal ? 0 : labelOffset),
             vSpace * (isXHorizontal ? 1 : BAR_FONT_SIZE_RATIO) - (isXHorizontal ? labelOffset : 0),
-            1
+            1,
+            undefined,
+            measure
           );
 
           // Save text metrics
           labels[dataIdx][seriesIdx].textMetrics = textMetrics;
 
           // Retrieve the new font size and use it
-          let autoFontSize = Math.round(Math.min(fontSize, VALUE_MAX_FONT_SIZE, calculatedSize));
+          let autoFontSize = Math.round(Math.min(fontSize, valueMaxSize, calculatedSize));
 
           // Calculate the scaling factor for bouding boxes
           // Take into account the fact that calculateFontSize
@@ -385,7 +414,7 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
           // Update the end font-size
           fontSize = autoFontSize;
         } else {
-          labels[dataIdx][seriesIdx].textMetrics = measureText(labels[dataIdx][seriesIdx].text, fontSize);
+          labels[dataIdx][seriesIdx].textMetrics = measure(labels[dataIdx][seriesIdx].text, fontSize);
         }
 
         let middleShift = isXHorizontal ? 0 : -Math.round(MIDDLE_BASELINE_SHIFT * fontSize);
@@ -455,14 +484,56 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
     },
   });
 
+  let cleanup: (() => void) | undefined;
+  const hitAt = (u: uPlot, event: MouseEvent): BarHit | undefined => {
+    if (!qt) {
+      return;
+    }
+    const rect = u.over.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * uPlot.pxRatio;
+    const y = (event.clientY - rect.top) * uPlot.pxRatio;
+    let found: BarHit | undefined;
+    qt.get(x, y, 1, 1, (bar) => {
+      if (pointWithin(x, y, bar.x, bar.y, bar.x + bar.w, bar.y + bar.h)) {
+        found = { sidx: bar.sidx, didx: bar.didx };
+      }
+    });
+    return found;
+  };
   const init = (u: uPlot) => {
     u.root.querySelectorAll<HTMLDivElement>('.u-cursor-pt').forEach((el) => {
-      el.style.borderRadius = '0';
+      el.style.borderRadius = opts.appearance ? '2px' : '0';
 
       if (opts.fullHighlight) {
         el.style.zIndex = '-1';
       }
     });
+    if (opts.interaction) {
+      const select = (event: MouseEvent) => {
+        if (event.button !== 0) {
+          return;
+        }
+        const hit = hitAt(u, event);
+        if (hit) {
+          opts.interaction!.pick(hit, event, false);
+          u.redraw(false);
+        }
+      };
+      const context = (event: MouseEvent) => {
+        const hit = hitAt(u, event);
+        if (hit) {
+          event.preventDefault();
+          opts.interaction!.pick(hit, event, true);
+          u.redraw(false);
+        }
+      };
+      u.over.addEventListener('click', select);
+      u.over.addEventListener('contextmenu', context);
+      cleanup = () => {
+        u.over.removeEventListener('click', select);
+        u.over.removeEventListener('contextmenu', context);
+      };
+    }
   };
 
   const cursor: uPlot.Cursor = {
@@ -496,7 +567,8 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
       return hovered[seriesIdx]?.didx;
     },
     points: {
-      fill: 'rgba(255,255,255,0.4)',
+      fill: opts.appearance ? 'transparent' : 'rgba(255,255,255,0.4)',
+      ...(opts.appearance ? { stroke: opts.appearance.hoverStroke, width: opts.appearance.selectionWidth } : {}),
       bbox: (u, seriesIdx) => {
         let hRect2 = hovered[seriesIdx];
         let isHovered = hRect2 != null;
@@ -553,20 +625,30 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
     }
 
     labels = {};
-    fontSize = opts.text?.valueSize ?? VALUE_MAX_FONT_SIZE;
+    fontSize = opts.text?.valueSize ?? valueMaxSize;
     labelOffset = LABEL_OFFSET_MAX;
     vSpace = hSpace = Infinity;
   };
 
   // uPlot hook to draw the labels on the bar chart.
   const draw = (u: uPlot) => {
+    const selected = opts.interaction?.selected();
+    if (selected && qt && opts.appearance) {
+      u.ctx.save();
+      u.ctx.strokeStyle = opts.appearance.hoverStroke;
+      u.ctx.lineWidth = opts.appearance.selectionWidth * uPlot.pxRatio;
+      findRects(qt, selected.sidx, selected.didx).forEach((bar) => {
+        u.ctx.strokeRect(u.bbox.left + bar.x, u.bbox.top + bar.y, bar.w, bar.h);
+      });
+      u.ctx.restore();
+    }
     if (showValue === VisibilityMode.Never || fontSize < VALUE_MIN_FONT_SIZE) {
       return;
     }
 
     u.ctx.save();
-    u.ctx.fillStyle = theme.colors.text.primary;
-    u.ctx.font = `${fontSize}px ${theme.typography.fontFamily}`;
+    u.ctx.fillStyle = opts.appearance?.text ?? theme.colors.text.primary;
+    u.ctx.font = `${fontSize}px ${opts.appearance?.fontFamily ?? theme.typography.fontFamily}`;
 
     let curAlign: CanvasTextAlign | undefined = undefined,
       curBaseline: CanvasTextBaseline | undefined = undefined;
@@ -658,6 +740,7 @@ export function getConfig(opts: BarsOptions, theme: GrafanaTheme2) {
 
     // hooks
     init,
+    destroy: () => cleanup?.(),
     drawClear,
     draw,
     prepData,

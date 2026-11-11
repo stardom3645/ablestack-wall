@@ -2,8 +2,10 @@ import * as React from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { Button } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 
 export interface Props {
+  pending?: string;
   canSave: boolean;
   canDelete: boolean;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -11,34 +13,41 @@ export interface Props {
   onTest: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-export function ButtonRow({ canSave, canDelete, onDelete, onSubmit, onTest }: Props) {
+export function ButtonRow({ canSave, canDelete, onDelete, onSubmit, onTest, pending }: Props) {
   return (
-    <div className="gf-form-button-row">
+    <div className="wall-datasource-actions">
       <Button
         type="button"
         variant="destructive"
-        disabled={!canDelete}
+        disabled={!canDelete || !!pending}
         onClick={onDelete}
         data-testid={selectors.pages.DataSource.delete}
       >
-        Delete
+        <Trans i18nKey="wall.button-row.text-fc81e222">삭제</Trans>
       </Button>
-      {canSave && (
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={!canSave}
-          onClick={onSubmit}
-          data-testid={selectors.pages.DataSource.saveAndTest}
-        >
-          Save &amp; test
-        </Button>
-      )}
-      {!canSave && (
-        <Button variant="primary" onClick={onTest}>
-          Test
-        </Button>
-      )}
+      <div>
+        {pending && (
+          <span role="status" aria-live="polite">
+            {pending}
+          </span>
+        )}
+        {canSave && (
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={!canSave || !!pending}
+            onClick={onSubmit}
+            data-testid={selectors.pages.DataSource.saveAndTest}
+          >
+            {pending || '저장 및 연결 테스트'}
+          </Button>
+        )}
+        {!canSave && (
+          <Button type="button" variant="primary" disabled={!!pending} onClick={onTest}>
+            {pending || '연결 테스트'}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

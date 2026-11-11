@@ -1,5 +1,6 @@
 import { config } from '@grafana/runtime';
 import { VariableModel, defaultDashboard } from '@grafana/schema';
+import { DEFAULT_DASHBOARD_CURSOR_SYNC } from 'app/features/dashboard/state/dashboardDefaults';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 import { DashboardDTO } from 'app/types';
 
@@ -43,6 +44,7 @@ export async function buildNewDashboardSaveModel(urlFolderUid?: string): Promise
     },
     dashboard: {
       ...defaultDashboard,
+      graphTooltip: DEFAULT_DASHBOARD_CURSOR_SYNC,
       uid: '',
       title: 'New dashboard',
       panels: [],

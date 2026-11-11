@@ -177,11 +177,17 @@ export class DashboardSceneChangeTracker {
 
   public stopTrackingChanges() {
     this._changeTrackerSub?.unsubscribe();
+    this._changeTrackerSub = undefined;
+    // A pending comparison must not re-dirty a restored/saved dashboard, or
+    // arrive through the next editing session's onmessage handler.
+    if (this._changesWorker) {
+      this._changesWorker.onmessage = null;
+      this._changesWorker.terminate();
+      this._changesWorker = undefined;
+    }
   }
 
   public terminate() {
     this.stopTrackingChanges();
-    this._changesWorker?.terminate();
-    this._changesWorker = undefined;
   }
 }

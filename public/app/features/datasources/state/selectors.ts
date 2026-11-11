@@ -4,10 +4,12 @@ import { DataSourcePluginMeta, DataSourceSettings, UrlQueryValue } from '@grafan
 import { DataSourcesState } from 'app/types/datasources';
 
 export const getDataSources = memoizeOne((state: DataSourcesState) => {
-  const regex = new RegExp(state.searchQuery, 'i');
+  const query = state.searchQuery.trim().toLocaleLowerCase();
 
   const filteredDataSources = state.dataSources.filter((dataSource: DataSourceSettings) => {
-    return regex.test(dataSource.name) || regex.test(dataSource.database) || regex.test(dataSource.type);
+    return [dataSource.name, dataSource.database, dataSource.type, dataSource.typeName].some((value) =>
+      value?.toLocaleLowerCase().includes(query)
+    );
   });
 
   return filteredDataSources.sort((a, b) =>
@@ -16,10 +18,10 @@ export const getDataSources = memoizeOne((state: DataSourcesState) => {
 });
 
 export const getFilteredDataSourcePlugins = memoizeOne((state: DataSourcesState) => {
-  const regex = new RegExp(state.dataSourceTypeSearchQuery, 'i');
+  const query = state.dataSourceTypeSearchQuery.trim().toLocaleLowerCase();
 
   return state.plugins.filter((type: DataSourcePluginMeta) => {
-    return regex.test(type.name);
+    return [type.name, type.id].some((value) => value?.toLocaleLowerCase().includes(query));
   });
 });
 

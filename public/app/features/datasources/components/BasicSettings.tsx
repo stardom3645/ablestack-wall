@@ -3,7 +3,8 @@ import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
-import { InlineField, InlineSwitch, Input, Badge, useStyles2 } from '@grafana/ui';
+import { Field, InlineSwitch, Input, Badge, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 
 export interface Props {
   dataSourceName: string;
@@ -15,44 +16,32 @@ export interface Props {
 
 export function BasicSettings({ dataSourceName, isDefault, onDefaultChange, onNameChange, disabled }: Props) {
   return (
-    <>
-      <div className="gf-form-group" aria-label="Datasource settings page basic settings">
-        <div className="gf-form-inline">
-          {/* Name */}
-          <div className="gf-form max-width-30">
-            <InlineField
-              label="Name"
-              tooltip="The name is used when you select the data source in panels. The default data source is
-              'preselected in new panels."
-              grow
-              disabled={disabled}
-              labelWidth={14}
-            >
-              <Input
-                id="basic-settings-name"
-                type="text"
-                value={dataSourceName}
-                placeholder="Name"
-                onChange={(event) => onNameChange(event.currentTarget.value)}
-                required
-                data-testid={selectors.pages.DataSource.name}
-              />
-            </InlineField>
-          </div>
-
-          {/* Is Default */}
-          <InlineField label="Default" labelWidth={8} disabled={disabled}>
-            <InlineSwitch
-              id="basic-settings-default"
-              value={isDefault}
-              onChange={(event: React.FormEvent<HTMLInputElement>) => {
-                onDefaultChange(event.currentTarget.checked);
-              }}
-            />
-          </InlineField>
-        </div>
+    <div className="wall-datasource-basic" aria-label="Datasource settings page basic settings">
+      <Field label="데이터 소스 이름" htmlFor="basic-settings-name" disabled={disabled}>
+        <Input
+          id="basic-settings-name"
+          type="text"
+          value={dataSourceName}
+          placeholder="Name"
+          onChange={(event) => onNameChange(event.currentTarget.value)}
+          required
+          disabled={disabled}
+          data-testid={selectors.pages.DataSource.name}
+        />
+      </Field>
+      <div className="wall-datasource-basic-default">
+        <InlineSwitch
+          id="basic-settings-default"
+          label="기본 데이터 소스"
+          value={isDefault}
+          disabled={disabled}
+          onChange={(event: React.FormEvent<HTMLInputElement>) => onDefaultChange(event.currentTarget.checked)}
+        />
+        <label htmlFor="basic-settings-default">
+          <Trans i18nKey="wall.basic-settings.text-0aee3b4d">기본 데이터 소스</Trans>
+        </label>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -1,10 +1,13 @@
 import { css } from '@emotion/css';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { createFieldConfigRegistry, SetFieldConfigOptionsArgs } from '@grafana/data';
 import { GraphFieldConfig, TableSparklineCellOptions } from '@grafana/schema';
 import { VerticalGroup, Field, useStyles2 } from '@grafana/ui';
 import { defaultSparklineCellConfig } from '@grafana/ui/src/components/Table/SparklineCell';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallOptionEditor } from 'app/features/wall-modern/editor/WallOptionEditor';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { getGraphFieldConfig } from '../../timeseries/config';
 import { TableCellEditorProps } from '../TableCellOptionEditor';
@@ -40,6 +43,8 @@ function getChartCellConfig(cfg: GraphFieldConfig): SetFieldConfigOptionsArgs<Gr
 }
 
 export const SparklineCellOptionsEditor = (props: TableCellEditorProps<TableSparklineCellOptions>) => {
+  const text = useWallOptionText();
+  const wall = useContext(editorPresentationContext);
   const { cellOptions, onChange } = props;
 
   const registry = useMemo(() => {
@@ -60,14 +65,17 @@ export const SparklineCellOptionsEditor = (props: TableCellEditorProps<TableSpar
         const Editor = item.editor;
         const path = item.path;
 
+        const editor = (
+          <Editor
+            onChange={(val) => onChange({ ...cellOptions, [path]: val })}
+            value={(isOptionKey(path, values) ? values[path] : undefined) ?? item.defaultValue}
+            item={item}
+            context={{ data: [] }}
+          />
+        );
         return (
-          <Field label={item.name} key={item.id} className={style.field}>
-            <Editor
-              onChange={(val) => onChange({ ...cellOptions, [path]: val })}
-              value={(isOptionKey(path, values) ? values[path] : undefined) ?? item.defaultValue}
-              item={item}
-              context={{ data: [] }}
-            />
+          <Field label={text(item.name)} key={item.id} className={style.field}>
+            {wall ? <WallOptionEditor editor={editor} /> : editor}
           </Field>
         );
       })}

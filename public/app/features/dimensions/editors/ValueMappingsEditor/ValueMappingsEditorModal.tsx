@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { GrafanaTheme2, MappingType, SelectableValue, SpecialValueMatch, ValueMapping } from '@grafana/data';
 import { useStyles2, Modal, ValuePicker, Button } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { ValueMappingEditRow, ValueMappingEditRowModel } from './ValueMappingEditRow';
 
@@ -16,6 +17,7 @@ export interface Props {
 }
 
 export function ValueMappingsEditorModal({ value, onChange, onClose, showIconPicker }: Props) {
+  const text = useWallOptionText();
   const styles = useStyles2(getStyles);
   const [rows, updateRows] = useState<ValueMappingEditRowModel[]>([]);
 
@@ -91,11 +93,11 @@ export function ValueMappingsEditorModal({ value, onChange, onClose, showIconPic
             <tr>
               <th style={{ width: '1%' }}></th>
               <th style={{ width: '40%', textAlign: 'left' }} colSpan={2}>
-                Condition
+                {text('Condition')}
               </th>
-              <th style={{ textAlign: 'left' }}>Display text</th>
-              <th style={{ width: '10%' }}>Color</th>
-              {showIconPicker && <th style={{ width: '10%' }}>Icon</th>}
+              <th style={{ textAlign: 'left' }}>{text('Display text')}</th>
+              <th style={{ width: '10%' }}>{text('Color')}</th>
+              {showIconPicker && <th style={{ width: '10%' }}>{text('Icon')}</th>}
               <th style={{ width: '1%' }}></th>
             </tr>
           </thead>
@@ -125,22 +127,26 @@ export function ValueMappingsEditorModal({ value, onChange, onClose, showIconPic
       <Modal.ButtonRow
         leftItems={
           <ValuePicker
-            label="Add a new mapping"
+            label={text('Add a new mapping')}
             variant="secondary"
             size="md"
             icon="plus"
             menuPlacement="auto"
             minWidth={40}
-            options={mappingTypes}
+            options={mappingTypes.map((option) => ({
+              ...option,
+              label: text(option.label),
+              description: text(option.description),
+            }))}
             onChange={onAddValueMapping}
           />
         }
       >
         <Button variant="secondary" fill="outline" onClick={onClose}>
-          Cancel
+          {text('Cancel')}
         </Button>
         <Button variant="primary" onClick={onUpdate}>
-          Update
+          {text('Update')}
         </Button>
       </Modal.ButtonRow>
     </>

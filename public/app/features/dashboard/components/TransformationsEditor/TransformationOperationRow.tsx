@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import * as React from 'react';
 import { useToggle } from 'react-use';
 
@@ -14,6 +14,8 @@ import { QueryOperationRow } from 'app/core/components/QueryOperationRow/QueryOp
 import config from 'app/core/config';
 import { t } from 'app/core/internationalization';
 import { PluginStateInfo } from 'app/features/plugins/components/PluginStateInfo';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallTransformationRow } from 'app/features/wall-modern/editor/WallTransformationRow';
 
 import { TransformationEditor } from './TransformationEditor';
 import { TransformationEditorHelpDisplay } from './TransformationEditorHelpDisplay';
@@ -40,6 +42,7 @@ export const TransformationOperationRow = ({
   uiConfig,
   onChange,
 }: TransformationOperationRowProps) => {
+  const wall = useContext(editorPresentationContext);
   const [showDeleteModal, setShowDeleteModal] = useToggle(false);
   const [showDebug, toggleShowDebug] = useToggle(false);
   const [showHelp, toggleShowHelp] = useToggle(false);
@@ -153,32 +156,66 @@ export const TransformationOperationRow = ({
 
   return (
     <>
-      <QueryOperationRow
-        id={id}
-        index={index}
-        title={`${index + 1} - ${uiConfig.name}`}
-        draggable
-        actions={renderActions}
-        disabled={disabled}
-        expanderMessages={{
-          close: 'Collapse transformation row',
-          open: 'Expand transformation row',
-        }}
-      >
-        {showFilterEditor && (
-          <TransformationFilter index={index} config={configs[index].transformation} data={data} onChange={onChange} />
-        )}
-
-        <TransformationEditor
-          debugMode={showDebug}
+      {wall ? (
+        <WallTransformationRow
+          id={id}
           index={index}
-          data={topic === DataTopic.Annotations ? (data.annotations ?? []) : data.series}
-          configs={configs}
-          uiConfig={uiConfig}
-          onChange={onChange}
-          toggleShowDebug={toggleShowDebug}
-        />
-      </QueryOperationRow>
+          title={uiConfig.name}
+          disabled={disabled}
+          actions={renderActions()}
+        >
+          {showFilterEditor && (
+            <TransformationFilter
+              index={index}
+              config={configs[index].transformation}
+              data={data}
+              onChange={onChange}
+            />
+          )}
+
+          <TransformationEditor
+            debugMode={showDebug}
+            index={index}
+            data={topic === DataTopic.Annotations ? (data.annotations ?? []) : data.series}
+            configs={configs}
+            uiConfig={uiConfig}
+            onChange={onChange}
+            toggleShowDebug={toggleShowDebug}
+          />
+        </WallTransformationRow>
+      ) : (
+        <QueryOperationRow
+          id={id}
+          index={index}
+          title={`${index + 1} - ${uiConfig.name}`}
+          draggable
+          actions={renderActions}
+          disabled={disabled}
+          expanderMessages={{
+            close: 'Collapse transformation row',
+            open: 'Expand transformation row',
+          }}
+        >
+          {showFilterEditor && (
+            <TransformationFilter
+              index={index}
+              config={configs[index].transformation}
+              data={data}
+              onChange={onChange}
+            />
+          )}
+
+          <TransformationEditor
+            debugMode={showDebug}
+            index={index}
+            data={topic === DataTopic.Annotations ? (data.annotations ?? []) : data.series}
+            configs={configs}
+            uiConfig={uiConfig}
+            onChange={onChange}
+            toggleShowDebug={toggleShowDebug}
+          />
+        </QueryOperationRow>
+      )}
       <TransformationEditorHelpDisplay transformer={uiConfig} isOpen={showHelp} onCloseClick={toggleShowHelp} />
     </>
   );

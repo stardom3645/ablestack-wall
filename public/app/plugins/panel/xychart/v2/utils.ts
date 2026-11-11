@@ -11,6 +11,7 @@ import {
   cacheFieldDisplayNames,
   FieldMatcherID,
   FieldConfigSource,
+  GrafanaTheme2,
 } from '@grafana/data';
 import { decoupleHideFromState } from '@grafana/data/src/field/fieldState';
 import { config } from '@grafana/runtime';
@@ -40,7 +41,8 @@ export function prepSeries(
   mapping: SeriesMapping,
   mappedSeries: XYSeriesConfig[],
   frames: DataFrame[],
-  fieldConfig: FieldConfigSource
+  fieldConfig: FieldConfigSource,
+  theme: GrafanaTheme2 = config.theme2
 ) {
   cacheFieldDisplayNames(frames);
   decoupleHideFromState(frames, fieldConfig);
@@ -51,7 +53,7 @@ export function prepSeries(
     mappedSeries = [{}];
   }
 
-  const { palette, getColorByName } = config.theme2.visualization;
+  const { palette, getColorByName } = theme.visualization;
 
   mappedSeries.forEach((seriesCfg, seriesIdx) => {
     if (mapping === SeriesMapping.Manual) {

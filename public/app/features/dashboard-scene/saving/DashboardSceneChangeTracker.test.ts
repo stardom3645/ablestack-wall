@@ -19,6 +19,30 @@ jest.mock('../serialization/transformSceneToSaveModel', () => {
 });
 
 describe('DashboardSceneChangeTracker', () => {
+  it('drops queued comparisons on cancel and starts the next edit with a fresh worker', () => {
+    const first = { onmessage: null, terminate: jest.fn() };
+    const second = { onmessage: null, terminate: jest.fn() };
+    const factory = jest
+      .spyOn(createDetectChangesWorker, 'createWorker')
+      .mockReturnValueOnce(first as unknown as CorsWorker)
+      .mockReturnValueOnce(second as unknown as CorsWorker);
+    const unsubscribe = jest.fn();
+    const changeTracker = new DashboardSceneChangeTracker({
+      subscribeToEvent: jest.fn().mockReturnValue({ unsubscribe }),
+    } as unknown as DashboardScene);
+    changeTracker.startTrackingChanges();
+    expect(first.onmessage).not.toBeNull();
+    changeTracker.stopTrackingChanges();
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(first.onmessage).toBeNull();
+    expect(first.terminate).toHaveBeenCalledTimes(1);
+    changeTracker.startTrackingChanges();
+    expect(factory).toHaveBeenCalledTimes(2);
+    expect(second.onmessage).not.toBeNull();
+    changeTracker.terminate();
+    expect(second.terminate).toHaveBeenCalledTimes(1);
+  });
+
   it('should set _changesWorker to undefined when terminate is called', () => {
     const terminate = jest.fn();
     jest.spyOn(createDetectChangesWorker, 'createWorker').mockImplementation(

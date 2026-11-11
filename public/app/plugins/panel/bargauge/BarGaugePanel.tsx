@@ -1,5 +1,5 @@
 import { isNumber } from 'lodash';
-import { PureComponent } from 'react';
+import { PureComponent, ContextType } from 'react';
 
 import {
   DisplayProcessor,
@@ -12,15 +12,22 @@ import {
   PanelProps,
   VizOrientation,
 } from '@grafana/data';
-import { BarGaugeSizing } from '@grafana/schema';
+import { BarGaugeSizing, BarGaugeDisplayMode, BarGaugeNamePlacement, BarGaugeValueMode } from '@grafana/schema';
 import { BarGauge, DataLinksContextMenu, VizLayout, VizRepeater, VizRepeaterRenderValueProps } from '@grafana/ui';
 import { DataLinksContextMenuApi } from '@grafana/ui/src/components/DataLinks/DataLinksContextMenu';
+import { panelScrollTokens } from '@grafana/ui/src/components/PanelScrollArea/PanelScrollArea';
+import { VizPresentationContext } from '@grafana/ui/src/components/VizPresentation/VizPresentation';
 import { config } from 'app/core/config';
+import { WallHeatStrip } from 'app/features/wall-modern/panels/WallHeatStrip';
+import { meterAppearance, WallMeterOptions } from 'app/features/wall-modern/panels/meterPresentation';
 
 import { BarGaugeLegend } from './BarGaugeLegend';
 import { defaultOptions, Options } from './panelcfg.gen';
 
 export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
+  static contextType = VizPresentationContext;
+  declare context: ContextType<typeof VizPresentationContext>;
+
   renderComponent = (
     valueProps: VizRepeaterRenderValueProps<FieldDisplay, DisplayValueAlignmentFactors>,
     menuProps: DataLinksContextMenuApi
@@ -37,6 +44,7 @@ export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
 
     return (
       <BarGauge
+        wallAppearance={meterAppearance(value, fieldConfig, this.props.data.series, options)}
         value={clearNameForSingleSeries(count, fieldConfig.defaults, display)}
         width={width}
         height={height}
@@ -46,7 +54,7 @@ export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
         display={processor}
         theme={config.theme2}
         itemSpacing={this.getItemSpacing()}
-        displayMode={options.displayMode}
+        displayMode={options.displayMode === 'heat-strip' ? BarGaugeDisplayMode.Basic : options.displayMode}
         onClick={openMenu}
         className={targetClassName}
         alignmentFactors={count > 1 ? alignmentFactors : undefined}
@@ -121,7 +129,12 @@ export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
     const minVizHeight = isManualSizing && isHorizontal ? options.minVizHeight : defaultOptions.minVizHeight;
     const maxVizHeight = isManualSizing && isHorizontal ? options.maxVizHeight : defaultOptions.maxVizHeight;
 
-    return { minVizWidth, minVizHeight, maxVizHeight };
+    return {
+      minVizWidth,
+      minVizHeight:
+        this.context && !isManualSizing ? Math.max(minVizHeight ?? 0, panelScrollTokens.minimumMeterRow) : minVizHeight,
+      maxVizHeight,
+    };
   }
 
   getLegend() {
@@ -139,6 +152,28 @@ export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
     const { height, width, options, data, renderCounter } = this.props;
 
     const { minVizWidth, minVizHeight, maxVizHeight } = this.calcBarSize();
+
+    if (options.displayMode === 'heat-strip') {
+      return (
+        <VizLayout width={width} height={height} legend={this.getLegend()}>
+          {(w, h) => (
+            <WallHeatStrip
+              values={this.getValues()}
+              range={this.props.timeRange}
+              timeZone={this.props.timeZone}
+              width={w}
+              height={h}
+              options={options}
+              config={this.props.fieldConfig}
+              frames={data.series}
+              colorValues={options.valueMode === BarGaugeValueMode.Color}
+              hideNames={options.namePlacement === BarGaugeNamePlacement.Hidden}
+              hideValues={options.valueMode === BarGaugeValueMode.Hidden}
+            />
+          )}
+        </VizLayout>
+      );
+    }
 
     return (
       <VizLayout width={width} height={height} legend={this.getLegend()}>
@@ -164,7 +199,9 @@ export class BarGaugePanel extends PureComponent<BarGaugePanelProps> {
     );
   }
 }
-export type BarGaugePanelProps = PanelProps<Options>;
+export type WallBarOptions = Omit<Options, 'displayMode'> &
+  WallMeterOptions & { displayMode: BarGaugeDisplayMode | 'heat-strip' };
+export type BarGaugePanelProps = PanelProps<WallBarOptions>;
 
 export function clearNameForSingleSeries(count: number, field: FieldConfig, display: DisplayValue): DisplayValue {
   if (count === 1 && !field.displayName) {

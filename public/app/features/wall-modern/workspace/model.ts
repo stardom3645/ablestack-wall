@@ -1,5 +1,3 @@
-import { STORAGE_VM_DASHBOARD_UID } from '../statPresentation';
-
 export const workspaceTabs = [
   { id: 'overview', label: '개요', rowId: 24, description: '가상머신의 핵심 자원과 서비스 상태를 확인합니다.' },
   {
@@ -58,7 +56,7 @@ export function selectedWorkspaceTab(search: string): WorkspaceTab {
 
 // Keep the existing renderer stable during native edit/view routes; only its body changes.
 export function usesStorageWorkspaceRenderer(uid: string | undefined, forceOld: boolean) {
-  return uid === STORAGE_VM_DASHBOARD_UID && !forceOld;
+  return Boolean(uid) && !forceOld;
 }
 
 /** Match source rows by ID, never by translated title; preserve unrecognised rows/panels. */

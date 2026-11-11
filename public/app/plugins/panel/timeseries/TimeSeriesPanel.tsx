@@ -8,13 +8,15 @@ import {
   TimeSeriesPresentationContext,
   TimeSeriesStyleConfigContext,
 } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
+import { CursorSyncPlugin } from '@grafana/ui/src/components/uPlot/plugins/CursorSyncPlugin';
+import { LegendFocusPlugin } from '@grafana/ui/src/components/uPlot/plugins/LegendFocusPlugin';
 import { TimeRange2, TooltipHoverMode } from '@grafana/ui/src/components/uPlot/plugins/TooltipPlugin2';
 import { TimeSeries } from 'app/core/components/TimeSeries/TimeSeries';
 import { config } from 'app/core/config';
+import { metricPresentation, WallTimeSeriesOptions } from 'app/features/wall-modern/charts/metricProfiles';
 import { presentTimeSeriesFrames } from 'app/features/wall-modern/timeSeriesPresentation';
 
 import { TimeSeriesTooltip } from './TimeSeriesTooltip';
-import { Options } from './panelcfg.gen';
 import { AnnotationsPlugin2 } from './plugins/AnnotationsPlugin2';
 import { ExemplarsPlugin, getVisibleLabels } from './plugins/ExemplarsPlugin';
 import { OutsideRangePlugin } from './plugins/OutsideRangePlugin';
@@ -22,7 +24,7 @@ import { ThresholdControlsPlugin } from './plugins/ThresholdControlsPlugin';
 import { getPrepareTimeseriesSuggestion } from './suggestions';
 import { getTimezones, prepareGraphableFields } from './utils';
 
-interface TimeSeriesPanelProps extends PanelProps<Options> {}
+interface TimeSeriesPanelProps extends PanelProps<WallTimeSeriesOptions> {}
 
 export const TimeSeriesPanel = ({
   data,
@@ -49,7 +51,11 @@ export const TimeSeriesPanel = ({
   // Vertical orientation is not available for users through config.
   // It is simplified version of horizontal time series panel and it does not support all plugins.
   const isVerticallyOriented = options.orientation === VizOrientation.Vertical;
-  const chartPresentation = useContext(TimeSeriesStyleConfigContext);
+  const basePresentation = useContext(TimeSeriesStyleConfigContext);
+  const chartPresentation = useMemo(
+    () => (basePresentation ? metricPresentation(basePresentation, options.wallMetricType) : undefined),
+    [basePresentation, options.wallMetricType]
+  );
   const frames = useMemo(() => {
     const prepared = prepareGraphableFields(data.series, config.theme2, timeRange);
     return prepared && chartPresentation
@@ -106,6 +112,10 @@ export const TimeSeriesPanel = ({
           return (
             <>
               <KeyboardPlugin config={uplotConfig} />
+              {chartPresentation && <LegendFocusPlugin config={uplotConfig} frames={frames} eventBus={eventBus} />}
+              {chartPresentation?.refinedInteractions && (
+                <CursorSyncPlugin config={uplotConfig} mode={cursorSync} scope={eventsScope} />
+              )}
               {cursorSync !== DashboardCursorSync.Off && (
                 <EventBusPlugin config={uplotConfig} eventBus={eventBus} frame={alignedFrame} />
               )}
@@ -137,6 +147,7 @@ export const TimeSeriesPanel = ({
                       // not sure it header time here works for annotations, since it's taken from nearest datapoint index
                       <TimeSeriesTooltip
                         series={alignedFrame}
+                        timeZone={timezones[0]}
                         dataIdxs={dataIdxs}
                         seriesIdx={seriesIdx}
                         mode={viaSync ? TooltipDisplayMode.Multi : options.tooltip.mode}

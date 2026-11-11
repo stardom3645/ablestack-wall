@@ -35,8 +35,8 @@ describe('<DataSourcesList>', () => {
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(3);
     expect(await screen.findAllByRole('heading')).toHaveLength(3);
-    expect(await screen.findAllByRole('link', { name: /Build a dashboard/i })).toHaveLength(3);
-    expect(await screen.findAllByRole('link', { name: 'Explore' })).toHaveLength(3);
+    expect(await screen.findAllByRole('link', { name: /대시보드 만들기/i })).toHaveLength(3);
+    expect(await screen.findAllByRole('link', { name: '데이터 탐색' })).toHaveLength(3);
   });
 
   it('should render all elements in the list item', async () => {

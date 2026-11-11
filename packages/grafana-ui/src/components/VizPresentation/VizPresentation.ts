@@ -4,9 +4,24 @@ import tinycolor from 'tinycolor2';
 import { DisplayValue } from '@grafana/data';
 import { GraphDrawStyle, GraphFieldConfig, GraphGradientMode, StackingMode } from '@grafana/schema';
 
+import type { Props as BarGaugeProps } from '../BarGauge/BarGauge';
+import type { Props as GaugeProps } from '../Gauge/Gauge';
+
+/** Optional display-only metadata. Native field configuration and values remain authoritative. */
+export interface MeterAppearance {
+  theme?: 'cobalt' | 'indigo' | 'teal' | 'slate';
+  shape?: 'ring' | 'arc' | 'semi';
+  finish?: 'solid' | 'duo';
+  colorSource?: 'default' | 'configured';
+  useThresholds?: boolean;
+}
+
 /** Optional presentation contract. No provider means unchanged Grafana rendering. */
 export interface VizPresentation {
   fontFamily: string;
+  bodyFontSize?: number;
+  captionFontSize?: number;
+  labelFontWeight?: number;
   /** Invalidates Canvas configuration after application web fonts finish loading. */
   fontLoadRevision?: string;
   text: string;
@@ -18,6 +33,8 @@ export interface VizPresentation {
   shadow: string;
   radius: number;
   /** Overview-only HTML readout, retaining the native gauge arc and threshold engine. */
+  renderGauge?: (props: GaugeProps) => ReactNode;
+  renderBarGauge?: (props: BarGaugeProps) => ReactNode;
   renderGaugeValue?: (value: DisplayValue, explicitSize?: number) => ReactNode;
   gaugeThickness?: number;
   gaugeValueMaxSize?: number;

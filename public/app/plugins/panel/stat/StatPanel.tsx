@@ -12,24 +12,33 @@ import {
   PanelProps,
 } from '@grafana/data';
 import { findNumericFieldMinMax } from '@grafana/data/src/field/fieldOverrides';
-import { getValueMappingResult } from '@grafana/data/src/utils/valueMappings';
 import { BigValueTextMode, BigValueGraphMode } from '@grafana/schema';
 import { BigValue, DataLinksContextMenu, VizRepeater, VizRepeaterRenderValueProps } from '@grafana/ui';
 import { StatCardPresentationContext } from '@grafana/ui/src/components/BigValue/StatCardPresentation';
 import { DataLinksContextMenuApi } from '@grafana/ui/src/components/DataLinks/DataLinksContextMenu';
 import { config } from 'app/core/config';
-import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
+import {
+  hasStatStateColor,
+  hasStatTimeSeries,
+  statSourceValue,
+  statValueMapping,
+} from 'app/features/wall-modern/panels/statReadout';
 
-import { Options } from './panelcfg.gen';
+import { Options } from './types';
 
 export class StatPanel extends PureComponent<PanelProps<Options>> {
   static contextType = StatCardPresentationContext;
   declare context: ContextType<typeof StatCardPresentationContext>;
   // VizRepeater is pure: refresh its render callback on skin/theme changes without re-querying data.
   presentedRenderValue = memoizeOne(
-    (_presentation: typeof this.context) =>
+    (_presentation: typeof this.context, _options: Options) =>
       (valueProps: VizRepeaterRenderValueProps<FieldDisplay, DisplayValueAlignmentFactors>) =>
         this.renderValue(valueProps)
+  );
+  presentedGridDimensions = memoizeOne(
+    (presentation: NonNullable<typeof this.context>, options: Options, textMode: BigValueTextMode) =>
+      (values: FieldDisplay[], width: number, height: number, spacing: number) =>
+        presentation.getGridDimensions?.(values, width, height, spacing, { ...options, textMode })
   );
   renderComponent = (
     valueProps: VizRepeaterRenderValueProps<FieldDisplay, DisplayValueAlignmentFactors>,
@@ -38,16 +47,22 @@ export class StatPanel extends PureComponent<PanelProps<Options>> {
     const { timeRange, options } = this.props;
     const { value, alignmentFactors, width, height, count } = valueProps;
     const { openMenu, targetClassName } = menuProps;
-    const mapping = this.context ? getValueMappingResult(value.field.mappings ?? [], value.display.numeric) : null;
-    let sparkline = value.sparkline;
-    if (sparkline) {
-      sparkline.timeRange = timeRange;
-    }
+    const mapping = this.context ? statValueMapping(value) : null;
+    const sparkline =
+      value.sparkline &&
+      (!this.context || (options.graphMode !== BigValueGraphMode.None && hasStatTimeSeries(value.sparkline)))
+        ? { ...value.sparkline, timeRange }
+        : undefined;
 
     return (
       <BigValue
         statPresentation={this.context}
+        statPresentationStyle={options.wallStatStyle}
+        statLayout={valueProps.layout}
+        hasStateColor={this.context ? hasStatStateColor(value) : undefined}
         isValueMapped={this.context ? mapping?.text != null && mapping.text === value.display.text : undefined}
+        isNoValue={this.context ? !value.view : undefined}
+        isTextValue={this.context && count === 1 ? typeof statSourceValue(value) === 'string' : undefined}
         value={value.display}
         count={count}
         sparkline={sparkline}
@@ -137,20 +152,30 @@ export class StatPanel extends PureComponent<PanelProps<Options>> {
     const { height, options, width, data, renderCounter } = this.props;
 
     return (
-      <WallPanelContent panel={this.props}>
-        <VizRepeater
-          getValues={this.getValues}
-          getAlignmentFactors={getDisplayValueAlignmentFactors}
-          renderValue={this.context ? this.presentedRenderValue(this.context) : this.renderValue}
-          width={width}
-          height={height}
-          source={data}
-          itemSpacing={3}
-          renderCounter={renderCounter}
-          autoGrid={true}
-          orientation={options.orientation}
-        />
-      </WallPanelContent>
+      <VizRepeater
+        getValues={this.getValues}
+        getAlignmentFactors={getDisplayValueAlignmentFactors}
+        renderValue={this.context ? this.presentedRenderValue(this.context, options) : this.renderValue}
+        width={width}
+        height={height}
+        source={data}
+        itemSpacing={this.context?.itemGap ?? 3}
+        minVizWidth={this.context?.minimumItemWidth}
+        minVizHeight={this.context?.minimumItemHeight}
+        gridItemMinSize={
+          this.context?.minimumItemWidth && this.context?.minimumItemHeight
+            ? { width: this.context.minimumItemWidth, height: this.context.minimumItemHeight }
+            : undefined
+        }
+        renderCounter={renderCounter}
+        autoGrid={true}
+        getGridDimensions={
+          this.context?.getGridDimensions
+            ? this.presentedGridDimensions(this.context, options, this.getTextMode())
+            : undefined
+        }
+        orientation={options.orientation}
+      />
     );
   }
 }

@@ -9,6 +9,7 @@ import { TimePickerContent } from '@grafana/ui/src/components/DateTimePickers/Ti
 import { getWeekStart } from '@grafana/ui/src/components/DateTimePickers/WeekStartPicker';
 import { quickOptions } from '@grafana/ui/src/components/DateTimePickers/options';
 import { useTimeSync } from '@grafana/ui/src/components/DateTimePickers/utils/useTimeSync';
+import { Trans } from 'app/core/internationalization';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../ui';
@@ -28,10 +29,18 @@ const historyOptions = {
         )
         .slice(0, 4)
     ),
-  deserializer: (value: string) =>
-    (JSON.parse(value) as Array<{ from: string; to: string }>).map((raw) =>
-      rangeUtil.convertRawToRange(raw, 'utc', undefined, 'YYYY-MM-DD HH:mm:ss')
-    ),
+  deserializer: (value: string) => {
+    const ranges: unknown = JSON.parse(value);
+    if (!Array.isArray(ranges)) {
+      return [];
+    }
+    return ranges
+      .filter(
+        (raw): raw is { from: string; to: string } =>
+          raw !== null && typeof raw === 'object' && typeof raw.from === 'string' && typeof raw.to === 'string'
+      )
+      .map((raw) => rangeUtil.convertRawToRange(raw, 'utc', undefined, 'YYYY-MM-DD HH:mm:ss'));
+  },
 };
 
 export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
@@ -73,9 +82,12 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
         <PopoverTrigger
           render={<Button className="wall-toolbar-control wall-toolbar-time-trigger" />}
           aria-label="시간 범위 선택"
+          title={rangeUtil.describeTimeRange(value.raw, timeZone)}
         >
           <Clock3 size={16} />
-          <TimePickerButtonLabel value={value} timeZone={timeZone} />
+          <span className="wall-time-label">
+            {wallTimeLabel(value) ?? <TimePickerButtonLabel value={value} timeZone={timeZone} />}
+          </span>
           <ChevronDown size={14} />
         </PopoverTrigger>
         <PopoverContent
@@ -87,7 +99,7 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
             <>
               <Button className="wall-time-advanced-back" variant="ghost" size="sm" onClick={() => setAdvanced(false)}>
                 <ChevronLeft size={14} />
-                빠른 시간 범위
+                <Trans i18nKey="wall.wall-time-range-control.text-c393a9de">빠른 시간 범위</Trans>
               </Button>
               <TimePickerContent
                 value={value}
@@ -104,7 +116,9 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
             </>
           ) : (
             <>
-              <div className="wall-timeframe-heading">시간 범위</div>
+              <div className="wall-timeframe-heading">
+                <Trans i18nKey="wall.wall-time-range-control.text-aee3e701">시간 범위</Trans>
+              </div>
               <button
                 className="wall-timeframe-summary"
                 onClick={() => setAdvanced(true)}
@@ -113,7 +127,9 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
                 <span>
                   {typeof value.raw.from === 'string' ? value.raw.from : value.from.format('YYYY-MM-DD HH:mm')}
                 </span>
-                <span>→</span>
+                <span>
+                  <Trans i18nKey="wall.wall-time-range-control.text-213edd25">→</Trans>
+                </span>
                 <span>{typeof value.raw.to === 'string' ? value.raw.to : value.to.format('YYYY-MM-DD HH:mm')}</span>
                 <CalendarDays size={16} />
               </button>
@@ -128,7 +144,8 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
                   >
                     <span>{option.display}</span>
                     <small>
-                      {option.from.replace('now', '') || 'Now'} →{' '}
+                      {option.from.replace('now', '') || 'Now'}
+                      <Trans i18nKey="wall.wall-time-range-control.text-213edd25"> →</Trans>{' '}
                       {option.to === 'now' ? 'Now' : option.to.replace('now', '')}
                     </small>
                   </Button>
@@ -140,7 +157,7 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
                   {timeZone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : timeZone}
                 </span>
                 <Button variant="ghost" size="sm" onClick={() => setAdvanced(true)}>
-                  고급 시간 설정
+                  <Trans i18nKey="wall.wall-time-range-control.text-744c04ff">고급 시간 설정</Trans>
                 </Button>
               </div>
             </>
@@ -151,6 +168,7 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
         className="wall-toolbar-control wall-toolbar-icon"
         size="icon"
         aria-label="이전 시간 범위"
+        title="이전 시간 범위"
         onClick={model.onMoveBackward}
       >
         <ChevronLeft size={15} />
@@ -159,6 +177,7 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
         className="wall-toolbar-control wall-toolbar-icon"
         size="icon"
         aria-label="다음 시간 범위"
+        title="다음 시간 범위"
         onClick={model.onMoveForward}
       >
         <ChevronRight size={15} />
@@ -177,3 +196,15 @@ const compactTimePresets = [
   { from: 'now-24h', to: 'now', display: '최근 24시간' },
   { from: 'now-7d', to: 'now', display: '최근 7일' },
 ];
+
+export function wallTimeLabel(value: TimeRange) {
+  if (value.raw.to !== 'now' || typeof value.raw.from !== 'string') {
+    return undefined;
+  }
+  const match = /^now-(\d+)(s|m|h|d|w|M|y)$/.exec(value.raw.from);
+  if (!match) {
+    return undefined;
+  }
+  const units: Record<string, string> = { s: '초', m: '분', h: '시간', d: '일', w: '주', M: '개월', y: '년' };
+  return `최근 ${match[1]}${units[match[2]]}`;
+}

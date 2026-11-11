@@ -1,8 +1,12 @@
 import { css } from '@emotion/css';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState, useContext } from 'react';
 
 import { GrafanaTheme2, MappingType, StandardEditorProps, ValueMapping } from '@grafana/data';
 import { useStyles2, VerticalGroup, Icon, ColorPicker, Button, Modal } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallValueMappingsEditor } from 'app/features/wall-modern/editor/WallValueMappingsEditor';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { MediaType, ResourceFolderName, ResourcePickerSize } from '../../types';
 import { ResourcePicker } from '../ResourcePicker';
@@ -14,6 +18,8 @@ export interface Props extends StandardEditorProps<ValueMapping[]> {
 }
 
 export const ValueMappingsEditor = memo((props: Props) => {
+  const text = useWallOptionText();
+  const wall = useContext(editorPresentationContext);
   const { value, onChange, item } = props;
 
   const styles = useStyles2(getStyles);
@@ -41,6 +47,9 @@ export const ValueMappingsEditor = memo((props: Props) => {
     [rows, onChange]
   );
 
+  if (wall) {
+    return <WallValueMappingsEditor value={value} onChange={onChange} showIconPicker={showIconPicker} />;
+  }
   return (
     <VerticalGroup>
       <table className={styles.compactTable}>
@@ -51,7 +60,11 @@ export const ValueMappingsEditor = memo((props: Props) => {
                 {row.type === MappingType.ValueToText && row.key}
                 {row.type === MappingType.RangeToText && (
                   <span>
-                    [{row.from} - {row.to}]
+                    <Trans i18nKey="wall.value-mappings-editor.text-1e5c2f36">[</Trans>
+                    {row.from}
+                    <Trans i18nKey="wall.value-mappings-editor.text-3bc15c8a"> - </Trans>
+                    {row.to}
+                    <Trans i18nKey="wall.value-mappings-editor.text-4ff447b8">]</Trans>
                   </span>
                 )}
                 {row.type === MappingType.RegexToText && row.pattern}
@@ -87,13 +100,19 @@ export const ValueMappingsEditor = memo((props: Props) => {
         </tbody>
       </table>
 
-      <Button variant="secondary" size="sm" fullWidth onClick={() => setIsEditorOpen(true)}>
-        {rows.length > 0 && <span>Edit value mappings</span>}
-        {rows.length === 0 && <span>Add value mappings</span>}
+      <Button
+        className="wall-value-mappings-action"
+        variant="secondary"
+        size="sm"
+        fullWidth
+        onClick={() => setIsEditorOpen(true)}
+      >
+        {rows.length > 0 && <span>{text('Edit value mappings')}</span>}
+        {rows.length === 0 && <span>{text('Add value mappings')}</span>}
       </Button>
       <Modal
         isOpen={isEditorOpen}
-        title="Value mappings"
+        title={text('Value mappings')}
         onDismiss={onCloseEditor}
         className={styles.modal}
         closeOnBackdropClick={false}

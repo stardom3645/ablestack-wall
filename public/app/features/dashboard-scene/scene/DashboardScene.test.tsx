@@ -166,6 +166,16 @@ describe('DashboardScene', () => {
         expect(locationService.getLocation().pathname).toBe('/d/dash-1');
       });
 
+      it('clears draft dirtiness when restoring an initial state without an isDirty key', () => {
+        const original = scene.getInitialState();
+        expect(original?.isDirty).toBeFalsy();
+        scene.setState({ title: 'Unsaved Resize draft', isDirty: true });
+        scene.exitEditMode({ skipConfirm: true, restoreInitialState: true });
+        expect(scene.state.title).toBe(original?.title);
+        expect(scene.state.isEditing).toBe(false);
+        expect(scene.state.isDirty).toBe(false);
+      });
+
       it('Exiting already saved dashboard should not restore initial state', () => {
         scene.setState({ title: 'Updated title' });
         expect(scene.state.isDirty).toBe(true);

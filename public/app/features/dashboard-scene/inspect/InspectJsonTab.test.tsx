@@ -21,11 +21,13 @@ import { DashboardScene } from '../scene/DashboardScene';
 import { LibraryPanelBehavior } from '../scene/LibraryPanelBehavior';
 import { VizPanelLinks, VizPanelLinksMenu } from '../scene/PanelLinks';
 import { DefaultGridLayoutManager } from '../scene/layout-default/DefaultGridLayoutManager';
+import * as nativePanelBuilder from '../serialization/transformSaveModelToScene';
 import { vizPanelToPanel } from '../serialization/transformSceneToSaveModel';
 import { activateFullSceneTree } from '../utils/test-utils';
 import { findVizPanelByKey } from '../utils/utils';
 
 import { InspectJsonTab } from './InspectJsonTab';
+import { PanelInspectDrawer } from './PanelInspectDrawer';
 
 standardTransformersRegistry.setInit(getStandardTransformers);
 const panelPlugin: PanelPlugin = new PanelPlugin(() => null);
@@ -143,6 +145,61 @@ describe('InspectJsonTab', () => {
     expect(tab.isEditable()).toBe(false);
   });
 
+  it('keeps invalid JSON in the inspector and does not apply or close it', async () => {
+    const { tab, panel } = await buildTestScene();
+    tab.onCodeEditorBlur('{invalid');
+    expect(() => tab.onApplyChange()).not.toThrow();
+    expect(tab.state.jsonError).toBeTruthy();
+    expect(tab.state.onClose).not.toHaveBeenCalled();
+    expect(panel.state.title).toBe('Panel A');
+  });
+
+  it('does not apply noneditable data JSON', async () => {
+    const { tab } = await buildTestScene();
+    tab.onChangeSource({ value: 'panel-data' });
+    tab.onApplyChange();
+    expect(tab.state.onClose).not.toHaveBeenCalled();
+  });
+
+  it('retains the panel draft and original snapshot across source switches without applying it', async () => {
+    const { tab, panel } = await buildTestScene();
+    const original = tab.state.originalText;
+    const edited = JSON.stringify({ ...JSON.parse(original), title: 'Not applied' });
+    tab.onCodeEditorBlur(edited);
+    tab.onChangeSource({ value: 'data-frames' });
+    expect(tab.isEditable()).toBe(false);
+    tab.onChangeSource({ value: 'panel-json' });
+    expect(tab.state.jsonText).toBe(edited);
+    expect(tab.state.originalText).toBe(original);
+    expect(panel.state.title).toBe('Panel A');
+    tab.onRestore();
+    expect(tab.state.jsonText).toBe(original);
+    expect(tab.state.onClose).not.toHaveBeenCalled();
+  });
+
+  it('keeps a native model-conversion failure in the workspace before changing the panel', async () => {
+    const { tab, panel } = await buildTestScene();
+    const failure = jest.spyOn(nativePanelBuilder, 'buildGridItemForPanel').mockImplementationOnce(() => {
+      throw new Error('Native conversion failed');
+    });
+    tab.onCodeEditorBlur(JSON.stringify({ ...JSON.parse(tab.state.jsonText), title: 'Not applied' }));
+    expect(() => tab.onApplyChange()).not.toThrow();
+    expect(tab.state.jsonError).toContain('Native conversion failed');
+    failure.mockRestore();
+    expect(panel.state.title).toBe('Panel A');
+    expect(tab.state.onClose).not.toHaveBeenCalled();
+  });
+
+  it('clears the Scene inspect key when closing without clearing prior dashboard dirty state', async () => {
+    const { scene, panel } = await buildTestScene();
+    const drawer = new PanelInspectDrawer({ panelRef: panel.getRef() });
+    scene.setState({ overlay: drawer, inspectPanelKey: panel.state.key, isDirty: true });
+    drawer.onClose();
+    expect(scene.state.overlay).toBeUndefined();
+    expect(scene.urlSync?.getUrlState().inspect).toBeUndefined();
+    expect(scene.state.isDirty).toBe(true);
+  });
+
   it('Can update model', async () => {
     const { tab, panel, scene } = await buildTestScene();
 
@@ -162,6 +219,8 @@ describe('InspectJsonTab', () => {
       "transparent": false
     }`);
 
+    const close = jest.fn(() => expect(findVizPanelByKey(scene, panel.state.key)!.state.title).toBe('New title'));
+    tab.setState({ onClose: close });
     tab.onApplyChange();
 
     const panel2 = findVizPanelByKey(scene, panel.state.key)!;

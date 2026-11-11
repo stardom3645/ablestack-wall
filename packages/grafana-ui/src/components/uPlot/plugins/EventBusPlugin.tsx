@@ -48,6 +48,10 @@ export const EventBusPlugin = ({ config, eventBus, frame }: EventBusPluginProps)
     });
 
     config.addHook('setLegend', () => {
+      // uPlot can deliver a final sync callback between React cleanup and destroy.
+      if (!u) {
+        return;
+      }
       let viaSync = u!.cursor.event == null;
 
       if (!viaSync) {
@@ -75,27 +79,29 @@ export const EventBusPlugin = ({ config, eventBus, frame }: EventBusPluginProps)
       }
     });
 
+    function setPassiveCursor(left: number, top: number) {
+      if (!u) {
+        return;
+      }
+      // uPlot retains the last DOM event. Received updates are never local
+      // input and must not open Crosshair-mode tooltips or echo back to the bus.
+      const previousEvent = u.cursor.event;
+      u.cursor.event = undefined;
+      try {
+        u.setCursor({ left, top });
+      } finally {
+        u.cursor.event = previousEvent;
+      }
+    }
+
     function handleCursorUpdate(evt: DataHoverEvent | LegacyGraphHoverEvent) {
       const time = evt.payload?.point?.time;
-
-      if (time) {
-        // Try finding left position on time axis
-        const left = u!.valToPos(time, 'x');
-
-        // let top;
-
-        // if (left) {
-        //   top = findMidPointYPosition(u!, u!.posToIdx(left));
-        // }
-
-        // if (!top || !left) {
-        //   return;
-        // }
-
-        u!.setCursor({
-          left,
-          top: u!.rect.height / 2,
-        });
+      if (u && time != null && Number.isFinite(time)) {
+        if (time < u.scales.x.min! || time > u.scales.x.max!) {
+          setPassiveCursor(-10, -10);
+          return;
+        }
+        setPassiveCursor(u.valToPos(time, 'x'), u.rect.height / 2);
       }
     }
 
@@ -144,20 +150,20 @@ export const EventBusPlugin = ({ config, eventBus, frame }: EventBusPluginProps)
             }
 
             // @ts-ignore
-            if (!u!.cursor._lock) {
-              u!.setCursor({
-                left: -10,
-                top: -10,
-              });
+            if (u && !u.cursor._lock) {
+              setPassiveCursor(-10, -10);
             }
           },
         })
     );
 
     return () => {
+      throttledHover.cancel();
+      throttledClear.cancel();
       subscription.unsubscribe();
+      u = null;
     };
-  }, [config]);
+  }, [config, eventBus]);
 
   return null;
 };

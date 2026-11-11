@@ -307,7 +307,7 @@ export class QueryGroup extends PureComponent<Props, State> {
             variant="secondary"
             data-testid={selectors.components.QueryTab.addQuery}
           >
-            Add query
+            <Trans i18nKey="wall.query-group.text-437a8051">Add query</Trans>
           </Button>
         )}
         {config.expressionsEnabled && this.isExpressionsSupported(dsSettings) && (
@@ -318,7 +318,9 @@ export class QueryGroup extends PureComponent<Props, State> {
             className={styles.expressionButton}
             data-testid="query-tab-add-expression"
           >
-            <span>Expression&nbsp;</span>
+            <span>
+              <Trans i18nKey="wall.query-group.text-0421ccb8">Expression&nbsp;</Trans>
+            </span>
           </Button>
         )}
         {this.renderExtraActions()}
@@ -388,6 +390,8 @@ const getStyles = stylesFactory(() => {
 type QueriesTabStyles = ReturnType<typeof getStyles>;
 
 interface QueryGroupTopSectionProps {
+  section?: 'source' | 'options' | 'actions';
+  renderActions?: (actions: { inspect?: () => void; help: () => void }) => React.ReactNode;
   data: PanelData;
   dataSource: DataSourceApi;
   dsSettings: DataSourceInstanceSettings;
@@ -398,6 +402,8 @@ interface QueryGroupTopSectionProps {
 }
 
 export function QueryGroupTopSection({
+  section,
+  renderActions,
   dataSource,
   options,
   data,
@@ -409,6 +415,68 @@ export function QueryGroupTopSection({
   const styles = getStyles();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const wallEditor = useContext(editorPresentationContext);
+  if (wallEditor && section) {
+    return (
+      <div className={`wall-work-group-${section}`}>
+        {section === 'source' && (
+          <>
+            <DataSourcePickerWithPrompt
+              options={options}
+              onChange={async (ds, defaults) => onDataSourceChange?.(ds, defaults)}
+              isDataSourceModalOpen={Boolean(locationService.getSearchObject().firstPanel)}
+            />
+            {isAngularDatasourcePluginAndNotHidden(dataSource.uid) && (
+              <AngularDeprecationPluginNotice
+                pluginId={dataSource.type}
+                pluginType={PluginType.datasource}
+                angularSupportEnabled={config?.angularSupportEnabled}
+                showPluginDetailsLink
+                interactionElementId="datasource-query"
+              />
+            )}
+          </>
+        )}
+        {section === 'options' && (
+          <QueryGroupOptionsEditor
+            standalone
+            options={options}
+            dataSource={dataSource}
+            data={data}
+            onChange={(opts) => onOptionsChange?.(opts)}
+          />
+        )}
+        {section === 'actions' && (
+          <>
+            {renderActions ? (
+              renderActions({ inspect: onOpenQueryInspector, help: () => setIsHelpOpen(true) })
+            ) : (
+              <>
+                {onOpenQueryInspector && (
+                  <WallButton size="sm" variant="ghost" onClick={onOpenQueryInspector}>
+                    <ScanSearch size={15} />
+                    {t('wall.editor.query-inspector', '쿼리 검사')}
+                  </WallButton>
+                )}
+                <WallButton size="sm" variant="ghost" onClick={() => setIsHelpOpen(true)}>
+                  <CircleHelp size={15} />
+                  {t('wall.editor.datasource-help', '데이터 소스 도움말')}
+                </WallButton>
+              </>
+            )}
+            {isHelpOpen && (
+              <Modal
+                title={t('wall.editor.datasource-help', '데이터 소스 도움말')}
+                isOpen
+                onDismiss={() => setIsHelpOpen(false)}
+              >
+                <PluginHelp pluginId={dsSettings.meta.id} />
+              </Modal>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
   return (
     <>
       <div data-testid={selectors.components.QueryTab.queryGroupTopSection}>
@@ -460,7 +528,7 @@ export function QueryGroupTopSection({
         ) : (
           <div className={styles.dataSourceRow}>
             <InlineFormLabel htmlFor="data-source-picker" width={'auto'}>
-              Data source
+              <Trans i18nKey="wall.query-group.text-ffb77dd8">Data source</Trans>
             </InlineFormLabel>
             <div className={styles.dataSourceRowItem}>
               <DataSourcePickerWithPrompt
@@ -499,7 +567,7 @@ export function QueryGroupTopSection({
                       onClick={onOpenQueryInspector}
                       aria-label={selectors.components.QueryTab.queryInspectorButton}
                     >
-                      Query inspector
+                      <Trans i18nKey="wall.query-group.text-f87c6468">Query inspector</Trans>
                     </Button>
                   </div>
                 )}

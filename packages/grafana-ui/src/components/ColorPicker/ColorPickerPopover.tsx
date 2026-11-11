@@ -10,6 +10,7 @@ import { Themeable2 } from '../../types/theme';
 import { Trans } from '../../utils/i18n';
 import { PopoverContentProps } from '../Tooltip';
 
+import { ColorPickerPresentationContext } from './ColorPickerPresentation';
 import { NamedColorsPalette } from './NamedColorsPalette';
 import SpectrumPalette from './SpectrumPalette';
 
@@ -40,6 +41,8 @@ interface State<T> {
 }
 
 class UnThemedColorPickerPopover<T extends CustomPickersDescriptor> extends Component<Props<T>, State<T>> {
+  static contextType = ColorPickerPresentationContext;
+  declare context: React.ContextType<typeof ColorPickerPresentationContext>;
   constructor(props: Props<T>) {
     super(props);
     this.state = {
@@ -113,6 +116,24 @@ class UnThemedColorPickerPopover<T extends CustomPickersDescriptor> extends Comp
 
   render() {
     const { theme } = this.props;
+    if (this.context) {
+      const { color, customPickers } = this.props;
+      return (
+        <FocusScope contain restoreFocus autoFocus>
+          {this.context.render({
+            color,
+            onChange: this.handleChange,
+            palette: <NamedColorsPalette color={color} onChange={this.handleChange} />,
+            spectrum: <SpectrumPalette color={color} onChange={this.handleChange} notifyOnMount={false} />,
+            extra: Object.entries(customPickers ?? {}).map(([id, item]) => ({
+              id,
+              label: item.name,
+              content: React.createElement(item.tabComponent, { color, theme, onChange: this.handleChange }),
+            })),
+          })}
+        </FocusScope>
+      );
+    }
     const styles = getStyles(theme);
     return (
       <FocusScope contain restoreFocus autoFocus>

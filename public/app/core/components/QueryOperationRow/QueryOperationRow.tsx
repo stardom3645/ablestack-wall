@@ -7,6 +7,7 @@ import { useUpdateEffect } from 'react-use';
 import { GrafanaTheme2 } from '@grafana/data';
 import { reportInteraction } from '@grafana/runtime';
 import { ReactUtils, useStyles2 } from '@grafana/ui';
+import { t } from 'app/core/internationalization';
 import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 
 import { QueryOperationRowHeader, ExpanderMessages } from './QueryOperationRowHeader';
@@ -131,7 +132,7 @@ export function QueryOperationRow({
                     isContentVisible={isContentVisible}
                     onRowToggle={onRowToggle}
                     reportDragMousePosition={reportDragMousePosition}
-                    title={title}
+                    title={wallEditor && id === 'Query options' ? t('wall.editor.query-options', '쿼리 옵션') : title}
                     expanderMessages={expanderMessages}
                   />
                 </div>
@@ -158,7 +159,7 @@ export function QueryOperationRow({
         isContentVisible={isContentVisible}
         onRowToggle={onRowToggle}
         reportDragMousePosition={reportDragMousePosition}
-        title={title}
+        title={wallEditor && id === 'Query options' ? t('wall.editor.query-options', '쿼리 옵션') : title}
         expanderMessages={expanderMessages}
       />
       {isContentVisible && <div className={cx(styles.content, wallEditor && 'wall-query-content')}>{children}</div>}

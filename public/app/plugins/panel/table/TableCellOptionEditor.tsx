@@ -6,6 +6,7 @@ import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { TableCellOptions } from '@grafana/schema';
 import { Field, Select, TableCellDisplayMode, useStyles2 } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { AutoCellOptionsEditor } from './cells/AutoCellOptionsEditor';
 import { BarGaugeCellOptionsEditor } from './cells/BarGaugeCellOptionsEditor';
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export const TableCellOptionEditor = ({ value, onChange }: Props) => {
+  const text = useWallOptionText();
   const cellType = value.type;
   const styles = useStyles2(getStyles);
   const currentMode = cellDisplayModeOptions.find((o) => o.value!.type === cellType)!;
@@ -61,7 +63,11 @@ export const TableCellOptionEditor = ({ value, onChange }: Props) => {
   return (
     <div className={styles.fixBottomMargin}>
       <Field>
-        <Select options={cellDisplayModeOptions} value={currentMode} onChange={onCellTypeChange} />
+        <Select
+          options={cellDisplayModeOptions.map((option) => ({ ...option, label: text(option.label) }))}
+          value={{ ...currentMode, label: text(currentMode?.label) }}
+          onChange={onCellTypeChange}
+        />
       </Field>
       {(cellType === TableCellDisplayMode.Auto || cellType === TableCellDisplayMode.ColorText) && (
         <AutoCellOptionsEditor cellOptions={value} onChange={onCellOptionsChange} />

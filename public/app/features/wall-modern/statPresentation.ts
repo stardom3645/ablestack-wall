@@ -1,7 +1,12 @@
+import { createElement } from 'react';
+
 import { GrafanaTheme2 } from '@grafana/data';
 import { StatCardPresentation } from '@grafana/ui/src/components/BigValue/StatCardPresentation';
 
 import { isWallModernRoute } from './model';
+import { WallStatContent } from './panels/WallStatContent';
+import { statGridDimensions } from './panels/statLayout';
+import { wallStatTokens } from './panels/statReadout';
 import { wallSurfaceTokens } from './surfaceTokens';
 import { wallTypography } from './typography';
 
@@ -17,10 +22,13 @@ export function isStorageStatPilot(pathname: string, search = '') {
 }
 
 export function wallStatCardPresentation(theme: GrafanaTheme2): StatCardPresentation {
+  const surface = theme.isDark ? wallSurfaceTokens.dark : wallSurfaceTokens.light;
   return {
-    foreground: theme.isDark ? '#edf2fa' : '#111d4e',
-    muted: theme.isDark ? '#a0afc4' : '#77819d',
+    foreground: surface.panelText,
+    muted: surface.panelMuted,
+    renderContent: (props) => createElement(WallStatContent, props),
     surface: (theme.isDark ? wallSurfaceTokens.dark : wallSurfaceTokens.light).surface,
+    softSurface: surface.soft,
     border: (theme.isDark ? wallSurfaceTokens.dark : wallSurfaceTokens.light).border,
     shadow: wallSurfaceTokens.shadow,
     radius: wallSurfaceTokens.radius,
@@ -37,5 +45,10 @@ export function wallStatCardPresentation(theme: GrafanaTheme2): StatCardPresenta
     unitSize: wallTypography.roles.unit.size,
     unitWeight: wallTypography.roles.unit.weight,
     statusLineHeight: wallTypography.roles.status.line / wallTypography.roles.status.size,
+    compactVerticalPadding: 0,
+    minimumItemWidth: wallStatTokens.minimumItemWidth,
+    minimumItemHeight: wallStatTokens.minimumItemHeight,
+    itemGap: wallStatTokens.itemGap,
+    getGridDimensions: statGridDimensions,
   };
 }

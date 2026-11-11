@@ -36,6 +36,78 @@ export function WallManagementActions({
   const canSaveAs = contextSrv.hasEditPermissionInFolders;
   const canSave = state.isEditing && !state.kioskMode && !library && (state.meta.canSave || canSaveAs);
   const onlyCopy = canSaveAs && !state.meta.canSave && !state.meta.canMakeEditable && !state.meta.isNew;
+  if (editor) {
+    return (
+      <div className="wall-management-actions wall-panel-edit-actions">
+        <span className="wall-management-unsaved" role="status">
+          {(editor.state.isDirty || state.isDirty) && <span />}
+          {editor.state.isDirty
+            ? t('wall.editor.unsaved', '변경 사항 있음')
+            : state.isDirty
+              ? t('wall.editor.dashboard-pending', '대시보드 미저장 변경')
+              : t('wall.editor.unchanged', '변경 사항 없음')}
+        </span>
+        {!state.kioskMode && (
+          <Button size="sm" variant="ghost" onClick={editor.onDiscard}>
+            <Trans i18nKey="wall.editor.cancel">취소</Trans>
+          </Button>
+        )}
+        {!state.kioskMode && (canSave || library) && (
+          <Button
+            size="sm"
+            variant="default"
+            onClick={library ? editor.onSaveLibraryPanel : () => locationService.partial({ editPanel: null })}
+          >
+            <Check size={14} />
+            <Trans i18nKey="wall.editor.apply">적용</Trans>
+          </Button>
+        )}
+        {canSave && (
+          <Menu.Root>
+            <Menu.Trigger
+              render={<Button size="sm" variant="ghost" />}
+              aria-label={t('wall.management.save-options', '저장 옵션')}
+            >
+              <ChevronDown size={14} />
+            </Menu.Trigger>
+            <Menu.Portal>
+              <Menu.Positioner sideOffset={6} align="end" className="wall-menu-positioner">
+                <Menu.Popup
+                  className="wall-modern wall-management-menu"
+                  data-wall-theme={theme.isDark ? 'dark' : 'light'}
+                  style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark, true) }}
+                >
+                  <Menu.Item
+                    className="wall-management-menu-item"
+                    onClick={() => dashboard.openSaveDrawer(onlyCopy ? { saveAsCopy: true } : {})}
+                  >
+                    <Save size={14} />
+                    {onlyCopy
+                      ? t('wall.management.save-copy', '복사본 저장')
+                      : t('wall.management.save-current', '대시보드 저장')}
+                  </Menu.Item>
+                  {!onlyCopy && canSaveAs && (
+                    <Menu.Item
+                      className="wall-management-menu-item"
+                      onClick={() => dashboard.openSaveDrawer({ saveAsCopy: true })}
+                    >
+                      <Save size={14} />
+                      <Trans i18nKey="wall.management.save-copy">복사본 저장</Trans>
+                    </Menu.Item>
+                  )}
+                </Menu.Popup>
+              </Menu.Positioner>
+            </Menu.Portal>
+          </Menu.Root>
+        )}
+        {!state.kioskMode && library && (
+          <Button size="sm" onClick={editor.onUnlinkLibraryPanel}>
+            <Trans i18nKey="wall.management.unlink">라이브러리 연결 해제</Trans>
+          </Button>
+        )}
+      </div>
+    );
+  }
   return (
     <div className="wall-management-actions">
       {state.isDirty && (
@@ -44,29 +116,16 @@ export function WallManagementActions({
           <Trans i18nKey="wall.management.unsaved">미저장 변경</Trans>
         </span>
       )}
-      {!state.kioskMode && (editor || state.isDirty) && (
+      {!state.kioskMode && state.isDirty && (
         <Button
           size="sm"
           variant="ghost"
-          disabled={editor ? !editor.state.isDirty && !library : !state.isDirty}
-          onClick={
-            editor ? editor.onDiscard : () => dashboard.exitEditMode({ skipConfirm: false, restoreInitialState: true })
-          }
+          disabled={!state.isDirty}
+          onClick={() => dashboard.exitEditMode({ skipConfirm: false, restoreInitialState: true })}
         >
           <Undo2 size={14} />
           <Trans i18nKey="wall.management.discard">변경 취소</Trans>
         </Button>
-      )}
-      {!state.kioskMode && library && editor && (
-        <>
-          <Button size="sm" onClick={editor.onUnlinkLibraryPanel}>
-            <Trans i18nKey="wall.management.unlink">라이브러리 연결 해제</Trans>
-          </Button>
-          <Button size="sm" variant="default" onClick={editor.onSaveLibraryPanel}>
-            <Save size={14} />
-            <Trans i18nKey="wall.management.save-library">라이브러리 저장</Trans>
-          </Button>
-        </>
       )}
       {canSave && (
         <div className="wall-management-save">
@@ -91,7 +150,7 @@ export function WallManagementActions({
                   <Menu.Popup
                     className="wall-modern wall-management-menu"
                     data-wall-theme={theme.isDark ? 'dark' : 'light'}
-                    style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark) }}
+                    style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark, true) }}
                   >
                     <Menu.Item className="wall-management-menu-item" onClick={() => dashboard.openSaveDrawer({})}>
                       <Check size={14} />
@@ -116,15 +175,22 @@ export function WallManagementActions({
     </div>
   );
 }
-export function WallManagementBack() {
+export function WallManagementBack({ dashboardTitle }: { dashboardTitle?: string }) {
   return (
     <Button
       size="sm"
       variant="ghost"
+      className={dashboardTitle ? 'wall-editor-back' : undefined}
+      title={dashboardTitle}
+      aria-label={dashboardTitle ? `${t('wall.management.back', '대시보드로 돌아가기')}: ${dashboardTitle}` : undefined}
       onClick={() => locationService.partial({ editPanel: null, editview: null, editIndex: null, viewPanel: null })}
     >
-      <ArrowLeft size={15} />
-      <Trans i18nKey="wall.management.back">대시보드로 돌아가기</Trans>
+      <ArrowLeft size={15} aria-hidden="true" />
+      {dashboardTitle ? (
+        <span>{dashboardTitle}</span>
+      ) : (
+        <Trans i18nKey="wall.management.back">대시보드로 돌아가기</Trans>
+      )}
     </Button>
   );
 }
@@ -149,7 +215,7 @@ export function WallSettingsPage({
       data-wall-theme={theme.isDark ? 'dark' : 'light'}
       data-wall-typography="storage-vm"
       data-wall-font-status={fontStatus}
-      style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark) }}
+      style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark, true) }}
     >
       <header className="wall-management-header">
         <div className="wall-management-identity">

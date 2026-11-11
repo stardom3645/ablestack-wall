@@ -21,7 +21,7 @@ import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScen
 import { STORAGE_VM_DASHBOARD_UID } from '../statPresentation';
 
 import { retainedToolbarLinks, WallDashboardToolbar } from './WallDashboardToolbar';
-import { variableSelectionSummary } from './WallVariableControl';
+import { variableSelection, variableSelectionSummary } from './WallVariableControl';
 
 jest.mock('app/features/dashboard-scene/utils/utils', () => ({
   ...jest.requireActual('app/features/dashboard-scene/utils/utils'),
@@ -158,15 +158,20 @@ it('keeps explicit hidden time/link/variable controls hidden while retaining act
 });
 
 it('keeps both time movement buttons available for relative ranges and delegates to the same Scene handlers', async () => {
-  const { user, time } = setup();
-  const before = time.state.value;
-  await user.click(screen.getByRole('button', { name: '이전 시간 범위' }));
-  expect(time.state.value.to.valueOf() - time.state.value.from.valueOf()).toBe(
-    before.to.valueOf() - before.from.valueOf()
-  );
-  expect(time.state.value.to.valueOf()).toBeLessThan(before.to.valueOf());
-  await user.click(screen.getByRole('button', { name: '다음 시간 범위' }));
-  expect(time.state.value.to.valueOf()).toBe(before.to.valueOf());
+  const clock = jest.spyOn(Date, 'now').mockReturnValue(Date.UTC(2026, 10, 5, 0));
+  try {
+    const { user, time } = setup();
+    const before = time.state.value;
+    await user.click(screen.getByRole('button', { name: '이전 시간 범위' }));
+    expect(time.state.value.to.valueOf() - time.state.value.from.valueOf()).toBe(
+      before.to.valueOf() - before.from.valueOf()
+    );
+    expect(time.state.value.to.valueOf()).toBeLessThan(before.to.valueOf());
+    await user.click(screen.getByRole('button', { name: '다음 시간 범위' }));
+    expect(time.state.value.to.valueOf()).toBe(before.to.valueOf());
+  } finally {
+    clock.mockRestore();
+  }
 });
 
 it('retains all native custom-range/timezone/history tools behind advanced time settings', async () => {
@@ -236,8 +241,14 @@ it('uses a single shadcn trigger and the native selection callback, including re
       ],
     });
     const { user } = setup(true, variable);
+    const overflowBefore = document.body.style.overflow;
     await user.click(screen.getByRole('button', { name: '자원: Alpha' }));
     expect(screen.getByRole('dialog', { name: '자원 선택' })).toBeInTheDocument();
+    // The native list must live inside its host popup, without a second body portal/scroll lock.
+    expect(screen.getByText('Beta', { exact: true }).closest('[role="dialog"]')).toBe(
+      screen.getByRole('dialog', { name: '자원 선택' })
+    );
+    expect(document.body.style.overflow).toBe(overflowBefore);
     await user.click(screen.getByRole('combobox'));
     await user.click(screen.getByText('Beta', { exact: true }));
     expect(variable.state.value).toBe('b');
@@ -288,4 +299,23 @@ it('commits multiple choices on native blur and keeps the summary in sync', asyn
     await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
     computedStyle.mockRestore();
   }
+});
+
+it('preserves native manual-all versus All semantics and resolves real option labels including valid empty values', () => {
+  const variable = new CustomVariable({
+    name: 'resource',
+    isMulti: true,
+    includeAll: true,
+    options: [
+      { value: '', label: '기본 자원' },
+      { value: 'b', label: '긴 자원명 B' },
+    ],
+    value: ['', 'b'],
+    text: ['', 'b'],
+  });
+  expect(variableSelection(variable)).toEqual({ all: false, labels: ['기본 자원', '긴 자원명 B'] });
+  variable.setState({ value: ['$__all'], text: ['All'] });
+  expect(variableSelection(variable)).toEqual({ all: true, labels: ['전체'] });
+  variable.setState({ value: '', text: '', options: [] });
+  expect(variableSelectionSummary(variable)).toBe('미선택');
 });

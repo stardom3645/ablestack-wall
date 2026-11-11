@@ -1,12 +1,14 @@
 import { SelectableValue } from '@grafana/data';
 import { BarGaugeDisplayMode, BarGaugeValueMode, TableBarGaugeCellOptions } from '@grafana/schema';
 import { Field, RadioButtonGroup, Stack } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { TableCellEditorProps } from '../TableCellOptionEditor';
 
 type Props = TableCellEditorProps<TableBarGaugeCellOptions>;
 
 export function BarGaugeCellOptionsEditor({ cellOptions, onChange }: Props) {
+  const text = useWallOptionText();
   // Set the display mode on change
   const onCellOptionsChange = (v: BarGaugeDisplayMode) => {
     cellOptions.mode = v;
@@ -20,18 +22,18 @@ export function BarGaugeCellOptionsEditor({ cellOptions, onChange }: Props) {
 
   return (
     <Stack direction="column" gap={0}>
-      <Field label="Gauge display mode">
+      <Field label={text('Gauge display mode')}>
         <RadioButtonGroup
           value={cellOptions?.mode ?? BarGaugeDisplayMode.Gradient}
           onChange={onCellOptionsChange}
-          options={barGaugeOpts}
+          options={barGaugeOpts.map((option) => ({ ...option, label: text(option.label) }))}
         />
       </Field>
-      <Field label="Value display">
+      <Field label={text('Value display')}>
         <RadioButtonGroup
           value={cellOptions?.valueDisplayMode ?? BarGaugeValueMode.Text}
           onChange={onValueModeChange}
-          options={valueModes}
+          options={valueModes.map((option) => ({ ...option, label: text(option.label) }))}
         />
       </Field>
     </Stack>

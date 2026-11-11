@@ -23,7 +23,13 @@ describe('<ButtonRow>', () => {
     setup();
 
     expect(screen.getByTestId(selectors.pages.DataSource.delete)).toBeInTheDocument();
-    expect(screen.getByText('Test')).toBeInTheDocument();
+    expect(screen.getByText('연결 테스트')).toBeInTheDocument();
+  });
+
+  it('disables repeat actions while testing', () => {
+    setup({ canSave: true, pending: '연결 테스트 중…' });
+    expect(screen.getByTestId(selectors.pages.DataSource.saveAndTest)).toBeDisabled();
+    expect(screen.getByTestId(selectors.pages.DataSource.delete)).toBeDisabled();
   });
 
   it('should render save & test', () => {

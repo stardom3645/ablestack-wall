@@ -3,7 +3,7 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useOverlay } from '@react-aria/overlays';
 import RcDrawer from 'rc-drawer';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import * as React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
@@ -14,6 +14,7 @@ import { t } from '../../utils/i18n';
 import { CustomScrollbar } from '../CustomScrollbar/CustomScrollbar';
 import { getDragStyles } from '../DragHandle/DragHandle';
 import { IconButton } from '../IconButton/IconButton';
+import { ModalPresentationContext } from '../Modal/ModalPresentationContext';
 import { Text } from '../Text/Text';
 
 import 'rc-drawer/assets/index.css';
@@ -72,6 +73,8 @@ export function Drawer({
   tabs,
 }: Props) {
   const [drawerWidth, onMouseDown, onTouchStart] = useResizebleDrawer();
+  const presentation = useContext(ModalPresentationContext);
+  const CloseButton = presentation?.CloseButton;
 
   const styles = useStyles2(getStyles);
   const wrapperStyles = useStyles2(getWrapperStyles, size);
@@ -91,7 +94,7 @@ export function Drawer({
   // Adds body class while open so the toolbar nav can hide some actions while drawer is open
   useBodyClassWhileOpen();
 
-  const content = <div className={styles.content}>{children}</div>;
+  const content = <div className={cx(styles.content, presentation && 'wall-drawer-content')}>{children}</div>;
   const overrideWidth = drawerWidth ?? width ?? drawerSizes[size].width;
   const minWidth = drawerSizes[size].minWidth;
 
@@ -102,7 +105,8 @@ export function Drawer({
       placement="right"
       getContainer={'.main-view'}
       className={styles.drawerContent}
-      rootClassName={styles.drawer}
+      rootClassName={cx(styles.drawer, presentation && 'wall-modern wall-drawer-root')}
+      rootStyle={presentation?.style}
       classNames={{
         wrapper: wrapperStyles,
       }}
@@ -115,13 +119,13 @@ export function Drawer({
       width={''}
       motion={{
         motionAppear: true,
-        motionName: styles.drawerMotion,
+        motionName: presentation ? 'wall-drawer-motion' : styles.drawerMotion,
       }}
-      maskClassName={styles.mask}
+      maskClassName={cx(styles.mask, presentation && 'wall-drawer-mask')}
       maskClosable={closeOnMaskClick}
       maskMotion={{
         motionAppear: true,
-        motionName: styles.maskMotion,
+        motionName: presentation ? 'wall-drawer-mask-motion' : styles.maskMotion,
       }}
     >
       <FocusScope restoreFocus contain autoFocus>
@@ -131,7 +135,8 @@ export function Drawer({
               ? selectors.components.Drawer.General.title(title)
               : selectors.components.Drawer.General.title('no title')
           }
-          className={styles.container}
+          className={cx(styles.container, presentation && 'wall-modern wall-drawer')}
+          style={presentation?.style}
           {...overlayProps}
           {...dialogProps}
           ref={overlayRef}
@@ -143,26 +148,39 @@ export function Drawer({
             onTouchStart={onTouchStart}
           />
           {typeof title === 'string' && (
-            <div className={cx(styles.header, Boolean(tabs) && styles.headerWithTabs)}>
-              <div className={styles.actions}>
-                <IconButton
-                  name="times"
-                  variant="secondary"
-                  onClick={onClose}
-                  data-testid={selectors.components.Drawer.General.close}
-                  tooltip={t(`grafana-ui.drawer.close`, 'Close')}
-                />
+            <div
+              className={cx(styles.header, Boolean(tabs) && styles.headerWithTabs, presentation && 'wall-modal-header')}
+            >
+              <div className={cx(styles.actions, presentation && 'wall-drawer-close-slot')}>
+                {CloseButton ? (
+                  <CloseButton
+                    onClick={onClose}
+                    aria-label={t('grafana-ui.drawer.close', 'Close')}
+                    data-testid={selectors.components.Drawer.General.close}
+                  />
+                ) : (
+                  <IconButton
+                    name="times"
+                    variant="secondary"
+                    onClick={onClose}
+                    data-testid={selectors.components.Drawer.General.close}
+                    tooltip={t(`grafana-ui.drawer.close`, 'Close')}
+                  />
+                )}
               </div>
-              <div className={styles.titleWrapper}>
+              <div className={cx(styles.titleWrapper, presentation && 'wall-modal-heading')}>
                 <Text element="h3" {...titleProps}>
                   {title}
                 </Text>
                 {subtitle && (
-                  <div className={styles.subtitle} data-testid={selectors.components.Drawer.General.subtitle}>
+                  <div
+                    className={cx(styles.subtitle, presentation && 'wall-drawer-subtitle')}
+                    data-testid={selectors.components.Drawer.General.subtitle}
+                  >
                     {subtitle}
                   </div>
                 )}
-                {tabs && <div className={styles.tabsWrapper}>{tabs}</div>}
+                {tabs && <div className={cx(styles.tabsWrapper, presentation && 'wall-drawer-tabs')}>{tabs}</div>}
               </div>
             </div>
           )}

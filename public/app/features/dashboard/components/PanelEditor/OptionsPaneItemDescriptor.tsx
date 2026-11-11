@@ -1,11 +1,13 @@
 import { css } from '@emotion/css';
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import * as React from 'react';
 import Highlighter from 'react-highlight-words';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Field, Label, useStyles2 } from '@grafana/ui';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallOptionField } from 'app/features/wall-modern/editor/WallOptionEditor';
 
 import { OptionsPaneCategoryDescriptor } from './OptionsPaneCategoryDescriptor';
 import { OptionsPaneItemOverrides } from './OptionsPaneItemOverrides';
@@ -87,16 +89,50 @@ export class OptionsPaneItemDescriptor {
     }
 
     return (
-      <Field
+      <OptionPaneField
+        item={this}
+        searchQuery={searchQuery}
         label={this.getLabel(searchQuery)}
         description={description}
         key={key}
         aria-label={selectors.components.PanelEditor.OptionsPane.fieldLabel(key)}
       >
         {render()}
-      </Field>
+      </OptionPaneField>
     );
   }
+}
+
+function OptionPaneField({
+  item,
+  searchQuery,
+  children,
+  ...props
+}: React.ComponentProps<typeof Field> & {
+  item: OptionsPaneItemDescriptor;
+  searchQuery?: string;
+}) {
+  const wall = useContext(editorPresentationContext);
+  if (wall && React.isValidElement(children)) {
+    return (
+      <WallOptionField
+        title={item.props.title}
+        hideTitle={
+          !searchQuery &&
+          item.parent.props.title === item.props.title &&
+          !item.props.addon &&
+          !item.props.overrides?.length
+        }
+        description={item.props.description}
+        category={searchQuery ? item.parent.props.title : undefined}
+        editor={children}
+        addon={item.props.addon}
+      >
+        {item.props.overrides?.length ? <OptionsPaneItemOverrides overrides={item.props.overrides} /> : undefined}
+      </WallOptionField>
+    );
+  }
+  return <Field {...props}>{children}</Field>;
 }
 
 interface OptionPanelLabelProps {

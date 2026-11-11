@@ -1,6 +1,6 @@
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const CorsWorkerPlugin = require('./plugins/CorsWorkerPlugin');
 
@@ -122,6 +122,12 @@ module.exports = {
         test: /\.(svg|ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/,
         type: 'asset/resource',
         generator: { filename: 'static/img/[name].[hash:8][ext]' },
+      },
+      {
+        // Extracted CSS lives in public/build already: avoid duplicating that prefix.
+        test: /[\\/]codicon\.ttf$/,
+        type: 'asset/resource',
+        generator: { filename: 'static/fonts/[name].[contenthash:8][ext]', publicPath: './' },
       },
       // for pre-caching SVGs as part of the JS bundles
       {

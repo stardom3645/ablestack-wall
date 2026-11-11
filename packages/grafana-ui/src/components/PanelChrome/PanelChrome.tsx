@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css';
 import { CSSProperties, ReactElement, ReactNode, useContext, useId } from 'react';
 import * as React from 'react';
-import { useMeasure, useToggle } from 'react-use';
+import { useToggle } from 'react-use';
 
 import { GrafanaTheme2, LoadingState } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -20,6 +20,7 @@ import { PanelDescription } from './PanelDescription';
 import { PanelMenu } from './PanelMenu';
 import { PanelStatus } from './PanelStatus';
 import { TitleItem } from './TitleItem';
+import { usePanelChromeSize } from './usePanelChromeSize';
 
 /**
  * @internal
@@ -138,7 +139,8 @@ export function PanelChrome({
 }: PanelChromeProps) {
   const theme = useTheme2();
   const configuredPresentation = useContext(PanelChromePresentationContext);
-  const presentation = !hoverHeader && !collapsible ? configuredPresentation : undefined;
+  const presentation =
+    !collapsible && (!hoverHeader || configuredPresentation?.renderHoverHeader) ? configuredPresentation : undefined;
   const styles = useStyles2(getStyles);
   const panelContentId = useId();
   const panelTitleId = useId().replace(/:/g, '_');
@@ -155,26 +157,37 @@ export function PanelChrome({
   // hover menu is only shown on hover when not on touch devices
   const showOnHoverClass = 'show-on-hover';
   const isPanelTransparent = displayMode === 'transparent';
+  const { ref, viewport, loadingBarWidth } = usePanelChromeSize(Boolean(presentation?.fitToContainer));
+  const renderWidth = viewport?.width ?? width;
+  const renderHeight = height === undefined ? height : (viewport?.height ?? height);
 
-  const headerHeight = presentation?.headerHeight ?? getHeaderHeight(theme, hasHeader);
+  const headerHeight = hasHeader
+    ? (presentation?.getHeaderHeight?.({ width: renderWidth, height: renderHeight }) ??
+      presentation?.headerHeight ??
+      getHeaderHeight(theme, hasHeader))
+    : 0;
   const { contentStyle, innerWidth, innerHeight } = getContentStyle(
     padding,
     theme,
     headerHeight,
     collapsed,
-    height,
-    width,
+    renderHeight,
+    renderWidth,
     presentation?.contentPadding
   );
 
   const headerStyles: CSSProperties = {
     height: headerHeight,
-    cursor: dragClass ? 'move' : 'auto',
+    cursor: dragClass && !presentation ? 'move' : 'auto',
     ...(presentation ? { padding: 0, background: 'transparent' } : {}),
   };
 
-  const containerStyles: CSSProperties = { width, height: collapsed ? undefined : height };
-  const [ref, { width: loadingBarWidth }] = useMeasure<HTMLDivElement>();
+  // Fill presentation owns its viewport and before-paint renderer measurement;
+  // upstream pixel props remain the fallback and the legacy sizing contract.
+  const containerStyles: CSSProperties = {
+    width: presentation?.fitToContainer ? '100%' : width,
+    height: collapsed ? undefined : presentation?.fitToContainer && height !== undefined ? '100%' : height,
+  };
 
   /** Old property name now maps to actions */
   if (leftItems) {
@@ -263,7 +276,11 @@ export function PanelChrome({
     <>
       {statusMessage && (
         <div className={dragClassCancel}>
-          <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
+          {presentation?.renderStatus ? (
+            presentation.renderStatus({ message: statusMessage, onClick: statusMessageOnClick })
+          ) : (
+            <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
+          )}
         </div>
       )}
       {headerContent}
@@ -286,7 +303,7 @@ export function PanelChrome({
       style={containerStyles}
       aria-labelledby={!!title ? panelTitleId : undefined}
       data-testid={testid}
-      data-wall-panel-chrome={presentation ? 'overview' : undefined}
+      data-wall-panel-chrome={presentation ? (presentation.name ?? 'overview') : undefined}
       tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
       onFocus={onFocus}
       onMouseMove={onMouseMove}
@@ -299,7 +316,15 @@ export function PanelChrome({
         ) : null}
       </div>
 
-      {hoverHeader && (
+      {hoverHeader &&
+        presentation?.renderHoverHeader?.({
+          title,
+          titleId: panelTitleId,
+          children: headerElements,
+          dragClass,
+          dragClassCancel,
+        })}
+      {hoverHeader && !presentation?.renderHoverHeader && (
         <>
           <HoverWidget
             menu={menu}
@@ -313,16 +338,30 @@ export function PanelChrome({
 
           {statusMessage && (
             <div className={styles.errorContainerFloating}>
-              <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
+              {presentation?.renderStatus ? (
+                presentation.renderStatus({ message: statusMessage, onClick: statusMessageOnClick })
+              ) : (
+                <PanelStatus message={statusMessage} onClick={statusMessageOnClick} ariaLabel="Panel status" />
+              )}
             </div>
           )}
         </>
       )}
 
       {hasHeader && (
-        <div className={cx(styles.headerContainer, dragClass)} style={headerStyles} data-testid="header-container">
+        <div
+          className={cx(styles.headerContainer, !presentation && dragClass)}
+          style={headerStyles}
+          data-testid="header-container"
+        >
           {presentation
-            ? presentation.renderHeader({ title, titleId: panelTitleId, children: headerElements })
+            ? presentation.renderHeader({
+                title,
+                titleId: panelTitleId,
+                children: headerElements,
+                dragClass,
+                dragClassCancel,
+              })
             : headerElements}
         </div>
       )}
@@ -334,7 +373,11 @@ export function PanelChrome({
           className={cx(styles.content, height === undefined && styles.containNone)}
           style={contentStyle}
         >
-          {typeof children === 'function' ? children(innerWidth, innerHeight) : children}
+          {presentation?.renderContent
+            ? presentation.renderContent(typeof children === 'function' ? children(innerWidth, innerHeight) : children)
+            : typeof children === 'function'
+              ? children(innerWidth, innerHeight)
+              : children}
         </div>
       )}
     </section>

@@ -19,6 +19,7 @@ import { sanitizeUrl } from '@grafana/data/src/text/sanitize';
 import { locationService } from '@grafana/runtime';
 import { VizPanel, VizPanelMenu } from '@grafana/scenes';
 import { useTheme2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 
 import {
   DropdownMenu,
@@ -81,16 +82,23 @@ function ActionLabel({ item, quick = false }: { item: PanelMenuItem; quick?: boo
   );
 }
 
+export interface WallPanelActionPolicy {
+  readOnly: boolean;
+  kiosk: boolean;
+}
+
 function BoundPanelActions({
   menu,
   title,
   panel,
   synchronize,
+  policy,
 }: {
   menu: VizPanelMenu;
   panel: VizPanel;
   title: string;
   synchronize?: (href: string) => void;
+  policy?: WallPanelActionPolicy;
 }) {
   const theme = useTheme2();
   const { items: nativeItems = [] } = menu.useState();
@@ -124,7 +132,11 @@ function BoundPanelActions({
       }
       return item;
     });
-  const items = commandItems(withCopy(nativeItems), editing?.readOnly, editing?.kiosk);
+  const items = commandItems(
+    withCopy(nativeItems),
+    policy?.readOnly ?? editing?.readOnly,
+    policy?.kiosk ?? editing?.kiosk
+  );
   const { quick, regular, danger } = splitCommandItems(items);
   const root = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -136,13 +148,13 @@ function BoundPanelActions({
     setOpen(false);
     setPath([]);
     return () => stop.current?.();
-  }, [menu, title, editing?.kiosk]);
+  }, [menu, title, editing?.kiosk, policy?.kiosk]);
   const prepare = useCallback(() => {
     stop.current?.();
     stop.current = menu.activate();
   }, [menu]);
   useEffect(() => {
-    const host = root.current?.closest('.wall-kpi-layout-item, .wall-workspace-panel');
+    const host = root.current?.closest('.wall-kpi-layout-item, .wall-workspace-panel, .wall-dashboard-panel');
     host?.addEventListener('mouseenter', prepare);
     return () => host?.removeEventListener('mouseenter', prepare);
   }, [prepare]);
@@ -205,10 +217,14 @@ function BoundPanelActions({
             return;
           }
           setOpen(next);
-          setPath([]);
           if (next) {
             editing?.begin();
             prepare();
+          }
+        }}
+        onOpenChangeComplete={(next) => {
+          if (!next) {
+            setPath([]);
           }
         }}
       >
@@ -248,7 +264,6 @@ function BoundPanelActions({
                 event.preventDefault();
                 event.stopPropagation();
                 setOpen(false);
-                setPath([]);
               }
               return;
             }
@@ -261,7 +276,6 @@ function BoundPanelActions({
               } else {
                 event.preventDefault();
                 setOpen(false);
-                setPath([]);
               }
             }
           }}
@@ -297,7 +311,11 @@ function BoundPanelActions({
                   <div className="wall-command-quick">{quick.map((item, index) => renderItem(item, index, true))}</div>
                 )}
                 <div className="wall-command-list">
-                  {!items.length && <div className="wall-panel-actions-empty">작업을 불러오는 중…</div>}
+                  {!items.length && (
+                    <div className="wall-panel-actions-empty">
+                      <Trans i18nKey="wall.wall-panel-actions.text-00d29ee8">작업을 불러오는 중…</Trans>
+                    </div>
+                  )}
                   {regular.map((item, index) => renderItem(item, index))}
                 </div>
                 {!!danger.length && (
@@ -315,9 +333,24 @@ function BoundPanelActions({
   );
 }
 
-export function WallPanelActions({ panel, synchronize }: { panel: VizPanel; synchronize?: (href: string) => void }) {
+export function WallPanelActions({
+  panel,
+  synchronize,
+  policy,
+}: {
+  panel: VizPanel;
+  synchronize?: (href: string) => void;
+  policy?: WallPanelActionPolicy;
+}) {
   const { menu, title } = panel.useState();
   return menu ? (
-    <BoundPanelActions key={panel.state.key} menu={menu} panel={panel} title={title} synchronize={synchronize} />
+    <BoundPanelActions
+      key={panel.state.key}
+      menu={menu}
+      panel={panel}
+      title={title}
+      synchronize={synchronize}
+      policy={policy}
+    />
   ) : null;
 }

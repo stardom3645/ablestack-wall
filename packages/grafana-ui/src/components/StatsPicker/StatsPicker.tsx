@@ -7,6 +7,7 @@ import { Select } from '../Select/Select';
 
 export interface Props {
   placeholder?: string;
+  displayText?: (text: string) => string;
   onChange: (stats: string[]) => void;
   stats: string[];
   allowMultiple?: boolean;
@@ -68,15 +69,23 @@ export class StatsPicker extends PureComponent<Props> {
       this.props;
 
     const select = fieldReducers.selectOptions(stats, filterOptions);
+    const translate = (options: Array<SelectableValue<string>>) =>
+      this.props.displayText
+        ? options.map((option) => ({
+            ...option,
+            label: this.props.displayText!(option.label ?? ''),
+            description: this.props.displayText!(option.description ?? ''),
+          }))
+        : options;
     return (
       <Select
-        value={select.current}
+        value={translate(select.current)}
         className={className}
         isClearable={!defaultStat}
         isMulti={allowMultiple}
         width={width}
         isSearchable={true}
-        options={select.options}
+        options={translate(select.options)}
         placeholder={placeholder}
         onChange={this.onSelectionChange}
         menuPlacement={menuPlacement}

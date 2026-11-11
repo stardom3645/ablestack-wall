@@ -24,8 +24,15 @@ import {
 import { UPlotConfigBuilder } from '@grafana/ui';
 import { FacetedData, FacetSeries } from '@grafana/ui/src/components/uPlot/types';
 import { findFieldIndex, getScaledDimensionForField } from 'app/features/dimensions';
+import {
+  AnalyticAppearance,
+  AnalyticInteraction,
+  analyticAxis,
+  analyticAxisValues,
+  installAnalyticPan,
+} from 'app/features/wall-modern/charts/analytic';
 
-import { pointWithin, Quadtree, Rect } from '../barchart/quadtree';
+import { pointWithin, findRects, Quadtree, Rect } from '../barchart/quadtree';
 
 import { DEFAULT_POINT_SIZE } from './config';
 import { isGraphable } from './dims';
@@ -41,13 +48,19 @@ export interface ScatterPanelInfo {
 /**
  * This is called when options or structure rev changes
  */
-export function prepScatter(options: Options, getData: () => DataFrame[], theme: GrafanaTheme2): ScatterPanelInfo {
+export function prepScatter(
+  options: Options,
+  getData: () => DataFrame[],
+  theme: GrafanaTheme2,
+  appearance?: AnalyticAppearance,
+  interaction?: AnalyticInteraction
+): ScatterPanelInfo {
   let series: ScatterSeries[];
   let builder: UPlotConfigBuilder;
 
   try {
-    series = prepSeries(options, getData());
-    builder = prepConfig(getData, series, theme);
+    series = prepSeries(options, getData(), appearance ? theme : config.theme2);
+    builder = prepConfig(getData, series, theme, appearance, interaction);
   } catch (e) {
     let errorMsg = 'Unknown error in prepScatter';
     if (typeof e === 'string') {
@@ -82,7 +95,8 @@ function getScatterSeries(
   frameIndex: number,
   xIndex: number,
   yIndex: number,
-  dims: Dims
+  dims: Dims,
+  theme: GrafanaTheme2
 ): ScatterSeries {
   const frame = frames[frameIndex];
   const y = frame.fields[yIndex];
@@ -93,12 +107,12 @@ function getScatterSeries(
   // Color configs
   //----------------
   let seriesColor = dims.pointColorFixed
-    ? config.theme2.visualization.getColorByName(dims.pointColorFixed)
-    : getFieldSeriesColor(y, config.theme2).color;
+    ? theme.visualization.getColorByName(dims.pointColorFixed)
+    : getFieldSeriesColor(y, theme).color;
   let pointColor: DimensionValues<string> = () => seriesColor;
   const fieldConfig: FieldConfig = { ...defaultFieldConfig, ...y.config.custom };
   let pointColorMode = fieldColorModeRegistry.get(FieldColorModeId.PaletteClassic);
-  if (dims.pointColorIndex) {
+  if (dims.pointColorIndex != null) {
     const f = frames[frameIndex].fields[dims.pointColorIndex];
     if (f) {
       pointColorMode = getFieldColorModeForField(y);
@@ -112,12 +126,12 @@ function getScatterSeries(
             field.state.range = undefined;
           }
 
-          field.display = getDisplayProcessor({ field, theme: config.theme2 });
+          field.display = getDisplayProcessor({ field, theme: theme });
 
           return field.values.map((v) => field.display!(v).color!); // slow!
         };
       } else {
-        seriesColor = pointColorMode.getCalculator(f, config.theme2)(f.values[0], 1);
+        seriesColor = pointColorMode.getCalculator(f, theme)(f.values[0], 1);
         pointColor = () => seriesColor;
       }
     }
@@ -128,7 +142,7 @@ function getScatterSeries(
   let pointSizeHints = dims.pointSizeConfig;
   let pointSizeFixed = dims.pointSizeConfig?.fixed ?? y.config.custom?.pointSize?.fixed ?? DEFAULT_POINT_SIZE;
   let pointSize: DimensionValues<number> = () => pointSizeFixed;
-  if (dims.pointSizeIndex) {
+  if (dims.pointSizeIndex != null) {
     pointSize = (frame) => {
       const s = getScaledDimensionForField(
         frame.fields[dims.pointSizeIndex!],
@@ -193,7 +207,7 @@ function getScatterSeries(
   };
 }
 
-function prepSeries(options: Options, frames: DataFrame[]): ScatterSeries[] {
+function prepSeries(options: Options, frames: DataFrame[], theme: GrafanaTheme2): ScatterSeries[] {
   let seriesIndex = 0;
   if (!frames.length) {
     throw 'Missing data';
@@ -237,7 +251,7 @@ function prepSeries(options: Options, frames: DataFrame[]): ScatterSeries[] {
             pointSizeConfig: series.pointSize,
             pointSizeIndex: findFieldIndex(series.pointSize?.field, frame, frames),
           };
-          scatterSeries.push(getScatterSeries(seriesIndex++, frames, frameIndex, xIndex, yIndex, dims));
+          scatterSeries.push(getScatterSeries(seriesIndex++, frames, frameIndex, xIndex, yIndex, dims, theme));
         }
       }
     }
@@ -273,7 +287,9 @@ function prepSeries(options: Options, frames: DataFrame[]): ScatterSeries[] {
   if (!numericIndices.length) {
     throw 'No Y values';
   }
-  return numericIndices.map((yIndex) => getScatterSeries(seriesIndex++, frames, frameIndex, xIndex!, yIndex, {}));
+  return numericIndices.map((yIndex) =>
+    getScatterSeries(seriesIndex++, frames, frameIndex, xIndex!, yIndex, {}, theme)
+  );
 }
 
 interface DrawBubblesOpts {
@@ -290,7 +306,13 @@ interface DrawBubblesOpts {
   };
 }
 
-const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], theme: GrafanaTheme2) => {
+const prepConfig = (
+  getData: () => DataFrame[],
+  scatterSeries: ScatterSeries[],
+  theme: GrafanaTheme2,
+  appearance?: AnalyticAppearance,
+  interaction?: AnalyticInteraction
+) => {
   let qt: Quadtree;
   let hRect: Rect | null;
 
@@ -331,7 +353,7 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
             showLine = true;
           }
 
-          let strokeWidth = 1;
+          let strokeWidth = appearance ? appearance.pointStroke * pxRatio : 1;
 
           u.ctx.save();
 
@@ -364,6 +386,7 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
           let pointAlpha = opts.disp.color.alpha;
 
           let linePath: Path2D | null = showLine ? new Path2D() : null;
+          let segmentOpen = false;
 
           let curColor: CanvasRenderingContext2D['fillStyle'] | null = null;
 
@@ -371,13 +394,22 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
             let xVal = d[0][i];
             let yVal = d[1][i];
             let size = sizes[i] * pxRatio;
+            if (appearance && (xVal == null || yVal == null || !Number.isFinite(xVal) || !Number.isFinite(yVal))) {
+              segmentOpen = false;
+              continue;
+            }
 
             if (xVal >= filtLft && xVal <= filtRgt && yVal >= filtBtm && yVal <= filtTop) {
               let cx = valToPosX(xVal, scaleX, xDim, xOff);
               let cy = valToPosY(yVal, scaleY, yDim, yOff);
 
               if (showLine) {
-                linePath!.lineTo(cx, cy);
+                if (appearance && !segmentOpen) {
+                  linePath!.moveTo(cx, cy);
+                } else {
+                  linePath!.lineTo(cx, cy);
+                }
+                segmentOpen = true;
               }
 
               if (showPoints) {
@@ -451,7 +483,7 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
         values: (u, seriesIdx) => {
           return u.data[seriesIdx][3] as any;
         },
-        alpha: 0.5,
+        alpha: appearance?.pointOpacity ?? 0.5,
       },
     },
     each: (u, seriesIdx, dataIdx, lft, top, wid, hgt) => {
@@ -465,7 +497,7 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
   const builder = new UPlotConfigBuilder();
 
   builder.setCursor({
-    drag: { setScale: true },
+    drag: { setScale: true, ...(appearance ? { x: true, y: true, dist: appearance.gestureIntent } : {}) },
     dataIdx: (u, seriesIdx) => {
       if (seriesIdx === 1) {
         const pxRatio = uPlot.pxRatio;
@@ -504,12 +536,15 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
       size: (u, seriesIdx) => {
         return hRect && seriesIdx === hRect.sidx ? hRect.w / uPlot.pxRatio : 0;
       },
-      fill: (u, seriesIdx) => 'rgba(255,255,255,0.4)',
+      fill: (u, seriesIdx) => (appearance ? appearance.surface : 'rgba(255,255,255,0.4)'),
     },
   });
 
   builder.addHook('drawClear', (u) => {
-    qt = qt || new Quadtree(0, 0, u.bbox.width, u.bbox.height);
+    qt =
+      appearance && qt && (qt.w !== u.bbox.width || qt.h !== u.bbox.height)
+        ? new Quadtree(0, 0, u.bbox.width, u.bbox.height)
+        : qt || new Quadtree(0, 0, u.bbox.width, u.bbox.height);
 
     qt.clear();
 
@@ -521,6 +556,51 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
       }
     });
   });
+
+  if (appearance && interaction) {
+    installAnalyticPan(builder, 'xy', interaction.ready, interaction.panMode);
+    let dispose = () => {};
+    builder.addHook('ready', (u) => {
+      const context = (event: MouseEvent) => {
+        const rect = u.over.getBoundingClientRect();
+        const x = (event.clientX - rect.left) * uPlot.pxRatio,
+          y = (event.clientY - rect.top) * uPlot.pxRatio;
+        let hit: Rect | undefined,
+          distance = Infinity;
+        qt?.get(x, y, 1, 1, (item) => {
+          const d = Math.hypot(item.x + item.w / 2 - x, item.y + item.h / 2 - y);
+          if (d <= item.w / 2 && d < distance) {
+            hit = item;
+            distance = d;
+          }
+        });
+        if (hit) {
+          event.preventDefault();
+          event.stopPropagation();
+          interaction.pick({ sidx: hit.sidx, didx: hit.didx }, event);
+          u.redraw(false);
+        }
+      };
+      u.over.addEventListener('contextmenu', context);
+      dispose = () => u.over.removeEventListener('contextmenu', context);
+    });
+    builder.addHook('destroy', () => dispose());
+    builder.addHook('draw', (u) => {
+      const hit = interaction.selected();
+      if (!hit || !qt) {
+        return;
+      }
+      u.ctx.save();
+      u.ctx.strokeStyle = appearance.text;
+      u.ctx.lineWidth = appearance.selectionStroke * uPlot.pxRatio;
+      findRects(qt, hit.sidx, hit.didx).forEach((r) => {
+        u.ctx.beginPath();
+        u.ctx.arc(r.x + u.bbox.left + r.w / 2, r.y + u.bbox.top + r.h / 2, r.w / 2 + uPlot.pxRatio, 0, Math.PI * 2);
+        u.ctx.stroke();
+      });
+      u.ctx.restore();
+    });
+  }
 
   builder.setMode(2);
 
@@ -548,13 +628,15 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
   });
 
   // why does this fall back to '' instead of null or undef?
-  let xAxisLabel = customConfig.axisLabel;
+  let xAxisLabel = customConfig?.axisLabel;
 
   builder.addAxis({
+    ...analyticAxis(appearance),
     scaleKey: 'x',
+    values: appearance ? analyticAxisValues(xField) : undefined,
     placement: customConfig?.axisPlacement !== AxisPlacement.Hidden ? AxisPlacement.Bottom : AxisPlacement.Hidden,
     show: customConfig?.axisPlacement !== AxisPlacement.Hidden,
-    grid: { show: customConfig?.axisGridShow },
+    grid: { stroke: appearance?.grid, show: customConfig?.axisGridShow },
     border: { show: customConfig?.axisBorderShow },
     theme,
     label:
@@ -597,11 +679,18 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
     let yAxisLabel = customConfig?.axisLabel;
 
     builder.addAxis({
+      ...analyticAxis(appearance),
       scaleKey,
+      values: appearance ? analyticAxisValues(field) : undefined,
       theme,
-      placement: customConfig?.axisPlacement === AxisPlacement.Auto ? AxisPlacement.Left : customConfig?.axisPlacement,
+      placement:
+        customConfig?.axisPlacement === AxisPlacement.Auto
+          ? appearance
+            ? AxisPlacement.Auto
+            : AxisPlacement.Left
+          : customConfig?.axisPlacement,
       show: customConfig?.axisPlacement !== AxisPlacement.Hidden,
-      grid: { show: customConfig?.axisGridShow },
+      grid: { stroke: appearance?.grid, show: customConfig?.axisGridShow },
       border: { show: customConfig?.axisBorderShow },
       size: customConfig?.axisWidth,
       label:
@@ -626,7 +715,7 @@ const prepConfig = (getData: () => DataFrame[], scatterSeries: ScatterSeries[], 
       theme,
       scaleKey: '', // facets' scales used (above)
       lineColor: alpha('' + lineColor, 1),
-      fillColor: alpha(pointColor, 0.5),
+      fillColor: alpha(pointColor, appearance?.pointOpacity ?? 0.5),
       show: !customConfig.hideFrom?.viz,
     });
   });

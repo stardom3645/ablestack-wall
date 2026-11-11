@@ -4,6 +4,7 @@ import { useContext } from 'react';
 
 import { useTheme2 } from '@grafana/ui';
 
+import { wallSurfaceVariables } from '../../surfaceTokens';
 import { WallTypographyContext, wallTypographyVariables } from '../../typography';
 import { cn } from '../../ui';
 
@@ -33,7 +34,11 @@ export function DropdownMenuContent({
           className={cn('wall-modern wall-panel-actions-menu', className)}
           data-wall-theme={theme.isDark ? 'dark' : 'light'}
           data-wall-typography={typography ? 'storage-vm' : undefined}
-          style={{ ...(typography ? wallTypographyVariables : {}), ...style }}
+          style={{
+            ...wallSurfaceVariables(theme.isDark, true),
+            ...(typography ? wallTypographyVariables : {}),
+            ...style,
+          }}
         />
       </Menu.Positioner>
     </Menu.Portal>

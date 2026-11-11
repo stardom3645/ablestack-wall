@@ -1,0 +1,217 @@
+/* One frame on the existing native border box. No second Card, grid offsets or UID rules. */
+.wall-dashboard-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.wall-common-native-panel {
+  width: 100%;
+  height: 100%;
+}
+.wall-dashboard-panel [data-wall-panel-chrome='common'] {
+  border: 1px solid var(--wall-card-border);
+  border-radius: var(--wall-radius);
+  background: var(--wall-surface);
+  box-shadow: var(--wall-card-shadow);
+  color: var(--wall-panel-text);
+  font-family: var(--wall-type-family);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+.wall-dashboard-panel:hover [data-wall-panel-chrome='common'] {
+  border-color: var(--wall-card-border-hover);
+  box-shadow: var(--wall-card-shadow-hover);
+}
+.wall-dashboard-panel [data-wall-panel-chrome='common']:focus-visible {
+  outline: var(--wall-selection-stroke) solid var(--wall-primary);
+  outline-offset: calc(-1 * var(--wall-selection-stroke));
+}
+.wall-dashboard-panel[data-wall-transparent='true'] [data-wall-panel-chrome='common'] {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.wall-dashboard-panel[data-wall-transparent='true']:hover [data-wall-panel-chrome='common'],
+.wall-dashboard-panel[data-wall-transparent='true']:focus-within [data-wall-panel-chrome='common'] {
+  background: var(--wall-surface);
+  border-color: var(--wall-card-border-hover);
+}
+.wall-dashboard-content .wall-dashboard-panel [data-testid='header-container'] {
+  padding: 0;
+}
+.wall-dashboard-panel .wall-common-panel-heading {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 var(--wall-card-padding-compact);
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+.wall-dashboard-panel .wall-panel-header-title .wall-ui-card-title {
+  font-size: var(--wall-type-panel-size);
+  font-weight: var(--wall-type-panel-weight);
+  line-height: var(--wall-type-panel-line);
+  letter-spacing: var(--wall-type-panel-tracking);
+  color: var(--wall-panel-text);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-dashboard-panel .wall-panel-header-grip:empty {
+  display: none;
+}
+.wall-dashboard-panel:hover .wall-panel-header-grip,
+.wall-dashboard-panel:hover .wall-panel-header-menu,
+.wall-dashboard-panel:focus-within .wall-panel-header-grip,
+.wall-dashboard-panel:focus-within .wall-panel-header-menu {
+  opacity: 1;
+  pointer-events: auto;
+}
+.wall-dashboard-content .wall-dashboard-panel [data-testid='title-items-container'] {
+  position: static;
+  display: inline-flex;
+  gap: var(--wall-panel-control-gap);
+  opacity: 1;
+}
+.wall-dashboard-panel .wall-panel-header-indicators {
+  display: none;
+  align-items: center;
+  min-width: 0;
+}
+.wall-dashboard-panel .wall-panel-header-indicators > * {
+  flex-shrink: 0;
+}
+.wall-common-hover-heading {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--wall-panel-control-size);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+.wall-dashboard-panel:hover .wall-common-hover-heading,
+.wall-dashboard-panel:focus-within .wall-common-hover-heading {
+  opacity: 1;
+}
+.wall-common-panel-body,
+.wall-common-native-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.wall-panel-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wall-card-content-gap);
+  padding: var(--wall-card-padding-compact);
+  color: var(--wall-panel-muted);
+  font-size: var(--wall-type-body-size);
+  line-height: var(--wall-type-body-line);
+  text-align: center;
+  overflow: hidden;
+}
+.wall-panel-state > span {
+  color: var(--wall-panel-text);
+}
+.wall-panel-state small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--wall-type-caption-size);
+}
+.wall-panel-state[data-wall-panel-state='error'] > svg {
+  color: var(--wall-state-error);
+}
+.wall-common-plugin-state {
+  position: absolute;
+  inset: 0;
+}
+.wall-common-plugin-state > .wall-common-panel-heading {
+  height: var(--wall-editor-heading-height);
+}
+.wall-common-plugin-state > .wall-panel-state {
+  top: var(--wall-editor-heading-height);
+}
+
+.wall-dashboard-panel:hover .wall-panel-header-indicators,
+.wall-dashboard-panel:focus-within .wall-panel-header-indicators,
+.wall-dashboard-panel .wall-panel-header-indicators:has(.wall-panel-error-action) {
+  display: flex;
+}
+.wall-dashboard-panel .wall-panel-error-action.wall-button {
+  width: var(--wall-panel-control-size);
+  height: var(--wall-panel-control-size);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  color: var(--wall-muted);
+}
+
+.wall-dashboard-panel .wall-kpi-move {
+  cursor: grab;
+}
+.wall-dashboard-panel .wall-kpi-move:active {
+  cursor: grabbing;
+}
+/* Repaint only the native SE handle. Its permanent hit area and event owner stay intact. */
+.wall-dashboard-content
+  .react-grid-item:has(.wall-dashboard-panel)
+  > :is(.react-resizable-handle-se, .scene-resize-handle) {
+  background-image: none;
+  color: var(--wall-resize-color);
+}
+.wall-dashboard-content
+  .react-grid-item:has(.wall-dashboard-panel)
+  > :is(.react-resizable-handle-se, .scene-resize-handle)::before,
+.wall-dashboard-content
+  .react-grid-item:has(.wall-dashboard-panel)
+  > :is(.react-resizable-handle-se, .scene-resize-handle)::after {
+  content: '';
+  position: absolute;
+  border: 0;
+  border-right: var(--wall-resize-stroke) solid currentColor;
+  border-bottom: var(--wall-resize-stroke) solid currentColor;
+  transform: none;
+  pointer-events: none;
+}
+.wall-dashboard-content
+  .react-grid-item:has(.wall-dashboard-panel)
+  > :is(.react-resizable-handle-se, .scene-resize-handle)::before {
+  width: 12px;
+  height: 12px;
+  right: var(--wall-resize-inset);
+  bottom: var(--wall-resize-inset);
+}
+.wall-dashboard-content
+  .react-grid-item:has(.wall-dashboard-panel)
+  > :is(.react-resizable-handle-se, .scene-resize-handle)::after {
+  width: 7px;
+  height: 7px;
+  right: calc(var(--wall-resize-inset) + 4px);
+  bottom: calc(var(--wall-resize-inset) + 4px);
+}
+.wall-embedded .react-grid-item:has(.wall-dashboard-panel) > :is(.react-resizable-handle, .scene-resize-handle) {
+  display: none;
+}
+
+.wall-dashboard-content .react-grid-item:has(.wall-dashboard-panel) > .scene-resize-handle > svg {
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Keep the error signal, without permanently spending narrow KPI title space on every link. */
+.wall-dashboard-panel:not(:hover):not(:focus-within)
+  .wall-panel-header-indicators:has(.wall-panel-error-action)
+  > :not(:has(.wall-panel-error-action)) {
+  display: none;
+}

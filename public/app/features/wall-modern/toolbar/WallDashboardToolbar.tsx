@@ -18,6 +18,7 @@ import { config, locationService } from '@grafana/runtime';
 import { sceneGraph } from '@grafana/scenes';
 import { DashboardLink } from '@grafana/schema';
 import { useTheme2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
 import { shareDashboardType } from 'app/features/dashboard/components/ShareModal/utils';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
@@ -34,7 +35,6 @@ import { getLinkSrv } from 'app/features/panel/panellinks/link_srv';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { STORAGE_VM_DASHBOARD_UID } from '../statPresentation';
 import { WallTypographyContext, wallTypographyVariables } from '../typography';
 import { Button } from '../ui';
 import { canAdjustKpiLayout } from '../workspace/kpiLayout';
@@ -82,7 +82,7 @@ export function WallDashboardToolbar({
 
   const canShare = Boolean(uid && !meta.isSnapshot && !isPlaying);
   const canEdit = dashboard.canEditDashboard() && !isPlaying && !kioskMode;
-  const canAdjustLayout = uid === STORAGE_VM_DASHBOARD_UID && canAdjustKpiLayout(contextSrv.user, canEdit);
+  const canAdjustLayout = canAdjustKpiLayout(contextSrv.user, canEdit);
   const visibleLinks = retainedToolbarLinks(links ?? []);
   const netdive = visibleLinks.find(
     (link) => link.type === 'link' && /netdive|skydive|넷다이브|스카이다이브|네트다이브/i.test(link.title)
@@ -103,66 +103,79 @@ export function WallDashboardToolbar({
     >
       <div className="wall-toolbar-primary" role="group" aria-label="분석 도구">
         {!hideVariableControls && <WallScopeControl controls={controls} />}
-        {!hideTimeControls && (
-          <>
-            <WallTimeRangeControl model={timePicker} />
-            <div className="wall-toolbar-group" role="group" aria-label="데이터 갱신">
-              <Menu.Root>
-                <Menu.Trigger render={<Button className="wall-toolbar-control" />} aria-label="자동 갱신 간격 선택">
-                  <TimerReset size={15} />
-                  <span>{refresh === 'auto' ? `자동${autoValue ? ` · ${autoValue}` : ''}` : refresh || '꺼짐'}</span>
-                  <ChevronDown size={14} />
-                </Menu.Trigger>
-                <Menu.Portal>
-                  <Menu.Positioner align="start" sideOffset={8} className="wall-toolbar-positioner">
-                    <Menu.Popup
-                      className="wall-modern wall-toolbar-popover wall-interval-menu"
-                      data-wall-theme={theme.isDark ? 'dark' : 'light'}
-                      aria-label="자동 갱신 간격"
-                      data-wall-typography={typography ? 'storage-vm' : undefined}
-                      style={typography ? wallTypographyVariables : undefined}
-                    >
-                      <div className="wall-toolbar-menu-label">자동 갱신 간격</div>
-                      <Menu.RadioGroup value={refresh ?? ''} onValueChange={refreshPicker.onIntervalChanged}>
-                        {[
-                          { value: '', label: '꺼짐' },
-                          ...(autoEnabled ? [{ value: 'auto', label: '자동' }] : []),
-                          ...(intervals ?? []).map((value) => ({ value, label: value })),
-                        ].map(({ value, label }) => (
-                          <Menu.RadioItem key={value} value={value} closeOnClick className="wall-toolbar-menu-item">
-                            <span>{label}</span>
-                            <Menu.RadioItemIndicator>
-                              <span className="wall-interval-dot" />
-                            </Menu.RadioItemIndicator>
-                          </Menu.RadioItem>
-                        ))}
-                      </Menu.RadioGroup>
-                    </Menu.Popup>
-                  </Menu.Positioner>
-                </Menu.Portal>
-              </Menu.Root>
-              <RefreshButton controller={queryController} onRefresh={refreshPicker.onRefresh} />
-            </div>
-          </>
-        )}
-        <Popover>
-          <PopoverTrigger
-            render={<Button className="wall-toolbar-control wall-toolbar-icon" size="icon" />}
-            aria-label="대시보드 정보"
-          >
-            <Info size={16} />
-          </PopoverTrigger>
-          <PopoverContent aria-label="대시보드 정보" className="wall-scope-popover">
-            <div className="wall-scope-heading">{dashboard.state.title}</div>
-            <p className="wall-toolbar-help">선택한 객체와 시간 범위에 따라 기존 패널을 조회합니다.</p>
-            {!hideTimeControls && (
-              <Button variant="ghost" size="sm" onClick={timePicker.onZoom}>
-                <ZoomOut size={15} />
-                시간 범위 축소
-              </Button>
-            )}
-          </PopoverContent>
-        </Popover>
+        <div className="wall-toolbar-query" role="group" aria-label="시간 및 갱신">
+          {!hideTimeControls && (
+            <>
+              <WallTimeRangeControl model={timePicker} />
+              <div className="wall-toolbar-group" role="group" aria-label="데이터 갱신">
+                <Menu.Root>
+                  <Menu.Trigger
+                    render={<Button className="wall-toolbar-control" />}
+                    aria-label="자동 갱신 간격 선택"
+                    title="자동 갱신 간격 선택"
+                  >
+                    <TimerReset size={15} />
+                    <span>{refresh === 'auto' ? `자동${autoValue ? ` · ${autoValue}` : ''}` : refresh || '꺼짐'}</span>
+                    <ChevronDown size={14} />
+                  </Menu.Trigger>
+                  <Menu.Portal>
+                    <Menu.Positioner align="start" sideOffset={8} className="wall-toolbar-positioner">
+                      <Menu.Popup
+                        className="wall-modern wall-toolbar-popover wall-interval-menu"
+                        data-wall-theme={theme.isDark ? 'dark' : 'light'}
+                        aria-label="자동 갱신 간격"
+                        data-wall-typography={typography ? 'storage-vm' : undefined}
+                        style={typography ? wallTypographyVariables : undefined}
+                      >
+                        <div className="wall-toolbar-menu-label">
+                          <Trans i18nKey="wall.wall-dashboard-toolbar.text-76e01834">자동 갱신 간격</Trans>
+                        </div>
+                        <Menu.RadioGroup value={refresh ?? ''} onValueChange={refreshPicker.onIntervalChanged}>
+                          {[
+                            { value: '', label: '꺼짐' },
+                            ...(autoEnabled ? [{ value: 'auto', label: '자동' }] : []),
+                            ...(intervals ?? []).map((value) => ({ value, label: value })),
+                          ].map(({ value, label }) => (
+                            <Menu.RadioItem key={value} value={value} closeOnClick className="wall-toolbar-menu-item">
+                              <span>{label}</span>
+                              <Menu.RadioItemIndicator>
+                                <span className="wall-interval-dot" />
+                              </Menu.RadioItemIndicator>
+                            </Menu.RadioItem>
+                          ))}
+                        </Menu.RadioGroup>
+                      </Menu.Popup>
+                    </Menu.Positioner>
+                  </Menu.Portal>
+                </Menu.Root>
+                <RefreshButton controller={queryController} onRefresh={refreshPicker.onRefresh} />
+              </div>
+            </>
+          )}
+          <Popover>
+            <PopoverTrigger
+              render={<Button className="wall-toolbar-control wall-toolbar-icon" size="icon" />}
+              aria-label="대시보드 정보"
+              title="대시보드 정보"
+            >
+              <Info size={16} />
+            </PopoverTrigger>
+            <PopoverContent aria-label="대시보드 정보" title="대시보드 정보" className="wall-scope-popover">
+              <div className="wall-scope-heading">{dashboard.state.title}</div>
+              <p className="wall-toolbar-help">
+                <Trans i18nKey="wall.wall-dashboard-toolbar.text-99396757">
+                  선택한 객체와 시간 범위에 따라 기존 패널을 조회합니다.
+                </Trans>
+              </p>
+              {!hideTimeControls && (
+                <Button variant="ghost" size="sm" onClick={timePicker.onZoom}>
+                  <ZoomOut size={15} />
+                  <Trans i18nKey="wall.wall-dashboard-toolbar.text-531e4e96">시간 범위 축소</Trans>
+                </Button>
+              )}
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
       {!analysisOnly && (
         <div className="wall-toolbar-secondary" role="group" aria-label="대시보드 작업">
@@ -182,7 +195,7 @@ export function WallDashboardToolbar({
               variant="ghost"
             >
               <ExternalLink size={16} />
-              Netdive
+              <Trans i18nKey="wall.wall-dashboard-toolbar.text-4bee20e1">Netdive</Trans>
             </Button>
           )}
           {!hideLinksControls && remainingLinks.length > 0 && (
@@ -193,6 +206,7 @@ export function WallDashboardToolbar({
               size="icon"
               variant="ghost"
               aria-label={meta.isStarred ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+              title={meta.isStarred ? '즐겨찾기 해제' : '즐겨찾기 추가'}
               aria-pressed={Boolean(meta.isStarred)}
               onClick={() => {
                 DashboardInteractions.toolbarFavoritesClick();
@@ -207,7 +221,7 @@ export function WallDashboardToolbar({
             <>
               <Button variant="ghost" onClick={openShare}>
                 <Share2 size={16} />
-                공유
+                <Trans i18nKey="wall.wall-dashboard-toolbar.text-0f20245b">공유</Trans>
               </Button>
               {config.featureToggles.newDashboardSharingComponent && (
                 <Popover>
@@ -233,10 +247,14 @@ export function WallDashboardToolbar({
                 }}
               >
                 <Settings size={15} />
-                대시보드 설정
+                <Trans i18nKey="wall.wall-dashboard-toolbar.text-25a90dcf">대시보드 설정</Trans>
               </Button>
               <Menu.Root>
-                <Menu.Trigger render={<Button variant="outline" size="icon" />} aria-label="대시보드 관리">
+                <Menu.Trigger
+                  render={<Button variant="outline" size="icon" />}
+                  aria-label="대시보드 관리"
+                  title="대시보드 관리"
+                >
                   <ChevronDown size={14} />
                 </Menu.Trigger>
                 <Menu.Portal>
@@ -252,7 +270,7 @@ export function WallDashboardToolbar({
                           dashboard.setState({ editPanel: buildPanelEditScene(dashboard.onCreateNewPanel(), true) });
                         }}
                       >
-                        패널 추가
+                        <Trans i18nKey="wall.wall-dashboard-toolbar.text-4e76e6e4">패널 추가</Trans>
                       </Menu.Item>
                       <Menu.Item
                         className="wall-toolbar-menu-item"
@@ -261,7 +279,7 @@ export function WallDashboardToolbar({
                           dashboard.onShowAddLibraryPanelDrawer();
                         }}
                       >
-                        라이브러리에서 추가
+                        <Trans i18nKey="wall.wall-dashboard-toolbar.text-f455c2a9">라이브러리에서 추가</Trans>
                       </Menu.Item>
                     </Menu.Popup>
                   </Menu.Positioner>

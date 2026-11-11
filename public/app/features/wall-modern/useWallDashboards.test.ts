@@ -7,8 +7,8 @@ import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import type { DashboardSearchItem } from 'app/features/search/types';
 import { useDispatch } from 'app/types';
 
-import { useWallDashboardSource } from './useWallDashboards';
 import { WallDashboardStarredEvent } from './events';
+import { useWallDashboardSource } from './useWallDashboards';
 
 jest.mock('@grafana/runtime', () => ({ getBackendSrv: jest.fn() }));
 jest.mock('app/core/services/context_srv', () => ({ contextSrv: { isSignedIn: true } }));

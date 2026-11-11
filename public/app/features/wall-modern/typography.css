@@ -20,6 +20,8 @@
   font-size: var(--wall-type-body-size);
   font-weight: var(--wall-type-body-weight);
   line-height: var(--wall-type-body-line);
+  /* Grafana's Inter-specific tracking must not carry over to mixed-script Wall text. */
+  letter-spacing: var(--wall-type-body-tracking);
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: 'tnum' 1;
   font-optical-sizing: auto;
@@ -79,7 +81,7 @@
 }
 .wall-modern[data-wall-typography] .wall-variable-value {
   font-size: var(--wall-type-control-size);
-  font-weight: var(--wall-type-panel-weight);
+  font-weight: var(--wall-type-control-weight);
 }
 .wall-modern[data-wall-typography] .wall-overview-gauge-value {
   font-family: var(--wall-type-family);
@@ -90,6 +92,7 @@
 
 .wall-modern[data-wall-typography] :is(h1, h2, h3, h4, h5, h6, button, input, select, textarea, label, th, td) {
   font-family: var(--wall-type-family);
+  letter-spacing: inherit;
 }
 .wall-modern[data-wall-typography] .wall-stat-card-value:not([data-wall-stat-kind='plain']) > div > span[style] {
   color: var(--wall-muted);

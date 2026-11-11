@@ -5,6 +5,7 @@ import { useContext } from 'react';
 
 import { useTheme2 } from '@grafana/ui';
 
+import { wallSurfaceVariables } from '../../surfaceTokens';
 import { WallTypographyContext, wallTypographyVariables } from '../../typography';
 import { cn } from '../../ui';
 
@@ -16,12 +17,16 @@ export function PopoverContent({
   align = 'end',
   sideOffset = 8,
   anchor,
+  portalContainer,
   ...props
-}: PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Positioner.Props, 'align' | 'sideOffset' | 'anchor'>) {
+}: PopoverPrimitive.Popup.Props &
+  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'sideOffset' | 'anchor'> & {
+    portalContainer?: PopoverPrimitive.Portal.Props['container'];
+  }) {
   const theme = useTheme2();
   const typography = useContext(WallTypographyContext);
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal container={portalContainer}>
       <PopoverPrimitive.Positioner
         anchor={anchor}
         align={align}
@@ -31,7 +36,7 @@ export function PopoverContent({
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           data-wall-typography={typography ? 'storage-vm' : undefined}
-          style={typography ? wallTypographyVariables : undefined}
+          style={{ ...wallSurfaceVariables(theme.isDark, true), ...(typography ? wallTypographyVariables : {}) }}
           data-wall-theme={theme.isDark ? 'dark' : 'light'}
           className={cn('wall-modern wall-toolbar-popover', className)}
           {...props}

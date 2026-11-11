@@ -1,0 +1,291 @@
+/* The frame is shared; native handlers, forms, width overrides and plugin content remain owned by callers. */
+.wall-modern.wall-modal {
+  inset-block: 0;
+  height: fit-content;
+  margin-block: auto;
+  max-width: calc(100vw - 2 * var(--wall-modal-gutter));
+  max-height: calc(100dvh - 2 * var(--wall-modal-gutter));
+  border-radius: var(--wall-radius);
+  box-shadow: var(--wall-modal-shadow);
+  animation: wall-content-enter var(--wall-motion-dialog-duration) var(--wall-motion-feedback-easing);
+}
+.wall-modern:is(.wall-modal, .wall-drawer) {
+  display: flex;
+  flex-direction: column;
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  border: 1px solid var(--wall-border);
+  outline: none;
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-editor-type-body-size);
+  font-weight: var(--wall-editor-type-body-weight);
+  line-height: var(--wall-editor-type-body-line);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-optical-sizing: auto;
+  font-synthesis: none;
+}
+:is([role='presentation'], .wall-dialog-backdrop).wall-modal-backdrop {
+  background: var(--wall-modal-backdrop);
+  backdrop-filter: none;
+}
+.wall-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+}
+.wall-dialog-viewport {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--wall-modal-gutter);
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-header {
+  display: flex;
+  align-items: flex-start;
+  flex: 0 0 auto;
+  gap: var(--wall-modal-gap);
+  padding: var(--wall-modal-padding);
+  padding-bottom: var(--wall-card-padding);
+  margin: 0;
+  min-height: 0;
+  border-bottom: 1px solid var(--wall-border);
+}
+.wall-modal-heading {
+  flex: 1;
+  min-width: 0;
+}
+.wall-modal-heading > :is(h2, h3),
+:is(.wall-modal, .wall-drawer) .wall-dialog-header h2 {
+  position: static;
+  margin: 4px 0 0;
+  font-family: inherit;
+  font-size: var(--wall-editor-type-heading-size);
+  font-weight: var(--wall-editor-type-heading-weight);
+  line-height: var(--wall-editor-type-heading-line);
+  color: var(--wall-text);
+  overflow-wrap: anywhere;
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-close-slot {
+  flex: 0 0 auto;
+  height: auto;
+  align-self: flex-start;
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-close {
+  width: var(--wall-modal-close-size);
+  height: var(--wall-modal-close-size);
+  min-height: 0;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: calc(var(--wall-radius) - 2px);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--wall-muted);
+  transition:
+    background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-close:hover {
+  background: var(--wall-hover);
+  color: var(--wall-text);
+}
+:is(.wall-modal, .wall-drawer) :is(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 2px;
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--wall-modal-padding);
+  border-end-start-radius: calc(var(--wall-radius) - 1px);
+  border-end-end-radius: calc(var(--wall-radius) - 1px);
+}
+:is(.wall-modal, .wall-drawer) :is(button, input, textarea, select, label) {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+:is(.wall-modal, .wall-drawer) [role='radiogroup'] {
+  max-width: 100%;
+  flex-wrap: wrap;
+  background: var(--wall-soft);
+  border-radius: var(--wall-radius);
+}
+:is(.wall-modal, .wall-drawer) [role='radiogroup'] input[type='radio'] + label {
+  min-height: calc(var(--wall-modal-control-height) - 6px);
+  border-radius: calc(var(--wall-radius) - 2px);
+  background: transparent;
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-editor-type-control-weight);
+  transition: background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+:is(.wall-modal, .wall-drawer) [role='radiogroup'] input[type='radio']:checked + label {
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  box-shadow: var(--wall-card-shadow);
+}
+:is(.wall-modal, .wall-drawer) [role='radiogroup'] input[type='radio']:focus-visible + label {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 1px;
+}
+:is(.wall-modal, .wall-drawer) [data-testid='input-wrapper'] input:only-child,
+:is(.wall-modal, .wall-drawer) textarea {
+  border-radius: calc(var(--wall-radius) - 2px);
+  font-size: var(--wall-editor-type-control-size);
+}
+:is(.wall-modal, .wall-drawer) [data-slot='modal-footer'] {
+  position: sticky;
+  bottom: calc(-1 * var(--wall-modal-padding));
+  z-index: 1;
+  background: var(--wall-surface);
+  border-top: 1px solid var(--wall-border);
+  margin: var(--wall-modal-padding) calc(-1 * var(--wall-modal-padding)) calc(-1 * var(--wall-modal-padding));
+  padding: var(--wall-card-padding) var(--wall-modal-padding);
+  border-end-start-radius: calc(var(--wall-radius) - 1px);
+  border-end-end-radius: calc(var(--wall-radius) - 1px);
+}
+:is(.wall-modal, .wall-drawer) [data-slot='confirm-message'] {
+  font-size: var(--wall-editor-type-body-size);
+  line-height: var(--wall-editor-type-body-line);
+  color: var(--wall-text);
+}
+:is(.wall-modal, .wall-drawer) [data-slot='confirm-description'] {
+  margin-top: var(--wall-modal-gap);
+  color: var(--wall-muted);
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button] {
+  min-height: var(--wall-modal-control-height);
+  height: auto;
+  padding: 6px 12px;
+  border-radius: calc(var(--wall-radius) - 2px);
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-editor-type-control-weight);
+  line-height: var(--wall-editor-type-control-line);
+  box-shadow: none;
+  transition:
+    background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    border-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button='secondary'] {
+  background: var(--wall-surface);
+  border: 1px solid var(--wall-border);
+  color: var(--wall-text);
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button='secondary']:not(:disabled):not([aria-disabled='true']):hover {
+  background: var(--wall-hover);
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button='primary'][data-ui-button-fill='solid'] {
+  background: var(--wall-primary);
+  border: 1px solid transparent;
+  color: var(--wall-modal-action-text);
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button='destructive'][data-ui-button-fill='solid'] {
+  background: var(--wall-state-error);
+  border: 1px solid transparent;
+  color: var(--wall-modal-action-text);
+}
+.wall-modal
+  [data-ui-button-fill='solid']:is([data-ui-button='primary'], [data-ui-button='destructive']):not(:disabled):not(
+    [aria-disabled='true']
+  ):hover {
+  background: color-mix(in srgb, var(--wall-primary) 88%, var(--wall-text));
+}
+.wall-modal
+  [data-ui-button='destructive'][data-ui-button-fill='solid']:not(:disabled):not([aria-disabled='true']):hover {
+  background: color-mix(in srgb, var(--wall-state-error) 88%, var(--wall-text));
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button-fill='text'] {
+  background: transparent;
+  border-color: transparent;
+}
+:is(.wall-modal, .wall-drawer) [data-ui-button]:is(:disabled, [aria-disabled='true']) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-heading [role='tablist'] {
+  height: auto;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: var(--wall-modal-gap);
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-heading [role='tab'] {
+  position: relative;
+  min-height: var(--wall-modal-control-height);
+  border: 0;
+  border-radius: calc(var(--wall-radius) - 2px);
+  padding: 6px 10px;
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-editor-type-control-weight);
+  color: var(--wall-muted);
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-heading [role='tab']::before {
+  display: none;
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-heading [role='tab']:hover {
+  background: var(--wall-hover);
+}
+:is(.wall-modal, .wall-drawer) .wall-modal-heading [role='tab'][aria-selected='true'] {
+  background: var(--wall-primary-soft);
+  color: var(--wall-primary);
+}
+/* Gallery keeps its own size and internal browser, sharing the same title/close/surface. */
+.wall-modern.wall-modal.wall-studio-dialog {
+  width: min(100%, var(--wall-studio-dialog-width));
+  height: var(--wall-studio-dialog-height);
+  max-width: 100%;
+  max-height: calc(100dvh - 2 * var(--wall-modal-gutter));
+  overflow: hidden;
+  animation: none;
+}
+.wall-modern.wall-drawer {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+}
+.wall-drawer .wall-drawer-close-slot {
+  position: static;
+  order: 2;
+}
+.wall-drawer .wall-drawer-content {
+  padding: var(--wall-modal-padding);
+}
+.wall-drawer .wall-drawer-subtitle {
+  padding-top: var(--wall-modal-gap);
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-caption-size);
+  line-height: var(--wall-editor-type-caption-line);
+}
+.wall-drawer .wall-drawer-tabs {
+  padding: 0;
+  margin: 0;
+}
+.wall-drawer-root .rc-drawer-content-wrapper {
+  box-shadow: var(--wall-modal-shadow);
+}
+.wall-drawer-root .wall-drawer-mask::before {
+  background: var(--wall-modal-backdrop) !important;
+  backdrop-filter: none;
+}
+.wall-drawer-motion-appear {
+  transform: translateX(100%);
+}
+.wall-drawer-motion-appear-active {
+  transform: translateX(0);
+  transition: transform var(--wall-motion-dialog-duration) var(--wall-motion-layout-easing);
+}
+.wall-drawer-mask-motion-appear {
+  opacity: 0;
+}
+.wall-drawer-mask-motion-appear-active {
+  opacity: 1;
+  transition: opacity var(--wall-motion-dialog-duration) var(--wall-motion-feedback-easing);
+}
+@media (max-width: 600px) {
+  .wall-modern:is(.wall-modal, .wall-drawer) {
+    --wall-modal-gutter: var(--wall-card-gap);
+    --wall-modal-padding: var(--wall-card-padding);
+  }
+}

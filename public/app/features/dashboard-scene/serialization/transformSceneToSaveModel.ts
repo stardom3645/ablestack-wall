@@ -28,6 +28,7 @@ import {
 import { sortedDeepCloneWithoutNulls } from 'app/core/utils/object';
 import { getPanelDataFrames } from 'app/features/dashboard/components/HelpWizard/utils';
 import { DASHBOARD_SCHEMA_VERSION } from 'app/features/dashboard/state/DashboardMigrator';
+import { DEFAULT_DASHBOARD_CURSOR_SYNC } from 'app/features/dashboard/state/dashboardDefaults';
 import { GrafanaQueryType } from 'app/plugins/datasource/grafana/types';
 
 import { DashboardDataLayerSet } from '../scene/DashboardDataLayerSet';
@@ -99,7 +100,7 @@ export function transformSceneToSaveModel(scene: DashboardScene, isSnapshot = fa
 
   const graphTooltip =
     state.$behaviors?.find((b): b is behaviors.CursorSync => b instanceof behaviors.CursorSync)?.state.sync ??
-    defaultDashboard.graphTooltip;
+    DEFAULT_DASHBOARD_CURSOR_SYNC;
   const liveNow =
     state.$behaviors?.find((b): b is behaviors.LiveNowTimer => b instanceof behaviors.LiveNowTimer)?.isEnabled ||
     undefined;
@@ -140,7 +141,7 @@ export function transformSceneToSaveModel(scene: DashboardScene, isSnapshot = fa
   // A Wall-only layout save must not rewrite otherwise unchanged panels merely
   // because the preview runtime advertises a different plugin build version.
   const unchangedWallPanels = new Map<number, Panel>();
-  if (state.uid === 'aec03x1adsi68f') {
+  if (Boolean(state.uid)) {
     // DashboardModel sorts by native gridPos while hydrating. Wall copies use
     // their Row's y to retain membership; their real position lives in the
     // 48-column document. Retain wire order within each Row so that simply
@@ -444,7 +445,9 @@ export function panelRepeaterToPanels(repeater: DashboardGridItem, isSnapshot = 
           title: panel.state.title,
           gridPos,
           options: panel.state.options,
-          fieldConfig: (panel.state.fieldConfig as FieldConfigSource) ?? { defaults: {}, overrides: [] },
+          fieldConfig: isDashboardFieldConfig(panel.state.fieldConfig)
+            ? panel.state.fieldConfig
+            : { defaults: {}, overrides: [] },
           transformations: [],
           transparent: panel.state.displayMode === 'transparent',
           // @ts-expect-error scopedVars are runtime only properties, not part of the persisted Dashboardmodel
@@ -493,15 +496,17 @@ export function gridRowToSaveModel(gridRow: SceneGridRow, panelsArray: Array<Pan
     // Rows that are repeated has SceneVariableSet attached to them.
     if (gridRow.state.$variables) {
       const localVariable = gridRow.state.$variables;
-      const scopedVars: ScopedVars = (localVariable.state.variables as LocalValueVariable[]).reduce((acc, variable) => {
-        return {
-          ...acc,
-          [variable.state.name]: {
-            text: variable.state.text,
-            value: variable.state.value,
-          },
-        };
-      }, {});
+      const scopedVars: ScopedVars = localVariable.state.variables
+        .filter((variable): variable is LocalValueVariable => variable instanceof LocalValueVariable)
+        .reduce((acc, variable) => {
+          return {
+            ...acc,
+            [variable.state.name]: {
+              text: variable.state.text,
+              value: variable.state.value,
+            },
+          };
+        }, {});
       // @ts-expect-error
       rowPanel.scopedVars = scopedVars;
     }
@@ -618,4 +623,18 @@ function removeDefaults<T>(object: T, defaults: T): T {
   }
 
   return newObj;
+}
+
+// Scenes and the saved dashboard use separate nominal field-color declarations.
+// Keep the original configuration after checking the shared persisted envelope.
+function isDashboardFieldConfig(value: unknown): value is FieldConfigSource {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'defaults' in value &&
+    value.defaults !== null &&
+    typeof value.defaults === 'object' &&
+    'overrides' in value &&
+    Array.isArray(value.overrides)
+  );
 }

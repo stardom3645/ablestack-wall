@@ -1,4 +1,5 @@
-import { screen, render } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 
 import { PluginExtensionTypes, PluginState } from '@grafana/data';
@@ -59,6 +60,36 @@ describe('<EditDataSource>', () => {
 
   beforeEach(() => {
     setPluginExtensionsHook(jest.fn().mockReturnValue({ extensions: [] }));
+  });
+
+  it('waits for saving before testing and prevents duplicate submits', async () => {
+    const user = userEvent.setup();
+    let complete!: () => void;
+    const onUpdate = jest.fn(
+      () =>
+        new Promise<Awaited<ReturnType<ViewProps['onUpdate']>>>((resolve) => {
+          complete = () => resolve(getMockDataSource());
+        })
+    );
+    const onTest = jest.fn();
+    setup({ onUpdate: onUpdate as ViewProps['onUpdate'], onTest });
+    await user.click(screen.getByRole('button', { name: '저장 및 연결 테스트' }));
+    expect(screen.getByRole('button', { name: '설정 저장 중…' })).toBeDisabled();
+    expect(onTest).not.toHaveBeenCalled();
+    complete();
+    await waitFor(() => expect(onTest).toHaveBeenCalledTimes(1));
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not test when saving fails', async () => {
+    const user = userEvent.setup();
+    const onUpdate = jest.fn().mockRejectedValue(new Error('Invalid config'));
+    const onTest = jest.fn();
+    setup({ onUpdate, onTest });
+    await user.click(screen.getByRole('button', { name: '저장 및 연결 테스트' }));
+    await waitFor(() => expect(onUpdate).toHaveBeenCalledTimes(1));
+    expect(onTest).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '저장 및 연결 테스트' })).toBeEnabled();
   });
 
   describe('On loading errors', () => {

@@ -1,11 +1,13 @@
 import { trim } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { CoreApp, isValidDuration, isValidGrafanaDuration, SelectableValue } from '@grafana/data';
+import { CoreApp, getValueFormat, isValidDuration, isValidGrafanaDuration, SelectableValue } from '@grafana/data';
 import { EditorField, EditorRow, QueryOptionGroup } from '@grafana/experimental';
 import { config, reportInteraction } from '@grafana/runtime';
 import { Alert, AutoSizeInput, RadioButtonGroup, Select } from '@grafana/ui';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallQueryOptions } from 'app/features/wall-modern/editor/WallQueryToolbar';
 
 import {
   preprocessMaxLines,
@@ -27,6 +29,8 @@ export interface Props {
 
 export const LokiQueryBuilderOptions = React.memo<Props>(
   ({ app, query, onChange, onRunQuery, maxLines, queryStats }) => {
+    const wallEditor = useContext(editorPresentationContext) && app === CoreApp.PanelEditor;
+    const Row = wallEditor ? React.Fragment : EditorRow;
     const [splitDurationValid, setSplitDurationValid] = useState(true);
 
     const onQueryTypeChange = (value: LokiQueryType) => {
@@ -99,8 +103,8 @@ export const LokiQueryBuilderOptions = React.memo<Props>(
     }, [query.step]);
 
     return (
-      <EditorRow>
-        <QueryOptionGroup
+      <Row>
+        <OptionsGroup
           title="Options"
           collapsedInfo={getCollapsedInfo(query, queryType, maxLines, isLogQuery, isValidStep)}
           queryStats={queryStats}
@@ -192,8 +196,8 @@ export const LokiQueryBuilderOptions = React.memo<Props>(
               />
             </EditorField>
           )}
-        </QueryOptionGroup>
-      </EditorRow>
+        </OptionsGroup>
+      </Row>
     );
   }
 );
@@ -234,3 +238,29 @@ function getCollapsedInfo(
 }
 
 LokiQueryBuilderOptions.displayName = 'LokiQueryBuilderOptions';
+
+function OptionsGroup(props: React.ComponentProps<typeof QueryOptionGroup>) {
+  const wall = useContext(editorPresentationContext);
+  if (!wall) {
+    return <QueryOptionGroup {...props} />;
+  }
+  const stats = props.queryStats;
+  const bytes = stats && Number.isFinite(stats.bytes) ? getValueFormat('bytes')(stats.bytes, 1) : undefined;
+  return (
+    <WallQueryOptions title="쿼리 옵션" summary={props.collapsedInfo}>
+      {props.children}
+      {stats && (stats.message || bytes) && (
+        <p
+          className="wall-query-run-hint"
+          title={
+            config.featureToggles.lokiQuerySplitting
+              ? '쿼리는 여러 부분으로 나누어 순차 실행됩니다. 조회 한도는 각 부분에 적용됩니다.'
+              : undefined
+          }
+        >
+          {stats.message ?? `예상 조회량 ${bytes?.text}${bytes?.suffix ?? ''}`}
+        </p>
+      )}
+    </WallQueryOptions>
+  );
+}

@@ -236,3 +236,27 @@ function buildTestScene(options: SceneOptions) {
 
   return { scene, vizPanel, context };
 }
+
+it('starts the existing dashboard edit baseline before native color overrides, and guards kiosk/Viewer', () => {
+  const { scene, vizPanel, context } = buildTestScene({ dashboardCanEdit: true });
+  const order: string[] = [];
+  const begin = jest.spyOn(scene, 'onEnterEditMode').mockImplementation(() => {
+    order.push('baseline');
+  });
+  const color = jest.fn(() => {
+    order.push('native-color');
+  });
+  context.onSeriesColorChange = color;
+  setDashboardPanelContext(vizPanel, context);
+  context.onSeriesColorChange!('host', 'purple');
+  expect(order).toEqual(['baseline', 'native-color']);
+  expect(color).toHaveBeenCalledWith('host', 'purple');
+  scene.setState({ kioskMode: 'full' });
+  context.onSeriesColorChange!('host', 'red');
+  expect(color).toHaveBeenCalledTimes(1);
+  scene.setState({ kioskMode: undefined });
+  jest.spyOn(scene, 'canEditDashboard').mockReturnValue(false);
+  context.onSeriesColorChange!('host', 'red');
+  expect(color).toHaveBeenCalledTimes(1);
+  expect(begin).toHaveBeenCalledTimes(1);
+});

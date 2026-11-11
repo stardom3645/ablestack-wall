@@ -1,0 +1,890 @@
+/* Wall diagnostic projection; native Drawer, data tables, reducers and JSON editor remain owners. */
+.wall-drawer:has(.wall-panel-inspector) .wall-drawer-content {
+  padding: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+.wall-panel-inspector {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--wall-card-padding);
+  font-family: var(--wall-editor-font-family);
+  font-size: var(--wall-editor-type-body-size);
+  font-weight: var(--wall-editor-type-body-weight);
+  line-height: var(--wall-editor-type-body-line);
+  color: var(--wall-text);
+}
+/* Native modal tab rules also match line tabs; override that presentation here only. */
+.wall-drawer:has(.wall-panel-inspector) .wall-panel-inspect-tabs .wall-ui-tabs-list {
+  gap: var(--wall-card-padding-compact);
+  margin-top: var(--wall-card-padding-compact);
+  flex-wrap: wrap;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-panel-inspect-tabs .wall-ui-tabs-trigger {
+  min-height: var(--wall-editor-heading-height);
+  padding: var(--wall-card-padding-compact);
+  border-radius: 0;
+  font-size: var(--wall-type-navigation-size);
+  font-weight: var(--wall-type-navigation-weight);
+  line-height: var(--wall-type-navigation-line);
+  color: var(--wall-muted);
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-panel-inspect-tabs .wall-ui-tabs-trigger[data-active] {
+  background: transparent;
+  color: var(--wall-primary);
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-panel-inspect-tabs .wall-ui-tabs-trigger:hover {
+  background: var(--wall-hover);
+}
+/* Same control baseline as the panel editor. Monaco and the key tree own their inputs. */
+.wall-drawer .wall-panel-inspector :is(.wall-button, [data-ui-button]) {
+  min-height: var(--wall-editor-form-controlHeight);
+  height: auto;
+  padding: calc(var(--wall-card-content-gap) / 2) var(--wall-card-gap);
+  border-radius: calc(var(--wall-radius) - 2px);
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-type-control-weight);
+  line-height: var(--wall-editor-type-control-line);
+}
+.wall-drawer .wall-panel-inspector :is(.wall-button, [data-ui-button]):is(:disabled, [aria-disabled='true']) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.wall-panel-inspector :is(input:not(.inputarea), select, label) {
+  font-size: var(--wall-editor-type-control-size);
+  line-height: var(--wall-editor-type-control-line);
+}
+/* Reuse the native Select's stable control hook; retain react-select input/list semantics. */
+.wall-panel-inspector .select-input-control {
+  min-height: var(--wall-editor-form-controlHeight);
+  border-radius: calc(var(--wall-radius) - 2px);
+  border-color: var(--wall-border);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  font-family: var(--wall-editor-font-family);
+  font-size: var(--wall-editor-type-control-size);
+  line-height: var(--wall-editor-type-control-line);
+  box-shadow: none;
+}
+.wall-panel-inspector .select-input-control:focus-within {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: 2px;
+}
+.wall-panel-inspector .select-input-control input:focus-visible {
+  outline: none;
+}
+.wall-panel-inspector .select-input-control.select-input-disabled {
+  background: var(--wall-soft);
+  opacity: 0.5;
+}
+.wall-inspect-tab-body[data-inspect-tab='data'] [data-ui-button='primary'] {
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  border-color: var(--wall-border);
+}
+.wall-panel-inspector [role='table'] {
+  font-family: var(--wall-editor-font-family);
+}
+.wall-panel-inspector [role='columnheader'] {
+  background: var(--wall-soft);
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-label-size);
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-panel-inspector [role='columnheader'] button {
+  font: inherit;
+  color: inherit;
+}
+.wall-panel-inspector [role='cell'] {
+  font-size: var(--wall-editor-type-body-size);
+}
+.wall-inspect-diagnostics,
+.wall-inspect-requests {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+.wall-inspect-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--wall-card-content-gap);
+  margin-bottom: var(--wall-card-padding);
+}
+.wall-inspect-section-heading h2 {
+  font-size: var(--wall-editor-type-heading-size);
+  line-height: var(--wall-editor-type-heading-line);
+  margin: 0;
+  font-weight: var(--wall-editor-type-heading-weight);
+}
+.wall-panel-inspector h3 {
+  font-size: var(--wall-editor-type-title-size);
+  line-height: var(--wall-editor-type-title-line);
+  font-weight: var(--wall-editor-type-title-weight);
+  margin: 0 0 var(--wall-card-gap);
+}
+.wall-inspect-section-heading p,
+.wall-inspect-muted,
+.wall-inspect-empty {
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-body-size);
+  line-height: var(--wall-editor-type-body-line);
+  margin: 4px 0 0;
+}
+.wall-inspect-error {
+  border-inline-start: 3px solid var(--wall-state-error);
+  padding: 4px 0 4px 16px;
+  margin: 0 0 var(--wall-section-gap);
+}
+.wall-inspect-error .wall-inspect-section-heading {
+  margin-bottom: 8px;
+  align-items: center;
+}
+.wall-inspect-message {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: var(--wall-editor-type-body-size);
+  line-height: var(--wall-editor-type-body-line);
+  margin-bottom: 12px;
+}
+.wall-inspect-facts {
+  display: grid;
+  grid-template-columns: minmax(100px, max-content) minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 8px;
+  margin: 0 0 16px;
+  font-size: var(--wall-editor-type-body-size);
+}
+.wall-inspect-facts dt {
+  color: var(--wall-muted);
+  font-weight: 400;
+}
+.wall-inspect-facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.wall-inspect-query-list {
+  margin-bottom: var(--wall-section-gap);
+}
+.wall-inspect-query-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  min-width: 0;
+  padding: var(--wall-card-padding-compact) 0;
+  border-bottom: 1px solid var(--wall-border);
+  font-size: var(--wall-editor-type-body-size);
+}
+.wall-inspect-query-row strong {
+  font-weight: 500;
+  min-width: 20px;
+}
+.wall-inspect-query-row code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--wall-muted);
+  overflow-wrap: anywhere;
+}
+.wall-inspect-detail {
+  border-top: 1px solid var(--wall-border);
+}
+.wall-drawer .wall-panel-inspector .wall-inspect-detail-trigger {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  min-height: var(--wall-editor-heading-height);
+  padding: var(--wall-card-padding-compact) 0;
+  font-weight: var(--wall-editor-type-title-weight);
+  font-size: var(--wall-editor-type-title-size);
+  border-radius: 0;
+}
+.wall-inspect-detail-trigger > span {
+  transition: rotate var(--wall-motion-accordion-open-duration) var(--wall-motion-expand-easing);
+}
+.wall-inspect-detail-trigger[data-panel-open] > span {
+  rotate: 180deg;
+}
+.wall-inspect-detail .wall-collapsible-content {
+  min-width: 0;
+}
+.wall-inspect-stats {
+  height: auto;
+  min-height: 100px;
+  padding-bottom: 16px;
+}
+.wall-inspect-stats > div {
+  height: auto;
+  overflow: visible;
+}
+.wall-inspect-raw {
+  min-width: 0;
+  padding: 8px 0 16px;
+  overflow: auto;
+}
+.wall-inspect-raw > button {
+  margin-bottom: 12px;
+}
+.wall-inspect-code {
+  max-width: 100%;
+  overflow: auto;
+  padding: 12px 0;
+  font-size: var(--wall-editor-type-body-size);
+}
+.wall-inspect-exchange + .wall-inspect-exchange {
+  margin-top: var(--wall-section-gap);
+}
+.wall-inspect-json {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.wall-inspect-json-editor {
+  flex: 1;
+  min-height: 180px;
+  position: relative;
+}
+.wall-inspect-json-error {
+  color: var(--wall-state-error);
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+}
+@media (max-width: 600px) {
+  .wall-inspect-facts {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+  }
+  .wall-inspect-facts dd {
+    margin-bottom: 8px;
+  }
+  .wall-inspect-section-heading {
+    flex-wrap: wrap;
+  }
+}
+.wall-inspect-tab-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+.wall-inspect-tab-body[hidden] {
+  display: none;
+}
+.wall-inspect-tab-body > div {
+  min-height: 0;
+}
+
+/* Workbench keeps document context, code tools and explicit commit actions separate. */
+.wall-drawer:has(.wall-panel-inspector) .wall-modal-header {
+  padding: var(--wall-section-gap) var(--wall-card-padding) 0;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-modal-heading > h3 {
+  order: 1;
+  margin: 0;
+  font-size: var(--wall-type-dashboard-size);
+  font-weight: var(--wall-type-dashboard-weight);
+  line-height: var(--wall-type-dashboard-line);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-drawer-subtitle {
+  display: contents;
+}
+.wall-inspect-eyebrow {
+  order: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-label-size);
+  font-weight: var(--wall-type-control-weight);
+  line-height: var(--wall-editor-type-label-line);
+}
+.wall-inspect-context {
+  order: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-content-gap);
+  min-width: 0;
+  font-size: var(--wall-editor-type-caption-size);
+  line-height: var(--wall-editor-type-caption-line);
+}
+.wall-inspect-kind {
+  flex-shrink: 0;
+  padding: 2px var(--wall-card-padding-compact);
+  border-radius: calc(var(--wall-radius) - 2px);
+  background: var(--wall-soft);
+  color: var(--wall-text);
+}
+.wall-inspect-dashboard {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-drawer-tabs {
+  order: 3;
+}
+.wall-drawer:has(.wall-panel-inspector) .wall-drawer-subtitle {
+  padding-top: var(--wall-card-padding-compact);
+  font-size: var(--wall-editor-type-body-size);
+  line-height: var(--wall-editor-type-body-line);
+  color: var(--wall-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-inspect-json-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--wall-card-gap);
+  padding-bottom: var(--wall-card-gap);
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--wall-border);
+}
+.wall-inspect-json-toolbar > .wall-json-source {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--wall-card-gap);
+  min-width: 190px;
+  max-width: 440px;
+}
+.wall-json-source > label {
+  font-weight: var(--wall-editor-type-label-weight);
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-label-size);
+}
+.wall-json-source > div {
+  flex: 1;
+  min-width: 0;
+}
+.wall-json-source-note,
+.wall-json-document-state {
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-caption-size);
+  white-space: nowrap;
+}
+.wall-json-document-state {
+  border: 0;
+  padding: 0;
+}
+.wall-inspector-json-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.wall-json-commandbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px var(--wall-card-gap);
+  flex-shrink: 0;
+  padding-block: 4px;
+}
+.wall-json-commandbar .wall-ui-tabs-trigger {
+  min-height: var(--wall-editor-heading-height);
+  padding: var(--wall-card-padding-compact) var(--wall-card-gap);
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-type-control-weight);
+  line-height: var(--wall-editor-type-control-line);
+}
+.wall-json-commandbar .wall-ui-tabs-trigger[data-active] {
+  color: var(--wall-primary);
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-json-tools,
+.wall-json-apply {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.wall-json-tools button[aria-pressed='true'] {
+  background: var(--wall-primary-soft);
+  color: var(--wall-primary);
+}
+.wall-json-tool-menu {
+  display: flex;
+  flex-direction: column;
+  padding: var(--wall-card-padding-compact);
+  min-width: 160px;
+  max-width: calc(100vw - 32px);
+}
+.wall-json-tool-menu > button {
+  justify-content: flex-start;
+  width: 100%;
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-editor-type-control-size);
+}
+.wall-json-workbench-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  padding-block: var(--wall-card-padding-compact);
+  gap: var(--wall-card-gap);
+}
+.wall-json-workbench-grid[data-outline-open] {
+  grid-template-columns: minmax(144px, min(25%, 240px)) minmax(0, 1fr);
+}
+.wall-json-structure-host {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.wall-json-structure-host[hidden] {
+  display: none;
+}
+.wall-json-outline {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.wall-json-outline-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex-shrink: 0;
+  min-height: var(--wall-editor-form-controlHeight);
+  margin-bottom: var(--wall-card-padding-compact);
+  color: var(--wall-text);
+  font-size: var(--wall-type-section-size);
+  font-weight: var(--wall-type-section-weight);
+}
+.wall-drawer .wall-panel-inspector .wall-json-outline-heading .wall-button {
+  width: var(--wall-editor-form-controlHeight);
+  padding: 0;
+}
+.wall-json-outline-scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 0 6px 8px 0;
+}
+.wall-json-outline ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.wall-json-outline ul ul {
+  padding-inline-start: 0;
+}
+.wall-json-outline-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: calc(var(--wall-radius) - 2px);
+}
+.wall-json-outline-row:hover {
+  background: var(--wall-hover);
+}
+.wall-json-outline-row[data-selected] {
+  color: var(--wall-primary);
+  background: var(--wall-primary-soft);
+}
+.wall-json-outline-row button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  min-height: var(--wall-editor-form-controlHeight);
+  padding: 4px;
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-editor-type-control-size);
+  line-height: var(--wall-editor-type-control-line);
+  display: flex;
+  align-items: center;
+}
+.wall-json-outline-row button:focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: -2px;
+}
+.wall-json-outline-key {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block !important;
+  text-align: start;
+}
+.wall-json-outline-spacer {
+  width: 22px;
+  flex-shrink: 0;
+}
+.wall-json-editor-surface {
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius);
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.wall-json-code,
+.wall-json-compare {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+}
+.wall-json-code[hidden],
+.wall-json-compare[hidden] {
+  display: none;
+}
+.wall-json-monaco,
+.wall-json-diff {
+  width: 100%;
+  height: 100%;
+}
+.wall-json-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 0;
+  flex: 1 1 280px;
+  min-width: 0;
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-caption-size);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.wall-json-validation {
+  color: var(--wall-state-error);
+  font-size: var(--wall-editor-type-caption-size);
+  padding-bottom: 8px;
+  max-height: 130px;
+  overflow: auto;
+  flex-shrink: 0;
+}
+.wall-json-validation p {
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.wall-json-validation button {
+  color: inherit;
+}
+.wall-json-change-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  flex-shrink: 0;
+}
+.wall-json-change-actions > span {
+  color: var(--wall-muted);
+  font-size: var(--wall-editor-type-caption-size);
+}
+@media (max-width: 650px) {
+  .wall-inspect-json-toolbar {
+    gap: 6px;
+  }
+  .wall-inspect-json-toolbar > .wall-json-source {
+    min-width: 0;
+  }
+  .wall-json-commandbar .wall-ui-tabs-trigger {
+    padding-inline: 8px;
+  }
+  .wall-json-tools {
+    gap: 0;
+  }
+  .wall-json-workbench-grid[data-outline-open] {
+    grid-template-columns: minmax(110px, 35%) minmax(0, 1fr);
+  }
+  .wall-json-change-actions > span {
+    max-width: 40%;
+  }
+}
+
+.wall-inspect-json-toolbar > button {
+  margin-inline-start: auto;
+}
+
+.wall-json-status > span:first-child {
+  flex: 1 0 100%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Native statistics keep their values and formatter, with the common table rhythm. */
+/* Native .width-30 is !important; cancel that fixed width only inside this projection. */
+.wall-panel-inspector .wall-inspect-stats .filter-table {
+  width: 100% !important;
+  font-size: var(--wall-editor-type-body-size);
+}
+.wall-panel-inspector .wall-inspect-stats .filter-table td {
+  height: auto;
+  line-height: var(--wall-editor-type-body-line);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  padding: var(--wall-card-padding-compact);
+  border-bottom: 1px solid var(--wall-border);
+}
+.wall-inspect-stats .filter-table td:first-child {
+  padding-inline-start: 0;
+}
+.wall-inspect-stats .filter-table td:last-child {
+  padding-inline-end: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Native Monaco Find/Replace chrome, scoped to this Workbench (including its Diff editor).
+   Preserve the engine's width, input reservation, responsive states and keyboard actions. */
+.wall-inspector-json-workspace .monaco-editor .editor-widget.find-widget {
+  max-width: calc(100% - 2 * var(--wall-card-gap)) !important;
+  min-height: calc(var(--wall-editor-form-controlHeight) + var(--wall-card-content-gap) + 2px);
+  padding-inline: calc(var(--wall-card-content-gap) / 2);
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius);
+  box-shadow: var(--wall-card-shadow);
+  font-family: var(--wall-editor-font-family);
+  font-size: var(--wall-editor-type-control-size);
+  line-height: var(--wall-editor-type-control-line);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.replaceToggled {
+  min-height: calc(2 * var(--wall-editor-form-controlHeight) + 2 * var(--wall-card-content-gap) + 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget > :is(.find-part, .replace-part) {
+  margin-inline-start: var(--wall-section-gap);
+  margin-bottom: calc(var(--wall-card-content-gap) / 2);
+  align-items: center;
+}
+/* Monaco writes theme colours inline; override those only inside its search controls. */
+.wall-inspector-json-workspace .monaco-editor .find-widget :is(.find-part, .replace-part) .monaco-inputbox {
+  min-height: var(--wall-editor-form-controlHeight);
+  background-color: var(--wall-surface) !important;
+  color: var(--wall-text) !important;
+  border: 1px solid var(--wall-border);
+  border-radius: calc(var(--wall-radius) - 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .monaco-inputbox.synthetic-focus {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: -1px;
+}
+.wall-inspector-json-workspace
+  .monaco-editor
+  .find-widget
+  :is(.find-part, .replace-part)
+  .monaco-inputbox
+  > .ibwrapper
+  > :is(.input, .mirror) {
+  padding-block: calc(var(--wall-card-content-gap) / 2);
+  padding-inline-start: var(--wall-card-padding-compact);
+  font-family: var(--wall-editor-font-family);
+  font-size: var(--wall-editor-type-control-size);
+  font-weight: var(--wall-editor-type-control-weight);
+  line-height: var(--wall-editor-type-control-line);
+  color: var(--wall-text) !important;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .monaco-inputbox .input:focus-visible {
+  outline: none;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .input::placeholder {
+  color: var(--wall-muted);
+  opacity: 1;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget :is(.find-actions, .replace-actions) {
+  height: var(--wall-editor-form-controlHeight);
+  align-items: center;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .matchesCount {
+  height: auto;
+  padding-block: 0;
+  font-family: var(--wall-editor-font-family);
+  font-size: var(--wall-editor-type-caption-size);
+  line-height: var(--wall-editor-type-caption-line);
+  color: var(--wall-muted);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.no-results .matchesCount {
+  color: var(--wall-state-error);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .button:not(.toggle) {
+  width: var(--wall-panel-control-size);
+  height: var(--wall-panel-control-size);
+  padding: 0;
+  border-radius: calc(var(--wall-radius) - 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .button.toggle {
+  width: var(--wall-section-gap);
+  border-radius: calc(var(--wall-radius) - 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .monaco-custom-toggle {
+  /* Width remains 20px: Monaco reserves exactly 22px per option, including its margin. */
+  height: var(--wall-section-gap);
+  border-radius: calc(var(--wall-radius) - 2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget :is(.button, .monaco-custom-toggle) {
+  color: var(--wall-muted) !important;
+}
+.wall-inspector-json-workspace
+  .monaco-editor
+  .find-widget
+  :is(.button, .monaco-custom-toggle):not([aria-disabled='true']):hover {
+  background-color: var(--wall-hover);
+  color: var(--wall-text) !important;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .monaco-custom-toggle[aria-checked='true'] {
+  background-color: var(--wall-primary-soft) !important;
+  color: var(--wall-primary) !important;
+  border-color: transparent !important;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget :is(.button, .monaco-custom-toggle)[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget :is(.button, .monaco-custom-toggle):focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: -1px;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .monaco-inputbox.error {
+  border-color: var(--wall-state-error) !important;
+  outline-color: var(--wall-state-error);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget .find-actions > .monaco-custom-toggle {
+  width: var(--wall-panel-control-size);
+  height: var(--wall-panel-control-size);
+  padding: 0;
+}
+
+/* Approved Inspector information hierarchy, composed from the existing document actions. */
+.wall-json-document-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+.wall-json-document-state[data-changed] {
+  color: var(--wall-primary);
+  font-weight: var(--wall-type-control-weight);
+}
+.wall-json-tools .wall-button:not([aria-pressed='true']) {
+  color: var(--wall-muted);
+}
+.wall-json-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wall-card-padding-compact) var(--wall-card-gap);
+  padding-top: var(--wall-card-padding-compact);
+  border-top: 1px solid var(--wall-border);
+  flex-shrink: 0;
+}
+.wall-json-syntax {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--wall-text);
+  white-space: nowrap;
+}
+.wall-json-syntax[data-invalid] {
+  color: var(--wall-state-error);
+}
+.wall-inspector-json-workspace .monaco-editor .view-overlays .current-line {
+  background: var(--wall-primary-soft);
+  border-color: transparent;
+}
+/* Native Find's reduced mode uses two rows so counts and controls remain legible. */
+.wall-inspector-json-workspace .monaco-editor .editor-widget.find-widget {
+  margin-top: var(--wall-card-padding-compact);
+}
+.wall-inspector-json-workspace .monaco-editor .editor-widget.find-widget.reduced-find-widget {
+  min-height: calc(2 * var(--wall-editor-form-controlHeight) + 1.5 * var(--wall-card-content-gap) + 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .editor-widget.find-widget.reduced-find-widget.replaceToggled {
+  min-height: calc(3 * var(--wall-editor-form-controlHeight) + 2.5 * var(--wall-card-content-gap) + 2px);
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.reduced-find-widget > .find-part {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.reduced-find-widget > .find-part > .monaco-findInput,
+.wall-inspector-json-workspace .monaco-editor .find-widget.reduced-find-widget > .find-part > .find-actions {
+  flex: 1 0 100%;
+  min-width: 0;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.reduced-find-widget .find-actions .matchesCount {
+  display: flex;
+  flex: 1;
+  margin-inline-start: 0;
+}
+.wall-inspector-json-workspace .monaco-editor .find-widget.reduced-find-widget > .replace-part > .monaco-findInput {
+  flex: 1 1 0;
+  min-width: 0;
+}
+@media (max-height: 650px) {
+  .wall-drawer:has(.wall-panel-inspector) .wall-modal-header {
+    padding-top: var(--wall-card-padding-compact);
+  }
+  .wall-drawer:has(.wall-panel-inspector) .wall-modal-heading > h3 {
+    font-size: var(--wall-editor-type-heading-size);
+    font-weight: var(--wall-editor-type-heading-weight);
+    line-height: var(--wall-editor-type-heading-line);
+  }
+  .wall-inspect-eyebrow {
+    font-size: var(--wall-editor-type-caption-size);
+    line-height: var(--wall-editor-type-caption-line);
+  }
+}
+
+/* Document actions are menu rows, not a stack of outlined form buttons. */
+.wall-json-document-menu {
+  padding: calc(var(--wall-card-content-gap) / 2);
+  gap: calc(var(--wall-card-content-gap) / 2);
+}
+.wall-drawer .wall-panel-inspector .wall-json-document-menu > button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--wall-card-content-gap);
+  padding-inline: var(--wall-card-padding-compact);
+  border: 0;
+  border-radius: calc(var(--wall-radius) - 2px);
+  background: transparent;
+  color: var(--wall-text);
+  box-shadow: none;
+  white-space: nowrap;
+}
+.wall-json-document-menu > button > svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.wall-drawer .wall-panel-inspector .wall-json-document-menu > button:not(:disabled):hover {
+  background: var(--wall-hover);
+}
+.wall-drawer .wall-panel-inspector .wall-json-document-menu > button:focus-visible {
+  outline: 2px solid var(--wall-primary);
+  outline-offset: -2px;
+}

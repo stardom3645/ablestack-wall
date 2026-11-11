@@ -1,6 +1,8 @@
 import { PanelPlugin } from '@grafana/data';
 import { BarGaugeSizing, VizOrientation } from '@grafana/schema';
 import { commonOptionsBuilder } from '@grafana/ui';
+import { addWallMeterOptions } from 'app/features/wall-modern/panels/WallMeterOptions';
+import { WallMeterOptions } from 'app/features/wall-modern/panels/meterPresentation';
 
 import { addOrientationOption, addStandardDataReduceOptions } from '../stat/common';
 
@@ -9,7 +11,7 @@ import { GaugePanel } from './GaugePanel';
 import { Options, defaultOptions } from './panelcfg.gen';
 import { GaugeSuggestionsSupplier } from './suggestions';
 
-export const plugin = new PanelPlugin<Options>(GaugePanel)
+export const plugin = new PanelPlugin<Options & WallMeterOptions>(GaugePanel)
   .useFieldConfig({
     useCustomConfig: (builder) => {
       builder.addNumberInput({
@@ -24,6 +26,7 @@ export const plugin = new PanelPlugin<Options>(GaugePanel)
     },
   })
   .setPanelOptions((builder) => {
+    addWallMeterOptions(builder, true);
     addStandardDataReduceOptions(builder);
     addOrientationOption(builder);
     builder

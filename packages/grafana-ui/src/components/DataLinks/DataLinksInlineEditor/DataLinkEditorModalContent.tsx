@@ -9,6 +9,7 @@ import { DataLinkEditor } from '../DataLinkEditor';
 
 interface DataLinkEditorModalContentProps {
   link: DataLink;
+  displayText?: (text: string) => string;
   index: number;
   data: DataFrame[];
   getSuggestions: () => VariableSuggestion[];
@@ -18,6 +19,7 @@ interface DataLinkEditorModalContentProps {
 
 export const DataLinkEditorModalContent = ({
   link,
+  displayText,
   index,
   getSuggestions,
   onSave,
@@ -27,6 +29,7 @@ export const DataLinkEditorModalContent = ({
   return (
     <>
       <DataLinkEditor
+        displayText={displayText}
         value={dirtyLink}
         index={index}
         isLast={false}
@@ -37,14 +40,18 @@ export const DataLinkEditorModalContent = ({
       />
       <Modal.ButtonRow>
         <Button variant="secondary" onClick={() => onCancel(index)} fill="outline">
-          <Trans i18nKey="grafana-ui.data-link-editor-modal.cancel">Cancel</Trans>
+          {displayText ? (
+            displayText('Cancel')
+          ) : (
+            <Trans i18nKey="grafana-ui.data-link-editor-modal.cancel">Cancel</Trans>
+          )}
         </Button>
         <Button
           onClick={() => {
             onSave(index, dirtyLink);
           }}
         >
-          <Trans i18nKey="grafana-ui.data-link-editor-modal.save">Save</Trans>
+          {displayText ? displayText('Save') : <Trans i18nKey="grafana-ui.data-link-editor-modal.save">Save</Trans>}
         </Button>
       </Modal.ButtonRow>
     </>

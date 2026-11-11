@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { HeaderGroup, Column } from 'react-table';
 
 import { Field } from '@grafana/data';
@@ -7,6 +8,7 @@ import { getFieldTypeIcon } from '../../types';
 import { Icon } from '../Icon/Icon';
 
 import { Filter } from './Filter';
+import { TableColumnAction, TablePresentationContext } from './TablePresentation';
 import { TableStyles } from './styles';
 import { TableFieldOptions } from './types';
 
@@ -14,10 +16,12 @@ export interface HeaderRowProps {
   headerGroups: HeaderGroup[];
   showTypeIcons?: boolean;
   tableStyles: TableStyles;
+  columnActions?: TableColumnAction[];
 }
 
 export const HeaderRow = (props: HeaderRowProps) => {
-  const { headerGroups, showTypeIcons, tableStyles } = props;
+  const { headerGroups, showTypeIcons, tableStyles, columnActions } = props;
+  const presentation = useContext(TablePresentationContext);
   const e2eSelectorsTable = selectors.components.Panels.Visualization.Table;
 
   return (
@@ -33,7 +37,13 @@ export const HeaderRow = (props: HeaderRowProps) => {
             role="row"
           >
             {headerGroup.headers.map((column: Column, index: number) =>
-              renderHeaderCell(column, tableStyles, showTypeIcons)
+              renderHeaderCell(
+                column,
+                tableStyles,
+                showTypeIcons,
+                columnActions?.find((action) => action.id === column.id),
+                presentation
+              )
             )}
           </div>
         );
@@ -42,7 +52,13 @@ export const HeaderRow = (props: HeaderRowProps) => {
   );
 };
 
-function renderHeaderCell(column: any, tableStyles: TableStyles, showTypeIcons?: boolean) {
+function renderHeaderCell(
+  column: any,
+  tableStyles: TableStyles,
+  showTypeIcons?: boolean,
+  action?: TableColumnAction,
+  presentation?: import('./TablePresentation').TablePresentation
+) {
   const { key, ...headerProps } = column.getHeaderProps();
   const field: Field = column.field ?? null;
   const tableFieldOptions: TableFieldOptions | undefined = field?.config.custom;
@@ -81,10 +97,26 @@ function renderHeaderCell(column: any, tableStyles: TableStyles, showTypeIcons?:
   }
 
   return (
-    <div className={tableStyles.headerCell} key={key} {...headerProps} role="columnheader">
+    <div
+      className={tableStyles.headerCell}
+      key={key}
+      {...headerProps}
+      role="columnheader"
+      aria-sort={
+        presentation && column.canSort
+          ? column.isSorted
+            ? column.isSortedDesc
+              ? 'descending'
+              : 'ascending'
+            : 'none'
+          : undefined
+      }
+      title={presentation ? String(column.Header ?? '') : undefined}
+    >
       {column.canSort && sortHeaderContent}
       {!column.canSort && headerContent}
       {!column.canSort && column.canFilter && <Filter column={column} tableStyles={tableStyles} field={field} />}
+      {action && presentation?.renderColumnMenu(action)}
       {column.canResize && <div {...column.getResizerProps()} className={tableStyles.resizeHandle} />}
     </div>
   );

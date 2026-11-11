@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useReducer } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useReducer } from 'react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import tinycolor from 'tinycolor2';
@@ -8,6 +8,10 @@ import uPlot from 'uplot';
 import { arrayToDataFrame, colorManipulator, DataFrame, DataTopic } from '@grafana/data';
 import { TimeZone } from '@grafana/schema';
 import { DEFAULT_ANNOTATION_COLOR, getPortalContainer, UPlotConfigBuilder, useStyles2, useTheme2 } from '@grafana/ui';
+import { TimeSeriesPresentationContext } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
+import { WallAnnotationPopover } from 'app/features/wall-modern/charts/WallAnnotationPopover';
+import { groupAnnotationMarkers, WallAnnotation } from 'app/features/wall-modern/charts/annotationModel';
+import { wallEventTokens } from 'app/features/wall-modern/eventTokens';
 
 import { AnnotationMarker2 } from './annotations2/AnnotationMarker2';
 
@@ -64,6 +68,7 @@ export const AnnotationsPlugin2 = ({
   setNewRange,
   canvasRegionRendering = true,
 }: AnnotationsPluginProps) => {
+  const presentation = useContext(TimeSeriesPresentationContext);
   const [plot, setPlot] = useState<uPlot>();
 
   const [portalRoot] = useState(() => getPortalContainer());
@@ -115,13 +120,36 @@ export const AnnotationsPlugin2 = ({
   const xAxisRef = useRef<HTMLDivElement>();
 
   useLayoutEffect(() => {
+    let live = true;
+    let frame = 0;
+    const updateMarkers = () => {
+      if (!presentation || !live || frame) {
+        return;
+      }
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (live) {
+          forceUpdate();
+        }
+      });
+    };
+    if (presentation) {
+      config.addHook('setScale', updateMarkers);
+      config.addHook('setSize', updateMarkers);
+    }
     config.addHook('ready', (u) => {
+      if (!live) {
+        return;
+      }
       let xAxisEl = u.root.querySelector<HTMLDivElement>('.u-axis')!;
       xAxisRef.current = xAxisEl;
       setPlot(u);
     });
 
     config.addHook('draw', (u) => {
+      if (!live) {
+        return;
+      }
       let annos = annoRef.current;
 
       const ctx = u.ctx;
@@ -169,7 +197,7 @@ export const AnnotationsPlugin2 = ({
           let y0 = u.bbox.top;
           let y1 = y0 + u.bbox.height;
 
-          ctx.lineWidth = 2;
+          ctx.lineWidth = presentation ? wallEventTokens.lineWidth * uPlot.pxRatio : 2;
           ctx.setLineDash([5, 5]);
 
           for (let i = 0; i < vals.time.length; i++) {
@@ -178,16 +206,22 @@ export const AnnotationsPlugin2 = ({
             let x0 = u.valToPos(vals.time[i], 'x', true);
 
             if (!vals.isRegion?.[i]) {
+              if (presentation) {
+                ctx.setLineDash(wallEventTokens.pointDash.map((n) => n * uPlot.pxRatio));
+              }
               renderLine(ctx, y0, y1, x0, color);
               // renderUpTriangle(ctx, x0, y1, 8 * uPlot.pxRatio, 5 * uPlot.pxRatio, color);
             } else if (canvasRegionRendering) {
+              if (presentation) {
+                ctx.setLineDash([]);
+              }
               renderLine(ctx, y0, y1, x0, color);
 
               let x1 = u.valToPos(vals.timeEnd[i], 'x', true);
 
               renderLine(ctx, y0, y1, x1, color);
 
-              ctx.fillStyle = colorManipulator.alpha(color, 0.1);
+              ctx.fillStyle = colorManipulator.alpha(color, presentation ? wallEventTokens.regionOpacity : 0.1);
               ctx.fillRect(x0, y0, x1 - x0, u.bbox.height);
             }
           }
@@ -196,7 +230,13 @@ export const AnnotationsPlugin2 = ({
 
       ctx.restore();
     });
-  }, [config, canvasRegionRendering, getColorByName]);
+    return () => {
+      live = false;
+      if (frame) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [config, canvasRegionRendering, getColorByName, presentation]);
 
   // ensure annos are re-drawn whenever they change
   useEffect(() => {
@@ -206,13 +246,60 @@ export const AnnotationsPlugin2 = ({
       // this forces a second redraw after uPlot is updated (in the Plot.tsx didUpdate) with new data/scales
       // and ensures the anno marker positions in the dom are re-rendered in correct places
       // (this is temp fix until uPlot integrtion is refactored)
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         forceUpdate();
       }, 0);
+      return () => clearTimeout(timeout);
     }
+    return undefined;
   }, [annos, plot]);
 
   if (plot) {
+    if (presentation) {
+      const events: WallAnnotation[] = annos.flatMap((data, frameIndex) => {
+        if (data.name === 'xymark') {
+          return [];
+        }
+        const values = getVals(data);
+        return values.time.flatMap((time, index) => {
+          const left = plot.valToPos(time, 'x');
+          const region = Boolean(values.isRegion?.[index]);
+          const right = region ? plot.valToPos(values.timeEnd?.[index], 'x') : left;
+          if (
+            !Number.isFinite(left) ||
+            !Number.isFinite(right) ||
+            (region ? left >= plot.rect.width || right <= 0 : left < 0 || left > plot.rect.width)
+          ) {
+            return [];
+          }
+          return [
+            {
+              key: `${frameIndex}:${values.id?.[index] ?? `${time}:${index}`}`,
+              values,
+              index,
+              left: Math.max(0, left),
+              right: Math.min(plot.rect.width, right),
+              region,
+              color: getColorByName(values.color?.[index] || DEFAULT_ANNOTATION_COLOR),
+              wip: Boolean(data.meta?.custom?.isWip),
+            },
+          ];
+        });
+      });
+      return createPortal(
+        groupAnnotationMarkers(events).map((group) => (
+          <WallAnnotationPopover
+            key={group[0].key}
+            events={group}
+            timeZone={timeZone}
+            portalRoot={portalRoot}
+            exitWipEdit={exitWipEdit}
+            tokens={presentation}
+          />
+        )),
+        xAxisRef.current!
+      );
+    }
     let markers = annos.flatMap((frame, frameIdx) => {
       let vals = getVals(frame);
 

@@ -7,6 +7,7 @@ import {
   snapPanelPosition,
   gridCoordinate,
 } from './layoutMovement';
+import { panelColumnPitch, panelPixelRect, panelGridPoint } from './panelGeometry';
 import { validatePanelLayout } from './panelLayout';
 
 const geometry = { width: 948, gap: 12, rowPitch: 2 };
@@ -189,4 +190,102 @@ it('guides compare visible card edges, deduplicate shared lines and never advert
     { axis: 'y', at: 88, start: 0, end: 468 },
   ]);
   expect(panelAlignmentGuides(source, [{ ...other, y: 1 }], 20, 2, 12, 12)).toEqual([]);
+});
+
+it('intersects Resize height constraints with global grid stops instead of clamping off-grid', () => {
+  // Real 64px usage panel: top246px, native minH38, 12px trailing gutter.
+  // minH alone produces bottom310px, two pixels short of a visible stop.
+  const source = { i: 'usage', x: 33, y: 123, w: 14, h: 60 };
+  const geom = { ...geometry, gapY: 12 };
+  const snapshot = { ...source };
+  const small = snapPanelResize([source], source, { x: -20, y: -200 }, geom, false, { minH: 38, maxH: 100 });
+  expect(small).toMatchObject({ x: 33, y: 123, w: 13, h: 39 });
+  const rect = panelPixelRect(small, { width: geom.width, gapX: geom.gap, gapY: geom.gapY, rowPitch: 2 });
+  expect((rect.top + rect.height) % 12).toBe(0);
+  const large = snapPanelResize([source], source, { x: 0, y: 2000 }, geom, false, { minH: 38, maxH: 100 });
+  expect(large.h).toBe(99);
+  expect((large.y + large.h) % 6).toBe(0);
+  expect(source).toEqual(snapshot);
+  // A horizontal-only edit must not quantize existing vertical geometry.
+  const legacy = { ...source, h: 38 };
+  expect(snapPanelResize([legacy], legacy, { x: -20, y: 0 }, geom, false, { minH: 38 }).h).toBe(38);
+});
+
+it.each([0, 12, 16])('keeps outer cell and visible card coordinates distinct for gutter %d', (gap) => {
+  const width = 1435;
+  const pitch = panelColumnPitch(width, gap);
+  const source = { i: 'any-panel', x: 17, y: 123, w: 14, h: 100 };
+  const resized = snapPanelResize(
+    [source],
+    source,
+    { x: pitch * 3, y: 41 },
+    { width, gap, gapY: gap, rowPitch: 2 },
+    false,
+    {}
+  );
+  const moved = snapPanelPosition([source], source, { x: pitch * 3, y: 41 }, { width, gap, rowPitch: 2 });
+  expect(resized.x + resized.w).toBe(source.x + source.w + 3);
+  expect(moved.x).toBe(source.x + 3);
+  const rect = panelPixelRect(resized, { width, gapX: gap, gapY: gap, rowPitch: 2 });
+  expect(rect.width + gap).toBe(Math.round(resized.w * pitch));
+  expect(rect.height + gap).toBe(resized.h * 2);
+  expect(
+    panelGridPoint(
+      resized.x + resized.w,
+      resized.y + resized.h,
+      { width, gapX: gap, gapY: gap, rowPitch: 2 },
+      { anchor: source }
+    )
+  ).toEqual({ x: rect.left + rect.width, y: rect.top + rect.height });
+});
+
+it('keeps both cell references fixed while resizing panels at different columns', () => {
+  const width = 1435;
+  const gap = 12;
+  const pitch = panelColumnPitch(width, gap);
+  for (const x of [0, 1, 17, 32]) {
+    const source = { i: 'resource', x, y: 30, w: 10, h: 54 };
+    for (const w of [8, 9, 10, 11, 12]) {
+      const item = snapPanelResize(
+        [source],
+        source,
+        { x: (w - 10) * pitch, y: 24 },
+        { width, gap, gapY: gap, rowPitch: 2 },
+        false,
+        {}
+      );
+      const rect = panelPixelRect(item, { width, gapX: gap, gapY: gap, rowPitch: 2 });
+      // Pixel rounding may differ by at most one pixel from the continuous marker.
+      expect(Math.abs(rect.left - x * pitch)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(rect.left + rect.width - ((x + w) * pitch - gap))).toBeLessThanOrEqual(1);
+      expect(panelGridPoint(item.x, item.y, { width, gapX: gap, gapY: gap, rowPitch: 2 })).toEqual({
+        x: rect.left,
+        y: rect.top,
+      });
+    }
+  }
+});
+
+it('keeps guide corner coordinates exact when a narrow grid cell is smaller than its gutter', () => {
+  const anchor = { i: 'small', x: 17, y: 0, w: 8, h: 54 };
+  const geometry = { width: 200, gapX: 12, gapY: 12, rowPitch: 2 };
+  const rect = panelPixelRect(anchor, geometry);
+  expect(panelGridPoint(25, 54, geometry, { anchor })).toEqual({
+    x: rect.left + rect.width,
+    y: rect.top + rect.height,
+  });
+});
+
+it('visits every consecutive Resize column in both directions with one visible dot per stop', () => {
+  const source = { i: 'resource', x: 0, y: 30, w: 10, h: 54 };
+  const geom = { ...geometry, gapY: 12 };
+  const pitch = panelColumnPitch(geometry.width, geometry.gap);
+  let previous = source;
+  for (const w of [11, 12, 13, 14, 13, 12, 11, 10]) {
+    const next = snapPanelResize([source], source, { x: (w - source.w) * pitch, y: 0 }, geom, false, {}, previous);
+    expect(next.w).toBe(w);
+    const rect = panelPixelRect(next, { width: geom.width, gapX: geom.gap, gapY: geom.gapY, rowPitch: 2 });
+    expect((rect.left + rect.width + geom.gap) / pitch).toBe(next.x + next.w);
+    previous = next;
+  }
 });

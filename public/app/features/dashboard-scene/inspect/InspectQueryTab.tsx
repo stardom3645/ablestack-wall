@@ -6,9 +6,9 @@ import {
   SceneObjectRef,
   VizPanel,
 } from '@grafana/scenes';
-import { t } from 'app/core/internationalization';
 import { QueryInspector } from 'app/features/inspector/QueryInspector';
 import { InspectTab } from 'app/features/inspector/types';
+import { isInspectorRequest } from 'app/features/wall-modern/editor/inspectorModel';
 
 import { getQueryRunnerFor } from '../utils/utils';
 
@@ -18,7 +18,7 @@ export interface InspectQueryTabState extends SceneObjectState {
 
 export class InspectQueryTab extends SceneObjectBase<InspectQueryTabState> {
   public getTabLabel() {
-    return t('dashboard.inspect.query-tab', 'Query');
+    return '요청·응답';
   }
 
   public getTabValue() {
@@ -40,6 +40,14 @@ export class InspectQueryTab extends SceneObjectBase<InspectQueryTabState> {
       return null;
     }
 
-    return <QueryInspector data={data.data} onRefreshQuery={model.onRefreshQuery} />;
+    const runner = getQueryRunnerFor(model.state.panelRef.resolve());
+    return (
+      <QueryInspector
+        wall
+        data={data.data}
+        onRefreshQuery={model.onRefreshQuery}
+        acceptResponse={(requestId) => isInspectorRequest(requestId, runner?.state.data?.request?.requestId)}
+      />
+    );
   };
 }

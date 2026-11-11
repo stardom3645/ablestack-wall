@@ -65,11 +65,11 @@ export function WallPanelDetails({
         <Switch.Root
           id={`${id}-transparent`}
           aria-labelledby={`${id}-transparent-label`}
-          className="wall-studio-switch"
+          className="wall-form-switch"
           checked={transparent}
           onCheckedChange={onTransparent}
         >
-          <Switch.Thumb />
+          <Switch.Thumb className="wall-form-switch-thumb" />
         </Switch.Root>
       </div>
       {children}

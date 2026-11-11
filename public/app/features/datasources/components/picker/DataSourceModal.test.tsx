@@ -107,7 +107,7 @@ describe('DataSourceDropdown', () => {
       await user.click(searchBox!);
       await user.keyboard('foobarbaz'); //Search for a DS that should not exist
 
-      expect(screen.queryAllByText('Configure a new data source')).toHaveLength(2);
+      expect(screen.queryAllByText('Configure a new data source')).toHaveLength(1);
       screen.queryAllByRole('link').forEach((link) => {
         // It should point to the new data source page including any sub url configured
         expect(link).toHaveAttribute('href', '/my-sub-path/connections/datasources/new');
@@ -187,6 +187,39 @@ describe('DataSourceDropdown', () => {
   });
 
   describe('interactions', () => {
+    it('renders each source once and keeps default separate from selection', () => {
+      mockDS1.isDefault = true;
+      setup({ current: mockDS2 });
+      expect(screen.getAllByText(mockDSBuiltIn.name, { selector: '.wall-datasource-name' })).toHaveLength(1);
+      expect(screen.getByRole('button', { name: /mock.datasource.1/ })).toHaveAttribute('aria-pressed', 'false');
+      expect(screen.getByRole('button', { name: /mock.datasource.2/ })).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByText('기본')).toBeVisible();
+      delete mockDS1.isDefault;
+    });
+
+    it('searches plugin type and navigates the unified list with native keyboard focus', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn();
+      const mysql = { ...mockDS2, type: 'mysql', meta: { ...mockDS2.meta, name: 'MySQL' } };
+      getListMock.mockReturnValue([mockDS1, mysql, mockDSBuiltIn]);
+      setup({ onChange });
+      await user.type(screen.getByRole('searchbox'), 'mysql');
+      expect(screen.queryByText(mockDS1.name, { selector: '.wall-datasource-name' })).not.toBeInTheDocument();
+      await user.keyboard('{ArrowDown}{Enter}');
+      expect(onChange).toHaveBeenCalledWith(mysql);
+    });
+
+    it('finds built-ins by original names and Korean aliases without changing native IDs', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn();
+      const mixed = { ...mockDSBuiltIn, uid: '-- Mixed --', name: '-- Mixed --' };
+      getListMock.mockReturnValue([mockDS1, mixed]);
+      setup({ onChange });
+      await user.type(screen.getByRole('searchbox'), '혼합');
+      await user.click(screen.getByRole('button', { name: /여러 데이터 소스 사용/ }));
+      expect(onChange).toHaveBeenCalledWith(mixed);
+    });
+
     it('should be searchable', async () => {
       const user = userEvent.setup();
       setup();
@@ -196,12 +229,12 @@ describe('DataSourceDropdown', () => {
 
       await user.keyboard(mockDS2.name); //Search for xMockDS
 
-      expect(screen.queryByText(mockDS1.name, { selector: 'span' })).toBeNull();
-      expect(await screen.findByText(mockDS2.name, { selector: 'span' })).toBeInTheDocument();
+      expect(screen.queryByText(mockDS1.name, { selector: '.wall-datasource-name' })).toBeNull();
+      expect(await screen.findByText(mockDS2.name, { selector: '.wall-datasource-name' })).toBeInTheDocument();
 
       await user.keyboard('foobarbaz'); //Search for a DS that should not exist
 
-      expect(await screen.findByText('No data sources found')).toBeInTheDocument();
+      expect(await screen.findByText('검색 결과가 없습니다.')).toBeInTheDocument();
     });
 
     //Skipping this test as it's flaky on drone
@@ -231,7 +264,7 @@ describe('DataSourceDropdown', () => {
       const user = userEvent.setup();
       const onChange = jest.fn();
       setup({ onChange });
-      await user.click(await screen.findByText(mockDS2.name, { selector: 'span' }));
+      await user.click(await screen.findByText(mockDS2.name, { selector: '.wall-datasource-name' }));
       expect(onChange.mock.lastCall[0].name).toEqual(mockDS2.name);
     });
   });

@@ -1,5 +1,7 @@
 import type { DashboardSearchItem } from '../search/types';
 
+import { isWallManagementRoute } from './managementNavigation';
+
 export type WallCategory = 'all' | 'overview' | 'hosts' | 'vms' | 'forecast' | 'logs' | 'alerts' | 'reports';
 export const categories: Array<{ id: WallCategory; label: string; description: string }> = [
   { id: 'all', label: '전체 대시보드', description: '모든 운영 대시보드를 한곳에서 확인하세요.' },
@@ -36,18 +38,24 @@ export function categoryOf(item: Pick<DashboardSearchItem, 'title' | 'tags'>): W
   return 'overview';
 }
 
+/** Common dashboard presentation; query editors/settings keep their own frame. */
+export function isWallDashboardPanelRoute(pathname: string, search = '') {
+  const params = new URLSearchParams(search);
+  return /^\/d\/[^/]+(?:\/[^/]+)?\/?$/.test(pathname) && !['editPanel', 'editview'].some((key) => params.has(key));
+}
+
 export function isWallModernRoute(pathname: string, search = '') {
   const path = pathname.replace(/\/+$/, '') || '/';
   const params = new URLSearchParams(search);
   // Embedded, solo, playlist and editing views retain their existing layout contract.
-  if (
-    ['editPanel', 'viewPanel', 'editview', 'fullscreen'].some((key) => params.has(key)) ||
-    (params.has('kiosk') && !path.startsWith('/d/aec03x1adsi68f/'))
-  ) {
+  if (['editPanel', 'viewPanel', 'editview', 'fullscreen'].some((key) => params.has(key))) {
     return false;
   }
   return (
-    path === '/dashboards' || /^\/dashboards\/f\/[^/]+(?:\/[^/]+)?$/.test(path) || /^\/d\/[^/]+(?:\/[^/]+)?$/.test(path)
+    isWallManagementRoute(path) ||
+    path === '/dashboards' ||
+    /^\/dashboards\/f\/[^/]+(?:\/[^/]+)?$/.test(path) ||
+    /^\/d\/[^/]+(?:\/[^/]+)?$/.test(path)
   );
 }
 

@@ -13,8 +13,8 @@ const sortOptions = [
   // We use this unicode 'en dash' character (U+2013), because it looks nicer
   // than simple dash in this context. This is also used in the response of
   // the `sorting` endpoint, which is used in the search dashboard page.
-  { label: 'Sort by A–Z', value: ascendingSortValue },
-  { label: 'Sort by Z–A', value: descendingSortValue },
+  { label: '이름 오름차순', value: ascendingSortValue },
+  { label: '이름 내림차순', value: descendingSortValue },
 ];
 
 export function DataSourcesListHeader() {

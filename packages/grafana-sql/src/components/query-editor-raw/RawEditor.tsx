@@ -17,9 +17,19 @@ interface RawEditorProps extends Omit<QueryEditorProps, 'onChange'> {
   onChange: (q: SQLQuery, processQuery: boolean) => void;
   onValidate: (isValid: boolean) => void;
   queryToValidate: SQLQuery;
+  codeHeight?: number;
 }
 
-export function RawEditor({ db, query, onChange, onRunQuery, onValidate, queryToValidate, range }: RawEditorProps) {
+export function RawEditor({
+  db,
+  query,
+  onChange,
+  onRunQuery,
+  onValidate,
+  queryToValidate,
+  range,
+  codeHeight,
+}: RawEditorProps) {
   const theme = useTheme2();
   const styles = useStyles2(getStyles);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -34,7 +44,7 @@ export function RawEditor({ db, query, onChange, onRunQuery, onValidate, queryTo
         editorLanguageDefinition={editorLanguageDefinition}
         query={query}
         width={width}
-        height={height ? height - toolboxMeasure.height : undefined}
+        height={codeHeight ?? (height ? height - toolboxMeasure.height : undefined)}
         onChange={onChange}
       >
         {({ formatQuery }) => {
@@ -45,7 +55,7 @@ export function RawEditor({ db, query, onChange, onRunQuery, onValidate, queryTo
                 query={queryToValidate}
                 onValidate={onValidate}
                 onFormatCode={formatQuery}
-                showTools
+                showTools={codeHeight === undefined}
                 range={range}
                 onExpand={setIsExpanded}
                 isExpanded={isExpanded}

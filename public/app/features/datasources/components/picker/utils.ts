@@ -7,6 +7,8 @@ import {
 import { MIXED_DATASOURCE_NAME } from 'app/plugins/datasource/mixed/MixedDataSource';
 import { QueryGroupDataSource } from 'app/types';
 
+import { sourcePresentation } from './sourcePresentation';
+
 export function isDataSourceMatch(
   ds: DataSourceInstanceSettings | undefined,
   current: string | DataSourceInstanceSettings | DataSourceRef | null | undefined
@@ -102,7 +104,15 @@ export function getDataSourceCompareFn(
  * @returns
  */
 export function matchDataSourceWithSearch(ds: DataSourceInstanceSettings, searchTerm = '') {
-  return ds.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const presentation = sourcePresentation(ds);
+  const text = [ds.name, ds.type, ds.meta?.name, presentation.name, presentation.detail, presentation.aliases]
+    .join(' ')
+    .toLocaleLowerCase();
+  return searchTerm
+    .trim()
+    .toLocaleLowerCase()
+    .split(/\s+/)
+    .every((term) => text.includes(term));
 }
 
 export function storeLastUsedDataSourceInLocalStorage(datasource: QueryGroupDataSource) {

@@ -22,6 +22,7 @@ import {
   SceneVariableDependencyConfigLike,
 } from '@grafana/scenes';
 import { GRID_CELL_HEIGHT, GRID_CELL_VMARGIN, GRID_COLUMN_COUNT } from 'app/core/constants';
+import { WallDashboardPanel } from 'app/features/wall-modern/panels/WallDashboardPanel';
 
 import { getMultiVariableValues, getQueryRunnerFor } from '../utils/utils';
 
@@ -252,7 +253,11 @@ export class DashboardGridItem extends SceneObjectBase<DashboardGridItemState> i
 
     if (!variableName) {
       if (body instanceof VizPanel) {
-        return <body.Component model={body} key={body.state.key} />;
+        return (
+          <WallDashboardPanel panel={body}>
+            <body.Component model={body} key={body.state.key} />
+          </WallDashboardPanel>
+        );
       }
     }
 
@@ -264,7 +269,9 @@ export class DashboardGridItem extends SceneObjectBase<DashboardGridItemState> i
       <div className={layoutStyle}>
         {repeatedPanels.map((panel) => (
           <div className={itemStyle} key={panel.state.key}>
-            <panel.Component model={panel} key={panel.state.key} />
+            <WallDashboardPanel panel={panel}>
+              <panel.Component model={panel} key={panel.state.key} />
+            </WallDashboardPanel>
           </div>
         ))}
       </div>

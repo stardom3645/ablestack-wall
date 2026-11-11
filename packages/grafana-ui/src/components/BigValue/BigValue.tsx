@@ -12,7 +12,12 @@ import { presentValueColor, VizPresentation, VizPresentationContext } from '../V
 
 import { buildLayout } from './BigValueLayout';
 import { PercentChange } from './PercentChange';
-import { getStatCardPresentation, StatCardPresentation } from './StatCardPresentation';
+import {
+  getStatCardPresentation,
+  StatCardPresentation,
+  StatPresentationStyle,
+  statPresentationStyle,
+} from './StatCardPresentation';
 
 export enum BigValueColorMode {
   Background = 'background',
@@ -47,7 +52,14 @@ export interface Props extends Themeable2 {
   presentation?: VizPresentation;
   /** Optional application skin. Unset keeps the existing Stat presentation. */
   statPresentation?: StatCardPresentation;
+  statPresentationStyle?: StatPresentationStyle;
   isValueMapped?: boolean;
+  /** An actual string source/reducer result, not a no-data placeholder. */
+  isTextValue?: boolean;
+  /** Native no-values placeholder; distinct from a real numeric zero. */
+  isNoValue?: boolean;
+  statLayout?: 'inline';
+  hasStateColor?: boolean;
   /** Height of the component */
   height: number;
   /** Width of the component */
@@ -98,7 +110,22 @@ export class BigValue extends PureComponent<Props> {
 
   render() {
     const { onClick, className, hasLinks, theme } = this.props;
-    const layout = buildLayout(this.context ? { ...this.props, presentation: this.context } : this.props);
+    const presentationStyle = this.props.statPresentation
+      ? statPresentationStyle(this.props.statPresentationStyle)
+      : 'legacy';
+    const singleValue =
+      (this.props.count ?? 1) === 1 &&
+      this.props.textMode !== BigValueTextMode.Name &&
+      this.props.textMode !== BigValueTextMode.None;
+    const modern = presentationStyle !== 'legacy' && !singleValue;
+    // Modern styles relocate the native field color to an accent. Keep the saved
+    // mode untouched; use native value-mode foreground/Sparkline on neutral surfaces.
+    const layoutProps =
+      modern && this.props.colorMode !== BigValueColorMode.None
+        ? { ...this.props, colorMode: BigValueColorMode.Value }
+        : this.props;
+    const layout = buildLayout(this.context ? { ...layoutProps, presentation: this.context } : layoutProps);
+    const autoValueSize = layout.valueFontSize;
     if (this.context) {
       // Keep the native fit calculation and explicit user font sizes as upper priorities.
       if (!this.props.text?.valueSize) {
@@ -127,25 +154,38 @@ export class BigValue extends PureComponent<Props> {
       }
     }
     const textValues = layout.textValues;
+    const mappedText = Boolean(
+      this.props.isValueMapped &&
+        !/^[+-]?(?:\d[\d,.\s]*|\d*\.\d+)%?$/.test(this.props.value.text.trim()) &&
+        this.props.textMode !== BigValueTextMode.Name &&
+        this.props.textMode !== BigValueTextMode.None
+    );
+    const emptyValue =
+      (this.props.isNoValue || this.props.value.numeric == null || Number.isNaN(this.props.value.numeric)) &&
+      !this.props.isValueMapped &&
+      !this.props.isTextValue;
     const statCard = this.props.statPresentation
       ? getStatCardPresentation(this.props.statPresentation, {
+          presentationStyle: singleValue ? 'legacy' : presentationStyle,
           width: this.props.width,
           height: this.props.height,
           valueSize: layout.valueFontSize,
           labelSize: layout.titleFontSize,
           explicitValueSize: this.props.text?.valueSize,
           explicitLabelSize: this.props.text?.titleSize,
-          isMapped: Boolean(
-            this.props.isValueMapped &&
-              this.props.textMode !== BigValueTextMode.Name &&
-              this.props.textMode !== BigValueTextMode.None
-          ),
-          isColored: this.props.colorMode === BigValueColorMode.Value && this.props.textMode !== BigValueTextMode.None,
+          isMapped: mappedText,
+          isColored:
+            (modern
+              ? this.props.colorMode !== BigValueColorMode.None
+              : this.props.colorMode === BigValueColorMode.Value) &&
+            this.props.textMode !== BigValueTextMode.None &&
+            this.props.hasStateColor !== false &&
+            this.props.value.color !== 'text',
           hasBackground:
             this.props.colorMode === BigValueColorMode.Background ||
             this.props.colorMode === BigValueColorMode.BackgroundSolid,
-          isEmpty: Number.isNaN(this.props.value.numeric) && !this.props.isValueMapped,
-          color: valueStyles.color,
+          isEmpty: emptyValue,
+          color: modern ? layout.valueColor : valueStyles.color,
         })
       : undefined;
     if (statCard) {
@@ -158,6 +198,45 @@ export class BigValue extends PureComponent<Props> {
     const percentChangeColorMode = this.props.percentChangeColorMode;
     const showPercentChange = percentChange != null && !Number.isNaN(percentChange);
 
+    const wallContent =
+      statCard &&
+      this.props.statPresentation?.renderContent?.({
+        presentationStyle,
+        singleValue,
+        foreground: this.props.statPresentation.foreground,
+        autoValueSize,
+        surfaceStyle: statCard.surfaceStyle,
+        contentInset: statCard.inset,
+        value: textValues,
+        layout: this.props.statLayout,
+        nameOnly: this.props.textMode === BigValueTextMode.Name,
+        textual: mappedText || this.props.isTextValue || emptyValue,
+        alignmentFactors:
+          this.props.textMode === BigValueTextMode.Name
+            ? { text: this.props.alignmentFactors?.title ?? textValues.text }
+            : this.props.alignmentFactors,
+        width: this.props.width - statCard.inset * 2,
+        height: this.props.height - statCard.verticalInset * 2,
+        valueStyle: valueStyles,
+        labelStyle: titleStyles,
+        explicitValueSize: this.props.text?.valueSize,
+        explicitLabelSize: this.props.text?.titleSize,
+        kind: statCard.kind,
+        indicator: statCard.indicator && this.props.hasStateColor !== false && this.props.value.color !== 'text',
+        indicatorSpace: (this.props.count ?? 1) > 1 && this.props.colorMode === BigValueColorMode.Value,
+        color: statCard.value['--wall-stat-state'],
+        centered: singleValue || this.props.justifyMode === BigValueJustifyMode.Center,
+        chart: layout.chartWidth > 0 && layout.chartHeight > 0 ? layout.renderChart() : null,
+        chartWidth: layout.chartWidth,
+        chartHeight: layout.chartHeight,
+        percentChange: showPercentChange ? (
+          <PercentChange
+            percentChange={percentChange}
+            styles={layout.getPercentChangeStyles(percentChange, percentChangeColorMode, valueStyles)}
+          />
+        ) : null,
+      });
+
     // When there is an outer data link this tooltip will override the outer native tooltip
     const tooltip = hasLinks ? undefined : textValues.tooltip;
 
@@ -169,31 +248,35 @@ export class BigValue extends PureComponent<Props> {
           title={tooltip}
           data-viz-presentation={statCard ? 'wall-stat-card' : this.context ? 'wall-stat' : undefined}
         >
-          <div style={valueAndTitleContainerStyles}>
-            {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
-            <FormattedValueDisplay
-              value={textValues}
-              unitStyle={
-                this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
-                  ? {
-                      fontSize: this.props.statPresentation.unitSize,
-                      fontWeight: this.props.statPresentation.unitWeight,
-                    }
-                  : undefined
-              }
-              style={valueStyles}
-              className={statCard ? 'wall-stat-card-value' : undefined}
-              data-wall-stat-kind={statCard?.kind}
-              data-wall-stat-indicator={statCard?.indicator || undefined}
-            />
-            {showPercentChange && (
-              <PercentChange
-                percentChange={percentChange}
-                styles={layout.getPercentChangeStyles(percentChange, percentChangeColorMode, valueStyles)}
-              />
-            )}
-          </div>
-          {layout.renderChart()}
+          {wallContent ?? (
+            <>
+              <div style={valueAndTitleContainerStyles}>
+                {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
+                <FormattedValueDisplay
+                  value={textValues}
+                  unitStyle={
+                    this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
+                      ? {
+                          fontSize: this.props.statPresentation.unitSize,
+                          fontWeight: this.props.statPresentation.unitWeight,
+                        }
+                      : undefined
+                  }
+                  style={valueStyles}
+                  className={statCard ? 'wall-stat-card-value' : undefined}
+                  data-wall-stat-kind={statCard?.kind}
+                  data-wall-stat-indicator={statCard?.indicator || undefined}
+                />
+                {showPercentChange && (
+                  <PercentChange
+                    percentChange={percentChange}
+                    styles={layout.getPercentChangeStyles(percentChange, percentChangeColorMode, valueStyles)}
+                  />
+                )}
+              </div>
+              {layout.renderChart()}
+            </>
+          )}
         </div>
       );
     }
@@ -207,22 +290,29 @@ export class BigValue extends PureComponent<Props> {
         title={tooltip}
         data-viz-presentation={statCard ? 'wall-stat-card' : this.context ? 'wall-stat' : undefined}
       >
-        <div style={valueAndTitleContainerStyles}>
-          {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
-          <FormattedValueDisplay
-            value={textValues}
-            unitStyle={
-              this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
-                ? { fontSize: this.props.statPresentation.unitSize, fontWeight: this.props.statPresentation.unitWeight }
-                : undefined
-            }
-            style={valueStyles}
-            className={statCard ? 'wall-stat-card-value' : undefined}
-            data-wall-stat-kind={statCard?.kind}
-            data-wall-stat-indicator={statCard?.indicator || undefined}
-          />
-        </div>
-        {layout.renderChart()}
+        {wallContent ?? (
+          <>
+            <div style={valueAndTitleContainerStyles}>
+              {textValues.title && <div style={titleStyles}>{textValues.title}</div>}
+              <FormattedValueDisplay
+                value={textValues}
+                unitStyle={
+                  this.props.statPresentation?.unitSize && this.props.text?.valueSize === undefined
+                    ? {
+                        fontSize: this.props.statPresentation.unitSize,
+                        fontWeight: this.props.statPresentation.unitWeight,
+                      }
+                    : undefined
+                }
+                style={valueStyles}
+                className={statCard ? 'wall-stat-card-value' : undefined}
+                data-wall-stat-kind={statCard?.kind}
+                data-wall-stat-indicator={statCard?.indicator || undefined}
+              />
+            </div>
+            {layout.renderChart()}
+          </>
+        )}
       </button>
     );
   }

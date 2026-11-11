@@ -58,6 +58,10 @@ jest.mock('@grafana/runtime', () => ({
 }));
 
 describe('buildNewDashboardSaveModel', () => {
+  it('defaults new Wall dashboards to shared crosshair without shared tooltips', async () => {
+    const result = await buildNewDashboardSaveModel();
+    expect(result.dashboard.graphTooltip).toBe(1);
+  });
   it('should not have template variables defined by default', async () => {
     const result = await buildNewDashboardSaveModel();
     expect(result.dashboard.templating).toBeUndefined();

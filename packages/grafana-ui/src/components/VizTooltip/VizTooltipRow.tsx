@@ -5,6 +5,7 @@ import * as React from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2 } from '../../themes';
+import { FormattedValueDisplay } from '../FormattedValueDisplay/FormattedValueDisplay';
 import { InlineToast } from '../InlineToast/InlineToast';
 import { Tooltip } from '../Tooltip';
 
@@ -41,6 +42,7 @@ export const VizTooltipRow = ({
   isPinned,
   lineStyle,
   showValueScroll,
+  formattedValue,
 }: VizTooltipRowProps) => {
   const styles = useStyles2(getStyles, justify, marginRight);
 
@@ -173,7 +175,14 @@ export const VizTooltipRow = ({
 
         {!isPinned ? (
           <div className={cx(styles.value, isActive)} style={innerValueScrollStyle}>
-            {value}
+            {formattedValue ? (
+              <FormattedValueDisplay
+                value={formattedValue}
+                unitStyle={{ fontSize: '0.9em', fontWeight: 400, opacity: 0.8 }}
+              />
+            ) : (
+              value
+            )}
           </div>
         ) : (
           <>
@@ -189,7 +198,14 @@ export const VizTooltipRow = ({
               onClick={() => copyToClipboard(value ? value.toString() : '', LabelValueTypes.value)}
               ref={valueRef}
             >
-              {value}
+              {formattedValue ? (
+                <FormattedValueDisplay
+                  value={formattedValue}
+                  unitStyle={{ fontSize: '0.9em', fontWeight: 400, opacity: 0.8 }}
+                />
+              ) : (
+                value
+              )}
             </div>
           </>
         )}

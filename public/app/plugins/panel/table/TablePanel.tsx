@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import { useCallback } from 'react';
 
 import {
   ActionModel,
@@ -14,7 +15,9 @@ import {
 import { config, PanelDataErrorView } from '@grafana/runtime';
 import { Select, Table, usePanelContext, useTheme2 } from '@grafana/ui';
 import { TableSortByFieldState } from '@grafana/ui/src/components/Table/types';
+import { useWallTablePresentation } from 'app/features/wall-modern/panels/useWallTablePresentation';
 import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
+import { useWallEditing } from 'app/features/wall-modern/workspace/WallEditContext';
 
 import { getActions } from '../../../features/actions/utils';
 
@@ -43,6 +46,15 @@ function NativeTablePanel(props: Props) {
   const hasFields = frames.some((frame) => frame.fields.length > 0);
   const currentIndex = getCurrentFrameIndex(frames, options);
   const main = frames[currentIndex];
+  const changeFrame = useCallback((index: number) => onChangeTableSelection({ value: index }, props), [props]);
+  const presentation = useWallTablePresentation(frames, currentIndex, changeFrame);
+  const editing = useWallEditing();
+  const canPersist = !presentation || !editing?.readOnly;
+  const beginChange = () => {
+    if (presentation) {
+      editing?.begin();
+    }
+  };
 
   let tableHeight = height;
 
@@ -50,7 +62,7 @@ function NativeTablePanel(props: Props) {
     return <PanelDataErrorView panelId={id} fieldConfig={fieldConfig} data={data} />;
   }
 
-  if (count > 1) {
+  if (count > 1 && !presentation) {
     const inputHeight = theme.spacing.gridSize * theme.components.height.md;
     const padding = theme.spacing.gridSize;
 
@@ -61,6 +73,7 @@ function NativeTablePanel(props: Props) {
 
   const tableElement = (
     <Table
+      presentation={presentation}
       height={tableHeight}
       width={width}
       data={main}
@@ -68,8 +81,22 @@ function NativeTablePanel(props: Props) {
       showTypeIcons={options.showTypeIcons}
       resizable={true}
       initialSortBy={options.sortBy}
-      onSortByChange={(sortBy) => onSortByChange(sortBy, props)}
-      onColumnResize={(displayName, resizedWidth) => onColumnResize(displayName, resizedWidth, props)}
+      onSortByChange={
+        canPersist
+          ? (sortBy) => {
+              beginChange();
+              onSortByChange(sortBy, props);
+            }
+          : undefined
+      }
+      onColumnResize={
+        canPersist
+          ? (displayName, resizedWidth) => {
+              beginChange();
+              onColumnResize(displayName, resizedWidth, props);
+            }
+          : undefined
+      }
       onCellFilterAdded={panelContext.onAddAdHocFilter}
       footerOptions={options.footer}
       enablePagination={options.footer?.enablePagination}
@@ -81,7 +108,7 @@ function NativeTablePanel(props: Props) {
     />
   );
 
-  if (count === 1) {
+  if (count === 1 || presentation) {
     return tableElement;
   }
 
@@ -108,7 +135,10 @@ function getCurrentFrameIndex(frames: DataFrame[], options: Options) {
 
 function onColumnResize(fieldDisplayName: string, width: number, props: Props) {
   const { fieldConfig } = props;
-  const { overrides } = fieldConfig;
+  const overrides = fieldConfig.overrides.map((rule) => ({
+    ...rule,
+    properties: rule.properties.map((property) => ({ ...property })),
+  }));
 
   const matcherId = FieldMatcherID.byName;
   const propId = 'custom.width';

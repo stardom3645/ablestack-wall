@@ -16,6 +16,7 @@ import {
 } from 'app/features/dashboard/components/DashboardSettings/AutoRefreshIntervals';
 import { GenAIDashDescriptionButton } from 'app/features/dashboard/components/GenAI/GenAIDashDescriptionButton';
 import { GenAIDashTitleButton } from 'app/features/dashboard/components/GenAI/GenAIDashTitleButton';
+import { DEFAULT_DASHBOARD_CURSOR_SYNC } from 'app/features/dashboard/state/dashboardDefaults';
 import { DeleteDashboardButton } from 'app/features/dashboard-scene/settings/DeleteDashboardButton';
 import type { GeneralSettingsEditView } from 'app/features/dashboard-scene/settings/GeneralSettingsEditView';
 
@@ -317,14 +318,14 @@ export function WallGeneralSettings({ model }: { model: GeneralSettingsEditView 
             <Trans i18nKey="wall.settings.interactions-help">패널 간 탐색과 데이터 로딩 동작을 설정합니다.</Trans>
           </p>
         </header>
-        <WallFormField label={t('wall.settings.tooltip', '패널 간 툴팁 동기화')}>
+        <WallFormField label={t('wall.settings.tooltip', '패널 간 시점 동기화')}>
           <Choice
-            label={t('wall.settings.tooltip', '패널 간 툴팁 동기화')}
-            value={sync ?? 0}
+            label={t('wall.settings.tooltip', '패널 간 시점 동기화')}
+            value={sync ?? DEFAULT_DASHBOARD_CURSOR_SYNC}
             options={[
-              { value: 0, label: t('wall.settings.individual', '개별') },
-              { value: 1, label: t('wall.settings.crosshair', '십자선') },
-              { value: 2, label: t('wall.settings.shared-tooltip', '툴팁') },
+              { value: 0, label: t('wall.settings.individual', '사용 안 함') },
+              { value: 1, label: t('wall.settings.crosshair', 'Crosshair 동기화') },
+              { value: 2, label: t('wall.settings.shared-tooltip', 'Crosshair + Tooltip 동기화') },
             ]}
             onChange={model.onTooltipChange}
           />

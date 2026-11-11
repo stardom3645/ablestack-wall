@@ -1,6 +1,8 @@
 import { PureComponent } from 'react';
 
 import { StandardEditorProps, ThresholdsConfig, ThresholdsMode, ThresholdsFieldConfigSettings } from '@grafana/data';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallThresholdEditor } from 'app/features/wall-modern/editor/WallThresholdEditor';
 
 import { ThresholdsEditor } from './ThresholdsEditor';
 
@@ -25,6 +27,16 @@ export class ThresholdsValueEditor extends PureComponent<Props> {
       };
     }
 
-    return <ThresholdsEditor thresholds={value} onChange={onChange} />;
+    return (
+      <editorPresentationContext.Consumer>
+        {(wall) =>
+          wall ? (
+            <WallThresholdEditor thresholds={value} onChange={onChange} />
+          ) : (
+            <ThresholdsEditor thresholds={value} onChange={onChange} />
+          )
+        }
+      </editorPresentationContext.Consumer>
+    );
   }
 }

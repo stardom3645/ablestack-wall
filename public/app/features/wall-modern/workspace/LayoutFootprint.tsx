@@ -47,50 +47,56 @@ export const LayoutFootprint = forwardRef<
   }
   const { position, mode } = feedback;
   const rect = panelPixelRect(position, { width, gapX, gapY, rowPitch });
+  const geometry = {
+    width: rect.width,
+    height: rect.height,
+    transform: `translate(${rect.left}px, ${rect.top}px)`,
+  };
+  const group = position.i === '@wall-selection' || undefined;
   const label = mode === 'held' ? '현재 자리' : '놓을 자리';
   return (
-    <div
-      className="wall-layout-footprint"
-      data-wall-footprint={mode}
-      data-wall-footprint-group={position.i === '@wall-selection' || undefined}
-      role="img"
-      aria-label={`${label}: 패널 ${rect.width} × ${rect.height} px, ${position.x + 1}열 ${position.y + 1}행`}
-      style={{
-        width: rect.width,
-        height: rect.height,
-        transform: `translate(${rect.left}px, ${rect.top}px)`,
-      }}
-    >
-      {feedback.guides.map((guide) => (
-        <span
-          key={`${guide.axis}:${guide.at}`}
-          className="wall-layout-alignment-guide"
-          data-axis={guide.axis}
-          aria-hidden="true"
-          style={
-            guide.axis === 'x'
-              ? {
-                  left: guide.at - rect.left,
-                  top: guide.start - rect.top,
-                  height: guide.end - guide.start,
-                }
-              : {
-                  top: guide.at - rect.top,
-                  left: guide.start - rect.left,
-                  width: guide.end - guide.start,
-                }
-          }
-        />
-      ))}
-      <div className="wall-layout-footprint-label">
-        <strong>{label}</strong>
-        <span>
-          {rect.width} × {rect.height} px
-        </span>
-        <span>
-          {position.x + 1}열 · {position.y + 1}행 · 격자 {position.w} × {position.h}
-        </span>
+    <>
+      {/* One painted box: its border clips the ink throughout size transitions.
+          Keep the unpainted target separate for exact guides/drop diagnostics. */}
+      <div
+        className="wall-layout-footprint-preview"
+        data-wall-footprint-preview={mode}
+        data-wall-footprint-group={group}
+        aria-hidden="true"
+        style={geometry}
+      >
+        <span className="wall-layout-footprint-ink" />
       </div>
-    </div>
+      <div
+        className="wall-layout-footprint"
+        data-wall-footprint={mode}
+        data-wall-footprint-group={group}
+        role="img"
+        aria-label={`${label}: 패널 ${rect.width} × ${rect.height} px, ${position.x + 1}열 ${position.y + 1}행`}
+        style={geometry}
+      >
+        {feedback.guides.map((guide) => (
+          <span
+            key={`${guide.axis}:${guide.at}`}
+            className="wall-layout-alignment-guide"
+            data-axis={guide.axis}
+            aria-hidden="true"
+            style={
+              guide.axis === 'x'
+                ? {
+                    left: guide.at - rect.left,
+                    top: guide.start - rect.top,
+                    height: guide.end - guide.start,
+                  }
+                : {
+                    top: guide.at - rect.top,
+                    left: guide.start - rect.left,
+                    width: guide.end - guide.start,
+                  }
+            }
+          />
+        ))}
+      </div>
+    </>
   );
 });

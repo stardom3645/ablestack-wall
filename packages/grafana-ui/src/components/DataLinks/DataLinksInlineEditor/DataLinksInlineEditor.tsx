@@ -15,6 +15,7 @@ import { DataLinksListItem } from './DataLinksListItem';
 
 interface DataLinksInlineEditorProps {
   links?: DataLink[];
+  displayText?: (text: string) => string;
   onChange: (links: DataLink[]) => void;
   getSuggestions: () => VariableSuggestion[];
   data: DataFrame[];
@@ -27,6 +28,7 @@ export const DataLinksInlineEditor = ({
   getSuggestions,
   data,
   showOneClick = false,
+  displayText,
 }: DataLinksInlineEditorProps) => {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -134,7 +136,7 @@ export const DataLinksInlineEditor = ({
 
       {isEditing && editIndex !== null && (
         <Modal
-          title="Edit link"
+          title={displayText ? displayText('Edit link') : 'Edit link'}
           isOpen={true}
           closeOnBackdropClick={false}
           onDismiss={() => {
@@ -142,6 +144,7 @@ export const DataLinksInlineEditor = ({
           }}
         >
           <DataLinkEditorModalContent
+            displayText={displayText}
             index={editIndex}
             link={isNew ? { title: '', url: '' } : linksSafe[editIndex]}
             data={data}
@@ -153,7 +156,11 @@ export const DataLinksInlineEditor = ({
       )}
 
       <Button size="sm" icon="plus" onClick={onDataLinkAdd} variant="secondary" className={styles.button}>
-        <Trans i18nKey="grafana-ui.data-links-inline-editor.add-link">Add link</Trans>
+        {displayText ? (
+          displayText('Add link')
+        ) : (
+          <Trans i18nKey="grafana-ui.data-links-inline-editor.add-link">Add link</Trans>
+        )}
       </Button>
     </div>
   );

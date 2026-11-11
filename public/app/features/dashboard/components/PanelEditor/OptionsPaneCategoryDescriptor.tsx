@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { WallOptionSummary } from 'app/features/wall-modern/editor/WallOptionSummary';
+
 import { OptionsPaneCategory } from './OptionsPaneCategory';
 import { OptionsPaneItemDescriptor } from './OptionsPaneItemDescriptor';
 
@@ -58,7 +60,7 @@ export class OptionsPaneCategoryDescriptor {
     }
 
     return (
-      <OptionsPaneCategory key={this.props.title} {...this.props}>
+      <OptionsPaneCategory key={this.props.title} {...this.props} summary={<WallOptionSummary items={this.items} />}>
         {this.items.map((item) => item.render(searchQuery))}
         {this.categories.map((category) => category.render(searchQuery))}
       </OptionsPaneCategory>

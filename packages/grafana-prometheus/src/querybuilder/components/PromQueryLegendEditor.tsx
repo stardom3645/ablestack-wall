@@ -1,5 +1,5 @@
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/querybuilder/components/PromQueryLegendEditor.tsx
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import * as React from 'react';
 
 import { SelectableValue } from '@grafana/data';
@@ -7,6 +7,8 @@ import { selectors } from '@grafana/e2e-selectors';
 import { EditorField } from '@grafana/experimental';
 import { AutoSizeInput, Select } from '@grafana/ui';
 
+import { editorPresentationContext } from '../../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
+import { wallQueryOptionText } from '../../../../../public/app/features/wall-modern/editor/optionText';
 import { LegendFormatMode } from '../../types';
 
 export interface PromQueryLegendEditorProps {
@@ -30,6 +32,11 @@ const legendModeOptions = [
  */
 export const PromQueryLegendEditor = React.memo<PromQueryLegendEditorProps>(
   ({ legendFormat, onChange, onRunQuery }) => {
+    const wallEditor = useContext(editorPresentationContext);
+    const choices = legendModeOptions.map((option) => ({
+      ...option,
+      label: wallEditor ? wallQueryOptionText(option.label) : option.label,
+    }));
     const mode = getLegendMode(legendFormat);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -66,7 +73,7 @@ export const PromQueryLegendEditor = React.memo<PromQueryLegendEditorProps>(
 
     return (
       <EditorField
-        label="Legend"
+        label={wallEditor ? wallQueryOptionText('Legend') : 'Legend'}
         tooltip="Series name override or template. Ex. {{hostname}} will be replaced with label value for hostname."
         data-testid={selectors.components.DataSource.Prometheus.queryEditor.legend}
       >
@@ -86,10 +93,10 @@ export const PromQueryLegendEditor = React.memo<PromQueryLegendEditorProps>(
               inputId="legend.mode"
               isSearchable={false}
               placeholder="Select legend mode"
-              options={legendModeOptions}
+              options={choices}
               width={22}
               onChange={onLegendModeChanged}
-              value={legendModeOptions.find((x) => x.value === mode)}
+              value={choices.find((x) => x.value === mode)}
             />
           )}
         </>

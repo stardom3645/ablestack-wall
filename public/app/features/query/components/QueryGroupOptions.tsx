@@ -4,16 +4,19 @@ import React, { useState, ChangeEvent, FocusEvent, useCallback } from 'react';
 import { rangeUtil, PanelData, DataSourceApi, GrafanaTheme2 } from '@grafana/data';
 import { Input, InlineSwitch, useStyles2, InlineLabel } from '@grafana/ui';
 import { QueryOperationRow } from 'app/core/components/QueryOperationRow/QueryOperationRow';
+import { Trans, t } from 'app/core/internationalization';
+import { wallQueryOptionText } from 'app/features/wall-modern/editor/optionText';
 import { QueryGroupOptions } from 'app/types';
 
 interface Props {
+  standalone?: boolean;
   options: QueryGroupOptions;
   dataSource: DataSourceApi;
   data: PanelData;
   onChange: (options: QueryGroupOptions) => void;
 }
 
-export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, onChange }: Props) => {
+export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, onChange, standalone }: Props) => {
   const [timeRangeFrom, setTimeRangeFrom] = useState(options.timeRange?.from || '');
   const [timeRangeShift, setTimeRangeShift] = useState(options.timeRange?.shift || '');
   const [timeRangeHide, setTimeRangeHide] = useState(options.timeRange?.hide ?? false);
@@ -159,7 +162,7 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
     return (
       <>
         <InlineLabel tooltip={tooltip} htmlFor="cache-timeout-id">
-          Cache timeout
+          {standalone ? wallQueryOptionText('Cache timeout') : 'Cache timeout'}
         </InlineLabel>
         <Input
           id="cache-timeout-id"
@@ -182,7 +185,9 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
 
     return (
       <>
-        <InlineLabel tooltip={tooltip}>Cache TTL</InlineLabel>
+        <InlineLabel tooltip={tooltip}>
+          <Trans i18nKey="wall.query-group-options.text-1a584611">Cache TTL</Trans>
+        </InlineLabel>
         <Input
           type="number"
           placeholder={`${dataSource.cachingConfig.TTLMs}`}
@@ -205,12 +210,14 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
           htmlFor="max-data-points-input"
           tooltip={
             <>
-              The maximum data points per series. Used directly by some data sources and used in calculation of auto
-              interval. With streaming data this value is used for the rolling buffer.
+              <Trans i18nKey="wall.query-group-options.text-07143d92">
+                The maximum data points per series. Used directly by some data sources and used in calculation of auto
+                interval. With streaming data this value is used for the rolling buffer.
+              </Trans>
             </>
           }
         >
-          Max data points
+          {standalone ? wallQueryOptionText('Max data points') : 'Max data points'}
         </InlineLabel>
         <Input
           id="max-data-points-input"
@@ -220,12 +227,19 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
           onBlur={onMaxDataPointsBlur}
           defaultValue={value}
         />
-        {isAuto && (
-          <>
-            <span className={cx(styles.noSquish, styles.operator)}>=</span>
-            <span className={cx(styles.noSquish, styles.left)}>Width of panel</span>
-          </>
-        )}
+        {isAuto &&
+          (standalone ? (
+            <span className="wall-query-option-hint">{t('wall.work.auto-points', '자동 · 패널 너비 기준')}</span>
+          ) : (
+            <>
+              <span className={cx(styles.noSquish, styles.operator)}>
+                <Trans i18nKey="wall.query-group-options.text-21606782">=</Trans>
+              </span>
+              <span className={cx(styles.noSquish, styles.left)}>
+                <Trans i18nKey="wall.query-group-options.text-8a1d3549">Width of panel</Trans>
+              </span>
+            </>
+          ))}
       </>
     );
   };
@@ -240,13 +254,22 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
           className={styles.firstColumn}
           tooltip={
             <>
-              A lower limit for the interval. Recommended to be set to write frequency, for example <code>1m</code> if
-              your data is written every minute. Default value can be set in data source settings for most data sources.
+              <Trans i18nKey="wall.query-group-options.text-66270f05">
+                A lower limit for the interval. Recommended to be set to write frequency, for example{' '}
+              </Trans>
+              <code>
+                <Trans i18nKey="wall.query-group-options.text-dc4ea839">1m</Trans>
+              </code>
+              <Trans i18nKey="wall.query-group-options.text-a9edc1ae">
+                {' '}
+                if your data is written every minute. Default value can be set in data source settings for most data
+                sources.
+              </Trans>
             </>
           }
           htmlFor="min-interval-input"
         >
-          Min interval
+          {standalone ? wallQueryOptionText('Min interval') : 'Min interval'}
         </InlineLabel>
         <Input
           id="min-interval-input"
@@ -256,21 +279,48 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
           onBlur={onMinIntervalBlur}
           defaultValue={options.minInterval ?? ''}
         />
-        <InlineLabel
-          className={styles.firstColumn}
-          tooltip={
-            <>
-              The evaluated interval that is sent to data source and is used in <code>$__interval</code> and{' '}
-              <code>$__interval_ms</code>. This value is not exactly equal to <code>Time range / max data points</code>,
-              it will approximate a series of magic number.
-            </>
-          }
-        >
-          Interval
-        </InlineLabel>
-        <span className={styles.noSquish}>{realInterval}</span>
-        <span className={cx(styles.noSquish, styles.operator)}>=</span>
-        <span className={cx(styles.noSquish, styles.left)}>Time range / max data points</span>
+        {standalone ? (
+          <>
+            <span className="wall-query-option-hint">{t('wall.work.actual-interval', '실제 조회 간격')}</span>
+            <span className="wall-query-option-hint">{realInterval ?? '—'}</span>
+          </>
+        ) : (
+          <>
+            <InlineLabel
+              className={styles.firstColumn}
+              tooltip={
+                <>
+                  <Trans i18nKey="wall.query-group-options.text-d5d9db1b">
+                    The evaluated interval that is sent to data source and is used in{' '}
+                  </Trans>
+                  <code>
+                    <Trans i18nKey="wall.query-group-options.text-7f2cd3cb">$__interval</Trans>
+                  </code>
+                  <Trans i18nKey="wall.query-group-options.text-cffa50a3"> and</Trans>{' '}
+                  <code>
+                    <Trans i18nKey="wall.query-group-options.text-427ed79f">$__interval_ms</Trans>
+                  </code>
+                  <Trans i18nKey="wall.query-group-options.text-b4f7631b">. This value is not exactly equal to</Trans>{' '}
+                  <code>
+                    <Trans i18nKey="wall.query-group-options.text-238360d0">Time range / max data points</Trans>
+                  </code>
+                  <Trans i18nKey="wall.query-group-options.text-0f0f62db">
+                    , it will approximate a series of magic number.
+                  </Trans>
+                </>
+              }
+            >
+              <Trans i18nKey="wall.query-group-options.text-011efcd5">Interval</Trans>
+            </InlineLabel>
+            <span className={styles.noSquish}>{realInterval}</span>
+            <span className={cx(styles.noSquish, styles.operator)}>
+              <Trans i18nKey="wall.query-group-options.text-21606782">=</Trans>
+            </span>
+            <span className={cx(styles.noSquish, styles.left)}>
+              <Trans i18nKey="wall.query-group-options.text-238360d0">Time range / max data points</Trans>
+            </span>
+          </>
+        )}
       </>
     );
   };
@@ -289,11 +339,134 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
 
     return (
       <>
-        {<span className={styles.collapsedText}>MD = {mdDesc}</span>}
-        {<span className={styles.collapsedText}>Interval = {intervalDesc}</span>}
+        {
+          <span className={styles.collapsedText}>
+            <Trans i18nKey="wall.query-group-options.text-a460a0a7">MD = </Trans>
+            {mdDesc}
+          </span>
+        }
+        {
+          <span className={styles.collapsedText}>
+            <Trans i18nKey="wall.query-group-options.text-728434f0">Interval = </Trans>
+            {intervalDesc}
+          </span>
+        }
       </>
     );
   };
+
+  const timeFields = (
+    <>
+      <InlineLabel
+        htmlFor="relative-time-input"
+        tooltip={
+          <>
+            <Trans i18nKey="wall.query-group-options.text-6dbabd31">
+              Overrides the relative time range for individual panels, which causes them to be different than what is
+              selected in the dashboard time picker in the top-right corner of the dashboard. For example to configure
+              the Last 5 minutes the Relative time should be{' '}
+            </Trans>
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-52d546a6">now-5m</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-cffa50a3"> and </Trans>
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-def11398">5m</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-8bf0f0cc">, or variables like</Trans>{' '}
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-277269ee">$_relativeTime</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-3a52ce78">.</Trans>
+          </>
+        }
+      >
+        {standalone ? wallQueryOptionText('Relative time') : 'Relative time'}
+      </InlineLabel>
+      <Input
+        id="relative-time-input"
+        type="text"
+        placeholder="1h"
+        onChange={onRelativeTimeChange}
+        onBlur={onOverrideTime}
+        invalid={!relativeTimeIsValid}
+        value={timeRangeFrom}
+      />
+      <InlineLabel
+        htmlFor="time-shift-input"
+        className={styles.firstColumn}
+        tooltip={
+          <>
+            <Trans i18nKey="wall.query-group-options.text-b5472908">
+              Overrides the time range for individual panels by shifting its start and end relative to the time picker.
+              For example to configure the Last 1h the Time shift should be{' '}
+            </Trans>
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-fe64e302">now-1h</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-cffa50a3"> and </Trans>
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-e9c9f7bc">1h</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-8bf0f0cc">, or variables like </Trans>
+            <code>
+              <Trans i18nKey="wall.query-group-options.text-5f119a04">$_timeShift</Trans>
+            </code>
+            <Trans i18nKey="wall.query-group-options.text-3a52ce78">.</Trans>
+          </>
+        }
+      >
+        {standalone ? wallQueryOptionText('Time shift') : 'Time shift'}
+      </InlineLabel>
+      <Input
+        id="time-shift-input"
+        type="text"
+        placeholder="1h"
+        onChange={onTimeShiftChange}
+        onBlur={onTimeShift}
+        invalid={!timeShiftIsValid}
+        value={timeRangeShift}
+      />
+      {(timeRangeShift || timeRangeFrom) && (
+        <>
+          <InlineLabel htmlFor="hide-time-info-switch" className={styles.firstColumn}>
+            {standalone ? wallQueryOptionText('Hide time info') : 'Hide time info'}
+          </InlineLabel>
+          <InlineSwitch
+            id="hide-time-info-switch"
+            className={styles.left}
+            value={timeRangeHide}
+            onChange={onToggleTimeOverride}
+          />
+        </>
+      )}
+    </>
+  );
+  const fields = (
+    <div className={styles.grid}>
+      {renderMaxDataPointsOption()}
+      {renderIntervalOption()}
+      {renderCacheTimeoutOption()}
+      {renderQueryCachingTTLOption()}
+
+      {timeFields}
+    </div>
+  );
+  if (standalone) {
+    return (
+      <div className="wall-work-execution-options">
+        <div className="wall-execution-field">{renderMaxDataPointsOption()}</div>
+        <div className="wall-execution-field">{renderIntervalOption()}</div>
+        {dataSource.meta.queryOptions?.cacheTimeout && (
+          <div className="wall-execution-field">{renderCacheTimeoutOption()}</div>
+        )}
+        {dataSource.cachingConfig?.enabled && (
+          <div className="wall-execution-field">{renderQueryCachingTTLOption()}</div>
+        )}
+        <div className="wall-execution-field">{timeFields}</div>
+      </div>
+    );
+  }
 
   return (
     <QueryOperationRow
@@ -305,70 +478,7 @@ export const QueryGroupOptionsEditor = React.memo(({ options, dataSource, data, 
       onOpen={onOpenOptions}
       onClose={onCloseOptions}
     >
-      <div className={styles.grid}>
-        {renderMaxDataPointsOption()}
-        {renderIntervalOption()}
-        {renderCacheTimeoutOption()}
-        {renderQueryCachingTTLOption()}
-
-        <InlineLabel
-          htmlFor="relative-time-input"
-          tooltip={
-            <>
-              Overrides the relative time range for individual panels, which causes them to be different than what is
-              selected in the dashboard time picker in the top-right corner of the dashboard. For example to configure
-              the Last 5 minutes the Relative time should be <code>now-5m</code> and <code>5m</code>, or variables like{' '}
-              <code>$_relativeTime</code>.
-            </>
-          }
-        >
-          Relative time
-        </InlineLabel>
-        <Input
-          id="relative-time-input"
-          type="text"
-          placeholder="1h"
-          onChange={onRelativeTimeChange}
-          onBlur={onOverrideTime}
-          invalid={!relativeTimeIsValid}
-          value={timeRangeFrom}
-        />
-        <InlineLabel
-          htmlFor="time-shift-input"
-          className={styles.firstColumn}
-          tooltip={
-            <>
-              Overrides the time range for individual panels by shifting its start and end relative to the time picker.
-              For example to configure the Last 1h the Time shift should be <code>now-1h</code> and <code>1h</code>, or
-              variables like <code>$_timeShift</code>.
-            </>
-          }
-        >
-          Time shift
-        </InlineLabel>
-        <Input
-          id="time-shift-input"
-          type="text"
-          placeholder="1h"
-          onChange={onTimeShiftChange}
-          onBlur={onTimeShift}
-          invalid={!timeShiftIsValid}
-          value={timeRangeShift}
-        />
-        {(timeRangeShift || timeRangeFrom) && (
-          <>
-            <InlineLabel htmlFor="hide-time-info-switch" className={styles.firstColumn}>
-              Hide time info
-            </InlineLabel>
-            <InlineSwitch
-              id="hide-time-info-switch"
-              className={styles.left}
-              value={timeRangeHide}
-              onChange={onToggleTimeOverride}
-            />
-          </>
-        )}
-      </div>
+      {fields}
     </QueryOperationRow>
   );
 });

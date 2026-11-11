@@ -43,10 +43,7 @@ export function VizLegend<T>({
   const { eventBus, onToggleSeriesVisibility, onToggleLegendSort } = usePanelContext();
 
   const onMouseOver = useCallback(
-    (
-      item: VizLegendItem,
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FocusEvent<HTMLButtonElement>
-    ) => {
+    (item: VizLegendItem, event: React.MouseEvent<HTMLElement, MouseEvent> | React.FocusEvent<HTMLElement>) => {
       eventBus?.publish({
         type: DataHoverEvent.type,
         payload: {
@@ -61,10 +58,7 @@ export function VizLegend<T>({
   );
 
   const onMouseOut = useCallback(
-    (
-      item: VizLegendItem,
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FocusEvent<HTMLButtonElement>
-    ) => {
+    (item: VizLegendItem, event: React.MouseEvent<HTMLElement, MouseEvent> | React.FocusEvent<HTMLElement>) => {
       eventBus?.publish({
         type: DataHoverClearEvent.type,
         payload: {
@@ -95,6 +89,21 @@ export function VizLegend<T>({
     [onToggleSeriesVisibility, onLabelClick, seriesVisibilityChangeBehavior]
   );
 
+  const presentationItemRenderer = useCallback(
+    (item: VizLegendItem<T>) =>
+      timeSeriesPresentation!.renderLegendItem!({
+        item,
+        displayMode,
+        readonly,
+        onLabelClick: onLegendLabelClick,
+        onLabelMouseOver: onMouseOver,
+        onLabelMouseOut: onMouseOut,
+      }),
+    [timeSeriesPresentation, displayMode, readonly, onLegendLabelClick, onMouseOver, onMouseOut]
+  );
+  const effectiveItemRenderer =
+    itemRenderer ?? (timeSeriesPresentation?.renderLegendItem ? presentationItemRenderer : undefined);
+
   const makeVizLegendList = useCallback(
     (items: VizLegendItem[]) => {
       return (
@@ -104,15 +113,30 @@ export function VizLegend<T>({
           onLabelMouseOver={onMouseOver}
           onLabelMouseOut={onMouseOut}
           onLabelClick={onLegendLabelClick}
-          itemRenderer={itemRenderer}
+          itemRenderer={effectiveItemRenderer}
           readonly={readonly}
           items={items}
         />
       );
     },
-    [className, placement, onMouseOver, onMouseOut, onLegendLabelClick, itemRenderer, readonly]
+    [className, placement, onMouseOver, onMouseOut, onLegendLabelClick, effectiveItemRenderer, readonly]
   );
 
+  if (timeSeriesPresentation?.renderLegend) {
+    return timeSeriesPresentation.renderLegend({
+      items,
+      thresholdItems,
+      mappingItems,
+      displayMode,
+      placement,
+      sortBy: sortKey,
+      sortDesc,
+      readonly,
+      onLabelClick: onLegendLabelClick,
+      onLabelMouseOver: onMouseOver,
+      onLabelMouseOut: onMouseOut,
+    });
+  }
   switch (displayMode) {
     case LegendDisplayMode.Table:
       return (
@@ -126,7 +150,7 @@ export function VizLegend<T>({
           onToggleSort={onToggleSort || onToggleLegendSort}
           onLabelMouseOver={onMouseOver}
           onLabelMouseOut={onMouseOut}
-          itemRenderer={itemRenderer}
+          itemRenderer={effectiveItemRenderer}
           readonly={readonly}
           isSortable={isSortable}
         />

@@ -2,6 +2,7 @@ import { DataSourceInstanceSettings, PanelPlugin } from '@grafana/data';
 import { Button, Stack } from '@grafana/ui';
 import { OldFolderPicker } from 'app/core/components/Select/OldFolderPicker';
 import { DataSourcePicker } from 'app/features/datasources/components/picker/DataSourcePicker';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 import { PermissionLevelString } from 'app/types';
 
 import { GRAFANA_DATASOURCE_NAME } from '../../../features/alerting/unified/utils/datasource';
@@ -108,6 +109,7 @@ const unifiedAlertList = new PanelPlugin<UnifiedAlertListOptions>(UnifiedAlertLi
       id: 'datasource',
       defaultValue: null,
       editor: function RenderDatasourcePicker(props) {
+        const text = useWallOptionText();
         return (
           <Stack gap={1}>
             <DataSourcePicker
@@ -118,7 +120,7 @@ const unifiedAlertList = new PanelPlugin<UnifiedAlertListOptions>(UnifiedAlertLi
               onChange={(ds: DataSourceInstanceSettings) => props.onChange(ds.name)}
             />
             <Button variant="secondary" onClick={() => props.onChange(null)}>
-              Clear
+              {text('Clear')}
             </Button>
           </Stack>
         );

@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { ChevronDown, Download } from 'lucide-react';
+import { useState } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -16,14 +17,19 @@ import {
   VizPanel,
 } from '@grafana/scenes';
 import { LibraryPanel } from '@grafana/schema/';
-import { Button, CodeEditor, Field, Select, useStyles2 } from '@grafana/ui';
-import { t } from 'app/core/internationalization';
+import { ClipboardButton, Select } from '@grafana/ui';
+import { Trans, t } from 'app/core/internationalization';
 import { getPanelDataFrames } from 'app/features/dashboard/components/HelpWizard/utils';
 import { PanelModel } from 'app/features/dashboard/state';
-import { getPanelInspectorStyles2 } from 'app/features/inspector/styles';
 import { InspectTab } from 'app/features/inspector/types';
+import { downloadAsJson } from 'app/features/inspector/utils/download';
 import { getPrettyJSON } from 'app/features/inspector/utils/utils';
 import { reportPanelInspectInteraction } from 'app/features/search/page/reporting';
+import { Popover, PopoverTrigger, PopoverContent } from 'app/features/wall-modern/components/ui/popover';
+import { WallJsonWorkspace } from 'app/features/wall-modern/editor/WallJsonWorkspace';
+import { inspectJsonSyntax } from 'app/features/wall-modern/editor/jsonWorkspace';
+import { safeQueryError } from 'app/features/wall-modern/panels/safeQueryError';
+import { Button } from 'app/features/wall-modern/ui';
 
 import { DashboardGridItem } from '../scene/DashboardGridItem';
 import { buildGridItemForPanel } from '../serialization/transformSaveModelToScene';
@@ -42,15 +48,21 @@ export interface InspectJsonTabState extends SceneObjectState {
   panelRef: SceneObjectRef<VizPanel>;
   source: ShowContent;
   jsonText: string;
+  jsonError?: string;
+  originalText: string;
+  sessions: Partial<Record<ShowContent, { text: string; original: string }>>;
   onClose: () => void;
 }
 
 export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
-  public constructor(state: Omit<InspectJsonTabState, 'source' | 'jsonText'>) {
+  public constructor(state: Omit<InspectJsonTabState, 'source' | 'jsonText' | 'originalText' | 'sessions'>) {
+    const original = getJsonText('panel-json', state.panelRef.resolve());
     super({
       ...state,
       source: 'panel-json',
-      jsonText: getJsonText('panel-json', state.panelRef.resolve()),
+      jsonText: original,
+      originalText: original,
+      sessions: {},
     });
   }
 
@@ -100,30 +112,74 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
   }
 
   public onChangeSource = (value: SelectableValue<ShowContent>) => {
-    this.setState({ source: value.value!, jsonText: getJsonText(value.value!, this.state.panelRef.resolve()) });
+    if (!value.value || value.value === this.state.source) {
+      return;
+    }
+    const sessions = {
+      ...this.state.sessions,
+      [this.state.source]: { text: this.state.jsonText, original: this.state.originalText },
+    };
+    const snapshot =
+      sessions[value.value] ??
+      (() => {
+        const text = getJsonText(value.value!, this.state.panelRef.resolve());
+        return { text, original: text };
+      })();
+    this.setState({
+      jsonError: undefined,
+      source: value.value,
+      jsonText: snapshot.text,
+      originalText: snapshot.original,
+      sessions,
+    });
   };
 
   public onApplyChange = () => {
     const panel = this.state.panelRef.resolve();
     const dashboard = getDashboardSceneFor(panel);
-    const jsonObj = JSON.parse(this.state.jsonText);
-
-    const panelModel = new PanelModel(jsonObj);
-    const gridItem = buildGridItemForPanel(panelModel);
-    const newState = sceneUtils.cloneSceneObjectState(gridItem.state);
-
-    if (!(panel.parent instanceof DashboardGridItem)) {
-      console.error('Cannot update state of panel', panel, gridItem);
+    if (!this.isEditable()) {
+      return;
+    }
+    let jsonObj;
+    try {
+      jsonObj = JSON.parse(this.state.jsonText);
+      if (!jsonObj || typeof jsonObj !== 'object' || Array.isArray(jsonObj)) {
+        throw new Error('패널 JSON은 객체여야 합니다.');
+      }
+    } catch {
+      this.setState({ jsonError: 'JSON 형식이 올바르지 않습니다. 내용을 확인한 후 다시 적용하세요.' });
       return;
     }
 
-    this.state.onClose();
+    const prepared = (() => {
+      try {
+        const panelModel = new PanelModel(jsonObj);
+        const gridItem = buildGridItemForPanel(panelModel);
+        return { panelModel, newState: sceneUtils.cloneSceneObjectState(gridItem.state) };
+      } catch (error) {
+        this.setState({
+          jsonError: `패널 설정을 적용할 수 없습니다. ${safeQueryError(error instanceof Error ? error.message : '')}`,
+        });
+        return undefined;
+      }
+    })();
+    if (!prepared) {
+      return;
+    }
+    const { panelModel, newState } = prepared;
+
+    if (!(panel.parent instanceof DashboardGridItem)) {
+      console.error('Cannot update state of panel', panel, panel.parent);
+      return;
+    }
 
     if (!dashboard.state.isEditing) {
       dashboard.onEnterEditMode();
     }
 
     panel.parent.setState(newState);
+    // Close after native edit-mode URL synchronization, so it cannot restore inspect=...
+    this.state.onClose();
 
     //Report relevant updates
     reportPanelInspectInteraction(InspectTab.JSON, 'apply', {
@@ -135,7 +191,11 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
   };
 
   public onCodeEditorBlur = (value: string) => {
-    this.setState({ jsonText: value });
+    this.setState({ jsonText: value, jsonError: undefined });
+  };
+
+  public onRestore = () => {
+    this.setState({ jsonText: this.state.originalText, jsonError: undefined });
   };
 
   public isEditable() {
@@ -160,44 +220,85 @@ export class InspectJsonTab extends SceneObjectBase<InspectJsonTabState> {
   }
 
   static Component = ({ model }: SceneComponentProps<InspectJsonTab>) => {
-    const { source: show, jsonText } = model.useState();
-    const styles = useStyles2(getPanelInspectorStyles2);
+    const { source: show, jsonText, originalText, jsonError } = model.useState();
     const options = model.getOptions();
+    const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
 
+    const documentActions = () => (
+      <>
+        <ClipboardButton
+          getText={() => model.state.jsonText}
+          variant="secondary"
+          fill="text"
+          size="sm"
+          icon="copy"
+          aria-label="전체 JSON 복사"
+          title="전체 JSON 복사"
+        >
+          <Trans i18nKey="wall.inspect-json-tab.text-524212f3">전체 JSON 복사</Trans>
+        </ClipboardButton>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label="JSON 파일 내보내기"
+          title="JSON 파일 내보내기"
+          disabled={Boolean(inspectJsonSyntax(jsonText).error)}
+          onClick={() => {
+            const parsed = inspectJsonSyntax(model.state.jsonText);
+            if (!parsed.error) {
+              downloadAsJson(parsed.value, `${model.state.panelRef.resolve().state.title}-${show}`);
+            }
+          }}
+        >
+          <Download size={15} />
+          <Trans i18nKey="wall.inspect-json-tab.text-9ad53fb3">JSON 파일 내보내기</Trans>
+        </Button>
+      </>
+    );
     return (
-      <div className={styles.wrap}>
-        <div className={styles.toolbar} data-testid={selectors.components.PanelInspector.Json.content}>
-          <Field label={t('dashboard.inspect-json.select-source', 'Select source')} className="flex-grow-1">
+      <div ref={setPortalHost} className="wall-inspect-json">
+        <div className="wall-inspect-json-toolbar" data-testid={selectors.components.PanelInspector.Json.content}>
+          <div className="wall-json-source">
+            <label htmlFor="select-source-dropdown">
+              <Trans i18nKey="wall.inspect-json-tab.text-cf2cebe7">JSON 소스</Trans>
+            </label>
             <Select
               inputId="select-source-dropdown"
               options={options}
               value={options.find((v) => v.value === show) ?? options[0].value}
               onChange={model.onChangeSource}
             />
-          </Field>
-          {model.isEditable() && (
-            <Button className={styles.toolbarItem} onClick={model.onApplyChange}>
-              Apply
-            </Button>
-          )}
-        </div>
-
-        <div className={styles.content}>
-          <AutoSizer disableWidth>
-            {({ height }) => (
-              <CodeEditor
-                width="100%"
-                height={height}
-                language="json"
-                showLineNumbers={true}
-                showMiniMap={jsonText.length > 100}
-                value={jsonText}
-                readOnly={!model.isEditable()}
-                onBlur={model.onCodeEditorBlur}
+          </div>
+          <div className="wall-json-document-actions" role="group" aria-label="JSON 문서 작업">
+            <Popover>
+              <PopoverTrigger
+                render={
+                  <Button size="sm" variant="ghost" aria-label="문서 작업" title="문서 작업">
+                    <Trans i18nKey="wall.inspect-json-tab.text-aa988127">문서 작업</Trans>
+                    <ChevronDown size={14} />
+                  </Button>
+                }
               />
-            )}
-          </AutoSizer>
+              <PopoverContent
+                portalContainer={portalHost}
+                className="wall-json-tool-menu wall-json-document-menu"
+                aria-label="JSON 문서 작업 메뉴"
+              >
+                {documentActions()}
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
+        <WallJsonWorkspace
+          key={show}
+          text={jsonText}
+          original={originalText}
+          readOnly={!model.isEditable()}
+          error={jsonError}
+          onChange={model.onCodeEditorBlur}
+          onRestore={model.onRestore}
+          onApply={model.onApplyChange}
+        />
       </div>
     );
   };

@@ -1,6 +1,6 @@
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/querybuilder/components/PromQueryEditorSelector.tsx
 import { isEqual, map } from 'lodash';
-import { memo, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { memo, SyntheticEvent, useCallback, useContext, useEffect, useState } from 'react';
 
 import { CoreApp, LoadingState, SelectableValue } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
@@ -9,6 +9,12 @@ import { reportInteraction } from '@grafana/runtime';
 import { Button, ConfirmModal, Space } from '@grafana/ui';
 
 import { t } from '../../../../../public/app/core/internationalization';
+import {
+  editorPresentationContext,
+  queryWorkspaceViewContext,
+} from '../../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
+import { WallQueryToolbar } from '../../../../../public/app/features/wall-modern/editor/WallQueryToolbar';
+import { wallStudioTokens } from '../../../../../public/app/features/wall-modern/surfaceTokens';
 import { PromQueryEditorProps } from '../../components/types';
 import { PromQueryFormat } from '../../dataquery';
 import { PromQuery } from '../../types';
@@ -39,6 +45,52 @@ export const INTERVAL_FACTOR_OPTIONS: Array<SelectableValue<number>> = map([1, 2
 type Props = PromQueryEditorProps;
 
 export const PromQueryEditorSelector = memo<Props>((props) => {
+  const wallEditor = useContext(editorPresentationContext) && props.app === CoreApp.PanelEditor;
+  return wallEditor ? <WallPromQueryEditor {...props} /> : <NativePromQueryEditorSelector {...props} />;
+});
+
+/** Code-only presentation; never parse or rewrite a stored Builder query on entry. */
+function WallPromQueryEditor(props: Props) {
+  const workspaceView = useContext(queryWorkspaceViewContext);
+  const [expandedCode, setExpandedCode] = useState(false);
+  const [stale, setStale] = useState(false);
+  const expanded = workspaceView?.expanded ?? expandedCode;
+  const query = getQueryWithDefaults(props.query, props.app, props.datasource.defaultEditor);
+  useEffect(() => setStale(false), [props.data]);
+  return (
+    <div className="wall-prom-code-workspace">
+      <PromQueryCodeEditor
+        {...props}
+        query={query}
+        showExplain={false}
+        showHints={false}
+        onChange={(next) => {
+          if (!isEqual(next, props.query)) {
+            setStale(true);
+          }
+          props.onChange(next);
+        }}
+        minEditorHeight={
+          expanded
+            ? wallStudioTokens.queryCodeExpandedHeight
+            : workspaceView
+              ? wallStudioTokens.queryWorkspaceCodeMinHeight
+              : wallStudioTokens.queryCodeMinHeight
+        }
+      />
+      <WallQueryToolbar
+        onRun={props.onRunQuery}
+        loading={props.data?.state === LoadingState.Loading}
+        stale={stale}
+        expanded={expanded}
+        onToggleExpand={() => setExpandedCode((value) => !value)}
+      />
+      <PromQueryBuilderOptions query={query} app={props.app} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+    </div>
+  );
+}
+
+const NativePromQueryEditorSelector = memo<Props>((props) => {
   const {
     onChange,
     onRunQuery,
@@ -151,24 +203,27 @@ export const PromQueryEditorSelector = memo<Props>((props) => {
         </div>
       </EditorHeader>
       <Space v={0.5} />
-      <EditorRows>
-        {editorMode === QueryEditorMode.Code && (
-          <PromQueryCodeEditor {...props} query={query} showExplain={explain} onChange={onChangeInternal} />
-        )}
-        {editorMode === QueryEditorMode.Builder && (
-          <PromQueryBuilderContainer
-            query={query}
-            datasource={props.datasource}
-            onChange={onChangeInternal}
-            onRunQuery={props.onRunQuery}
-            data={data}
-            showExplain={explain}
-          />
-        )}
-        <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery} />
-      </EditorRows>
+      <div>
+        <EditorRows>
+          {editorMode === QueryEditorMode.Code && (
+            <PromQueryCodeEditor {...props} query={query} showExplain={explain} onChange={onChangeInternal} />
+          )}
+          {editorMode === QueryEditorMode.Builder && (
+            <PromQueryBuilderContainer
+              query={query}
+              datasource={props.datasource}
+              onChange={onChangeInternal}
+              onRunQuery={props.onRunQuery}
+              data={data}
+              showExplain={explain}
+            />
+          )}
+          <PromQueryBuilderOptions query={query} app={props.app} onChange={onChange} onRunQuery={onRunQuery} />
+        </EditorRows>
+      </div>
     </>
   );
 });
 
 PromQueryEditorSelector.displayName = 'PromQueryEditorSelector';
+NativePromQueryEditorSelector.displayName = 'NativePromQueryEditorSelector';

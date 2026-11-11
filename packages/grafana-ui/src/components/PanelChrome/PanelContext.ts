@@ -34,6 +34,11 @@ export interface PanelContext {
    */
   onSeriesColorChange?: (label: string, color: string) => void;
 
+  /** Optional native dashboard hooks for the Wall legend; absent outside supported contexts. */
+  onSeriesVisibilityReset?: () => void;
+  onInspectSeriesData?: () => void;
+  canEditSeriesColor?: () => boolean;
+
   onToggleSeriesVisibility?: (label: string, mode: SeriesVisibilityChangeMode) => void;
 
   canAddAnnotations?: () => boolean;

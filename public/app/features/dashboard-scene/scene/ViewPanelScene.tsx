@@ -1,4 +1,5 @@
 import { SceneComponentProps, SceneObjectBase, SceneObjectRef, SceneObjectState, VizPanel } from '@grafana/scenes';
+import { WallDashboardPanel } from 'app/features/wall-modern/panels/WallDashboardPanel';
 
 import { activateInActiveParents } from '../utils/utils';
 
@@ -26,6 +27,10 @@ export class ViewPanelScene extends SceneObjectBase<ViewPanelSceneState> {
     const { panelRef } = model.useState();
     const panel = panelRef.resolve();
 
-    return <panel.Component model={panel} />;
+    return (
+      <WallDashboardPanel panel={panel}>
+        <panel.Component model={panel} />
+      </WallDashboardPanel>
+    );
   };
 }

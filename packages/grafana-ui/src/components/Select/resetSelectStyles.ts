@@ -1,7 +1,11 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { CSSObjectWithLabel } from 'react-select';
 
 import { GrafanaTheme2 } from '@grafana/data';
+
+import { PortalPresentationContext } from '../Portal/PortalPresentationContext';
+
+import { EmbeddedSelectContext } from './EmbeddedSelectContext';
 
 export default function resetSelectStyles(theme: GrafanaTheme2) {
   return {
@@ -48,6 +52,8 @@ export default function resetSelectStyles(theme: GrafanaTheme2) {
 }
 
 export function useCustomSelectStyles(theme: GrafanaTheme2, width: number | string | undefined) {
+  const presentation = useContext(PortalPresentationContext);
+  const embedded = useContext(EmbeddedSelectContext);
   return useMemo(() => {
     return {
       ...resetSelectStyles(theme),
@@ -57,26 +63,29 @@ export function useCustomSelectStyles(theme: GrafanaTheme2, width: number | stri
         return {
           ...base,
           zIndex: theme.zIndex.portal,
+          ...presentation,
         };
       },
       //These are required for the menu positioning to function
       menu: ({ top, bottom, position }: any) => {
         return {
-          top,
-          bottom,
-          position,
+          top: embedded ? undefined : top,
+          bottom: embedded ? undefined : bottom,
+          position: embedded ? 'relative' : position,
           minWidth: '100%',
           zIndex: theme.zIndex.dropdown,
+          ...presentation,
         };
       },
       container: () => ({
         width: width ? theme.spacing(width) : '100%',
-        display: width === 'auto' ? 'inline-flex' : 'flex',
+        display: !embedded && width === 'auto' ? 'inline-flex' : 'flex',
+        flexDirection: embedded ? 'column' : undefined,
       }),
       option: (provided: any, state: any) => ({
         ...provided,
         opacity: state.isDisabled ? 0.5 : 1,
       }),
     };
-  }, [theme, width]);
+  }, [theme, width, presentation, embedded]);
 }

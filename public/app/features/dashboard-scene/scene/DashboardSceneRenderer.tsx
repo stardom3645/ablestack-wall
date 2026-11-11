@@ -15,10 +15,10 @@ import DashboardEmpty from 'app/features/dashboard/dashgrid/DashboardEmpty';
 import { WallDashboardHeading } from 'app/features/wall-modern/WallDashboardHeading';
 import { WallSettingsContext } from 'app/features/wall-modern/management/WallManagement';
 import { isWallModernRoute } from 'app/features/wall-modern/model';
-import { isStorageStatPilot } from 'app/features/wall-modern/statPresentation';
 import { WallDashboardToolbar } from 'app/features/wall-modern/toolbar/WallDashboardToolbar';
 import { WallLayoutHistoryProvider } from 'app/features/wall-modern/workspace/LayoutHistoryContext';
 import { StorageDashboardWorkspace } from 'app/features/wall-modern/workspace/StorageDashboardWorkspace';
+import { WallDashboardWorkspace } from 'app/features/wall-modern/workspace/WallDashboardWorkspace';
 import { WallEditingProvider } from 'app/features/wall-modern/workspace/WallEditContext';
 import { useSelector } from 'app/types';
 
@@ -30,29 +30,17 @@ import { DashboardAngularDeprecationBanner } from './angular/DashboardAngularDep
 import { DefaultGridLayoutManager } from './layout-default/DefaultGridLayoutManager';
 
 export function DashboardSceneRenderer({ model }: SceneComponentProps<DashboardScene>) {
-  return model.state.uid === 'aec03x1adsi68f' ? (
+  return (
     <WallLayoutHistoryProvider>
       <WallEditingProvider dashboard={model}>
         <DashboardSceneContent model={model} />
       </WallEditingProvider>
     </WallLayoutHistoryProvider>
-  ) : (
-    <DashboardSceneContent model={model} />
   );
 }
 function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
-  const {
-    controls,
-    overlay,
-    editview,
-    editPanel,
-    isEmpty,
-    meta,
-    viewPanelScene,
-    panelSearch,
-    panelsPerRow,
-    isEditing,
-  } = model.useState();
+  const { controls, overlay, editview, editPanel, isEmpty, meta, viewPanelScene, panelSearch, panelsPerRow } =
+    model.useState();
   const headerHeight = useChromeHeaderHeight();
   const styles = useStyles2(getStyles, headerHeight ?? 0);
   const location = useLocation();
@@ -63,13 +51,14 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
   const hasControls = controls?.hasControls();
   const isSettingsOpen = editview !== undefined;
   const workspace =
-    (!isEditing || model.state.uid === 'aec03x1adsi68f') &&
     !viewPanelScene &&
     !panelSearch &&
     !panelsPerRow &&
-    isStorageStatPilot(location.pathname, location.search) &&
+    !meta.isSnapshot &&
+    !meta.dashboardNotFound &&
     bodyToRender instanceof DefaultGridLayoutManager;
-  const wallToolbar = workspace && controls instanceof DashboardControls && !meta.isSnapshot && !meta.dashboardNotFound;
+  // Toolbar presentation is shared; the 05 Workspace/Grid remains independently scoped.
+  const wallToolbar = controls instanceof DashboardControls && !meta.isSnapshot && !meta.dashboardNotFound;
 
   // Remember scroll pos when going into view panel, edit panel or settings
   useMemo(() => {
@@ -88,7 +77,7 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
   if (editview) {
     return (
       <>
-        <WallSettingsContext.Provider value={model.state.uid === 'aec03x1adsi68f' ? model : undefined}>
+        <WallSettingsContext.Provider value={!meta.isSnapshot && !meta.dashboardNotFound ? model : undefined}>
           <editview.Component model={editview} />
         </WallSettingsContext.Provider>
         {overlay && <overlay.Component model={overlay} />}
@@ -103,7 +92,11 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
   const withPanels = (
     <div className={cx(styles.body, !hasControls && styles.bodyWithoutControls)} key="dashboard-panels">
       {workspace && bodyToRender instanceof DefaultGridLayoutManager ? (
-        <StorageDashboardWorkspace layout={bodyToRender} />
+        model.state.uid === 'aec03x1adsi68f' ? (
+          <StorageDashboardWorkspace layout={bodyToRender} />
+        ) : (
+          <WallDashboardWorkspace layout={bodyToRender} />
+        )
       ) : (
         <bodyToRender.Component model={bodyToRender} />
       )}
@@ -148,13 +141,7 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
               )}
               <div className={cx(styles.canvasContent)}>
                 {isWallModernRoute(location.pathname, location.search) && (
-                  <WallDashboardHeading
-                    title={model.state.title}
-                    description={
-                      model.state.description ||
-                      (workspace ? '스토리지센터 가상머신의 자원과 서비스 상태를 영역별로 확인하세요.' : undefined)
-                    }
-                  />
+                  <WallDashboardHeading title={model.state.title} description={model.state.description} />
                 )}
                 {body}
               </div>

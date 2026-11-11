@@ -86,7 +86,7 @@ it('keeps existing odd coordinates while native panel IDs are added or removed',
 });
 
 it.each(['aec03x1adsi68f', 'another-dashboard'])(
-  'removes deleted Wall metadata only in the opted-in dashboard and restores it on cancel: %s',
+  'removes deleted Wall metadata across dashboards and restores it on cancel: %s',
   (uid) => {
     const doc: WallDocument = {
       version: 1,
@@ -112,16 +112,43 @@ it.each(['aec03x1adsi68f', 'another-dashboard'])(
     scene.removePanel(panel);
     const saved = transformSceneToSaveModel(scene);
     expect(saved.panels).toEqual([]);
-    if (uid === 'aec03x1adsi68f') {
-      expect(scene.state.wallModern?.layouts.network).toEqual([doc.layouts.network[1]]);
-      expect(scene.state.wallModern?.layouts.overview).toEqual(doc.layouts.overview);
-      expect(scene.state.wallModern?.texts).toEqual(doc.texts);
-      expect(scene.state.wallModern?.panelSources).toBeUndefined();
-    } else {
-      expect(scene.state.wallModern).toEqual(doc);
-    }
+    expect(scene.state.wallModern?.layouts.network).toEqual([doc.layouts.network[1]]);
+    expect(scene.state.wallModern?.layouts.overview).toEqual(doc.layouts.overview);
+    expect(scene.state.wallModern?.texts).toEqual(doc.texts);
+    expect(scene.state.wallModern?.panelSources).toBeUndefined();
     scene.exitEditMode({ skipConfirm: true, restoreInitialState: true });
     expect(scene.state.wallModern).toEqual(doc);
     expect(scene.state.body.getVizPanels().map((item) => item.state.key)).toEqual(['panel-252']);
   }
 );
+
+it('does not mark a layout dirty solely because native item order or transient engine flags differ', () => {
+  const defaults: WallDocument = {
+    version: 1,
+    layouts: {
+      overview: [
+        { i: '1', x: 0, y: 0, w: 12, h: 48 },
+        { i: '2', x: 12, y: 0, w: 12, h: 48 },
+      ],
+    },
+    texts: {},
+  };
+  const reordered = {
+    ...defaults,
+    layouts: { overview: [...defaults.layouts.overview].reverse().map((item) => ({ ...item, moved: false })) },
+  };
+  expect(normalizeWallDocument(reordered, undefined, defaults)).toBeUndefined();
+  expect(normalizeWallDocument(reordered, defaults, defaults)).toBe(defaults);
+  const changed = {
+    ...reordered,
+    layouts: { overview: reordered.layouts.overview.map((item) => ({ ...item, w: 11 })) },
+  };
+  expect(normalizeWallDocument(changed, defaults, defaults)).toBe(changed);
+  expect(
+    normalizeWallDocument(
+      { ...reordered, texts: { section: { title: 'Changed', description: '' } } },
+      defaults,
+      defaults
+    )
+  ).toBeDefined();
+});

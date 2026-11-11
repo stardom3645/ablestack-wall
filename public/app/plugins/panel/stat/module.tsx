@@ -7,12 +7,14 @@ import {
   PercentChangeColorMode,
 } from '@grafana/schema';
 import { commonOptionsBuilder, sharedSingleStatMigrationHandler } from '@grafana/ui';
+import { WallStatStyleEditor } from 'app/features/wall-modern/panels/WallStatStyleEditor';
 
 import { statPanelChangedHandler } from './StatMigrations';
 import { StatPanel } from './StatPanel';
 import { addStandardDataReduceOptions, addOrientationOption } from './common';
-import { defaultOptions, Options } from './panelcfg.gen';
+import { defaultOptions } from './panelcfg.gen';
 import { StatSuggestionsSupplier } from './suggestions';
+import { Options } from './types';
 
 export const plugin = new PanelPlugin<Options>(StatPanel)
   .useFieldConfig()
@@ -20,6 +22,15 @@ export const plugin = new PanelPlugin<Options>(StatPanel)
     const mainCategory = ['Stat styles'];
 
     addStandardDataReduceOptions(builder);
+    builder.addCustomEditor({
+      id: 'wallStatStyle',
+      path: 'wallStatStyle',
+      name: '표현 스타일',
+      category: mainCategory,
+      // Do not silently convert existing dashboards when the option is absent.
+      defaultValue: undefined,
+      editor: WallStatStyleEditor,
+    });
     addOrientationOption(builder, mainCategory);
     commonOptionsBuilder.addTextSizeOptions(builder);
 

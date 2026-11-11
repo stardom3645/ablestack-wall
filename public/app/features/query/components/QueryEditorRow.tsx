@@ -39,12 +39,14 @@ import { Trans, t } from 'app/core/internationalization';
 import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
+import { WallCodeQueryHost, WallSelectedQuery } from 'app/features/wall-modern/editor/WallQueryParts';
 
 import { QueryActionComponent, RowActionComponents } from './QueryActionComponent';
 import { QueryEditorRowHeader } from './QueryEditorRowHeader';
 import { QueryErrorAlert } from './QueryErrorAlert';
 
 export interface Props<TQuery extends DataQuery> {
+  workspace?: boolean;
   data: PanelData;
   query: TQuery;
   queries: TQuery[];
@@ -286,21 +288,30 @@ export class QueryEditorRow<TQuery extends DataQuery> extends PureComponent<Prop
       let QueryEditor = this.getReactQueryEditor(datasource);
 
       if (QueryEditor) {
+        const renderEditor = (
+          wallPresentation?: import('app/features/wall-modern/editor/EditorPresentationContext').WallCodeQueryPresentation
+        ) => (
+          <QueryEditor
+            {...(wallPresentation ? { wallPresentation } : {})}
+            query={query}
+            datasource={datasource}
+            onChange={onChange}
+            onRunQuery={onRunQuery}
+            onAddQuery={onAddQuery}
+            data={data}
+            range={getTimeSrv().timeRange()}
+            queries={queries}
+            app={app}
+            history={history}
+          />
+        );
         return (
-          <DataSourcePluginContextProvider instanceSettings={this.props.dataSource}>
-            <QueryEditor
-              key={datasource?.name}
-              query={query}
-              datasource={datasource}
-              onChange={onChange}
-              onRunQuery={onRunQuery}
-              onAddQuery={onAddQuery}
-              data={data}
-              range={getTimeSrv().timeRange()}
-              queries={queries}
-              app={app}
-              history={history}
-            />
+          <DataSourcePluginContextProvider key={datasource.name} instanceSettings={this.props.dataSource}>
+            {this.props.workspace && ['mysql', 'postgres', 'mssql'].includes(this.props.dataSource.type) ? (
+              <WallCodeQueryHost>{renderEditor}</WallCodeQueryHost>
+            ) : (
+              renderEditor()
+            )}
           </DataSourcePluginContextProvider>
         );
       }
@@ -460,7 +471,10 @@ export class QueryEditorRow<TQuery extends DataQuery> extends PureComponent<Prop
     const { hasTextEditMode, datasource, showingHelp } = this.state;
     const isHidden = !!query.hide;
 
-    const hasEditorHelp = datasource?.components?.QueryEditorHelp;
+    const hasEditorHelp =
+      !(
+        this.props.workspace && ['prometheus', 'loki', 'mysql', 'postgres', 'mssql'].includes(datasource?.type ?? '')
+      ) && datasource?.components?.QueryEditorHelp;
 
     return (
       <>
@@ -548,33 +562,52 @@ export class QueryEditorRow<TQuery extends DataQuery> extends PureComponent<Prop
     const editor = this.renderPluginEditor();
     const DatasourceCheatsheet = datasource.components?.QueryEditorHelp;
 
+    const content = (
+      <div
+        className={rowClasses}
+        id={this.id}
+        data-wall-query-type={this.props.workspace ? this.props.dataSource.type : undefined}
+        data-wall-query-plugin={this.props.workspace ? datasource.type : undefined}
+      >
+        <ErrorBoundaryAlert>
+          {showingHelp &&
+            !(this.props.workspace && ['prometheus', 'loki', 'mysql', 'postgres', 'mssql'].includes(datasource.type)) &&
+            DatasourceCheatsheet && (
+              <OperationRowHelp>
+                <DatasourceCheatsheet
+                  onClickExample={(query) => this.onClickExample(query)}
+                  query={this.props.query}
+                  datasource={datasource}
+                />
+              </OperationRowHelp>
+            )}
+          {editor}
+        </ErrorBoundaryAlert>
+        {error && <QueryErrorAlert error={error} />}
+        {visualization}
+      </div>
+    );
+    // Angular controllers keep their legacy header/toggle path. Other plugins reuse the native editor directly.
+    if (this.props.workspace && !datasource.components?.QueryCtrl) {
+      const args = { isOpen: true, onOpen: () => {}, onClose: () => {} };
+      return (
+        <WallSelectedQuery metadata={this.renderHeader(args)} actions={this.renderActions(args)}>
+          {content}
+        </WallSelectedQuery>
+      );
+    }
     return (
       <div data-testid="query-editor-row" aria-label={selectors.components.QueryEditorRows.rows}>
         <QueryOperationRow
           id={this.id}
-          draggable={!hideActionButtons}
+          draggable={!hideActionButtons && !this.props.workspace}
           collapsable={collapsable}
           index={index}
           headerElement={this.renderHeader}
           actions={hideActionButtons ? undefined : this.renderActions}
           onOpen={this.onOpen}
         >
-          <div className={rowClasses} id={this.id}>
-            <ErrorBoundaryAlert>
-              {showingHelp && DatasourceCheatsheet && (
-                <OperationRowHelp>
-                  <DatasourceCheatsheet
-                    onClickExample={(query) => this.onClickExample(query)}
-                    query={this.props.query}
-                    datasource={datasource}
-                  />
-                </OperationRowHelp>
-              )}
-              {editor}
-            </ErrorBoundaryAlert>
-            {error && <QueryErrorAlert error={error} />}
-            {visualization}
-          </div>
+          {content}
         </QueryOperationRow>
       </div>
     );

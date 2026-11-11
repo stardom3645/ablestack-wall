@@ -3,6 +3,7 @@ import memoizeOne from 'memoize-one';
 import { Component, ContextType } from 'react';
 
 import { DataFrame, TimeRange } from '@grafana/data';
+import { LegendDisplayMode } from '@grafana/schema';
 import {
   TimeSeriesPresentation,
   timeSeriesPlotStyles,
@@ -11,6 +12,8 @@ import { VizPresentationContext } from '@grafana/ui/src/components/VizPresentati
 import { hasVisibleLegendSeries, PlotLegend } from '@grafana/ui/src/components/uPlot/PlotLegend';
 import { UPlotConfigBuilder } from '@grafana/ui/src/components/uPlot/config/UPlotConfigBuilder';
 import { withTheme2 } from '@grafana/ui/src/themes/ThemeContext';
+import { wallLegendTokens } from 'app/features/wall-modern/charts/legendTokens';
+import { legendPlacement } from 'app/features/wall-modern/charts/seriesLegendModel';
 
 import { GraphNG, GraphNGProps, PropDiffFn } from '../GraphNG/GraphNG';
 
@@ -56,11 +59,28 @@ export class UnthemedTimeSeries extends Component<TimeSeriesProps> {
   renderLegend = (config: UPlotConfigBuilder) => {
     const { legend, frames } = this.props;
 
-    if (!config || (legend && !legend.showLegend) || !hasVisibleLegendSeries(config, frames)) {
+    if (
+      !config ||
+      (legend && (!legend.showLegend || legend.displayMode === LegendDisplayMode.Hidden)) ||
+      !hasVisibleLegendSeries(config, frames)
+    ) {
       return null;
     }
 
-    return <PlotLegend data={frames} config={config} {...legend} />;
+    const placement = this.props.wallPresentation
+      ? legendPlacement(
+          legend?.placement,
+          this.props.options?.wallLegendAuto,
+          this.props.width,
+          this.props.height,
+          this.props.wallPresentation.legendAutoMinWidth ?? 900
+        )
+      : legend?.placement;
+    const width =
+      this.props.wallPresentation && placement === 'right' && !legend?.width
+        ? Math.min(wallLegendTokens.rightMaxWidth, this.props.width * wallLegendTokens.rightWidthRatio)
+        : legend?.width;
+    return <PlotLegend data={frames} config={config} {...legend} placement={placement ?? 'bottom'} width={width} />;
   };
 
   render() {

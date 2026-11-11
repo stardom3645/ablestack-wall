@@ -5,7 +5,9 @@ import * as React from 'react';
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { CustomScrollbar, FilterInput, RadioButtonGroup, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 import { AngularDeprecationPluginNotice } from 'app/features/plugins/angularDeprecation/AngularDeprecationPluginNotice';
+import { wallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { isPanelModelLibraryPanel } from '../../../library-panels/guard';
 
@@ -61,7 +63,9 @@ export const OptionsPaneOptions = (props: OptionPaneRenderProps) => {
     if (props.plugin.angularPanelCtrl) {
       mainBoxElements.push(
         <div className={styles.searchNotice} key="Search notice">
-          This is an old visualization type that does not support searching all options.
+          <Trans i18nKey="wall.options-pane-options.text-4fe8423b">
+            This is an old visualization type that does not support searching all options.
+          </Trans>
         </div>
       );
     }
@@ -154,19 +158,29 @@ export enum OptionFilter {
 export function renderSearchHits(
   allOptions: OptionsPaneCategoryDescriptor[],
   overrides: OptionsPaneCategoryDescriptor[],
-  searchQuery: string
+  searchQuery: string,
+  wall = false
 ) {
-  const engine = new OptionSearchEngine(allOptions, overrides);
+  const engine = new OptionSearchEngine(allOptions, overrides, wall ? wallOptionText : undefined);
   const { optionHits, totalCount, overrideHits } = engine.search(searchQuery);
 
   return (
     <div key="search results">
       <OptionsPaneCategory
         id="Found options"
-        title={`Matched ${optionHits.length}/${totalCount} options`}
+        title={
+          wall
+            ? `설정 ${optionHits.length}개 / 전체 ${totalCount}개`
+            : `Matched ${optionHits.length}/${totalCount} options`
+        }
         key="Normal options"
         forceOpen={1}
       >
+        {wall && optionHits.length === 0 && overrideHits.length === 0 && (
+          <p className="wall-option-empty">
+            <Trans i18nKey="wall.options-pane-options.text-b19af275">검색 조건에 맞는 설정이 없습니다.</Trans>
+          </p>
+        )}
         {optionHits.map((hit) => hit.render(searchQuery))}
       </OptionsPaneCategory>
       {overrideHits.map((override) => override.render(searchQuery))}

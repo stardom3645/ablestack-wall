@@ -1,9 +1,10 @@
 import { AnnotationChangeEvent, AnnotationEventUIModel, CoreApp, DataFrame } from '@grafana/data';
-import { config, getDataSourceSrv } from '@grafana/runtime';
+import { config, getDataSourceSrv, locationService } from '@grafana/runtime';
 import { AdHocFiltersVariable, dataLayers, sceneGraph, sceneUtils, VizPanel } from '@grafana/scenes';
 import { DataSourceRef } from '@grafana/schema';
 import { AdHocFilterItem, PanelContext } from '@grafana/ui';
 import { deleteAnnotation, saveAnnotation, updateAnnotation } from 'app/features/annotations/api';
+import { clearSeriesSelection } from 'app/features/wall-modern/charts/seriesLegendModel';
 
 import { dashboardSceneGraph } from '../utils/dashboardSceneGraph';
 import { getDashboardSceneFor, getPanelIdForVizPanel, getQueryRunnerFor } from '../utils/utils';
@@ -12,6 +13,32 @@ import { DashboardScene } from './DashboardScene';
 
 export function setDashboardPanelContext(vizPanel: VizPanel, context: PanelContext) {
   context.app = CoreApp.Dashboard;
+  // Color is a persistent Field Override; start native dirty/baseline tracking
+  // before invoking the existing renderer callback (also used by the swatch).
+  const changeColor = context.onSeriesColorChange;
+  if (changeColor) {
+    context.onSeriesColorChange = (label, color) => {
+      const dashboard = getDashboardSceneFor(vizPanel);
+      if (!dashboard.canEditDashboard() || dashboard.state.kioskMode) {
+        return;
+      }
+      dashboard.onEnterEditMode();
+      changeColor(label, color);
+    };
+  }
+
+  context.onSeriesVisibilityReset = () => {
+    vizPanel.onFieldConfigChange(clearSeriesSelection(vizPanel.state.fieldConfig), true);
+  };
+  context.canEditSeriesColor = () => {
+    const dashboard = getDashboardSceneFor(vizPanel);
+    return dashboard.canEditDashboard() && !dashboard.state.kioskMode;
+  };
+  context.onInspectSeriesData = () => {
+    if (!getDashboardSceneFor(vizPanel).state.kioskMode) {
+      locationService.partial({ inspect: vizPanel.state.key, inspectTab: 'data' });
+    }
+  };
 
   context.canAddAnnotations = () => {
     const dashboard = getDashboardSceneFor(vizPanel);

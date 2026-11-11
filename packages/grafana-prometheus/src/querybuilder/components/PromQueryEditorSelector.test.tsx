@@ -1,10 +1,11 @@
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/querybuilder/components/PromQueryEditorSelector.test.tsx
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { cloneDeep, defaultsDeep } from 'lodash';
 
 import { CoreApp, PluginMeta, PluginType } from '@grafana/data';
 
+import { editorPresentationContext } from '../../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
 import { PromQueryEditorProps } from '../../components/types';
 import { PrometheusDatasource } from '../../datasource';
 import PromQlLanguageProvider from '../../language_provider';
@@ -18,9 +19,18 @@ import { PromQueryEditorSelector } from './PromQueryEditorSelector';
 // We need to mock this because it seems jest has problem importing monaco in tests
 jest.mock('../../components/monaco-query-field/MonacoQueryFieldWrapper', () => {
   return {
-    MonacoQueryFieldWrapper: () => {
-      return 'MonacoQueryFieldWrapper';
-    },
+    MonacoQueryFieldWrapper: ({
+      initialValue,
+      onChange,
+    }: {
+      initialValue: string;
+      onChange: (value: string) => void;
+    }) => (
+      <>
+        <span>MonacoQueryFieldWrapper</span>
+        <textarea aria-label="Native PromQL" defaultValue={initialValue} onChange={(e) => onChange(e.target.value)} />
+      </>
+    ),
   };
 });
 
@@ -242,3 +252,41 @@ async function switchToMode(mode: QueryEditorMode) {
   const switchEl = screen.getByLabelText(label);
   await userEvent.click(switchEl);
 }
+
+it.each([QueryEditorMode.Builder, QueryEditorMode.Code])(
+  'opens saved %s queries directly as code without rewriting the query',
+  async (mode) => {
+    const user = userEvent.setup();
+    const onRunQuery = jest.fn();
+    const onChange = jest.fn();
+    const query = { ...defaultQuery, editorMode: mode, expr: 'rate(test_metric{host="$scvm"}[$__interval])' };
+    const original = cloneDeep(query);
+    render(
+      <editorPresentationContext.Provider value>
+        <PromQueryEditorSelector
+          {...defaultProps}
+          query={query}
+          app={CoreApp.PanelEditor}
+          onRunQuery={onRunQuery}
+          onChange={onChange}
+        />
+      </editorPresentationContext.Provider>
+    );
+    expect(screen.getByRole('textbox', { name: 'Native PromQL' })).toHaveValue(query.expr);
+    expect(screen.queryByRole('radiogroup', { name: '쿼리 작성 방식' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Metric')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /지표 탐색|쿼리 보조 도구|쿼리 예제|Builder|Code/ })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(EXPLAIN_LABEL_FILTER_CONTENT)).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(query).toEqual(original);
+    const expression = 'sum(rate(test_metric{host="$scvm"}[$__interval]))';
+    fireEvent.change(screen.getByRole('textbox', { name: 'Native PromQL' }), { target: { value: expression } });
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ refId: 'A', expr: expression, editorMode: mode }));
+    await user.click(screen.getByRole('button', { name: '쿼리 실행' }));
+    expect(onRunQuery).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: '코드 편집 영역 확대' }));
+    expect(screen.getByRole('button', { name: '코드 편집 영역 축소' })).toHaveAttribute('aria-pressed', 'true');
+  }
+);

@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { FC, CSSProperties, ComponentType } from 'react';
+import { FC, CSSProperties, ComponentType, useContext } from 'react';
 import * as React from 'react';
 import { useMeasure } from 'react-use';
 
@@ -9,6 +9,9 @@ import { LegendPlacement } from '@grafana/schema';
 import { useStyles2, useTheme2 } from '../../themes/ThemeContext';
 import { getFocusStyles } from '../../themes/mixins';
 import { CustomScrollbar } from '../CustomScrollbar/CustomScrollbar';
+import { panelScrollTokens } from '../PanelScrollArea/PanelScrollArea';
+import { TimeSeriesPresentationContext } from '../VizPresentation/TimeSeriesPresentation';
+import { VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 /**
  * @beta
@@ -32,6 +35,9 @@ export interface VizLayoutComponentType extends FC<VizLayoutProps> {
  */
 export const VizLayout: VizLayoutComponentType = ({ width, height, legend, children }) => {
   const theme = useTheme2();
+  const wall = Boolean(useContext(VizPresentationContext));
+  const timeSeriesPresentation = useContext(TimeSeriesPresentationContext);
+  const wallTimeSeries = Boolean(timeSeriesPresentation?.refinedInteractions);
   const styles = useStyles2(getVizStyles);
   const containerStyle: CSSProperties = {
     display: 'flex',
@@ -52,7 +58,7 @@ export const VizLayout: VizLayoutComponentType = ({ width, height, legend, child
 
   let { placement, maxHeight = '35%', maxWidth = '60%' } = legend.props;
 
-  if (document.body.clientWidth < theme.breakpoints.values.lg) {
+  if (!wallTimeSeries && document.body.clientWidth < theme.breakpoints.values.lg) {
     placement = 'bottom';
   }
 
@@ -72,6 +78,9 @@ export const VizLayout: VizLayoutComponentType = ({ width, height, legend, child
     case 'right':
       containerStyle.flexDirection = 'row';
       legendStyle.maxWidth = maxWidth;
+      if (wallTimeSeries) {
+        legendStyle.flexShrink = 0;
+      }
 
       if (legendMeasure.width) {
         size = { width: width - legendMeasure.width, height };
@@ -79,26 +88,41 @@ export const VizLayout: VizLayoutComponentType = ({ width, height, legend, child
 
       if (legend.props.width) {
         legendStyle.width = legend.props.width;
-        size = { width: width - legend.props.width, height };
+        // Subtract the measured, CSS-constrained box, not an unclamped request.
+        if (!wallTimeSeries) {
+          size = { width: width - legend.props.width, height };
+        }
       }
       break;
   }
 
   // This happens when position is switched from bottom to right
   // Then we preserve old with for one render cycle until legend is measured in it's new position
-  if (size?.width === 0) {
+  if (wallTimeSeries && size) {
+    size.width = Math.max(1, size.width);
+    size.height = Math.max(1, size.height);
+  }
+  if (!wallTimeSeries && size?.width === 0) {
     size.width = width;
   }
 
-  if (size?.height === 0) {
+  if (!wallTimeSeries && size?.height === 0) {
     size.height = height;
   }
 
   return (
     <div style={containerStyle}>
-      <div className={styles.viz}>{size && children(size.width, size.height)}</div>
+      <div className={styles.viz} style={wallTimeSeries ? { minWidth: 0, minHeight: 0 } : undefined}>
+        {size && children(size.width, size.height)}
+      </div>
       <div style={legendStyle} ref={legendRef}>
-        <CustomScrollbar hideHorizontalTrack>{legend}</CustomScrollbar>
+        <CustomScrollbar
+          hideHorizontalTrack
+          hideNativeScrollbars={timeSeriesPresentation?.refinedInteractions}
+          contentInset={wall ? panelScrollTokens.clearance : 0}
+        >
+          {legend}
+        </CustomScrollbar>
       </div>
     </div>
   );

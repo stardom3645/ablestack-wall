@@ -22,6 +22,7 @@ import { Pagination } from '../Pagination/Pagination';
 import { FooterRow } from './FooterRow';
 import { HeaderRow } from './HeaderRow';
 import { RowsList } from './RowsList';
+import { TableColumnAction, TablePresentationContext } from './TablePresentation';
 import { useFixScrollbarContainer, useResetVariableListSizeCache } from './hooks';
 import { getInitialState, useTableStateReducer } from './reducer';
 import { useTableStyles } from './styles';
@@ -61,13 +62,14 @@ export const Table = memo((props: Props) => {
     initialRowIndex = undefined,
     fieldConfig,
     getActions,
+    presentation,
   } = props;
 
   const listRef = useRef<VariableSizeList>(null);
   const tableDivRef = useRef<HTMLDivElement>(null);
   const variableSizeListScrollbarRef = useRef<HTMLDivElement>(null);
   const theme = useTheme2();
-  const tableStyles = useTableStyles(theme, cellHeight);
+  const tableStyles = useTableStyles(theme, cellHeight, presentation?.styles);
   const headerHeight = noHeader ? 0 : tableStyles.rowHeight;
   const [footerItems, setFooterItems] = useState<FooterItem[] | undefined>(footerValues);
   const noValuesDisplayText = fieldConfig?.defaults?.noValue ?? NO_DATA_TEXT;
@@ -157,6 +159,7 @@ export const Table = memo((props: Props) => {
       autoResetPage: false,
       initialState: getInitialState(initialSortBy, memoizedColumns),
       autoResetFilters: false,
+      ...(presentation ? { autoResetHiddenColumns: false } : {}),
       sortTypes: {
         // the builtin number type on react-table does not handle NaN values
         number: sortNumber,
@@ -175,10 +178,12 @@ export const Table = memo((props: Props) => {
       options.autoResetExpanded = false;
     }
     return options;
-  }, [initialSortBy, memoizedColumns, memoizedData, resizable, stateReducer, hasUniqueId, data]);
+  }, [initialSortBy, memoizedColumns, memoizedData, resizable, stateReducer, hasUniqueId, data, presentation]);
 
   const {
     getTableProps,
+    allColumns,
+    setHiddenColumns,
     headerGroups,
     footerGroups,
     rows,
@@ -191,6 +196,15 @@ export const Table = memo((props: Props) => {
     pageOptions,
     toggleAllRowsExpanded,
   } = useTable(options, useFilters, useSortBy, useAbsoluteLayout, useResizeColumns, useExpanded, usePagination);
+
+  const previousView = useRef(presentation?.viewKey);
+  useEffect(() => {
+    if (presentation && previousView.current !== presentation.viewKey) {
+      previousView.current = presentation.viewKey;
+      // Refreshing one frame preserves visibility; switching frame/schema cannot hide a different field by index.
+      setHiddenColumns([]);
+    }
+  }, [presentation, setHiddenColumns]);
 
   const extendedState = state as GrafanaTableState;
   toggleAllRowsExpandedRef.current = toggleAllRowsExpanded;
@@ -235,10 +249,10 @@ export const Table = memo((props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [footerOptions, theme, state.filters, data]);
 
-  let listHeight = height - (headerHeight + footerHeight);
+  let listHeight = Math.max(1, height - (headerHeight + footerHeight + (presentation?.toolbarHeight ?? 0)));
 
   if (enablePagination) {
-    listHeight -= tableStyles.cellHeight;
+    listHeight = Math.max(1, listHeight - tableStyles.cellHeight);
   }
 
   const pageSize = Math.round(listHeight / tableStyles.rowHeight) - 1;
@@ -322,19 +336,46 @@ export const Table = memo((props: Props) => {
     });
   }
 
-  return (
+  const columnActions: TableColumnAction[] = allColumns
+    .filter((column) => column.id !== 'expander')
+    .flatMap((column) =>
+      column.field
+        ? [
+            {
+              id: column.id,
+              label: String(column.Header ?? ''),
+              field: column.field,
+              visible: column.isVisible,
+              canSort: column.canSort,
+              sort: column.isSorted ? (column.isSortedDesc ? 'desc' : 'asc') : undefined,
+              canHide:
+                allColumns.filter((item) => item.isVisible && item.id !== 'expander').length > 1 || !column.isVisible,
+              setVisible: (visible) => column.toggleHidden(!visible),
+              setSort: (sort?: 'asc' | 'desc') =>
+                sort ? column.toggleSortBy(sort === 'desc', false) : column.clearSortBy(),
+            },
+          ]
+        : []
+    );
+
+  const table = (
     <div
       {...getTableProps()}
       className={tableStyles.table}
       aria-label={ariaLabel}
       role="table"
       ref={tableDivRef}
-      style={{ width, height }}
+      style={{ width, height: height - (presentation?.toolbarHeight ?? 0) }}
     >
       <CustomScrollbar hideVerticalTrack={true}>
         <div className={tableStyles.tableContentWrapper(totalColumnsWidth)}>
           {!noHeader && (
-            <HeaderRow headerGroups={headerGroups} showTypeIcons={showTypeIcons} tableStyles={tableStyles} />
+            <HeaderRow
+              headerGroups={headerGroups}
+              showTypeIcons={showTypeIcons}
+              tableStyles={tableStyles}
+              columnActions={presentation ? columnActions : undefined}
+            />
           )}
           {itemCount > 0 ? (
             <div data-testid={selectors.components.Panels.Visualization.Table.body} ref={variableSizeListScrollbarRef}>
@@ -365,7 +406,10 @@ export const Table = memo((props: Props) => {
               />
             </div>
           ) : (
-            <div style={{ height: height - headerHeight, width }} className={tableStyles.noData}>
+            <div
+              style={{ height: height - headerHeight - (presentation?.toolbarHeight ?? 0), width }}
+              className={tableStyles.noData}
+            >
               {noValuesDisplayText}
             </div>
           )}
@@ -382,6 +426,16 @@ export const Table = memo((props: Props) => {
       </CustomScrollbar>
       {paginationEl}
     </div>
+  );
+  return presentation ? (
+    <TablePresentationContext.Provider value={presentation}>
+      <div className="wall-table-workspace" style={{ ...presentation.variables, width, height }}>
+        {presentation.renderToolbar({ columns: columnActions, totalRows: data.length, filteredRows: rows.length })}
+        {table}
+      </div>
+    </TablePresentationContext.Provider>
+  ) : (
+    <TablePresentationContext.Provider value={undefined}>{table}</TablePresentationContext.Provider>
   );
 });
 

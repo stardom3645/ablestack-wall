@@ -27,7 +27,16 @@ export const SelectContainer = <Option, isMulti extends boolean, Group extends G
   const styles = useStyles2(getSelectContainerStyles, isFocused, isDisabled, invalid);
 
   return (
-    <components.SelectContainer {...props} className={cx(styles.wrapper, props.className)}>
+    <components.SelectContainer
+      {...props}
+      className={cx(
+        styles.wrapper,
+        'select-input-control',
+        invalid && 'select-input-invalid',
+        isDisabled && 'select-input-disabled',
+        props.className
+      )}
+    >
       {children}
     </components.SelectContainer>
   );

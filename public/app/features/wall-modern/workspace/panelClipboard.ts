@@ -63,10 +63,14 @@ export function pastePanelSettings(
     return;
   }
   const manager = dashboard.state.body;
-  const rowId = workspaceTabs.find((tab) => tab.id === target.tab)!.rowId;
-  const row = manager.state.grid.state.children.find(
-    (child): child is SceneGridRow => child instanceof SceneGridRow && getPanelIdForVizPanel(child) === rowId
-  );
+  const genericRow = /:row:(\d+):/.exec(target.key);
+  const rowId = genericRow ? Number(genericRow[1]) : workspaceTabs.find((tab) => tab.id === target.tab)!.rowId;
+  const row =
+    rowId === 0
+      ? manager.state.grid
+      : manager.state.grid.state.children.find(
+          (child): child is SceneGridRow => child instanceof SceneGridRow && getPanelIdForVizPanel(child) === rowId
+        );
   if (!row) {
     throw new Error('붙여넣을 탭의 원본 Row를 찾을 수 없습니다.');
   }
@@ -98,7 +102,7 @@ export function pastePanelSettings(
   // DashboardModel sorts expanded rows by native y on reload. Anchor the new
   // native model to its Row so it can never spill into the following tab. Wall's
   // independent 48-column position is the authoritative non-overlapping layout.
-  json.gridPos = { ...json.gridPos, x: 0, y: row.state.y ?? 0 };
+  json.gridPos = { ...json.gridPos, x: 0, y: 'y' in row.state ? Number(row.state.y) : 0 };
   const item = buildGridItemForPanel(new PanelModel(json));
   dashboard.onEnterEditMode();
   row.setState({ children: [...row.state.children, item] });
@@ -133,8 +137,12 @@ export function pastePanelWithHistory(
   }
   const after = cloneDeep(dashboard.state.wallModern!);
   const panel = dashboard.state.body.getVizPanels().find((panel) => getPanelIdForVizPanel(panel) === id)!;
-  const json = cloneDeep(gridItemToPanel(panel.parent as DashboardGridItem));
-  const rowId = workspaceTabs.find((tab) => tab.id === target.tab)!.rowId;
+  if (!(panel.parent instanceof DashboardGridItem)) {
+    return id;
+  }
+  const json = cloneDeep(gridItemToPanel(panel.parent));
+  const genericRow = /:row:(\d+):/.exec(target.key);
+  const rowId = genericRow ? Number(genericRow[1]) : workspaceTabs.find((tab) => tab.id === target.tab)!.rowId;
   const apply = (insert: boolean) => {
     if (dashboard.state.kioskMode || !dashboard.canEditDashboard()) {
       return false;
@@ -143,9 +151,12 @@ export function pastePanelWithHistory(
     if (!(manager instanceof DefaultGridLayoutManager)) {
       return false;
     }
-    const row = manager.state.grid.state.children.find(
-      (child): child is SceneGridRow => child instanceof SceneGridRow && getPanelIdForVizPanel(child) === rowId
-    );
+    const row =
+      rowId === 0
+        ? manager.state.grid
+        : manager.state.grid.state.children.find(
+            (child): child is SceneGridRow => child instanceof SceneGridRow && getPanelIdForVizPanel(child) === rowId
+          );
     const exists = row?.state.children.some((child) => child.state.key === `grid-item-${id}`);
     if (
       !row ||
@@ -177,11 +188,7 @@ export function pastePanelWithHistory(
       delete next.panelSources;
     }
     dashboard.setState({
-      wallModern: normalizeWallDocument(
-        next,
-        wallDocument((dashboard.getInitialSaveModel() as { wallModern?: unknown })?.wallModern),
-        before
-      ),
+      wallModern: normalizeWallDocument(next, wallDocument(initialWallDocument(dashboard)), before),
     });
     manager.state.grid.forceRender();
     dashboard.setState({ isDirty: getDashboardChangesFromScene(dashboard).hasChanges });
@@ -189,4 +196,9 @@ export function pastePanelWithHistory(
   };
   history.recordCommand(target.key, { undo: () => apply(false), redo: () => apply(true) });
   return id;
+}
+
+function initialWallDocument(dashboard: DashboardScene): unknown {
+  const model = dashboard.getInitialSaveModel();
+  return model && 'wallModern' in model ? model.wallModern : undefined;
 }

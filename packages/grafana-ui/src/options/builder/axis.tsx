@@ -160,7 +160,12 @@ const LOG_DISTRIBUTION_OPTIONS: Array<SelectableValue<number>> = [
 /**
  * @internal
  */
-export const ScaleDistributionEditor = ({ value, onChange }: StandardEditorProps<ScaleDistributionConfig>) => {
+export const ScaleDistributionEditor = ({
+  value,
+  onChange,
+  item,
+}: StandardEditorProps<ScaleDistributionConfig, { displayText?: (text: string) => string }>) => {
+  const text = item.settings?.displayText ?? ((text: string) => text);
   const type = value?.type ?? ScaleDistribution.Linear;
   const log = value?.log ?? 2;
   return (
@@ -168,7 +173,7 @@ export const ScaleDistributionEditor = ({ value, onChange }: StandardEditorProps
       <div style={{ marginBottom: 16 }}>
         <RadioButtonGroup
           value={type}
-          options={DISTRIBUTION_OPTIONS}
+          options={DISTRIBUTION_OPTIONS.map((option) => ({ ...option, label: text(option.label!) }))}
           onChange={(v) => {
             onChange({
               ...value,
@@ -179,7 +184,7 @@ export const ScaleDistributionEditor = ({ value, onChange }: StandardEditorProps
         />
       </div>
       {(type === ScaleDistribution.Log || type === ScaleDistribution.Symlog) && (
-        <Field label="Log base">
+        <Field label={text('Log base')}>
           <Select
             options={LOG_DISTRIBUTION_OPTIONS}
             value={log}
@@ -193,7 +198,7 @@ export const ScaleDistributionEditor = ({ value, onChange }: StandardEditorProps
         </Field>
       )}
       {type === ScaleDistribution.Symlog && (
-        <Field label="Linear threshold">
+        <Field label={text('Linear threshold')}>
           <Input
             placeholder="1"
             value={value?.linearThreshold}

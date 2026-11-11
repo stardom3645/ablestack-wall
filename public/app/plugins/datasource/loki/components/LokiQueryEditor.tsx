@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import { memo, SyntheticEvent, useCallback, useEffect, useId, useState } from 'react';
+import { memo, SyntheticEvent, useCallback, useContext, useEffect, useId, useState } from 'react';
 import { usePrevious } from 'react-use';
 
 import { CoreApp, LoadingState } from '@grafana/data';
@@ -14,6 +14,12 @@ import {
 } from '@grafana/experimental';
 import { config, reportInteraction } from '@grafana/runtime';
 import { Button, ConfirmModal, Space, Stack } from '@grafana/ui';
+import {
+  editorPresentationContext,
+  queryWorkspaceViewContext,
+} from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallQueryToolbar } from 'app/features/wall-modern/editor/WallQueryToolbar';
+import { wallStudioTokens } from 'app/features/wall-modern/surfaceTokens';
 
 import { LabelBrowserModal } from '../querybuilder/components/LabelBrowserModal';
 import { LokiQueryBuilderContainer } from '../querybuilder/components/LokiQueryBuilderContainer';
@@ -34,6 +40,10 @@ export const testIds = {
 export const lokiQueryEditorExplainKey = 'LokiQueryEditorExplainDefault';
 
 export const LokiQueryEditor = memo<LokiQueryEditorProps>((props) => {
+  const wallEditor = useContext(editorPresentationContext) && props.app === CoreApp.PanelEditor;
+  const view = useContext(queryWorkspaceViewContext);
+  const [expandedCode, setExpandedCode] = useState(false);
+  const expanded = view?.expanded ?? expandedCode;
   const id = useId();
   const { onChange, onRunQuery, onAddQuery, data, app, queries, datasource, range: timeRange } = props;
   const [parseModalOpen, setParseModalOpen] = useState(false);
@@ -120,6 +130,37 @@ export const LokiQueryEditor = memo<LokiQueryEditorProps>((props) => {
       makeAsyncRequest();
     }
   }, [datasource, timeRange, previousTimeRange, query, previousQueryExpr, previousQueryType, setQueryStats, id]);
+
+  if (wallEditor) {
+    return (
+      <div className="wall-prom-code-workspace">
+        <LokiQueryCodeEditor
+          {...props}
+          query={query}
+          onChange={onChangeInternal}
+          showExplain={false}
+          minEditorHeight={
+            expanded ? wallStudioTokens.queryCodeExpandedHeight : wallStudioTokens.queryWorkspaceCodeMinHeight
+          }
+        />
+        <WallQueryToolbar
+          onRun={onRunQuery}
+          loading={data?.state === LoadingState.Loading}
+          stale={dataIsStale}
+          expanded={expanded}
+          onToggleExpand={() => setExpandedCode((value) => !value)}
+        />
+        <LokiQueryBuilderOptions
+          query={query}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+          app={app}
+          maxLines={datasource.maxLines}
+          queryStats={queryStats}
+        />
+      </div>
+    );
+  }
 
   return (
     <>

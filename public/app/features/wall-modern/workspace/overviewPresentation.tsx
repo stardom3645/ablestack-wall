@@ -21,29 +21,16 @@ import { overviewSections } from './model';
 export type OverviewRole = keyof typeof overviewSections | 'additional';
 export function overviewPanelRole(id: number): OverviewRole {
   return (
-    (Object.keys(overviewSections) as Array<keyof typeof overviewSections>).find((key) =>
-      overviewSections[key].includes(id)
-    ) ?? 'additional'
+    Object.keys(overviewSections)
+      .filter((key): key is keyof typeof overviewSections => key in overviewSections)
+      .find((key) => overviewSections[key].includes(id)) ?? 'additional'
   );
 }
 
 /** These tokens override only the overview provider, never another tab or saved field configuration. */
+/** The editor, overview and every dashboard use the same time-series contract. */
 export function overviewChartTokens(theme: GrafanaTheme2) {
-  return {
-    ...wallTimeSeriesTokens(theme),
-    palette: theme.isDark
-      ? ['#7caaff', '#48d2bb', '#b9a0ff', '#efbd7c', '#f395b5', '#79c5e7', '#abbdd8', '#b2d78c']
-      : ['#1677ff', '#0e9387', '#7c5ce7', '#bd7b24', '#cb4874', '#2389b5', '#687b96', '#698632'],
-    lineWidth: 2.2,
-    fillOpacity: 6,
-    gridDash: [],
-    axisFontSize: wallTypography.roles.axis.size,
-    legendFontSize: wallTypography.roles.legend.size,
-    legendCellPadding: '5px 8px',
-    tooltipHeaderBackground: theme.isDark ? '#202e42' : '#f3f7ff',
-    tooltipRowGap: 10,
-    tooltipPadding: wallSurfaceTokens.padding,
-  };
+  return wallTimeSeriesTokens(theme);
 }
 
 function OverviewGaugeReadout({ value, explicitSize }: { value: DisplayValue; explicitSize?: number }) {
@@ -71,10 +58,12 @@ export function OverviewPanelPresentation({
   id,
   children,
   preserveTimeSeries = false,
+  pluginId,
 }: {
   id?: number;
   children: ReactNode;
   preserveTimeSeries?: boolean;
+  pluginId?: string;
 }) {
   const theme = useTheme2();
   const fontStatus = useContext(WallFontStatusContext);
@@ -86,18 +75,22 @@ export function OverviewPanelPresentation({
     () => ({
       hideMenu: true,
       contentPadding: {
-        horizontal: wallSurfaceTokens.padding,
+        horizontal: pluginId === 'stat' ? 0 : wallSurfaceTokens.padding,
         vertical:
-          displayKind && ['kpi', 'usage', 'service', 'counts'].includes(displayKind)
-            ? wallSurfaceTokens.compactPadding
-            : wallSurfaceTokens.padding,
+          pluginId === 'stat'
+            ? 0
+            : displayKind && ['kpi', 'usage', 'service', 'counts'].includes(displayKind)
+              ? wallSurfaceTokens.compactPadding
+              : wallSurfaceTokens.padding,
       },
       headerHeight:
-        role === 'services' || role === 'usage'
+        (role === 'services' && pluginId !== 'stat') || role === 'usage'
           ? 0
-          : role === 'resources'
-            ? compactResourceTokens.kpi.headerHeight
-            : wallSurfaceTokens.headerHeight,
+          : role === 'services' && pluginId === 'stat'
+            ? wallSurfaceTokens.compactHeaderHeight
+            : role === 'resources'
+              ? compactResourceTokens.kpi.headerHeight
+              : wallSurfaceTokens.headerHeight,
       renderHeader: ({
         title,
         titleId,
@@ -107,7 +100,7 @@ export function OverviewPanelPresentation({
         titleId: string;
         children: ReactNode;
       }) =>
-        role === 'services' || role === 'usage' ? (
+        (role === 'services' && pluginId !== 'stat') || role === 'usage' ? (
           <span id={titleId} className="wall-panel-a11y-title">
             {title}
           </span>
@@ -122,7 +115,7 @@ export function OverviewPanelPresentation({
           </CardHeader>
         ),
     }),
-    [displayKind, role]
+    [displayKind, role, pluginId]
   );
   const viz = useMemo(
     () => ({
@@ -135,15 +128,14 @@ export function OverviewPanelPresentation({
     }),
     [theme, fontStatus]
   );
+  const chart = useMemo(() => ({ ...overviewChartTokens(theme), fontLoadRevision: fontStatus }), [theme, fontStatus]);
   return (
     <PanelChromePresentationContext.Provider value={chrome}>
       <VizPresentationContext.Provider value={viz}>
         {preserveTimeSeries ? (
           children
         ) : (
-          <TimeSeriesStyleConfigContext.Provider value={overviewChartTokens(theme)}>
-            {children}
-          </TimeSeriesStyleConfigContext.Provider>
+          <TimeSeriesStyleConfigContext.Provider value={chart}>{children}</TimeSeriesStyleConfigContext.Provider>
         )}
       </VizPresentationContext.Provider>
     </PanelChromePresentationContext.Provider>

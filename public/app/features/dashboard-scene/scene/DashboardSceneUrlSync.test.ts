@@ -58,6 +58,21 @@ describe('DashboardSceneUrlSync', () => {
       expect(scene.state.kioskMode).toBe(KioskMode.Full);
     });
 
+    it.each(['aec03x1adsi68f', 'fec03giqwtw5cf', 'arbitrary-dashboard'])(
+      'clears explicit kiosk removal on %s without touching layout',
+      (uid) => {
+        const scene = buildTestScene();
+        scene.setState({ uid, kioskMode: KioskMode.Full });
+        const layout = scene.state.body;
+        scene.urlSync?.updateFromUrl({});
+        expect(scene.state.kioskMode).toBe(KioskMode.Full);
+        scene.urlSync?.updateFromUrl({ kiosk: null });
+        expect(scene.state.kioskMode).toBeUndefined();
+        expect(scene.state.body).toBe(layout);
+        expect(scene.urlSync?.getUrlState().kiosk).toBeUndefined();
+      }
+    );
+
     it('Should get the kiosk mode from the scene state', () => {
       const scene = buildTestScene();
 

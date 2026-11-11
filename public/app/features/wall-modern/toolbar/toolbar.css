@@ -2,6 +2,13 @@
 .wall-modern .wall-dashboard-toolbar-region {
   background: var(--wall-bg);
   padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .wall-dashboard-toolbar {
   --wall-toolbar-height: 32px;
@@ -10,23 +17,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 8px 20px;
   min-width: 0;
   width: 100%;
 }
 .wall-toolbar-primary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  flex: 0 1 auto;
-  flex-wrap: wrap;
+  flex: 1 1 560px;
+  flex-wrap: nowrap;
   min-width: 0;
-  padding: 4px;
-  gap: var(--wall-toolbar-gap);
-  background: var(--wall-surface);
-  border: 1px solid var(--wall-border);
-  border-radius: 9px;
-  box-shadow: var(--wall-shadow);
+  padding: 0;
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
+
 .wall-dashboard-toolbar .wall-button {
   height: var(--wall-toolbar-height);
   min-height: var(--wall-toolbar-height);
@@ -58,10 +66,11 @@
 /* Native variable renderers remain functional controls, not fixed object/filter buttons. */
 .wall-toolbar-variables {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--wall-toolbar-gap);
-  min-width: 0;
+  min-width: 86px;
+  flex: 1 1 0;
 }
 .wall-toolbar-variables:empty {
   display: none;
@@ -80,20 +89,28 @@
   font-size: var(--wall-type-body-size, 13px);
 }
 .wall-variable-trigger {
-  max-width: 360px;
+  min-width: 0;
+  max-width: min(var(--wall-variable-width, 360px), 100%);
 }
 .wall-variable-icon {
   flex-shrink: 0;
   color: var(--wall-primary);
 }
 .wall-variable-name {
+  min-width: 0;
+  max-width: var(--wall-variable-name-width, 128px);
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--wall-muted);
   font-size: var(--wall-type-caption-size, 11px);
   font-weight: var(--wall-type-body-weight, 400);
 }
 .wall-variable-value {
+  min-width: 0;
+  flex: 1 1 auto;
   color: var(--wall-text);
-  font-weight: var(--wall-type-panel-weight, 600);
+  font-weight: var(--wall-type-control-weight, 500);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -102,7 +119,26 @@
   color: var(--wall-muted);
 }
 .wall-variable-popover {
-  width: 360px;
+  width: min(360px, calc(100vw - 24px));
+}
+.wall-variable-count {
+  flex: 0 0 auto;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--wall-soft);
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
+  font-variant-numeric: tabular-nums;
+}
+.wall-variable-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--wall-border);
+  color: var(--wall-muted);
+  font-size: var(--wall-type-caption-size);
 }
 .wall-toolbar-time-group,
 .wall-toolbar-group {
@@ -303,12 +339,111 @@
   border-radius: 50%;
   background: currentColor;
 }
-@media (max-width: 1100px) {
-  .wall-dashboard-toolbar {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+/* One positioned popup owns both the search input and the native virtualized list. */
+.wall-variable-popover [data-wall-embedded-select] {
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+  overscroll-behavior: contain;
+}
+.wall-variable-popover .select-input-control {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.wall-variable-popover [data-wall-embedded-control] {
+  border: 1px solid var(--wall-border);
+  border-radius: var(--wall-radius, 8px);
+  margin-bottom: 8px;
+}
+.wall-variable-popover [data-wall-embedded-control]:focus-within {
+  border-color: var(--wall-primary);
+  outline: 1px solid var(--wall-primary);
+}
+/* Whole functional groups wrap together; individual refresh controls never fall onto another row. */
+.wall-toolbar-variables:has(.wall-adaptive-filters:empty) {
+  display: none;
+}
+.wall-toolbar-query {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.wall-toolbar-secondary {
+  flex: 0 0 auto;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+.wall-adaptive-filters {
+  display: flex;
+  flex: 1 1 0;
+  width: auto;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+}
+.wall-filter-item {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.wall-filter-item:empty {
+  display: none;
+}
+.wall-filter-overflow {
+  width: min(400px, calc(100vw - 24px));
+  display: grid;
+  gap: 10px;
+}
+.wall-filter-overflow .wall-filter-item > * {
+  max-width: 100%;
+}
+@media (max-width: 640px) {
   .wall-toolbar-primary {
     flex-wrap: wrap;
+  }
+  .wall-toolbar-variables {
+    flex-basis: 100%;
+  }
+  .wall-toolbar-query {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+.wall-toolbar-layer-controls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+.wall-toolbar-layer-controls:empty {
+  display: none;
+}
+.wall-toolbar-variables:not(:has(.wall-filter-item, button, input)) {
+  display: none;
+}
+.wall-dashboard-toolbar {
+  container-type: inline-size;
+}
+.wall-toolbar-time-trigger {
+  max-width: 280px;
+}
+.wall-time-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@container (max-width: 600px) {
+  .wall-toolbar-primary {
+    flex-wrap: wrap;
+  }
+  .wall-toolbar-variables {
+    flex-basis: 100%;
+  }
+  .wall-toolbar-query {
+    max-width: 100%;
+    overflow-x: auto;
   }
 }

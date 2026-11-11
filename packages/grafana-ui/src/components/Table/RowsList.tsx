@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { CSSProperties, UIEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, UIEventHandler, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 import { Cell, Row, TableState, HeaderGroup } from 'react-table';
 import { VariableSizeList } from 'react-window';
@@ -22,6 +22,7 @@ import { usePanelContext } from '../PanelChrome';
 
 import { ExpandedRow, getExpandedRowHeight } from './ExpandedRow';
 import { TableCell } from './TableCell';
+import { TablePresentationContext } from './TablePresentation';
 import { TableStyles } from './styles';
 import { CellColors, GetActionsFunction, TableFieldOptions, TableFilterActionCallback } from './types';
 import {
@@ -30,6 +31,17 @@ import {
   isPointTimeValAroundTableTimeVal,
   guessTextBoundingBox,
 } from './utils';
+
+interface VirtualRowData {
+  renderRow: (props: { index: number; style: CSSProperties; rowHighlightIndex?: number }) => JSX.Element;
+  rowHighlightIndex?: number;
+}
+
+// A new inline children function remounts every virtual cell on each width change.
+// Keep the component type stable so field menus/focus survive native column resizing.
+function VirtualTableRow({ index, style, data }: { index: number; style: CSSProperties; data: VirtualRowData }) {
+  return data.renderRow({ index, style, rowHighlightIndex: data.rowHighlightIndex });
+}
 
 interface RowsListProps {
   data: DataFrame;
@@ -90,24 +102,20 @@ export const RowsList = (props: RowsListProps) => {
   }
 
   const theme = useTheme2();
+  const presentation = useContext(TablePresentationContext);
   const panelContext = usePanelContext();
 
-  // Create off-screen canvas for measuring rows for virtualized rendering
-  // This line is like this because Jest doesn't have OffscreenCanvas mocked
-  // nor is it a part of the jest-canvas-mock package
-  let osContext = null;
-  if (window.OffscreenCanvas !== undefined) {
-    // The canvas size is defined arbitrarily
-    // As we never actually visualize rendered content
-    // from the offscreen canvas, only perform text measurements
-    osContext = new OffscreenCanvas(256, 1024).getContext('2d');
-  }
-
-  // Set font property using theme info
-  // This will make text measurement accurate
-  if (osContext !== undefined && osContext !== null) {
-    osContext.font = `${theme.typography.fontSize}px ${theme.typography.body.fontFamily}`;
-  }
+  // Reuse the measurement context while geometry changes; no canvas allocations per pointer move.
+  const osContext = useMemo(() => {
+    if (window.OffscreenCanvas === undefined) {
+      return null;
+    }
+    const context = new OffscreenCanvas(256, 1024).getContext('2d');
+    if (context) {
+      context.font = `${tableStyles.fontSize}px ${tableStyles.fontFamily}`;
+    }
+    return context;
+  }, [tableStyles.fontSize, tableStyles.fontFamily]);
 
   const threshold = useMemo(() => {
     const timeField = data.fields.find((f) => f.type === FieldType.time);
@@ -261,6 +269,11 @@ export const RowsList = (props: RowsListProps) => {
     }
   }
 
+  // Visibility is a view state, not field.config.custom.hidden. Measure only visible columns.
+  if (presentation && textWrapFinal && !headerGroups[0].headers.some((column) => column.field === textWrapFinal)) {
+    textWrapFinal = undefined;
+  }
+
   const RenderRow = useCallback(
     ({ index, style, rowHighlightIndex }: { index: number; style: CSSProperties; rowHighlightIndex?: number }) => {
       const indexForPagination = rowIndexForPagination(index);
@@ -287,9 +300,9 @@ export const RowsList = (props: RowsListProps) => {
 
       // If there's a text wrapping field we set the height of it here
       if (textWrapFinal) {
-        const visibleFields = data.fields.filter((field) => !Boolean(field.config.custom?.hidden));
+        const visibleFields = headerGroups[0].headers.flatMap((column) => (column.field ? [column.field] : []));
         const seriesIndex = visibleFields.findIndex((field) => field.name === textWrapFinal.name);
-        const pxLineHeight = theme.typography.body.lineHeight * theme.typography.fontSize;
+        const pxLineHeight = theme.typography.body.lineHeight * tableStyles.fontSize;
         const bbox = guessTextBoundingBox(
           textWrapFinal.values[row.index],
           headerGroups[0].headers[seriesIndex],
@@ -356,7 +369,6 @@ export const RowsList = (props: RowsListProps) => {
       cellHeight,
       theme.components.table.rowSelected,
       theme.typography.body.lineHeight,
-      theme.typography.fontSize,
       data,
       headerGroups,
       osContext,
@@ -376,9 +388,9 @@ export const RowsList = (props: RowsListProps) => {
     }
 
     if (textWrapFinal) {
-      const visibleFields = data.fields.filter((field) => !Boolean(field.config.custom?.hidden));
+      const visibleFields = headerGroups[0].headers.flatMap((column) => (column.field ? [column.field] : []));
       const seriesIndex = visibleFields.findIndex((field) => field.name === textWrapFinal.name);
-      const pxLineHeight = theme.typography.fontSize * theme.typography.body.lineHeight;
+      const pxLineHeight = tableStyles.fontSize * theme.typography.body.lineHeight;
       return guessTextBoundingBox(
         textWrapFinal.values[row.index],
         headerGroups[0].headers[seriesIndex],
@@ -410,7 +422,16 @@ export const RowsList = (props: RowsListProps) => {
     if (listRef.current) {
       listRef.current.resetAfterIndex(0);
     }
-  }, [rows, listRef]);
+  }, [
+    rows,
+    listRef,
+    tableState.hiddenColumns,
+    tableState.columnResizing.isResizingColumn,
+    textWrapFinal,
+    presentation,
+  ]);
+
+  const itemData = useMemo(() => ({ renderRow: RenderRow, rowHighlightIndex }), [RenderRow, rowHighlightIndex]);
 
   return (
     <CustomScrollbar onScroll={handleScroll} hideHorizontalTrack={true} scrollTop={scrollTop}>
@@ -419,12 +440,13 @@ export const RowsList = (props: RowsListProps) => {
         key={`${rowHeight}${pageIndex}${expandedKey}`}
         height={listHeight}
         itemCount={itemCount}
+        itemData={itemData}
         itemSize={getItemSize}
         width={'100%'}
         ref={listRef}
         style={{ overflow: undefined }}
       >
-        {({ index, style }) => RenderRow({ index, style, rowHighlightIndex })}
+        {VirtualTableRow}
       </VariableSizeList>
     </CustomScrollbar>
   );

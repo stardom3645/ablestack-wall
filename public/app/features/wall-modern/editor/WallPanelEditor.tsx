@@ -1,45 +1,62 @@
-import { ChevronDown, Database, SlidersHorizontal } from 'lucide-react';
-import { useContext, type ComponentProps, type PropsWithChildren, type ReactNode } from 'react';
+import { ChevronDown, Database, Maximize2, Minimize2, SlidersHorizontal } from 'lucide-react';
+import { useContext, useMemo, type ComponentProps, type PropsWithChildren, type ReactNode } from 'react';
 
 import { selectors } from '@grafana/e2e-selectors';
 import { useTheme2, Tab } from '@grafana/ui';
+import { StatCardPresentationContext } from '@grafana/ui/src/components/BigValue/StatCardPresentation';
 import { Trans, t } from 'app/core/internationalization';
 
 import { Card } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { WallManagementBack } from '../management/WallManagement';
-import { wallSurfaceVariables } from '../surfaceTokens';
-import { WallFontStatusContext, wallTypographyVariables, useWallTypographyFonts } from '../typography';
+import { wallStatCardPresentation } from '../statPresentation';
+import { wallEditorFormVariables, wallSurfaceVariables } from '../surfaceTokens';
+import {
+  WallFontStatusContext,
+  wallEditorTypographyVariables,
+  wallTypographyVariables,
+  useWallTypographyFonts,
+} from '../typography';
 import { Button } from '../ui';
 
 import '../modern.css';
 import '../typography.css';
-import { editorPresentationContext } from './EditorPresentationContext';
+import { editorPresentationContext, studioPreviewContext } from './EditorPresentationContext';
+import { WallVisualizationIcon } from './WallVisualizationIcon';
+import { wallOptionText } from './optionText';
 import { useWallMonacoTheme } from './useWallMonacoTheme';
 import './panelEditor.css';
 
 export const WallPanelEditorContext = editorPresentationContext;
 
 export function WallEditorVisualizationButton({
+  pluginId,
   name,
   logo,
   onOpen,
 }: {
+  pluginId: string;
   name: string;
   logo: string;
   onOpen: () => void;
 }) {
   return (
-    <Button
-      className="wall-editor-visualization-button"
-      onClick={onOpen}
-      data-testid={selectors.components.PanelEditor.toggleVizPicker}
-      aria-label="Change Visualization"
-    >
-      <img src={logo} alt="" />
-      <span>{name}</span>
-      <ChevronDown size={14} aria-hidden="true" />
-    </Button>
+    <div className="wall-current-visualization">
+      <div>
+        <WallVisualizationIcon pluginId={pluginId} logo={logo} selected />
+        <strong>{wallOptionText(name)}</strong>
+      </div>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={onOpen}
+        data-testid={selectors.components.PanelEditor.toggleVizPicker}
+        aria-label="시각화 변경"
+      >
+        <Trans i18nKey="wall.studio.change-visualization">시각화 변경</Trans>
+        <ChevronDown size={14} aria-hidden="true" />
+      </Button>
+    </div>
   );
 }
 
@@ -50,7 +67,16 @@ export function WallPanelEditorFrame({
   dirty,
   actions,
   children,
-}: PropsWithChildren<{ enabled: boolean; title: string; dirty?: boolean; actions?: ReactNode }>) {
+  visualizationName,
+  dashboardTitle,
+}: PropsWithChildren<{
+  visualizationName?: string;
+  dashboardTitle?: string;
+  enabled: boolean;
+  title: string;
+  dirty?: boolean;
+  actions?: ReactNode;
+}>) {
   const theme = useTheme2();
   const fontStatus = useWallTypographyFonts(enabled);
   useWallMonacoTheme(enabled);
@@ -64,16 +90,27 @@ export function WallPanelEditorFrame({
         data-wall-theme={theme.isDark ? 'dark' : 'light'}
         data-wall-typography="storage-vm"
         data-wall-font-status={fontStatus}
-        style={{ ...wallTypographyVariables, ...wallSurfaceVariables(theme.isDark) }}
+        style={{
+          ...wallTypographyVariables,
+          ...wallEditorTypographyVariables,
+          ...wallEditorFormVariables,
+          ...wallSurfaceVariables(theme.isDark, true),
+        }}
       >
         <header className="wall-editor-heading">
           <div className="wall-editor-identity">
-            <WallManagementBack />
+            <WallManagementBack dashboardTitle={dashboardTitle} />
             <div className="wall-editor-title">
-              <span>
-                <Trans i18nKey="wall.editor.studio-label">Wall 패널 스튜디오</Trans>
-              </span>
               <h1 title={title}>{title.trim() ? title : t('wall.editor.untitled', '제목 없는 패널')}</h1>
+              <small className="wall-editor-metadata" title={visualizationName}>
+                <Trans i18nKey="wall.editor.edit-panel">패널 편집</Trans>
+                {visualizationName && (
+                  <>
+                    <Trans i18nKey="wall.wall-panel-editor.text-1fdf0d90"> · </Trans>
+                    {visualizationName}
+                  </>
+                )}
+              </small>
             </div>
           </div>
           {actions ?? (
@@ -97,6 +134,13 @@ export function WallEditorPreview({
   hasData,
 }: PropsWithChildren<{ tableView: boolean; hasData: boolean; onToggleTableView: () => void }>) {
   const enabled = useContext(WallPanelEditorContext);
+  const theme = useTheme2();
+  const fontStatus = useContext(WallFontStatusContext);
+  const stat = useMemo(
+    () => ({ ...wallStatCardPresentation(theme), fontLoadRevision: fontStatus }),
+    [theme, fontStatus]
+  );
+  const studio = useContext(studioPreviewContext);
   if (!enabled) {
     return <>{children}</>;
   }
@@ -106,20 +150,41 @@ export function WallEditorPreview({
         <span>
           <Trans i18nKey="wall.editor.visualization-preview">시각화 미리보기</Trans>
         </span>
-        {hasData && (
-          <Button
-            size="sm"
-            variant="ghost"
-            aria-pressed={tableView}
-            onClick={onToggleTableView}
-            data-testid={selectors.components.PanelEditor.toggleTableView}
-          >
-            <Database size={14} aria-hidden="true" />
-            <Trans i18nKey="wall.editor.table-view">테이블 보기</Trans>
-          </Button>
-        )}
+        {studio?.controls && <div className="wall-studio-controls">{studio.controls}</div>}
+        <div className="wall-preview-actions">
+          {hasData && (
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-pressed={tableView}
+              onClick={onToggleTableView}
+              data-testid={selectors.components.PanelEditor.toggleTableView}
+            >
+              <Database size={14} aria-hidden="true" />
+              <Trans i18nKey="wall.editor.table-view">테이블 보기</Trans>
+            </Button>
+          )}
+          {studio && (
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-label={
+                studio.expanded
+                  ? t('wall.studio.restore-preview', '미리보기 크기 복원')
+                  : t('wall.studio.expand-preview', '전체 화면 미리보기')
+              }
+              aria-pressed={studio.expanded}
+              onClick={studio.onToggleExpand}
+            >
+              {studio.expanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+            </Button>
+          )}
+        </div>
       </header>
-      <div className="wall-editor-preview-content">{children}</div>
+      <div className="wall-editor-preview-content">
+        <StatCardPresentationContext.Provider value={stat}>{children}</StatCardPresentationContext.Provider>
+      </div>
+      {studio && <footer className="wall-studio-caption">{studio.resultStatus}</footer>}
     </Card>
   );
 }
@@ -150,7 +215,11 @@ export function WallEditorDataTab({ value, ...props }: ComponentProps<typeof Tab
   }
   return (
     <TabsTrigger value={value} data-testid={selectors.components.Tab.title(props.label)}>
-      {props.label}
+      {props.label === 'Queries'
+        ? t('wall.editor.queries', '쿼리')
+        : props.label === 'Transformations'
+          ? t('wall.editor.transforms', '변환')
+          : props.label}
       {typeof props.counter === 'number' && <span className="wall-editor-tab-count">{props.counter}</span>}
     </TabsTrigger>
   );

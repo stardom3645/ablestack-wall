@@ -33,12 +33,13 @@ import {
   UPlotConfigBuilder,
   measureText,
 } from '@grafana/ui';
+import type { TimeSeriesPresentation } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import { AxisProps, UPLOT_AXIS_FONT_SIZE } from '@grafana/ui/src/components/uPlot/config/UPlotAxisBuilder';
 import { getStackingGroups } from '@grafana/ui/src/components/uPlot/utils';
 
 import { setClassicPaletteIdxs } from '../timeseries/utils';
 
-import { BarsOptions, getConfig } from './bars';
+import { BarAppearance, BarInteraction, BarsOptions, getConfig } from './bars';
 import { FieldConfig, Options, defaultFieldConfig } from './panelcfg.gen';
 // import { isLegendOrdered } from './utils';
 
@@ -154,9 +155,21 @@ export interface PrepConfigOpts {
   options: Options;
   timeZone: TimeZone;
   theme: GrafanaTheme2;
+  presentation?: TimeSeriesPresentation & BarAppearance;
+  interaction?: BarInteraction;
 }
 
-export const prepConfig = ({ series, totalSeries, color, orientation, options, timeZone, theme }: PrepConfigOpts) => {
+export const prepConfig = ({
+  series,
+  totalSeries,
+  color,
+  orientation,
+  options,
+  timeZone,
+  theme,
+  presentation,
+  interaction,
+}: PrepConfigOpts) => {
   let {
     showValue,
     groupWidth,
@@ -273,7 +286,11 @@ export const prepConfig = ({ series, totalSeries, color, orientation, options, t
     text,
     showValue,
     legend,
-    xSpacing: xTickLabelSpacing,
+    xSpacing:
+      xTickLabelSpacing ||
+      (presentation ? (vizOrientation.xOri === 1 ? presentation.axisFontSize * 2 : presentation.categorySpacing) : 0),
+    appearance: presentation,
+    interaction,
     xTimeAuto: frame.fields[0]?.type === FieldType.time && !frame.fields[0].config.unit?.startsWith('time:'),
     negY: frame.fields.map((f) => f.config.custom?.transform === GraphTransform.NegativeY),
     fullHighlight,
@@ -285,6 +302,9 @@ export const prepConfig = ({ series, totalSeries, color, orientation, options, t
   builder.setCursor(config.cursor);
 
   builder.addHook('init', config.init);
+  if (interaction) {
+    builder.addHook('destroy', config.destroy);
+  }
   builder.addHook('drawClear', config.drawClear);
   builder.addHook('draw', config.draw);
 
@@ -322,12 +342,20 @@ export const prepConfig = ({ series, totalSeries, color, orientation, options, t
     placement: xFieldAxisPlacement,
     label: frame.fields[0]?.config.custom?.axisLabel,
     splits: config.xSplits,
-    filter: vizOrientation.xOri === 0 ? config.hFilter : undefined,
+    filter: vizOrientation.xOri === 0 || presentation ? config.hFilter : undefined,
     values: config.xValues,
     timeZone,
     grid: { show: false },
     ticks: { show: false },
-    gap: 15,
+    gap: presentation?.axisGap ?? 15,
+    ...(presentation
+      ? {
+          fontFamily: presentation.fontFamily,
+          fontSize: presentation.axisFontSize,
+          fontWeight: presentation.axisFontWeight,
+          color: presentation.muted,
+        }
+      : {}),
     tickLabelRotation: vizOrientation.xOri === 0 ? xTickLabelRotation * -1 : 0,
     theme,
     show: xFieldAxisShow,
@@ -440,11 +468,24 @@ export const prepConfig = ({ series, totalSeries, color, orientation, options, t
         label: customConfig.axisLabel,
         size: customConfig.axisWidth,
         placement,
-        formatValue: (v, decimals) => formattedValueToString(field.display!(v, decimals)),
+        formatValue: (v, decimals) =>
+          formattedValueToString(
+            (presentation && stacking === StackingMode.Percent ? formatters[i] : field.display!)(v, decimals)
+          ),
         filter: vizOrientation.yOri === 0 ? config.hFilter : undefined,
         tickLabelRotation: vizOrientation.xOri === 1 ? xTickLabelRotation * -1 : 0,
         theme,
-        grid: { show: customConfig.axisGridShow },
+        grid: { show: customConfig.axisGridShow, ...(presentation ? { stroke: presentation.grid } : {}) },
+        ...(presentation
+          ? {
+              fontFamily: presentation.fontFamily,
+              fontSize: presentation.axisFontSize,
+              fontWeight: presentation.axisFontWeight,
+              color: presentation.muted,
+              gap: presentation.axisGap,
+              gridDash: presentation.gridDash,
+            }
+          : {}),
       };
 
       if (customConfig.axisBorderShow) {

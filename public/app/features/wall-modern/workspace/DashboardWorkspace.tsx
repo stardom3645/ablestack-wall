@@ -1,6 +1,8 @@
 import { Activity, Cpu, Database, HardDrive, Network, Server } from 'lucide-react';
 import { ReactNode, useId, useRef } from 'react';
 
+import { Trans } from 'app/core/internationalization';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { displayKinds } from '../visualizations/model';
@@ -104,6 +106,7 @@ export function DashboardWorkspace<T>({
       >
         <CardContent className="wall-workspace-panel-content" style={{ overflow: 'hidden', borderRadius: 'inherit' }}>
           <OverviewPanelPresentation
+            pluginId={panel.type}
             id={panel.presentationId ?? panel.id}
             preserveTimeSeries={activeTab !== 'overview'}
           >
@@ -137,8 +140,12 @@ export function DashboardWorkspace<T>({
   const usageCard = (
     <Card className="wall-workspace-usage-card" data-wall-flow-group="usage">
       <CardHeader>
-        <CardTitle>자원 사용률</CardTitle>
-        <CardDescription>현재 자원 사용 상태</CardDescription>
+        <CardTitle>
+          <Trans i18nKey="wall.dashboard-workspace.text-40c6a312">자원 사용률</Trans>
+        </CardTitle>
+        <CardDescription>
+          <Trans i18nKey="wall.dashboard-workspace.text-0e8e16a4">현재 자원 사용 상태</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent>{grid(select(overviewSections.usage), 'wall-workspace-usage-grid', 155, '자원 사용률')}</CardContent>
     </Card>
@@ -146,7 +153,15 @@ export function DashboardWorkspace<T>({
 
   return (
     <div className="wall-dashboard-workspace" data-testid="wall-dashboard-workspace" style={compactResourceVariables}>
-      <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as WorkspaceTab)}>
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          const tab = workspaceTabs.find((tab) => tab.id === value);
+          if (tab) {
+            onTabChange(tab.id);
+          }
+        }}
+      >
         <div className="wall-workspace-navigation">
           <TabsList aria-label="스토리지센터 상세 영역" variant="line">
             {workspaceTabs.map((tab) => {
@@ -163,7 +178,7 @@ export function DashboardWorkspace<T>({
           </TabsList>
           <span className="wall-workspace-context">
             <Server size={14} />
-            스토리지센터
+            <Trans i18nKey="wall.dashboard-workspace.text-1c9fb551">스토리지센터</Trans>
           </span>
         </div>
         <TabsContent value="overview">

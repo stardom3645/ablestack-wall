@@ -254,12 +254,12 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
   }
 
   public onEnterEditMode = () => {
-    if (this.state.uid === 'aec03x1adsi68f' && this.state.isEditing) {
+    if (Boolean(this.state.uid) && this.state.isEditing) {
       return; // Native panel/settings entry must not overwrite the direct-edit baseline.
     }
     // Save this state
     this._initialState = sceneUtils.cloneSceneObjectState(
-      this.state.uid === 'aec03x1adsi68f'
+      Boolean(this.state.uid)
         ? { ...this.state, overlay: undefined, editPanel: undefined, editview: undefined }
         : this.state
     );
@@ -302,7 +302,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
       },
     });
 
-    if (this.state.uid === 'aec03x1adsi68f') {
+    if (Boolean(this.state.uid)) {
       this._initialState = sceneUtils.cloneSceneObjectState({
         ...this.state,
         overlay: undefined,
@@ -363,7 +363,9 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
     if (restoreInitialState) {
       //  Restore initial state and disable editing
-      this.setState({ ...this._initialState, isEditing: false });
+      // setState merges keys: an initial state without optional isDirty would
+      // otherwise retain the draft's true flag after its layout was restored.
+      this.setState({ ...this._initialState, isEditing: false, isDirty: false });
     } else {
       // Do not restore
       this.setState({ isEditing: false });
@@ -554,7 +556,7 @@ export class DashboardScene extends SceneObjectBase<DashboardSceneState> {
 
   public removePanel(panel: VizPanel) {
     this.state.body.removePanel(panel);
-    if (this.state.uid === 'aec03x1adsi68f' && this.state.wallModern) {
+    if (Boolean(this.state.uid) && this.state.wallModern) {
       this.setState({ wallModern: removeWallPanel(this.state.wallModern, getPanelIdForVizPanel(panel)) });
     }
   }

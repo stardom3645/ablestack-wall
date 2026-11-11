@@ -158,9 +158,9 @@ export const getSelectStyles = stylesFactory((theme: GrafanaTheme2) => {
       '&:not(:first-child)': {
         borderTop: `1px solid ${theme.colors.border.weak}`,
       },
-      // ensure there's a bottom border if there are options following the group
-      ':has(+ [role="option"])': {
-        borderBottom: `1px solid ${theme.colors.border.weak}`,
+      // Draw the same boundary on the following option without requiring :has().
+      '& + [role="option"]': {
+        borderTop: `1px solid ${theme.colors.border.weak}`,
       },
     }),
     toggleAllButton: css({

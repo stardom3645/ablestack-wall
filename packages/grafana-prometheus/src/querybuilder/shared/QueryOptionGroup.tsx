@@ -1,10 +1,14 @@
 // Core Grafana history https://github.com/grafana/grafana/blob/v11.0.0-preview/public/app/plugins/datasource/prometheus/querybuilder/shared/QueryOptionGroup.tsx
 import { css } from '@emotion/css';
 import * as React from 'react';
+import { useContext } from 'react';
 import { useToggle } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Collapse, useStyles2, Stack } from '@grafana/ui';
+
+import { editorPresentationContext } from '../../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
+import { WallQueryOptions } from '../../../../../public/app/features/wall-modern/editor/WallQueryToolbar';
 
 export interface Props {
   title: string;
@@ -15,6 +19,14 @@ export interface Props {
 export function QueryOptionGroup({ title, children, collapsedInfo }: Props) {
   const [isOpen, toggleOpen] = useToggle(false);
   const styles = useStyles2(getStyles);
+  const wallEditor = useContext(editorPresentationContext);
+  if (wallEditor) {
+    return (
+      <WallQueryOptions title={title === 'Options' ? '쿼리 설정' : title} summary={collapsedInfo}>
+        {children}
+      </WallQueryOptions>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>

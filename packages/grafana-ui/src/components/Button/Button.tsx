@@ -78,6 +78,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const button = (
       <button
         className={buttonStyles}
+        data-ui-button={variant}
+        data-ui-button-fill={fill}
         type={type}
         onClick={disabled ? undefined : onClick}
         {...otherProps}
@@ -153,6 +155,8 @@ export const LinkButton = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
     const button = (
       <a
         className={linkButtonStyles}
+        data-ui-button={variant}
+        data-ui-button-fill={fill}
         {...otherProps}
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled}

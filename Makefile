@@ -203,6 +203,11 @@ build-cli: ## Build Grafana CLI application.
 	$(GO) run build.go $(GO_BUILD_FLAGS) build-cli
 
 .PHONY: build-js
+.PHONY: wall-preview-check
+wall-preview-check: ## Verify an isolated Wall preview's source, binary and frontend provenance.
+	@test -n "$(WALL_PREVIEW_RUNTIME)" || (echo 'Set WALL_PREVIEW_RUNTIME to the isolated runtime directory'; exit 1)
+	python3 scripts/wall-preview-check.py check --runtime "$(WALL_PREVIEW_RUNTIME)" $(if $(WALL_PREVIEW_URL),--url "$(WALL_PREVIEW_URL)")
+
 build-js: ## Build frontend assets.
 	@echo "build frontend"
 	yarn run build

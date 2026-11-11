@@ -32,12 +32,15 @@ describe('Wall route boundaries', () => {
   ])('leaves %s unchanged', (path) => {
     expect(isWallModernRoute(path)).toBe(false);
   });
-  it.each(['?kiosk', '?kiosk=tv', '?editPanel=7', '?viewPanel=7', '?editview=settings', '?fullscreen'])(
+  it.each(['?editPanel=7', '?viewPanel=7', '?editview=settings', '?fullscreen'])(
     'preserves embedded and editing layout %s',
     (query) => {
       expect(isWallModernRoute('/d/overview', query)).toBe(false);
     }
   );
+  it('keeps kiosk on the shared modern layout', () => {
+    expect(isWallModernRoute('/d/overview', '?kiosk=tv')).toBe(true);
+  });
   it('keeps ordinary variable, refresh and time parameters on the modern dashboard', () => {
     expect(isWallModernRoute('/d/overview', '?var-host=host1&from=now-6h&to=now&refresh=1m')).toBe(true);
   });

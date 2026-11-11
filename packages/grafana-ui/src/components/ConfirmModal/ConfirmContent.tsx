@@ -94,9 +94,13 @@ export const ConfirmContent = ({
 
   return (
     <form onSubmit={handleSubmit(onConfirmClick)}>
-      <div className={styles.text}>
+      <div className={styles.text} data-slot="confirm-message">
         {body}
-        {description ? <div className={styles.description}>{description}</div> : null}
+        {description ? (
+          <div className={styles.description} data-slot="confirm-description">
+            {description}
+          </div>
+        ) : null}
         {confirmPromptText ? (
           <div className={styles.confirmationInput}>
             <Stack alignItems="flex-start">
@@ -114,7 +118,7 @@ export const ConfirmContent = ({
           </div>
         ) : null}
       </div>
-      <div className={styles.buttonsContainer}>
+      <footer className={styles.buttonsContainer} data-slot="modal-footer">
         <Stack justifyContent={justifyButtons} gap={2} wrap="wrap">
           <Button variant={dismissButtonVariant} onClick={onDismiss} fill="outline">
             {dismissButtonLabel}
@@ -134,7 +138,7 @@ export const ConfirmContent = ({
             </Button>
           ) : null}
         </Stack>
-      </div>
+      </footer>
     </form>
   );
 };

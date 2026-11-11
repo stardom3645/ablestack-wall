@@ -5,6 +5,7 @@ import { CellProps, Column, Row, TableState, UseExpandedRowProps } from 'react-t
 import { DataFrame, Field, KeyValue, SelectableValue, TimeRange, FieldConfigSource, ActionModel } from '@grafana/data';
 import * as schema from '@grafana/schema';
 
+import type { TablePresentation } from './TablePresentation';
 import { TableStyles } from './styles';
 
 export {
@@ -83,6 +84,8 @@ export interface TableStateReducerProps {
 }
 
 export interface Props {
+  /** Optional application presentation, preserving native field/cell implementations. */
+  presentation?: TablePresentation;
   ariaLabel?: string;
   data: DataFrame;
   width: number;

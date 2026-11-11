@@ -1,4 +1,5 @@
 export enum InspectTab {
+  Diagnostic = 'diagnostic',
   Data = 'data',
   Meta = 'meta', // When result metadata exists
   Error = 'error',

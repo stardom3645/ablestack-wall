@@ -1,6 +1,4 @@
-import { Input as BaseInput } from '@base-ui/react/input';
 import { css } from '@emotion/css';
-import { ArrowLeft, Search } from 'lucide-react';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
@@ -10,15 +8,12 @@ import { reportInteraction } from '@grafana/runtime';
 import { VizPanel } from '@grafana/scenes';
 import { Button, CustomScrollbar, Field, FilterInput, RadioButtonGroup, useStyles2 } from '@grafana/ui';
 import { LS_VISUALIZATION_SELECT_TAB_KEY, LS_WIDGET_SELECT_TAB_KEY } from 'app/core/constants';
-import { t, Trans } from 'app/core/internationalization';
 import { VisualizationSelectPaneTab } from 'app/features/dashboard/components/PanelEditor/types';
 import { VisualizationSuggestions } from 'app/features/panel/components/VizTypePicker/VisualizationSuggestions';
 import { VizTypePicker } from 'app/features/panel/components/VizTypePicker/VizTypePicker';
 import { VizTypeChangeDetails } from 'app/features/panel/components/VizTypePicker/types';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from 'app/features/wall-modern/components/ui/tabs';
 import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
-import { WallVisualizationGallery } from 'app/features/wall-modern/editor/WallVisualizationGallery';
-import { Button as WallButton } from 'app/features/wall-modern/ui';
+import { WallVisualizationPicker } from 'app/features/wall-modern/editor/WallVisualizationGallery';
 
 import { PanelModelCompatibilityWrapper } from '../utils/PanelModelCompatibilityWrapper';
 
@@ -78,61 +73,7 @@ export function PanelVizTypePicker({ panel, data, onChange, onClose }: Props) {
   ];
 
   if (wallEditor) {
-    return (
-      <div className="wall-studio-viz-picker">
-        <div className="wall-studio-viz-picker-heading">
-          <WallButton
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            data-testid={selectors.components.PanelEditor.toggleVizPicker}
-          >
-            <ArrowLeft size={15} />
-            <Trans i18nKey="wall.studio.back-to-properties">표현 설정으로</Trans>
-          </WallButton>
-          <span>
-            <Trans i18nKey="wall.studio.choose-visualization">시각화 선택</Trans>
-          </span>
-        </div>
-        <div className="wall-option-search">
-          <Search size={15} aria-hidden="true" />
-          <BaseInput
-            value={searchQuery}
-            onValueChange={handleSearchChange}
-            aria-label={t('wall.studio.search-visualization', '시각화 검색')}
-            placeholder={t('wall.studio.search-visualization', '시각화 검색')}
-            autoFocus
-          />
-        </div>
-        <Tabs
-          value={listMode}
-          className="wall-studio-gallery-tabs"
-          onValueChange={(value) => {
-            if (typeof value === 'number') {
-              handleListModeChange(value);
-            }
-          }}
-        >
-          <TabsList
-            aria-label={t('wall.studio.visualization-modes', '시각화 선택 방식')}
-            className="wall-studio-gallery-navigation"
-          >
-            <TabsTrigger value={VisualizationSelectPaneTab.Visualizations}>
-              <Trans i18nKey="wall.studio.all-visualizations">전체 유형</Trans>
-            </TabsTrigger>
-            <TabsTrigger value={VisualizationSelectPaneTab.Suggestions}>
-              <Trans i18nKey="wall.studio.suggestions">데이터 기반 추천</Trans>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value={VisualizationSelectPaneTab.Visualizations} className="wall-studio-gallery-content">
-            <WallVisualizationGallery pluginId={panel.state.pluginId} searchQuery={searchQuery} onChange={onChange} />
-          </TabsContent>
-          <TabsContent value={VisualizationSelectPaneTab.Suggestions} className="wall-studio-gallery-content">
-            <VisualizationSuggestions onChange={onChange} searchQuery={searchQuery} panel={panelModel} data={data} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    );
+    return <WallVisualizationPicker pluginId={panel.state.pluginId} onChange={onChange} onClose={onClose} />;
   }
 
   return (

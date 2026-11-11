@@ -1,18 +1,16 @@
-import { css } from '@emotion/css';
 import { ReactNode, useContext } from 'react';
 
-import { DataFrame, Field, FieldType, formattedValueToString, InterpolateFunction } from '@grafana/data';
+import { DataFrame, Field, FieldType, formattedValueToString, InterpolateFunction, TimeZone } from '@grafana/data';
 import { SortOrder, TooltipDisplayMode } from '@grafana/schema/dist/esm/common/common.gen';
-import {
-  TimeSeriesPresentationContext,
-  timeSeriesTooltipContent,
-} from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
+import { TimeSeriesPresentationContext } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import { VizTooltipContent } from '@grafana/ui/src/components/VizTooltip/VizTooltipContent';
 import { VizTooltipFooter } from '@grafana/ui/src/components/VizTooltip/VizTooltipFooter';
 import { VizTooltipHeader } from '@grafana/ui/src/components/VizTooltip/VizTooltipHeader';
 import { VizTooltipWrapper } from '@grafana/ui/src/components/VizTooltip/VizTooltipWrapper';
 import { VizTooltipItem } from '@grafana/ui/src/components/VizTooltip/types';
 import { getContentItems } from '@grafana/ui/src/components/VizTooltip/utils';
+import { WallTimeSeriesTooltip } from 'app/features/wall-modern/charts/WallTimeSeriesTooltip';
+import { tooltipTime, WallTooltipItem } from 'app/features/wall-modern/charts/tooltipModel';
 
 import { getDataLinks, getFieldActions } from '../status-history/utils';
 import { fmt } from '../xychart/utils';
@@ -42,6 +40,7 @@ export interface TimeSeriesTooltipProps {
   maxHeight?: number;
 
   replaceVariables?: InterpolateFunction;
+  timeZone?: TimeZone;
 }
 
 export const TimeSeriesTooltip = ({
@@ -55,6 +54,7 @@ export const TimeSeriesTooltip = ({
   annotate,
   maxHeight,
   replaceVariables,
+  timeZone = 'browser',
 }: TimeSeriesTooltipProps) => {
   const presentation = useContext(TimeSeriesPresentationContext);
   const xField = series.fields[0];
@@ -67,7 +67,8 @@ export const TimeSeriesTooltip = ({
     seriesIdx,
     mode,
     sortOrder,
-    (field) => field.type === FieldType.number || field.type === FieldType.enum
+    (field) => field.type === FieldType.number || field.type === FieldType.enum,
+    Boolean(presentation)
   );
 
   _rest?.forEach((field) => {
@@ -97,6 +98,36 @@ export const TimeSeriesTooltip = ({
         value: xVal,
       };
 
+  if (presentation) {
+    const timestamp = xField.type === FieldType.time ? xField.values[dataIdxs[0]!] : null;
+    const time =
+      typeof timestamp === 'number' && Number.isFinite(timestamp)
+        ? tooltipTime(timestamp, xField, timeZone)
+        : undefined;
+    const items: WallTooltipItem[] = contentItems.map((item) => ({
+      ...item,
+      sampleTime: item.dataIndex != null && xField.type === FieldType.time ? xField.values[item.dataIndex] : undefined,
+    }));
+    return (
+      <WallTimeSeriesTooltip
+        header={headerItem && time ? { ...headerItem, value: time.text } : headerItem}
+        timestamp={timestamp}
+        timeZoneLabel={time?.zone}
+        exactTime={time?.exact}
+        sampleTimeLabel={(sample) => {
+          const actual = tooltipTime(sample, xField, timeZone);
+          return actual.exact.slice(0, 10) === time?.exact.slice(0, 10) ? actual.short : actual.text;
+        }}
+        items={items}
+        isPinned={isPinned}
+        maxHeight={maxHeight}
+        scrollable={isTooltipScrollable({ mode, maxHeight })}
+        footer={footer}
+        tokens={presentation}
+      />
+    );
+  }
+
   const header = headerItem != null && <VizTooltipHeader item={headerItem} isPinned={isPinned} />;
   const rows = (
     <VizTooltipContent
@@ -107,9 +138,9 @@ export const TimeSeriesTooltip = ({
     />
   );
   return (
-    <VizTooltipWrapper className={presentation ? css(timeSeriesTooltipContent(presentation)) : undefined}>
-      {presentation && header ? <div data-wall-chart-slot="tooltip-heading">{header}</div> : header}
-      {presentation ? <div data-wall-chart-slot="tooltip-rows">{rows}</div> : rows}
+    <VizTooltipWrapper>
+      {header}
+      {rows}
       {footer}
     </VizTooltipWrapper>
   );

@@ -1,6 +1,5 @@
-import { Collapsible } from '@base-ui/react/collapsible';
 import { css, cx } from '@emotion/css';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { ReactNode, useContext, useCallback, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
 import { useLocalStorage } from 'react-use';
@@ -9,7 +8,9 @@ import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Button, Counter, useStyles2 } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
+import { Collapsible } from 'app/features/wall-modern/components/ui/collapsible';
 import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { wallOptionText } from 'app/features/wall-modern/editor/optionText';
 import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 import { PANEL_EDITOR_UI_STATE_STORAGE_KEY } from './state/reducers';
@@ -20,6 +21,7 @@ export interface OptionsPaneCategoryProps {
   renderTitle?: (isExpanded: boolean) => React.ReactNode;
   isOpenDefault?: boolean;
   itemsCount?: number;
+  summary?: ReactNode;
   forceOpen?: number;
   className?: string;
   isNested?: boolean;
@@ -39,15 +41,19 @@ export const OptionsPaneCategory = React.memo(
     renderTitle,
     className,
     itemsCount,
+    summary,
     isNested = false,
     sandboxId,
   }: OptionsPaneCategoryProps) => {
     const wallEditor = useContext(editorPresentationContext);
-    const [savedState, setSavedState] = useLocalStorage(getOptionGroupStorageKey(id), {
-      isExpanded: isOpenDefault,
-    });
+    const [savedState, setSavedState] = useLocalStorage(
+      wallEditor ? `wall.studio.groups.v2.${id}` : getOptionGroupStorageKey(id),
+      {
+        isExpanded: wallEditor ? false : isOpenDefault,
+      }
+    );
 
-    const [isExpanded, setIsExpanded] = useState(savedState?.isExpanded ?? isOpenDefault);
+    const [isExpanded, setIsExpanded] = useState(savedState?.isExpanded ?? (wallEditor ? false : isOpenDefault));
     const manualClickTime = useRef(0);
     const ref = useRef<HTMLDivElement>(null);
     const [queryParams, updateQueryParams] = useQueryParams();
@@ -85,13 +91,13 @@ export const OptionsPaneCategory = React.memo(
     const hasCustomTitle = Boolean(renderTitle);
     if (!renderTitle) {
       renderTitle = function defaultTitle(isExpanded: boolean) {
-        if (isExpanded || itemsCount === undefined || itemsCount === 0) {
-          return title;
+        if (isExpanded || (wallEditor && summary) || itemsCount === undefined || itemsCount === 0) {
+          return wallEditor ? wallOptionText(title) : title;
         }
 
         return (
           <span>
-            {title} <Counter value={itemsCount} />
+            {wallEditor ? wallOptionText(title) : title} <Counter value={itemsCount} />
           </span>
         );
       };
@@ -132,7 +138,7 @@ export const OptionsPaneCategory = React.memo(
               </div>
               <Collapsible.Trigger
                 render={<WallButton variant="ghost" size="icon" />}
-                aria-label={title ?? id}
+                aria-label={wallOptionText(title ?? id)}
                 data-testid={selectors.components.OptionsGroup.toggle(id)}
                 className="wall-option-custom-trigger"
               >
@@ -145,12 +151,15 @@ export const OptionsPaneCategory = React.memo(
               className="wall-option-group-trigger"
               data-testid={selectors.components.OptionsGroup.toggle(id)}
               id={`button-${id}`}
+              aria-label={wallOptionText(title ?? id)}
             >
-              <span>{renderTitle(isExpanded)}</span>
+              <SlidersHorizontal size={15} aria-hidden="true" />
+              <span className="wall-option-group-label">{renderTitle(isExpanded)}</span>
+              {!isExpanded && summary}
               <ChevronDown size={14} aria-hidden="true" />
             </Collapsible.Trigger>
           )}
-          <Collapsible.Panel className="wall-option-group-content" id={id} aria-labelledby={`button-${id}`}>
+          <Collapsible.Panel keepMounted className="wall-option-group-content" id={id} aria-labelledby={`button-${id}`}>
             {children}
           </Collapsible.Panel>
         </Collapsible.Root>

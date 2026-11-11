@@ -11,6 +11,7 @@ import { LokiQueryBuilderExplained } from './LokiQueryBuilderExplained';
 
 type Props = LokiQueryEditorProps & {
   showExplain: boolean;
+  minEditorHeight?: number;
 };
 
 export function LokiQueryCodeEditor({
@@ -23,11 +24,12 @@ export function LokiQueryCodeEditor({
   app,
   showExplain,
   history,
+  minEditorHeight,
 }: Props) {
   const styles = useStyles2(getStyles);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper}${minEditorHeight !== undefined ? ' wall-prom-code-editor' : ''}`}>
       <LokiQueryField
         datasource={datasource}
         query={query}
@@ -38,6 +40,7 @@ export function LokiQueryCodeEditor({
         data={data}
         app={app}
         data-testid={testIds.editor}
+        minimumHeight={minEditorHeight}
       />
       {showExplain && <LokiQueryBuilderExplained query={query.expr} />}
     </div>

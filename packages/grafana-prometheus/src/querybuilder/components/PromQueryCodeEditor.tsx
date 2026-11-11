@@ -13,6 +13,8 @@ import { PromQueryBuilderExplained } from './PromQueryBuilderExplained';
 
 type PromQueryCodeEditorProps = PromQueryEditorProps & {
   showExplain: boolean;
+  minEditorHeight?: number;
+  showHints?: boolean;
 };
 
 export function PromQueryCodeEditor(props: PromQueryCodeEditorProps) {
@@ -22,7 +24,7 @@ export function PromQueryCodeEditor(props: PromQueryCodeEditorProps) {
   return (
     <div
       data-testid={selectors.components.DataSource.Prometheus.queryEditor.code.queryField}
-      className={styles.wrapper}
+      className={`${styles.wrapper}${props.minEditorHeight !== undefined ? ' wall-prom-code-editor' : ''}`}
     >
       <PromQueryField
         datasource={datasource}
@@ -33,9 +35,18 @@ export function PromQueryCodeEditor(props: PromQueryCodeEditorProps) {
         history={[]}
         data={data}
         app={app}
+        editorMinHeight={props.minEditorHeight}
       />
       {showExplain && <PromQueryBuilderExplained query={query.expr} />}
-      <QueryEditorHints query={query} datasource={datasource} data={data} onChange={onChange} onRunQuery={onRunQuery} />
+      {props.showHints !== false && (
+        <QueryEditorHints
+          query={query}
+          datasource={datasource}
+          data={data}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+        />
+      )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   editorInspectorContext,
   editorPresentationContext,
 } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallInspector } from 'app/features/wall-modern/editor/WallInspector';
 import { WallOptionNavigator } from 'app/features/wall-modern/editor/WallOptionNavigator';
 import { WallPanelDetails } from 'app/features/wall-modern/editor/WallPanelDetails';
 
@@ -122,21 +123,34 @@ export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, d
   }
 
   if (wallEditor) {
-    if (inspector === 'panel' && !isSearching) {
+    const metadata = (
+      <WallPanelDetails
+        title={panel.state.title}
+        description={panel.state.description}
+        transparent={panel.state.displayMode === 'transparent'}
+        onTitle={(title) => panel.setState({ title, hoverHeader: title === '' })}
+        onDescription={(description) => panel.setState({ description })}
+        onTransparent={(transparent) => panel.setState({ displayMode: transparent ? 'transparent' : 'default' })}
+        titleAddon={panelFrameOptions.items.find((item) => item.props.title === 'Title')?.props.addon}
+        descriptionAddon={panelFrameOptions.items.find((item) => item.props.title === 'Description')?.props.addon}
+      >
+        {libraryPanelOptions?.render()}
+        {panelFrameOptions.categories.map((group) => group.render())}
+      </WallPanelDetails>
+    );
+    if (inspector) {
       return (
-        <WallPanelDetails
-          title={panel.state.title}
-          description={panel.state.description}
-          transparent={panel.state.displayMode === 'transparent'}
-          onTitle={(title) => panel.setState({ title, hoverHeader: title === '' })}
-          onDescription={(description) => panel.setState({ description })}
-          onTransparent={(transparent) => panel.setState({ displayMode: transparent ? 'transparent' : 'default' })}
-          titleAddon={panelFrameOptions.items.find((item) => item.props.title === 'Title')?.props.addon}
-          descriptionAddon={panelFrameOptions.items.find((item) => item.props.title === 'Description')?.props.addon}
-        >
-          {libraryPanelOptions?.render()}
-          {panelFrameOptions.categories.map((group) => group.render())}
-        </WallPanelDetails>
+        <>
+          <div hidden={inspector !== 'panel'}>{metadata}</div>
+          <div hidden={inspector !== 'visual'} className="wall-visual-options">
+            <WallInspector
+              groups={visualizationOptions ?? []}
+              overrides={justOverrides}
+              pluginId={panel.state.pluginId}
+              searchQuery={searchQuery}
+            />
+          </div>
+        </>
       );
     }
     const plugin = panel.getPlugin();
@@ -162,7 +176,8 @@ export const PanelOptions = React.memo<Props>(({ panel, searchQuery, listMode, d
                     ? [...(libraryPanelOptions ? [libraryPanelOptions] : []), panelFrameOptions]
                     : (visualizationOptions ?? []),
                   inspector === 'panel' ? [] : justOverrides,
-                  searchQuery
+                  searchQuery,
+                  true
                 )
               : mainBoxElements
             : undefined

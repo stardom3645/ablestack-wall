@@ -3,6 +3,7 @@ import { Action } from 'redux';
 import { DataSourcePluginMeta, PluginType } from '@grafana/data';
 import { LinkButton, FilterInput } from '@grafana/ui';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
+import { Trans } from 'app/core/internationalization';
 import { PluginsErrorsInfo } from 'app/features/plugins/components/PluginsErrorsInfo';
 import { DataSourcePluginCategory, StoreState, useDispatch, useSelector } from 'app/types';
 
@@ -15,6 +16,8 @@ import {
   getFilteredDataSourcePlugins,
   setDataSourceTypeSearchQuery,
 } from '../state';
+
+import './dataSources.css';
 
 export function NewDataSource() {
   useLoadDataSourcePlugins();
@@ -61,13 +64,13 @@ export function NewDataSourceView({
   }
 
   return (
-    <>
+    <div className="wall-datasource-add">
       {/* Search */}
       <div className="page-action-bar">
-        <FilterInput value={searchQuery} onChange={onSetSearchQuery} placeholder="Filter by name or type" />
+        <FilterInput value={searchQuery} onChange={onSetSearchQuery} placeholder="이름 또는 유형으로 검색" />
         <div className="page-action-bar__spacer" />
         <LinkButton href={ROUTES.DataSources} fill="outline" variant="secondary" icon="arrow-left">
-          Cancel
+          <Trans i18nKey="wall.new-data-source.text-8407653e">목록으로 돌아가기</Trans>
         </LinkButton>
       </div>
 
@@ -83,6 +86,6 @@ export function NewDataSourceView({
           <DataSourceCategories categories={dataSourceCategories} onClickDataSourceType={onAddDataSource} />
         )}
       </div>
-    </>
+    </div>
   );
 }

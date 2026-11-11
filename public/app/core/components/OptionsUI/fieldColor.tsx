@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { CSSProperties, FC } from 'react';
+import { CSSProperties, FC, useContext } from 'react';
 
 import {
   StandardEditorProps,
@@ -14,12 +14,17 @@ import {
   getFieldColorMode,
 } from '@grafana/data';
 import { useStyles2, useTheme2, Field, RadioButtonGroup, Select } from '@grafana/ui';
+import { isWallAutomaticColor, wallSeriesPalette } from 'app/features/wall-modern/colorSystem';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { ColorValueEditor } from './color';
 
 type Props = StandardEditorProps<FieldColor | undefined, FieldColorConfigSettings>;
 
 export const FieldColorEditor = ({ value, onChange, item, id }: Props) => {
+  const text = useWallOptionText();
+  const wall = useContext(editorPresentationContext);
   const theme = useTheme2();
   const styles = useStyles2(getStyles);
 
@@ -35,8 +40,13 @@ export const FieldColorEditor = ({ value, onChange, item, id }: Props) => {
 
       return {
         value: mode.id,
-        label: `${mode.name}${suffix}`,
-        description: mode.description,
+        label:
+          wall && isWallAutomaticColor(mode.id)
+            ? mode.id === FieldColorModeId.PaletteClassicByName
+              ? 'Wall 시리즈 · 이름 기준'
+              : 'Wall 시리즈'
+            : `${text(mode.name)}${suffix ? ' (' + text('by value') + ')' : ''}`,
+        description: text(mode.description),
         isContinuous: mode.isContinuous,
         isByValue: mode.isByValue,
         component() {
@@ -98,8 +108,12 @@ export const FieldColorEditor = ({ value, onChange, item, id }: Props) => {
         <div style={{ marginBottom: theme.spacing(2) }}>
           <Select minMenuHeight={200} options={options} value={mode} onChange={onModeChange} inputId={id} />
         </div>
-        <Field label="Color series by">
-          <RadioButtonGroup value={value?.seriesBy ?? 'last'} options={seriesModes} onChange={onSeriesModeChange} />
+        <Field label={text('Color series by')}>
+          <RadioButtonGroup
+            value={value?.seriesBy ?? 'last'}
+            options={seriesModes.map((option) => ({ ...option, label: text(option.label) }))}
+            onChange={onSeriesModeChange}
+          />
         </Field>
       </>
     );
@@ -114,11 +128,15 @@ interface ModeProps {
 }
 
 const FieldColorModeViz: FC<ModeProps> = ({ mode, theme }) => {
+  const wall = useContext(editorPresentationContext);
   if (!mode.getColors) {
     return null;
   }
 
-  const colors = mode.getColors(theme).map(theme.visualization.getColorByName);
+  const colors =
+    wall && isWallAutomaticColor(mode.id)
+      ? wallSeriesPalette(theme)
+      : mode.getColors(theme).map(theme.visualization.getColorByName);
   const style: CSSProperties = {
     height: '8px',
     width: '100%',

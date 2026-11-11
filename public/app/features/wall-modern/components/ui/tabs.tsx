@@ -2,6 +2,7 @@
 // Source and license: ../../DESIGN_SYSTEM.md, ./SHADCN-LICENSE.txt.
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { forwardRef } from 'react';
 
 import { cn } from '../../ui';
 
@@ -19,9 +20,15 @@ const listVariants = cva('wall-ui-tabs-list wl-flex wl-items-center', {
 export function TabsList({
   className,
   variant,
+  children,
   ...props
 }: TabsPrimitive.List.Props & VariantProps<typeof listVariants>) {
-  return <TabsPrimitive.List data-slot="tabs-list" className={cn(listVariants({ variant }), className)} {...props} />;
+  return (
+    <TabsPrimitive.List data-slot="tabs-list" className={cn(listVariants({ variant }), className)} {...props}>
+      {children}
+      <TabsPrimitive.Indicator className="wall-tabs-indicator" />
+    </TabsPrimitive.List>
+  );
 }
 
 export function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
@@ -34,12 +41,12 @@ export function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
   );
 }
 
-export function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
-  return (
-    <TabsPrimitive.Panel
-      data-slot="tabs-content"
-      className={cn('wall-ui-tabs-content wl-outline-none', className)}
-      {...props}
-    />
-  );
-}
+export const TabsContent = forwardRef<HTMLDivElement, TabsPrimitive.Panel.Props>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Panel
+    ref={ref}
+    data-slot="tabs-content"
+    className={cn('wall-ui-tabs-content wl-outline-none', className)}
+    {...props}
+  />
+));
+TabsContent.displayName = 'WallTabsContent';

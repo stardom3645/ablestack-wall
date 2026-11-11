@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { useId } from 'react';
+import { useId, useContext } from 'react';
 import Highlighter from 'react-highlight-words';
 
 import {
@@ -10,6 +10,8 @@ import {
   GrafanaTheme2,
 } from '@grafana/data';
 import { Counter, Field, HorizontalGroup, IconButton, Label, useStyles2 } from '@grafana/ui';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
+import { WallOptionField } from 'app/features/wall-modern/editor/WallOptionEditor';
 
 import { OptionsPaneCategory } from './OptionsPaneCategory';
 
@@ -32,6 +34,7 @@ export const DynamicConfigValueEditor = ({
   isSystemOverride,
   searchQuery,
 }: DynamicConfigValueEditorProps) => {
+  const wall = useContext(editorPresentationContext);
   const styles = useStyles2(getStyles);
   const item = registry?.getIfExists(property.id);
 
@@ -39,6 +42,19 @@ export const DynamicConfigValueEditor = ({
 
   if (!item) {
     return null;
+  }
+
+  if (wall) {
+    return (
+      <WallOptionField
+        title={item.name}
+        description={item.description}
+        editor={
+          <item.override value={property.value} onChange={onChange} item={item} context={context} id={componentId} />
+        }
+        addon={!isSystemOverride ? <IconButton name="times" onClick={onRemove} tooltip="설정 항목 삭제" /> : undefined}
+      />
+    );
   }
 
   const isCollapsible =

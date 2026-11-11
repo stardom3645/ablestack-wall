@@ -28,6 +28,22 @@ variableAdapters.setInit(() => [
 ]);
 
 describe('DashboardModel', () => {
+  it.each([undefined, 39, 40])('defaults an unspecified hover mode to Crosshair at schema %s', (schemaVersion) => {
+    const input = { title: 'Wall defaults', schemaVersion };
+    const model = new DashboardModel(input);
+    expect(model.graphTooltip).toBe(1);
+    expect(input).not.toHaveProperty('graphTooltip');
+  });
+
+  it.each([0, 1, 2])('preserves the saved hover mode %s', (graphTooltip) => {
+    const model = new DashboardModel({ title: 'Saved choice', schemaVersion: 40, graphTooltip });
+    expect(model.graphTooltip).toBe(graphTooltip);
+  });
+
+  it.each([false, true])('preserves the pre-v14 sharedCrosshair preference %s', (sharedCrosshair) => {
+    const model = new DashboardModel({ title: 'Legacy choice', schemaVersion: 13, sharedCrosshair } as Dashboard);
+    expect(model.graphTooltip).toBe(Number(sharedCrosshair));
+  });
   describe('when creating new dashboard model defaults only', () => {
     let model: DashboardModel;
 

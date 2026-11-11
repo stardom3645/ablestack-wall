@@ -1,11 +1,13 @@
 import { css } from '@emotion/css';
-import { PropsWithChildren, useLayoutEffect, useRef } from 'react';
+import { PropsWithChildren, useContext, useLayoutEffect, useRef } from 'react';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 
 import { GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2, useTheme2 } from '../../themes';
+
+import { PortalPresentationContext } from './PortalPresentationContext';
 
 interface Props {
   className?: string;
@@ -16,6 +18,7 @@ interface Props {
 export function Portal(props: PropsWithChildren<Props>) {
   const { children, className, root, forwardedRef } = props;
   const theme = useTheme2();
+  const presentation = useContext(PortalPresentationContext);
   const node = useRef<HTMLDivElement | null>(null);
   const portalRoot = root ?? getPortalContainer();
 
@@ -40,7 +43,16 @@ export function Portal(props: PropsWithChildren<Props>) {
     };
   }, [portalRoot]);
 
-  return ReactDOM.createPortal(<div ref={forwardedRef}>{children}</div>, node.current);
+  return ReactDOM.createPortal(
+    <div
+      ref={forwardedRef}
+      data-wall-motion={presentation ? 'true' : undefined}
+      className={presentation ? css(presentation) : undefined}
+    >
+      {children}
+    </div>,
+    node.current
+  );
 }
 
 /** @internal */

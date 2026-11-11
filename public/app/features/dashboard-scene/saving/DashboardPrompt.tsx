@@ -167,7 +167,7 @@ export function ignoreChanges(current: DashboardScene | null, original?: Dashboa
   // The local/anonymous Admin preview can save Wall dashboards too. Protect its
   // direct-edit transaction by the existing canSave capability, not login UI state.
   if (
-    current?.state.uid === 'aec03x1adsi68f' &&
+    current?.state.wallModern &&
     current.state.isDirty &&
     current.state.meta.canSave &&
     !current.state.meta.fromScript &&

@@ -29,6 +29,7 @@ export function useTableStateReducer({ onColumnResize, onSortByChange, data }: T
             onColumnResize(fieldDisplayName, width);
           }
         case 'toggleSortBy':
+        case 'clearSortBy':
           if (onSortByChange) {
             const sortByFields: TableSortByFieldState[] = [];
 

@@ -36,6 +36,7 @@ import { PlotLegend } from '@grafana/ui/src/components/uPlot/PlotLegend';
 import { preparePlotConfigBuilder } from 'app/core/components/TimeSeries/utils';
 
 import { isWallTimeSeriesRoute, wallTimeSeriesTokens } from './chartTokens';
+import { metricPresentation, metricProfiles } from './charts/metricProfiles';
 import { presentTimeSeriesFrames } from './timeSeriesPresentation';
 
 const theme = createTheme({ colors: { mode: 'light' } });
@@ -318,12 +319,132 @@ it('does not apply effective chart styling to siblings just because a dashboard 
   expect(container.innerHTML).toBe(nativeMarkup);
 });
 
-it('enables only this UID, retaining fullscreen styling and excluding native panel editing', () => {
+it('shares chart styling across dashboard UIDs, retaining fullscreen and excluding editing', () => {
   const path = '/d/aec03x1adsi68f/storage';
   expect(isWallTimeSeriesRoute(path)).toBe(true);
   expect(isWallTimeSeriesRoute(path, '?viewPanel=panel-176')).toBe(true);
   expect(isWallTimeSeriesRoute(path, '?kiosk')).toBe(true);
   expect(isWallTimeSeriesRoute(path, '?editPanel=176')).toBe(false);
-  expect(isWallTimeSeriesRoute('/d/fec03giqwtw5cf/overview')).toBe(false);
-  expect(isWallTimeSeriesRoute('/d/aec03x1adsi68f-copy/storage')).toBe(false);
+  expect(isWallTimeSeriesRoute('/d/fec03giqwtw5cf/overview')).toBe(true);
+  expect(isWallTimeSeriesRoute('/d/aec03x1adsi68f-copy/storage')).toBe(true);
+});
+
+it.each(metricProfiles)('keeps saved graph settings and data identical for profile $value', (profile) => {
+  const frame = frameWith({
+    lineInterpolation: LineInterpolation.StepAfter,
+    lineWidth: 1,
+    fillOpacity: 40,
+    gradientMode: GraphGradientMode.None,
+    showPoints: VisibilityMode.Auto,
+    pointSize: 5,
+  });
+  const original = JSON.stringify(frame.fields[1].config);
+  const config: FieldConfigSource = { defaults: frame.fields[1].config, overrides: [] };
+  const result = presentTimeSeriesFrames([frame], config, theme, metricPresentation(tokens, profile.value))[0];
+  expect(result.fields[1].config.custom).toEqual(frame.fields[1].config.custom);
+  expect(result.fields[1].values).toBe(frame.fields[1].values);
+  expect(result.fields[1].config.unit).toBe('percent');
+  expect(result.fields[1].config.thresholds).toBe(frame.fields[1].config.thresholds);
+  expect(JSON.stringify(frame.fields[1].config)).toBe(original);
+});
+
+it('uses the same native Linear paths, keeping subpixel peaks and dense-column extrema without Bezier smoothing', () => {
+  const y = Array.from({ length: 2001 }, (_, i) =>
+    i === 1001 ? 99 : i === 1002 ? -20 : i === 900 ? null : 20 + (i % 3) * 0.01
+  );
+  const x = y.map((_, i) => i);
+  const raw = frameWith({ lineInterpolation: LineInterpolation.Linear, fillOpacity: 0 });
+  raw.fields[0].values = x;
+  raw.fields[1].values = y;
+  raw.length = x.length;
+  const original = JSON.stringify([x, y]);
+  const projected = presentTimeSeriesFrames([raw], { defaults: raw.fields[1].config, overrides: [] }, theme, tokens)[0];
+  const path = (fieldFrame: DataFrame, modern: boolean, round: (n: number) => number) => {
+    const config = builder(fieldFrame, modern).getConfig().series[1];
+    const fake = {
+      mode: 1,
+      _data: [x, y],
+      bands: [],
+      series: [
+        { scale: 'x' },
+        {
+          ...config,
+          scale: 'y',
+          fill: null,
+          pxRound: round,
+          gaps: (_u: unknown, _s: unknown, _i: unknown, _j: unknown, gaps: unknown) => gaps,
+        },
+      ],
+      scales: { x: { ori: 0, dir: 1 }, y: { ori: 1, dir: 1 } },
+      bbox: { left: 0, top: 0, width: 200, height: 100 },
+      valToPosH: (v: number) => v / 10,
+      valToPosV: (v: number) => 100 - v,
+    } as unknown as uPlot;
+    const paths = config.paths;
+    if (typeof paths !== 'function') {
+      throw new Error('Missing native path builder');
+    }
+    return paths(fake, 1, 0, y.length - 1)!.stroke as Path2D;
+  };
+  for (const round of [Math.round, (n: number) => n]) {
+    const native = path(raw, false, round);
+    const wall = path(projected, true, round);
+    expect((wall.lineTo as jest.Mock).mock.calls).toEqual((native.lineTo as jest.Mock).mock.calls);
+    expect((wall.lineTo as jest.Mock).mock.calls.some(([, value]) => value === 1)).toBe(true);
+    expect((wall.lineTo as jest.Mock).mock.calls.some(([, value]) => value === 120)).toBe(true);
+    expect(wall.bezierCurveTo).not.toHaveBeenCalled();
+    expect(wall.quadraticCurveTo).not.toHaveBeenCalled();
+  }
+  expect(JSON.stringify([x, y])).toBe(original);
+});
+
+it.each([
+  ['cpu', 's'],
+  ['memory', 'bytes'],
+  ['network', 'Bps'],
+  ['disk', 'iops'],
+  ['latency', 'ms'],
+  ['storage', 'gbytes'],
+])('retains %s unit %s and the native formatter', (profile, unit) => {
+  const frame = frameWith();
+  frame.fields[1].config.unit = unit;
+  frame.fields[1].display = getDisplayProcessor({ field: frame.fields[1], theme });
+  const copy = presentTimeSeriesFrames([frame], source, theme, metricPresentation(tokens, profile))[0].fields[1];
+  expect(copy.config.unit).toBe(unit);
+  expect(copy.values).toBe(frame.fields[1].values);
+  expect(formattedValueToString(copy.display!(12345.678))).toBe(
+    formattedValueToString(frame.fields[1].display!(12345.678))
+  );
+});
+
+it.each([1, 2])('keeps native physical grid widths and CSS marker sizing at DPR %s', (dpr) => {
+  const previous = window.devicePixelRatio;
+  Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: dpr });
+  try {
+    const modern = builder(presentTimeSeriesFrames([frameWith()], source, theme, tokens)[0], true).getConfig();
+    expect(modern.axes![1].grid?.width).toBe(1 / dpr);
+    expect(modern.cursor?.points?.width).toBe(tokens.markerStrokeWidth);
+    expect(modern.cursor?.points?.stroke).toBe(tokens.surface);
+    expect(modern.cursor?.focus?.alpha).toBe(tokens.focusAlpha);
+    const paint = modern.cursor?.points?.fill as (u: uPlot, index: number) => string;
+    expect(paint({ series: [{}, { points: { _stroke: 'rgba(12, 34, 56, 0.8)' } }] } as unknown as uPlot, 1)).toBe(
+      'rgba(12, 34, 56, 0.8)'
+    );
+  } finally {
+    Object.defineProperty(window, 'devicePixelRatio', { configurable: true, value: previous });
+  }
+});
+
+it('attenuates only implicit unstacked area defaults as series overlap increases, preserving explicit fill', () => {
+  const frames = Array.from({ length: 12 }, () => frameWith({ fillOpacity: 10 }));
+  const result = presentTimeSeriesFrames(frames, source, theme, tokens);
+  expect(result[0].fields[1].config.custom!.fillOpacity).toBeCloseTo(tokens.fillOpacity / Math.sqrt(12));
+  const explicit = presentTimeSeriesFrames(
+    frames,
+    { defaults: { custom: { fillOpacity: 10 } }, overrides: [] },
+    theme,
+    tokens
+  );
+  expect(explicit[0].fields[1].config.custom!.fillOpacity).toBe(10);
+  expect(frames[0].fields[1].config.custom!.fillOpacity).toBe(10);
 });

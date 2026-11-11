@@ -27,13 +27,8 @@
   --wall-radius: 12px;
   --wall-shadow: 0 2px 6px rgb(20 40 80 / 2%);
   color: var(--wall-text);
-  font-family:
-    Inter,
-    Pretendard,
-    'Noto Sans KR',
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
+  font-family: var(--wall-type-family, 'Wall Inter', 'Wall Pretendard', -apple-system, BlinkMacSystemFont, sans-serif);
+  letter-spacing: 0;
   font-size: 13px;
   line-height: 1.5;
   color-scheme: light;
@@ -864,6 +859,11 @@
 .wall-native-toolbar button {
   border-radius: 6px;
 }
+/* Dashboard canvas only: keep management pages, cards and controls on their existing surfaces. */
+.wall-dashboard-content {
+  --wall-bg: var(--wall-dashboard-bg);
+  background: var(--wall-bg);
+}
 .wall-dashboard-content > div {
   min-height: 0;
 }
@@ -883,7 +883,7 @@
 .wall-dashboard-heading h1 {
   font-size: 25px;
 }
-.wall-dashboard-content section[data-testid^='data-testid Panel header'] {
+.wall-dashboard-content section[data-testid^='data-testid Panel header']:not([data-wall-panel-chrome='common']) {
   background: var(--wall-surface);
   border: 1px solid var(--wall-border);
   box-shadow: var(--wall-shadow);
@@ -1069,12 +1069,37 @@
 .wall-modern .wall-stat-card-value[data-wall-stat-kind='metric'][data-wall-stat-indicator]::before {
   order: 1;
 }
-.wall-modern .wall-stat-card-value[data-wall-stat-kind='status'] {
+.wall-modern .wall-stat-card-value[data-wall-stat-kind='status']:not(.wall-stat-readout),
+.wall-modern .wall-stat-readout[data-wall-stat-colored] {
   border: 1px solid color-mix(in srgb, var(--wall-stat-state) 15%, transparent);
   background: color-mix(in srgb, var(--wall-stat-state) 6%, transparent);
   border-radius: 7px;
   padding: 6px 10px;
   letter-spacing: 0.01em;
+}
+/* Application-owned Stat hierarchy; native values, links and Sparkline remain upstream. */
+.wall-stat-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--wall-card-content-gap);
+  position: relative;
+  z-index: 1;
+}
+.wall-stat-label {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wall-modern .wall-stat-readout {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.wall-stat-number {
+  display: inline-flex;
+  align-items: baseline;
 }
 .wall-modern .wall-stat-card-value[data-wall-stat-kind='empty'] {
   font-weight: 500;
@@ -1467,3 +1492,7 @@
   visibility: hidden;
   pointer-events: none;
 }
+.wall-dashboard-heading h1 { overflow-wrap: anywhere; }
+.wall-dashboard-heading .wall-page-heading > div { min-width: 0; }
+.wall-dashboard-heading .wall-page-heading p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.wall-dashboard-heading .wall-breadcrumb > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

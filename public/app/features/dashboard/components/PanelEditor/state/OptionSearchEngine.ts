@@ -10,7 +10,8 @@ export interface OptionSearchResults {
 export class OptionSearchEngine {
   constructor(
     private categories: OptionsPaneCategoryDescriptor[],
-    private overrides: OptionsPaneCategoryDescriptor[]
+    private overrides: OptionsPaneCategoryDescriptor[],
+    private translate: (text: string) => string = (text) => text
   ) {}
 
   search(query: string): OptionSearchResults {
@@ -31,14 +32,18 @@ export class OptionSearchEngine {
 
   private collectHits(categories: OptionsPaneCategoryDescriptor[], searchRegex: RegExp, hits: SearchHit[]) {
     for (const category of categories) {
-      const categoryNameMatch = searchRegex.test(category.props.title);
+      const categoryNameMatch =
+        searchRegex.test(category.props.title) || searchRegex.test(this.translate(category.props.title));
 
       for (const item of category.items) {
-        if (searchRegex.test(item.props.title)) {
+        if (searchRegex.test(item.props.title) || searchRegex.test(this.translate(item.props.title))) {
           hits.push({ item: item, rank: 1 });
           continue;
         }
-        if (item.props.description && searchRegex.test(item.props.description)) {
+        if (
+          item.props.description &&
+          (searchRegex.test(item.props.description) || searchRegex.test(this.translate(item.props.description)))
+        ) {
           hits.push({ item: item, rank: 2 });
           continue;
         }

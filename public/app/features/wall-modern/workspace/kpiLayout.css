@@ -33,14 +33,23 @@
 }
 .wall-kpi-layout[data-interacting='true'] {
   outline: none;
-  /* Paint the guide behind the native Grid, never over panel content or charts. */
-  background-image: radial-gradient(
-    circle,
-    var(--wall-layout-grid-dot) var(--wall-layout-grid-dot-radius),
-    transparent 1.8px
-  );
-  background-size: var(--wall-kpi-grid-step) var(--wall-layout-grid-row, 18px);
-  background-position: calc(var(--wall-kpi-grid-step) / -2) calc(var(--wall-layout-grid-row, 18px) / -2);
+}
+.wall-layout-grid-guide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--wall-layout-grid-dot);
+  pointer-events: none;
+  /* A background layer, never an overlay on cards or charts. */
+  z-index: -1;
+  /* Edge dots are centered on x=0/width. Keep their full radius visible without
+     exposing the extra viewport rows generated below a short layout. */
+  overflow: visible;
+  clip-path: inset(calc(-1 * var(--wall-layout-grid-dot-radius)));
+}
+.wall-kpi-layout[data-interacting='false'] > .wall-layout-grid-guide {
+  display: none;
 }
 .wall-kpi-layout .react-grid-layout {
   margin-bottom: calc(-1 * var(--wall-kpi-gutter-y, var(--wall-kpi-gutter)));
@@ -123,44 +132,33 @@
   border: none;
   opacity: 1;
 }
-.wall-layout-footprint {
+.wall-layout-footprint,
+.wall-layout-footprint-preview {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 8;
-  border: 1px solid var(--wall-primary);
   border-radius: var(--wall-radius);
-  background: repeating-linear-gradient(135deg, var(--wall-layout-preview-stripe) 0 2px, transparent 2px 9px),
-    var(--wall-layout-preview-fill);
   pointer-events: none;
 }
-.wall-layout-footprint[data-wall-footprint-group='true'] {
+.wall-layout-footprint {
+  z-index: 9;
+  /* Exact logical target/guide anchor; only the coherent preview box paints. */
+}
+.wall-layout-footprint-preview {
+  border: 1px solid var(--wall-primary);
+  overflow: hidden;
+}
+.wall-layout-footprint-ink {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, var(--wall-layout-preview-stripe) 0 2px, transparent 2px 9px),
+    var(--wall-layout-preview-fill);
+}
+.wall-layout-footprint-preview[data-wall-footprint-group='true'] .wall-layout-footprint-ink {
   /* A sparse selection's hull may include unselected charts; keep them readable. */
   background: transparent;
-}
-.wall-layout-footprint-label {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 8px;
-  padding: 4px 8px;
-  max-width: calc(100% - 16px);
-  border: 1px solid var(--wall-border);
-  border-radius: calc(var(--wall-radius) / 2);
-  background: var(--wall-surface);
-  color: var(--wall-text);
-  font-size: var(--wall-type-caption-size);
-  line-height: var(--wall-type-caption-line);
-  font-variant-numeric: tabular-nums;
-}
-.wall-layout-footprint-label strong {
-  font-weight: var(--wall-type-control-weight);
-}
-.wall-layout-footprint-label span {
-  color: var(--wall-muted);
 }
 .wall-kpi-layout[data-interacting='false'] .react-grid-placeholder {
   display: none;
@@ -235,15 +233,20 @@
 .wall-dashboard-workspace .wall-kpi-layout .wall-kpi-resize {
   opacity: 0;
   visibility: visible;
-  pointer-events: none;
+  /* A permanent input box: hover changes paint, never the hit-test target.
+     Read-only/multi-selection removes the handle in the component itself. */
+  pointer-events: auto;
   transition: opacity 100ms ease;
 }
 .wall-dashboard-workspace .wall-kpi-layout-item:hover > .wall-kpi-resize,
 .wall-dashboard-workspace .wall-kpi-layout-item:focus-within > .wall-kpi-resize,
-.wall-dashboard-workspace .wall-kpi-layout-item[data-selected='true'] > .wall-kpi-resize {
+.wall-dashboard-workspace .wall-kpi-layout-item[data-selected='true'] > .wall-kpi-resize,
+.wall-dashboard-workspace .wall-kpi-layout-item > .wall-kpi-resize[data-wall-resize-captured] {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+}
+.wall-kpi-corner-grip {
+  pointer-events: none;
 }
 .wall-kpi-layout-feedback {
   order: 3;
@@ -296,4 +299,9 @@
 }
 .wall-layout-alignment-guide[data-axis='y'] {
   border-top: 1px dashed var(--wall-primary);
+}
+
+.wall-layout-grid-dot {
+  fill: var(--wall-layout-grid-dot);
+  r: var(--wall-layout-grid-dot-radius);
 }

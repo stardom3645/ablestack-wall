@@ -3,10 +3,12 @@ import { css } from '@emotion/css';
 import { GrafanaTheme2, InternalTimeZones, StandardEditorProps } from '@grafana/data';
 import { OptionsWithTimezones } from '@grafana/schema';
 import { IconButton, TimeZonePicker, useStyles2 } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 type Props = StandardEditorProps<string[], unknown, OptionsWithTimezones>;
 
 export const TimezonesEditor = ({ value, onChange }: Props) => {
+  const text = useWallOptionText();
   const styles = useStyles2(getStyles);
 
   if (!value || value.length < 1) {
@@ -38,14 +40,15 @@ export const TimezonesEditor = ({ value, onChange }: Props) => {
       {value.map((tz, idx) => (
         <li className={styles.listItem} key={`${idx}.${tz}`}>
           <TimeZonePicker
+            displayText={text}
             onChange={(v) => setTimezone(idx, v)}
             includeInternal={true}
             value={tz ?? InternalTimeZones.default}
           />
           {idx === value.length - 1 ? (
-            <IconButton name="plus" onClick={addTimezone} tooltip="Add timezone" />
+            <IconButton name="plus" onClick={addTimezone} tooltip={text('Add timezone')} />
           ) : (
-            <IconButton name="times" onClick={() => removeTimezone(idx)} tooltip="Remove timezone" />
+            <IconButton name="times" onClick={() => removeTimezone(idx)} tooltip={text('Remove timezone')} />
           )}
         </li>
       ))}

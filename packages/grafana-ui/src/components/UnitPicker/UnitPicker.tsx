@@ -8,6 +8,7 @@ export interface UnitPickerProps {
   onChange: (item?: string) => void;
   value?: string;
   width?: number;
+  displayText?: (text: string) => string;
 }
 
 function formatCreateLabel(input: string) {
@@ -20,7 +21,7 @@ export class UnitPicker extends PureComponent<UnitPickerProps> {
   };
 
   render() {
-    const { value, width } = this.props;
+    const { value, width, displayText = (text: string) => text } = this.props;
 
     // Set the current selection
     let current: SelectableValue<string> | undefined = undefined;
@@ -32,7 +33,7 @@ export class UnitPicker extends PureComponent<UnitPickerProps> {
     const groupOptions: CascaderOption[] = unitGroups.map((group) => {
       const options = group.submenu.map((unit) => {
         const sel = {
-          label: unit.text,
+          label: displayText(unit.text),
           value: unit.value,
         };
         if (unit.value === value) {
@@ -42,7 +43,7 @@ export class UnitPicker extends PureComponent<UnitPickerProps> {
       });
 
       return {
-        label: group.text,
+        label: displayText(group.text),
         value: group.text,
         items: options,
       };
@@ -59,9 +60,11 @@ export class UnitPicker extends PureComponent<UnitPickerProps> {
         initialValue={current && current.label}
         allowCustomValue
         changeOnSelect={false}
-        formatCreateLabel={formatCreateLabel}
+        formatCreateLabel={(input) =>
+          this.props.displayText ? `사용자 지정 단위: ${input}` : formatCreateLabel(input)
+        }
         options={groupOptions}
-        placeholder="Choose"
+        placeholder={this.props.displayText ? '단위 선택' : 'Choose'}
         isClearable
         onSelect={this.props.onChange}
       />

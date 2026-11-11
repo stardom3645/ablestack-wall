@@ -161,7 +161,7 @@ export class DashboardSceneUrlSync implements SceneObjectUrlSyncHandler {
       }
     }
 
-    if (this._scene.state.uid === 'aec03x1adsi68f' && values.hasOwnProperty('kiosk') && values.kiosk == null) {
+    if (values.hasOwnProperty('kiosk') && values.kiosk == null) {
       update.kioskMode = undefined;
     }
     if (typeof values.kiosk === 'string') {

@@ -1,6 +1,24 @@
 import GridLayout, { Layout } from 'react-grid-layout';
 
-import { KpiPosition, panelSnap } from './kpiLayout';
+import { KpiPosition, kpiGrid, panelSnap, sameKpiLayout } from './kpiLayout';
+import { panelColumnPitch, panelPixelRect, panelRowAnchors, panelRowStops } from './panelGeometry';
+
+export interface ResizeReflow {
+  id: string;
+  origin: KpiPosition[];
+  result: KpiPosition[];
+}
+
+/** Retain preferred slots across consecutive resizes, without compacting intentional gaps.
+ * A move, undo, paste or any other intervening layout change invalidates this baseline.
+ */
+export function resizeReflowOrigin(items: KpiPosition[], id: string, previous?: ResizeReflow) {
+  const origin = previous?.id === id && sameKpiLayout(items, previous.result) ? previous.origin : items;
+  // Remember neighbours' preferred slots, but pin this gesture to the active tile's current edges.
+  // West resize changes x; reusing its old x would move it again when switching to the east handle.
+  const active = items.find((entry) => entry.i === id);
+  return origin.map((entry) => ({ ...(entry.i === id && active ? active : entry) }));
+}
 
 /** Every grid stop is magnetic. The small cell-relative dead band avoids jitter,
  * without allowing a distant neighbour to capture several intervening cells. */
@@ -10,6 +28,51 @@ export function gridCoordinate(value: number, previous: number, step = 1) {
 
 export function interactionRowStep(rowPitch: number) {
   return rowPitch < 6 ? Math.max(1, Math.round(panelSnap.rowPixels / rowPitch)) : 1;
+}
+
+/** Intersect constraints with the snap lattice before clamping. Clamping a snapped
+ * edge to an arbitrary min/max afterwards can put it between two visible stops. */
+function boundedGridEdge(
+  value: number,
+  previous: number,
+  step: number,
+  min: number,
+  max: number,
+  anchors?: readonly number[]
+) {
+  if (anchors) {
+    const validAnchors = anchors.filter((edge) => edge >= min && edge <= max);
+    const center = Math.max(min, Math.min(max, value));
+    const candidates = panelRowStops(Math.max(min, center - step * 2), Math.min(max, center + step * 2), step, anchors);
+    // Include distant anchors for bounded/locked legacy dimensions as well.
+    candidates.push(...validAnchors);
+    if (!candidates.length) {
+      return previous;
+    }
+    const next = candidates.reduce((best, edge) => (Math.abs(edge - value) < Math.abs(best - value) ? edge : best));
+    if (next !== previous && previous >= min && previous <= max) {
+      const direction = Math.sign(next - previous);
+      const adjacent = panelRowStops(previous - step * 2, previous + step * 2, step, anchors)
+        .filter((edge) => Math.sign(edge - previous) === direction)
+        .sort((a, b) => Math.abs(a - previous) - Math.abs(b - previous))[0];
+      if (adjacent !== undefined && Math.abs(value - previous) <= Math.abs(adjacent - previous) * panelSnap.cellHold) {
+        return previous;
+      }
+    }
+    return next;
+  }
+  const snapped = gridCoordinate(value, previous, step);
+  if (snapped === previous && previous >= min && previous <= max) {
+    // Preserve an untouched legacy axis, including its original 2px precision.
+    return previous;
+  }
+  const first = Math.ceil(min / step) * step;
+  const last = Math.floor(max / step) * step;
+  if (first > last) {
+    // A locked legacy dimension may have no compatible stop. Do not alter it.
+    return previous;
+  }
+  return Math.max(first, Math.min(last, snapped));
 }
 
 function exchangeSlots(layout: Layout[], source: KpiPosition, target: KpiPosition) {
@@ -50,7 +113,7 @@ function exchangeSlots(layout: Layout[], source: KpiPosition, target: KpiPositio
 }
 
 // RGL 1.4.4 exports these helpers from index.js; its installed declaration omits them.
-const native = GridLayout as unknown as {
+interface NativeGridHelpers {
   utils: {
     compact: (layout: Layout[], type: null, cols: number) => Layout[];
     correctBounds: (layout: Layout[], bounds: { cols: number }) => Layout[];
@@ -82,16 +145,44 @@ const native = GridLayout as unknown as {
       h: number
     ) => { x: number; y: number };
   };
-};
+}
+
+function hasNativeGridHelpers(value: unknown): value is NativeGridHelpers {
+  if (typeof value !== 'function' || !('utils' in value) || !('calculateUtils' in value)) {
+    return false;
+  }
+  const utils = value.utils,
+    calculate = value.calculateUtils;
+  return (
+    utils !== null &&
+    typeof utils === 'object' &&
+    'compact' in utils &&
+    typeof utils.compact === 'function' &&
+    'correctBounds' in utils &&
+    typeof utils.correctBounds === 'function' &&
+    'sortLayoutItems' in utils &&
+    typeof utils.sortLayoutItems === 'function' &&
+    'moveElement' in utils &&
+    typeof utils.moveElement === 'function' &&
+    calculate !== null &&
+    typeof calculate === 'object' &&
+    'calcXY' in calculate &&
+    typeof calculate.calcXY === 'function'
+  );
+}
+if (!hasNativeGridHelpers(GridLayout)) {
+  throw new Error('Expected native grid layout helpers');
+}
+const native: NativeGridHelpers = GridLayout;
 
 export function snapPanelPosition(
   _origin: KpiPosition[],
   source: KpiPosition,
   delta: { x: number; y: number },
-  geometry: { width: number; gap: number; rowPitch: number },
+  geometry: { width: number; gap: number; rowPitch: number; rowAnchors?: readonly number[] },
   previousPosition?: { x: number; y: number }
 ) {
-  const pitch = (geometry.width + geometry.gap) / 48;
+  const pitch = panelColumnPitch(geometry.width, geometry.gap);
   return {
     x: Math.max(
       0,
@@ -99,10 +190,13 @@ export function snapPanelPosition(
     ),
     y: Math.max(
       0,
-      gridCoordinate(
+      boundedGridEdge(
         source.y + delta.y / geometry.rowPitch,
         previousPosition?.y ?? source.y,
-        interactionRowStep(geometry.rowPitch)
+        interactionRowStep(geometry.rowPitch),
+        0,
+        Infinity,
+        geometry.rowAnchors
       )
     ),
   };
@@ -113,7 +207,7 @@ export function panelMovePreview(
   origin: KpiPosition[],
   id: string,
   delta: { x: number; y: number },
-  geometry: { width: number; gap: number; rowPitch: number },
+  geometry: { width: number; gap: number; rowPitch: number; rowAnchors?: readonly number[] },
   previousTarget?: string,
   previousPosition?: { x: number; y: number }
 ) {
@@ -182,7 +276,7 @@ export function panelGroupMovePreview(
   origin: KpiPosition[],
   ids: string[],
   delta: { x: number; y: number },
-  geometry: { width: number; gap: number; rowPitch: number },
+  geometry: { width: number; gap: number; rowPitch: number; rowAnchors?: readonly number[] },
   previousPosition?: { x: number; y: number }
 ) {
   const members = origin.filter((item) => ids.includes(item.i));
@@ -229,15 +323,15 @@ export function panelResizePreview(origin: KpiPosition[], item: KpiPosition, wes
 /** Grid Resize uses pointer pixels, never the already-rounded native size.
  * Preserve the opposite corner and native min/max constraints. */
 export function snapPanelResize(
-  _origin: KpiPosition[],
+  origin: KpiPosition[],
   source: KpiPosition,
   delta: { x: number; y: number },
-  geometry: { width: number; gap: number; rowPitch: number; gapY: number },
+  geometry: { width: number; gap: number; rowPitch: number; gapY: number; rowAnchors?: readonly number[] },
   west: boolean,
   limits: { minW?: number; maxW?: number; minH?: number; maxH?: number },
   previous?: KpiPosition
 ): KpiPosition {
-  const pitch = (geometry.width + geometry.gap) / 48;
+  const pitch = panelColumnPitch(geometry.width, geometry.gap);
   const edge = west ? source.x : source.x + source.w;
   const rawX = edge + delta.x / pitch;
   const rawY = source.y + source.h + delta.y / geometry.rowPitch;
@@ -245,18 +339,27 @@ export function snapPanelResize(
   const maxW = Math.min(limits.maxW ?? 48, west ? source.x + source.w : 48 - source.x);
   const minH = limits.minH ?? 1;
   const maxH = limits.maxH ?? Infinity;
-  const x = gridCoordinate(rawX, previous ? (west ? previous.x : previous.x + previous.w) : edge);
-  const y = gridCoordinate(
+  const x = boundedGridEdge(
+    rawX,
+    previous ? (west ? previous.x : previous.x + previous.w) : edge,
+    1,
+    west ? source.x + source.w - maxW : source.x + minW,
+    west ? source.x + source.w - minW : source.x + maxW
+  );
+  const y = boundedGridEdge(
     rawY,
     previous ? previous.y + previous.h : source.y + source.h,
-    interactionRowStep(geometry.rowPitch)
+    interactionRowStep(geometry.rowPitch),
+    source.y + minH,
+    source.y + maxH,
+    geometry.rowAnchors ?? panelRowAnchors(origin)
   );
-  const w = Math.max(minW, Math.min(maxW, west ? source.x + source.w - x : x - source.x));
+  const w = west ? source.x + source.w - x : x - source.x;
   return {
     ...source,
     x: west ? source.x + source.w - w : source.x,
     w,
-    h: Math.max(minH, Math.min(maxH, y - source.y)),
+    h: y - source.y,
   };
 }
 
@@ -275,12 +378,10 @@ export function panelAlignmentGuides(
   gapX: number,
   gapY: number
 ): AlignmentGuide[] {
-  const rect = (p: KpiPosition) => ({
-    left: p.x * pitch,
-    right: (p.x + p.w) * pitch - gapX,
-    top: p.y * rowPitch,
-    bottom: (p.y + p.h) * rowPitch - gapY,
-  });
+  const rect = (p: KpiPosition) => {
+    const box = panelPixelRect(p, { width: pitch * kpiGrid.columns - gapX, rowPitch, gapX, gapY });
+    return { left: box.left, right: box.left + box.width, top: box.top, bottom: box.top + box.height };
+  };
   const a = rect(position);
   const guides = new Map<string, AlignmentGuide>();
   for (const item of neighbours.filter((item) => item.i !== position.i)) {

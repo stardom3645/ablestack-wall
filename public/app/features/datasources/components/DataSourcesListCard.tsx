@@ -3,7 +3,8 @@ import Skeleton from 'react-loading-skeleton';
 
 import { DataSourceSettings, GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
-import { Card, LinkButton, Stack, Tag, useStyles2 } from '@grafana/ui';
+import { Card, LinkButton, Stack, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
 
 import { ROUTES } from '../../connections/constants';
 import { trackCreateDashboardClicked, trackExploreClicked } from '../tracking';
@@ -20,59 +21,56 @@ export function DataSourcesListCard({ dataSource, hasWriteRights, hasExploreRigh
   const styles = useStyles2(getStyles);
 
   return (
-    <Card href={hasWriteRights ? dsLink : undefined}>
-      <Card.Heading>{dataSource.name}</Card.Heading>
-      <Card.Figure>
-        <img src={dataSource.typeLogoUrl} alt="" height="40px" width="40px" className={styles.logo} />
-      </Card.Figure>
-      <Card.Meta>
-        {[
-          dataSource.typeName,
-          dataSource.url,
-          dataSource.isDefault && <Tag key="default-tag" name={'default'} colorIndex={1} />,
-        ]}
-      </Card.Meta>
-      <Card.Tags>
-        {/* Build Dashboard */}
+    <div className="wall-datasource-row">
+      <span className="wall-datasource-logo">
+        <img src={dataSource.typeLogoUrl} alt="" className={styles.logo} />
+      </span>
+      <div className="wall-datasource-identity">
+        <h3 title={dataSource.name}>{hasWriteRights ? <a href={dsLink}>{dataSource.name}</a> : dataSource.name}</h3>
+        <span className="wall-datasource-type">{dataSource.typeName || dataSource.type}</span>
+      </div>
+      {dataSource.isDefault && (
+        <span className="wall-datasource-default">
+          <Trans i18nKey="wall.data-sources-list-card.text-7f1d8c41">기본</Trans>
+        </span>
+      )}
+      <div className="wall-datasource-row-actions">
         <LinkButton
           icon="apps"
-          fill="outline"
+          fill="text"
           variant="secondary"
           href={`dashboard/new-with-ds/${dataSource.uid}`}
-          onClick={() => {
+          onClick={() =>
             trackCreateDashboardClicked({
               grafana_version: config.buildInfo.version,
               datasource_uid: dataSource.uid,
               plugin_name: dataSource.typeName,
               path: location.pathname,
-            });
-          }}
+            })
+          }
         >
-          Build a dashboard
+          <Trans i18nKey="wall.data-sources-list-card.text-4f9fea25">대시보드 만들기</Trans>
         </LinkButton>
-
-        {/* Explore */}
         {hasExploreRights && (
           <LinkButton
             icon="compass"
-            fill="outline"
+            fill="text"
             variant="secondary"
-            className={styles.button}
             href={constructDataSourceExploreUrl(dataSource)}
-            onClick={() => {
+            onClick={() =>
               trackExploreClicked({
                 grafana_version: config.buildInfo.version,
                 datasource_uid: dataSource.uid,
                 plugin_name: dataSource.typeName,
                 path: location.pathname,
-              });
-            }}
+              })
+            }
           >
-            Explore
+            <Trans i18nKey="wall.data-sources-list-card.text-7e9e38e5">데이터 탐색</Trans>
           </LinkButton>
         )}
-      </Card.Tags>
-    </Card>
+      </div>
+    </div>
   );
 }
 

@@ -16,8 +16,15 @@ import { alpha } from '@grafana/data/src/themes/colorManipulator';
 import { AxisPlacement, FieldColorModeId, ScaleDirection, ScaleOrientation, VisibilityMode } from '@grafana/schema';
 import { UPlotConfigBuilder } from '@grafana/ui';
 import { FacetedData, FacetSeries } from '@grafana/ui/src/components/uPlot/types';
+import {
+  AnalyticAppearance,
+  AnalyticInteraction,
+  analyticAxis,
+  analyticAxisValues,
+  installAnalyticPan,
+} from 'app/features/wall-modern/charts/analytic';
 
-import { pointWithin, Quadtree, Rect } from '../../barchart/quadtree';
+import { pointWithin, findRects, Quadtree, Rect } from '../../barchart/quadtree';
 import { valuesToFills } from '../../heatmap/utils';
 
 import { PointShape } from './panelcfg.gen';
@@ -37,9 +44,14 @@ interface DrawBubblesOpts {
   };
 }
 
-export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
+export const prepConfig = (
+  xySeries: XYSeries[],
+  theme: GrafanaTheme2,
+  appearance?: AnalyticAppearance,
+  interaction?: AnalyticInteraction
+) => {
   if (xySeries.length === 0) {
-    return { builder: null, prepData: () => [] };
+    return { builder: null, prepData: () => [], getPointColor: () => FALLBACK_COLOR };
   }
 
   let qt: Quadtree;
@@ -77,7 +89,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
 
           let showLine = scatterInfo.showLine;
           let showPoints = scatterInfo.showPoints === VisibilityMode.Always;
-          let strokeWidth = scatterInfo.pointStrokeWidth ?? 0;
+          let strokeWidth = (scatterInfo.pointStrokeWidth ?? 0) * (appearance ? pxRatio : 1);
 
           u.ctx.save();
 
@@ -117,12 +129,17 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
           let isSquare = scatterInfo.pointShape === PointShape.Square;
 
           let linePath: Path2D | null = showLine ? new Path2D() : null;
+          let segmentOpen = false;
 
           let curColorIdx = -1;
 
           for (let i = 0; i < d[0].length; i++) {
             let xVal = d[0][i];
             let yVal = d[1][i];
+            if (appearance && (xVal == null || yVal == null || !Number.isFinite(xVal) || !Number.isFinite(yVal))) {
+              segmentOpen = false;
+              continue;
+            }
 
             if (xVal >= filtLft && xVal <= filtRgt && yVal >= filtBtm && yVal <= filtTop) {
               let size = Math.round(sizes[i] * pxRatio);
@@ -130,7 +147,12 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
               let cy = valToPosY(yVal, scaleY, yDim, yOff);
 
               if (showLine) {
-                linePath!.lineTo(cx, cy);
+                if (appearance && !segmentOpen) {
+                  linePath!.moveTo(cx, cy);
+                } else {
+                  linePath!.lineTo(cx, cy);
+                }
+                segmentOpen = true;
               }
 
               if (showPoints) {
@@ -233,7 +255,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
   const builder = new UPlotConfigBuilder();
 
   builder.setCursor({
-    drag: { setScale: true },
+    drag: { setScale: true, ...(appearance ? { x: true, y: true, dist: appearance.gestureIntent } : {}) },
     dataIdx: (u, seriesIdx) => {
       if (seriesIdx === 1) {
         const pxRatio = uPlot.pxRatio;
@@ -255,7 +277,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
             let d = Math.sqrt(dx ** 2 + dy ** 2);
 
             // test against radius for actual hover
-            if (d <= o.w / 2) {
+            if (d <= o.w / 2 || (appearance && xySeries[o.sidx - 1].pointShape === PointShape.Square)) {
               // only hover bbox with closest distance
               if (d <= dist) {
                 dist = d;
@@ -272,7 +294,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
       size: (u, seriesIdx) => {
         return hRect && seriesIdx === hRect.sidx ? hRect.w / uPlot.pxRatio : 0;
       },
-      fill: (u, seriesIdx) => 'rgba(255,255,255,0.4)',
+      fill: (u, seriesIdx) => (appearance ? appearance.surface : 'rgba(255,255,255,0.4)'),
     },
   });
 
@@ -282,7 +304,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
   });
 
   builder.addHook('drawClear', (u) => {
-    qt = qt || new Quadtree(0, 0, u.bbox.width, u.bbox.height);
+    qt = !qt || qt.w !== u.bbox.width || qt.h !== u.bbox.height ? new Quadtree(0, 0, u.bbox.width, u.bbox.height) : qt;
 
     qt.clear();
 
@@ -294,6 +316,58 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
       }
     });
   });
+
+  if (appearance && interaction) {
+    installAnalyticPan(builder, 'xy', interaction.ready, interaction.panMode);
+    let dispose = () => {};
+    builder.addHook('ready', (u) => {
+      const context = (event: MouseEvent) => {
+        const rect = u.over.getBoundingClientRect();
+        const x = (event.clientX - rect.left) * uPlot.pxRatio,
+          y = (event.clientY - rect.top) * uPlot.pxRatio;
+        let hit: Rect | undefined,
+          distance = Infinity;
+        qt?.get(x, y, 1, 1, (item) => {
+          if (!pointWithin(x, y, item.x, item.y, item.x + item.w, item.y + item.h)) {
+            return;
+          }
+          const d = Math.hypot(item.x + item.w / 2 - x, item.y + item.h / 2 - y);
+          if ((d <= item.w / 2 || xySeries[item.sidx - 1].pointShape === PointShape.Square) && d < distance) {
+            hit = item;
+            distance = d;
+          }
+        });
+        if (hit) {
+          event.preventDefault();
+          event.stopPropagation();
+          interaction.pick({ sidx: hit.sidx, didx: hit.didx }, event);
+          u.redraw(false);
+        }
+      };
+      u.over.addEventListener('contextmenu', context);
+      dispose = () => u.over.removeEventListener('contextmenu', context);
+    });
+    builder.addHook('destroy', () => dispose());
+    builder.addHook('draw', (u) => {
+      const hit = interaction.selected();
+      if (!hit || !qt) {
+        return;
+      }
+      u.ctx.save();
+      u.ctx.strokeStyle = appearance.text;
+      u.ctx.lineWidth = appearance.selectionStroke * uPlot.pxRatio;
+      findRects(qt, hit.sidx, hit.didx).forEach((r) => {
+        u.ctx.beginPath();
+        if (xySeries[hit.sidx - 1].pointShape === PointShape.Square) {
+          u.ctx.rect(r.x + u.bbox.left, r.y + u.bbox.top, r.w, r.h);
+        } else {
+          u.ctx.arc(r.x + u.bbox.left + r.w / 2, r.y + u.bbox.top + r.h / 2, r.w / 2 + uPlot.pxRatio, 0, Math.PI * 2);
+        }
+        u.ctx.stroke();
+      });
+      u.ctx.restore();
+    });
+  }
 
   builder.setMode(2);
 
@@ -320,7 +394,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
   });
 
   // why does this fall back to '' instead of null or undef?
-  let xAxisLabel = customConfig.axisLabel;
+  let xAxisLabel = customConfig?.axisLabel;
 
   if (xAxisLabel == null || xAxisLabel === '') {
     let dispNames = xySeries.map((s) => s.x.field.state?.displayName ?? '');
@@ -338,10 +412,12 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
   }
 
   builder.addAxis({
+    ...analyticAxis(appearance),
     scaleKey: 'x',
+    values: appearance ? analyticAxisValues(xField) : undefined,
     placement: customConfig?.axisPlacement !== AxisPlacement.Hidden ? AxisPlacement.Bottom : AxisPlacement.Hidden,
     show: customConfig?.axisPlacement !== AxisPlacement.Hidden,
-    grid: { show: customConfig?.axisGridShow },
+    grid: { stroke: appearance?.grid, show: customConfig?.axisGridShow },
     border: { show: customConfig?.axisBorderShow },
     theme,
     label: xAxisLabel,
@@ -377,7 +453,7 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
     });
 
     // why does this fall back to '' instead of null or undef?
-    let yAxisLabel = customConfig.axisLabel;
+    let yAxisLabel = customConfig?.axisLabel;
 
     if (yAxisLabel == null || yAxisLabel === '') {
       let dispNames = xySeries.map((s) => s.y.field.state?.displayName ?? '');
@@ -395,11 +471,18 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
     }
 
     builder.addAxis({
+      ...analyticAxis(appearance),
       scaleKey,
+      values: appearance ? analyticAxisValues(field) : undefined,
       theme,
-      placement: customConfig?.axisPlacement === AxisPlacement.Auto ? AxisPlacement.Left : customConfig?.axisPlacement,
+      placement:
+        customConfig?.axisPlacement === AxisPlacement.Auto
+          ? appearance
+            ? AxisPlacement.Auto
+            : AxisPlacement.Left
+          : customConfig?.axisPlacement,
       show: customConfig?.axisPlacement !== AxisPlacement.Hidden,
-      grid: { show: customConfig?.axisGridShow },
+      grid: { stroke: appearance?.grid, show: customConfig?.axisGridShow },
       border: { show: customConfig?.axisBorderShow },
       size: customConfig?.axisWidth,
       // label: yAxisLabel == null || yAxisLabel === '' ? fieldDisplayName : yAxisLabel,
@@ -502,7 +585,18 @@ export const prepConfig = (xySeries: XYSeries[], theme: GrafanaTheme2) => {
     ];
   }
 
-  return { builder, prepData };
+  const getPointColor = (series: number, row: number) => {
+    const cache = dispColors[series];
+    if (!cache) {
+      return;
+    }
+    return xySeries[series].color.field
+      ? typeof cache.index[cache.values[row]] === 'string'
+        ? (cache.index[cache.values[row]] as string)
+        : FALLBACK_COLOR
+      : xySeries[series].color.fixed;
+  };
+  return { builder, prepData, getPointColor };
 };
 
 export type PrepData = (xySeries: XYSeries[]) => FacetedData;
@@ -664,9 +758,10 @@ function fieldValueColors(f: Field, theme: GrafanaTheme2): FieldColorValues {
   }
 
   if (conds !== '') {
-    getOne = new Function('v', `return ${conds};`) as GetOneValue;
+    const evaluateOne = new Function('v', `return ${conds};`);
+    getOne = (value) => evaluateOne(value);
 
-    getAll = new Function(
+    const evaluateAll = new Function(
       'vals',
       `
       let idxs = Array(vals.length);
@@ -678,7 +773,8 @@ function fieldValueColors(f: Field, theme: GrafanaTheme2): FieldColorValues {
 
       return idxs;
     `
-    ) as GetAllValues;
+    );
+    getAll = (values) => evaluateAll(values);
   }
 
   return {

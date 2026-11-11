@@ -1,11 +1,13 @@
 import { css, cx } from '@emotion/css';
-import { RefCallback, useCallback, useEffect, useRef } from 'react';
+import { RefCallback, useCallback, useEffect, useRef, useContext } from 'react';
 import * as React from 'react';
 import Scrollbars, { positionValues } from 'react-custom-scrollbars-2';
 
 import { GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2 } from '../../themes';
+import { panelScrollClass, panelScrollTokens, usePanelScrollActivity } from '../PanelScrollArea/PanelScrollArea';
+import { VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 import { ScrollIndicators } from './ScrollIndicators';
 
@@ -20,6 +22,9 @@ interface Props {
   hideTracksWhenNotNeeded?: boolean;
   hideHorizontalTrack?: boolean;
   hideVerticalTrack?: boolean;
+  /** Hide platform tracks directly instead of masking them with negative margins. */
+  hideNativeScrollbars?: boolean;
+  contentInset?: number;
   scrollRefCallback?: RefCallback<HTMLDivElement>;
   scrollTop?: number;
   setScrollTop?: (position: ScrollbarPosition) => void;
@@ -44,6 +49,8 @@ export const CustomScrollbar = ({
   hideTracksWhenNotNeeded = false,
   hideHorizontalTrack,
   hideVerticalTrack,
+  hideNativeScrollbars = false,
+  contentInset = 0,
   scrollRefCallback,
   showScrollIndicators = false,
   updateAfterMountMs,
@@ -54,6 +61,8 @@ export const CustomScrollbar = ({
 }: React.PropsWithChildren<Props>) => {
   const ref = useRef<Scrollbars & { view: HTMLDivElement; update: () => void }>(null);
   const styles = useStyles2(getStyles);
+  const wall = Boolean(useContext(VizPresentationContext));
+  usePanelScrollActivity(() => ref.current?.view, wall);
 
   useEffect(() => {
     if (ref.current && scrollRefCallback) {
@@ -89,16 +98,16 @@ export const CustomScrollbar = ({
 
   const renderTrackHorizontal = useCallback(
     (passedProps: JSX.IntrinsicElements['div']) => {
-      return renderTrack('track-horizontal', hideHorizontalTrack, passedProps);
+      return renderTrack('track-horizontal', wall || hideHorizontalTrack, passedProps);
     },
-    [hideHorizontalTrack]
+    [hideHorizontalTrack, wall]
   );
 
   const renderTrackVertical = useCallback(
     (passedProps: JSX.IntrinsicElements['div']) => {
-      return renderTrack('track-vertical', hideVerticalTrack, passedProps);
+      return renderTrack('track-vertical', wall || hideVerticalTrack, passedProps);
     },
-    [hideVerticalTrack]
+    [hideVerticalTrack, wall]
   );
 
   const renderThumbHorizontal = useCallback((passedProps: JSX.IntrinsicElements['div']) => {
@@ -116,9 +125,32 @@ export const CustomScrollbar = ({
         passedProps.style['WebkitOverflowScrolling'] = 'auto';
       }
 
-      return <div {...passedProps} className="scrollbar-view" id={divId} />;
+      if (hideNativeScrollbars || wall) {
+        passedProps.style = {
+          ...passedProps.style,
+          overflow: 'auto',
+          marginRight: 0,
+          marginBottom: 0,
+          maxHeight: '100%',
+          // Native thin rail replaces the overlay rail inside the same clearance.
+          paddingInlineEnd: wall ? Math.max(0, contentInset - panelScrollTokens.rail) : contentInset,
+          scrollbarGutter: wall ? 'stable' : undefined,
+          boxSizing: 'border-box',
+        };
+      }
+
+      // Native scroll regions need a focus target for keyboard scrolling.
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      return (
+        <div
+          {...passedProps}
+          className={cx('scrollbar-view', wall && panelScrollClass)}
+          id={divId}
+          tabIndex={wall ? 0 : undefined}
+        />
+      );
     },
-    [divId]
+    [divId, hideNativeScrollbars, wall, contentInset]
   );
 
   const onScrollStop = useCallback(() => {
@@ -129,14 +161,17 @@ export const CustomScrollbar = ({
     <Scrollbars
       data-testid={testId}
       ref={ref}
-      className={cx(styles.customScrollbar, className, {
+      className={cx(styles.customScrollbar, className, wall && panelScrollClass, {
         [styles.scrollbarWithScrollIndicators]: showScrollIndicators,
+        // Wall uses the browser's thumb/track input, independent of the library's
+        // cached gutter width (zero during overlay-scrollbar initialization).
+        [styles.hiddenNativeScrollbars]: hideNativeScrollbars && !wall,
       })}
       onScrollStop={onScrollStop}
       autoHeight={true}
       autoHide={autoHide}
       autoHideTimeout={autoHideTimeout}
-      hideTracksWhenNotNeeded={hideTracksWhenNotNeeded}
+      hideTracksWhenNotNeeded={wall || hideTracksWhenNotNeeded}
       // These autoHeightMin & autoHeightMax options affect firefox and chrome differently.
       // Before these where set to inherit but that caused problems with cut of legends in firefox
       autoHeightMax={autoHeightMax}
@@ -157,6 +192,12 @@ export default CustomScrollbar;
 
 const getStyles = (theme: GrafanaTheme2) => {
   return {
+    hiddenNativeScrollbars: css({
+      '.scrollbar-view': {
+        scrollbarWidth: 'none',
+        '&::-webkit-scrollbar': { display: 'none' },
+      },
+    }),
     customScrollbar: css({
       // Fix for Firefox. For some reason sometimes .view container gets a height of its content, but in order to
       // make scroll working it should fit outer container size (scroll appears only when inner container size is

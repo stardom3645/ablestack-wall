@@ -119,29 +119,31 @@ export class PanelOptionsPane extends SceneObjectBase<PanelOptionsPaneState> {
     const inspector = useContext(editorInspectorContext);
     return (
       <>
-        {(!isVizPickerOpen || inspector === 'panel') && (
+        {(wallEditor || !isVizPickerOpen || inspector === 'panel') && (
           <>
-            <div className={wallEditor ? 'wall-options-tools' : styles.top}>
-              {inspector !== 'panel' && <VisualizationButton pluginId={pluginId} onOpen={model.onToggleVizPicker} />}
-              {wallEditor ? (
-                <div className="wall-option-search">
-                  <Search size={15} aria-hidden="true" />
-                  <BaseInput
+            {(!wallEditor || inspector !== 'panel') && (
+              <div className={wallEditor ? 'wall-options-tools' : styles.top}>
+                {inspector !== 'panel' && <VisualizationButton pluginId={pluginId} onOpen={model.onToggleVizPicker} />}
+                {wallEditor ? (
+                  <div className="wall-option-search">
+                    <Search size={15} aria-hidden="true" />
+                    <BaseInput
+                      value={searchQuery}
+                      placeholder={t('wall.editor.option-search', '설정 검색')}
+                      aria-label={t('wall.editor.option-search', '설정 검색')}
+                      onValueChange={model.onSetSearchQuery}
+                    />
+                  </div>
+                ) : (
+                  <FilterInput
+                    className={styles.searchOptions}
                     value={searchQuery}
-                    placeholder={t('wall.editor.option-search', '설정 검색')}
-                    aria-label={t('wall.editor.option-search', '설정 검색')}
-                    onValueChange={model.onSetSearchQuery}
+                    placeholder="Search options"
+                    onChange={model.onSetSearchQuery}
                   />
-                </div>
-              ) : (
-                <FilterInput
-                  className={styles.searchOptions}
-                  value={searchQuery}
-                  placeholder="Search options"
-                  onChange={model.onSetSearchQuery}
-                />
-              )}
-            </div>
+                )}
+              </div>
+            )}
             {isAngularPanel && (
               <div className={styles.angularDeprecationContainer}>
                 <AngularDeprecationPluginNotice
@@ -248,7 +250,14 @@ export function VisualizationButton({ pluginId, onOpen }: VisualizationButtonPro
   }
 
   if (wallEditor) {
-    return <WallEditorVisualizationButton name={pluginMeta.name} logo={pluginMeta.info.logos.small} onOpen={onOpen} />;
+    return (
+      <WallEditorVisualizationButton
+        pluginId={pluginId}
+        name={pluginMeta.name}
+        logo={pluginMeta.info.logos.small}
+        onOpen={onOpen}
+      />
+    );
   }
 
   return (

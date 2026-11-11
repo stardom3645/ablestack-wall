@@ -4,6 +4,7 @@ import { cloneDeep, defaultsDeep } from 'lodash';
 
 import { CoreApp } from '@grafana/data';
 import { QueryEditorMode } from '@grafana/experimental';
+import { editorPresentationContext } from 'app/features/wall-modern/editor/EditorPresentationContext';
 
 import { createLokiDatasource } from '../__mocks__/datasource';
 import { EXPLAIN_LABEL_FILTER_CONTENT } from '../querybuilder/components/LokiQueryBuilderExplained';
@@ -217,3 +218,32 @@ async function switchToMode(mode: QueryEditorMode) {
   const switchEl = screen.getByLabelText(label);
   await userEvent.click(switchEl);
 }
+
+it.each([QueryEditorMode.Builder, QueryEditorMode.Code])(
+  'uses existing LogQL code for stored %s queries in Wall without conversion',
+  async (editorMode) => {
+    const onChange = jest.fn();
+    const onRunQuery = jest.fn();
+    const query = { ...defaultQuery, editorMode, expr: '{host="$host"} |= "error"' };
+    const original = cloneDeep(query);
+    render(
+      <editorPresentationContext.Provider value>
+        <LokiQueryEditor
+          {...defaultProps}
+          query={query}
+          app={CoreApp.PanelEditor}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+        />
+      </editorPresentationContext.Provider>
+    );
+    await expectCodeEditor();
+    expect(screen.queryByRole('radio', { name: 'Builder' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Kick start|Label browser/ })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Explain query')).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+    expect(query).toEqual(original);
+    await userEvent.click(screen.getByRole('button', { name: '쿼리 실행' }));
+    expect(onRunQuery).toHaveBeenCalledTimes(1);
+  }
+);

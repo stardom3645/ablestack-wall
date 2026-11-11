@@ -1,30 +1,27 @@
-import { css } from '@emotion/css';
 import { once } from 'lodash';
-import { useMemo, useState } from 'react';
+import { Check, Database, Layers, LayoutDashboard } from 'lucide-react';
+import { useMemo, useRef, useState, type KeyboardEvent } from 'react';
 
-import { DataSourceInstanceSettings, DataSourceRef, GrafanaTheme2 } from '@grafana/data';
+import { DataSourceInstanceSettings, DataSourceRef } from '@grafana/data';
 import { config, reportInteraction } from '@grafana/runtime';
 import { DataQuery } from '@grafana/schema';
-import {
-  Modal,
-  FileDropzone,
-  FileDropzoneDefaultChildren,
-  CustomScrollbar,
-  useStyles2,
-  Input,
-  Icon,
-} from '@grafana/ui';
-import { t, Trans } from 'app/core/internationalization';
+import { Modal, FileDropzone, FileDropzoneDefaultChildren, LinkButton, Input, Icon } from '@grafana/ui';
+import { contextSrv } from 'app/core/core';
+import { Trans, t } from 'app/core/internationalization';
 import * as DFImport from 'app/features/dataframe-import';
+import { Button } from 'app/features/wall-modern/ui';
 import { GrafanaQuery } from 'app/plugins/datasource/grafana/types';
 import { getFileDropToQueryHandler } from 'app/plugins/datasource/grafana/utils';
+import { AccessControlAction } from 'app/types';
 
-import { useDatasource } from '../../hooks';
+import { PanelScrollArea } from '../../../../../../packages/grafana-ui/src/components/PanelScrollArea/PanelScrollArea';
+import { useDatasource, useDatasources, useRecentlyUsedDataSources } from '../../hooks';
 
 import { AddNewDataSourceButton } from './AddNewDataSourceButton';
-import { BuiltInDataSourceList } from './BuiltInDataSourceList';
-import { DataSourceList } from './DataSourceList';
-import { matchDataSourceWithSearch } from './utils';
+import { sourcePresentation } from './sourcePresentation';
+import { getDataSourceCompareFn, isDataSourceMatch, matchDataSourceWithSearch } from './utils';
+
+import '../dataSources.css';
 
 const INTERACTION_EVENT_NAME = 'dashboards_dspickermodal_clicked';
 const INTERACTION_ITEM = {
@@ -76,8 +73,56 @@ export function DataSourceModal({
   onDismiss,
   reportedInteractionFrom,
 }: DataSourceModalProps) {
-  const styles = useStyles2(getDataSourceModalStyles);
   const [search, setSearch] = useState('');
+  const listRef = useRef<HTMLDivElement>(null);
+  const sources = useDatasources({
+    tracing,
+    dashboard,
+    mixed,
+    metrics,
+    type,
+    annotations,
+    variables,
+    alerting,
+    pluginId,
+    logs,
+  });
+  const [recent, remember] = useRecentlyUsedDataSources();
+  const visible = sources
+    .filter((ds) => (!filter || filter(ds)) && matchDataSourceWithSearch(ds, search))
+    .sort(getDataSourceCompareFn(current, recent, []));
+  const groups = [
+    { title: '연결된 데이터 소스', sources: visible.filter((ds) => !ds.meta.builtIn) },
+    { title: '다른 데이터 사용 방식', sources: visible.filter((ds) => ds.meta.builtIn) },
+  ];
+  const canManage = contextSrv.hasPermission(AccessControlAction.DataSourcesRead);
+  // Native buttons own Enter/Space/Tab. Arrow keys traverse one list, including both groups.
+  const navigate = (event: KeyboardEvent<HTMLElement>) => {
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+      return;
+    }
+    const buttons = Array.from(listRef.current?.querySelectorAll<HTMLButtonElement>('[data-source-choice]') || []);
+    const index = buttons.findIndex((button) => button === document.activeElement);
+    if (index < 0 && !['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      return;
+    }
+    if (!buttons.length) {
+      return;
+    }
+    event.preventDefault();
+    const next =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? buttons.length - 1
+          : index < 0
+            ? event.key === 'ArrowDown'
+              ? 0
+              : buttons.length - 1
+            : (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length;
+    buttons[next].focus();
+    buttons[next].scrollIntoView({ block: 'nearest' });
+  };
   const analyticsInteractionSrc = reportedInteractionFrom || 'modal';
 
   const onDismissModal = () => {
@@ -85,6 +130,7 @@ export function DataSourceModal({
     reportInteraction(INTERACTION_EVENT_NAME, { item: INTERACTION_ITEM.DISMISS, src: analyticsInteractionSrc });
   };
   const onChangeDataSource = (ds: DataSourceInstanceSettings) => {
+    remember(ds);
     onChange(ds);
     reportInteraction(INTERACTION_EVENT_NAME, {
       item: INTERACTION_ITEM.SELECT_DS,
@@ -119,83 +165,97 @@ export function DataSourceModal({
     }
   });
 
-  // Built-in data sources used twice because of mobile layout adjustments
-  // In movile the list is appended to the bottom of the DS list
-  const BuiltInList = ({ className }: { className?: string }) => {
-    return (
-      <BuiltInDataSourceList
-        className={className}
-        onChange={onChangeDataSource}
-        current={current}
-        filter={filter}
-        variables={variables}
-        tracing={tracing}
-        metrics={metrics}
-        type={type}
-        annotations={annotations}
-        alerting={alerting}
-        pluginId={pluginId}
-        logs={logs}
-        dashboard={dashboard}
-        mixed={mixed}
-      />
-    );
-  };
-
   return (
     <Modal
       title={t('data-source-picker.modal.title', 'Select data source')}
       closeOnEscape={true}
       closeOnBackdropClick={true}
       isOpen={true}
-      className={styles.modal}
-      contentClassName={styles.modalContent}
+      className="wall-datasource-modal"
+      contentClassName="wall-datasource-modal-content"
       onClickBackdrop={onDismissModal}
       onDismiss={onDismissModal}
     >
-      <div className={styles.leftColumn}>
+      <div className="wall-datasource-picker">
         <Input
           type="search"
+          onKeyDown={navigate}
           autoFocus
-          className={styles.searchInput}
+          aria-label="데이터 소스 검색"
           value={search}
           prefix={<Icon name="search" />}
-          placeholder={t('data-source-picker.modal.input-placeholder', 'Select data source')}
+          placeholder="이름 또는 유형으로 검색"
           onChange={(e) => {
             setSearch(e.currentTarget.value);
             reportSearchUsageOnce();
           }}
         />
-        <CustomScrollbar>
-          <DataSourceList
-            onChange={onChangeDataSource}
-            current={current}
-            onClickEmptyStateCTA={() =>
-              reportInteraction(INTERACTION_EVENT_NAME, {
-                item: INTERACTION_ITEM.CONFIG_NEW_DS_EMPTY_STATE,
-                src: analyticsInteractionSrc,
-              })
-            }
-            filter={(ds) => (filter ? filter?.(ds) : true) && matchDataSourceWithSearch(ds, search) && !ds.meta.builtIn}
-            variables={variables}
-            tracing={tracing}
-            metrics={metrics}
-            type={type}
-            annotations={annotations}
-            alerting={alerting}
-            pluginId={pluginId}
-            logs={logs}
-            dashboard={dashboard}
-            mixed={mixed}
-          />
-          <BuiltInList className={styles.appendBuiltInDataSourcesList} />
-        </CustomScrollbar>
-      </div>
-      <div className={styles.rightColumn}>
-        <div className={styles.builtInDataSources}>
-          <CustomScrollbar className={styles.builtInDataSourcesList}>
-            <BuiltInList />
-          </CustomScrollbar>
+        <PanelScrollArea className="wall-datasource-choices" tabIndex={-1} aria-label="데이터 소스 목록">
+          <div ref={listRef}>
+            {groups
+              .filter((group) => group.sources.length)
+              .map((group) => (
+                <section key={group.title} aria-label={group.title}>
+                  <h3 className="wall-datasource-group-title">
+                    {group.title}
+                    <span>{group.sources.length}</span>
+                  </h3>
+                  {group.sources.map((ds) => {
+                    const item = sourcePresentation(ds);
+                    const selected = isDataSourceMatch(ds, current);
+                    const SpecialIcon =
+                      item.icon === 'mixed' ? Layers : item.icon === 'dashboard' ? LayoutDashboard : Database;
+                    return (
+                      <Button
+                        key={ds.uid}
+                        variant="ghost"
+                        className="wall-datasource-choice"
+                        data-source-choice={ds.uid}
+                        onKeyDown={navigate}
+                        aria-pressed={selected}
+                        onClick={() => onChangeDataSource(ds)}
+                      >
+                        <span className="wall-datasource-logo">
+                          {item.icon ? (
+                            <SpecialIcon size={22} aria-hidden="true" />
+                          ) : (
+                            <img src={ds.meta.info.logos.small} alt="" />
+                          )}
+                        </span>
+                        <span className="wall-datasource-identity">
+                          <span className="wall-datasource-name" title={item.name}>
+                            {item.name}
+                          </span>
+                          <span className="wall-datasource-type" title={item.detail}>
+                            {item.detail}
+                          </span>
+                        </span>
+                        {ds.isDefault && (
+                          <span className="wall-datasource-default">
+                            <Trans i18nKey="wall.data-source-modal.text-7f1d8c41">기본</Trans>
+                          </span>
+                        )}
+                        <span className="wall-datasource-selected">
+                          {selected && (
+                            <>
+                              <Check size={16} aria-hidden="true" />
+                              <span className="sr-only">
+                                <Trans i18nKey="wall.data-source-modal.text-c7cad5ad">선택됨</Trans>
+                              </span>
+                            </>
+                          )}
+                        </span>
+                      </Button>
+                    );
+                  })}
+                </section>
+              ))}
+            {!visible.length && (
+              <p className="wall-datasource-empty" role="status">
+                <Trans i18nKey="wall.data-source-modal.text-300d3cac">검색 결과가 없습니다.</Trans>
+              </p>
+            )}
+          </div>
           {uploadFile && config.featureToggles.editPanelCSVDragAndDrop && (
             <FileDropzone
               readAs="readAsArrayBuffer"
@@ -210,13 +270,19 @@ export function DataSourceModal({
               <FileDropzoneDefaultChildren />
             </FileDropzone>
           )}
-        </div>
-        <div className={styles.newDSSection}>
-          <span className={styles.newDSDescription}>
-            <Trans i18nKey="data-source-picker.modal.configure-new-data-source">
-              Open a new tab and configure a data source
-            </Trans>
-          </span>
+        </PanelScrollArea>
+        <footer className="wall-datasource-picker-footer">
+          {canManage && (
+            <LinkButton
+              href={config.appSubUrl + '/connections/datasources'}
+              variant="secondary"
+              fill="text"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Trans i18nKey="wall.data-source-modal.text-70a7b6bd">데이터 소스 관리</Trans>
+            </LinkButton>
+          )}
           <AddNewDataSourceButton
             variant="secondary"
             onClick={() => {
@@ -227,103 +293,8 @@ export function DataSourceModal({
               onDismiss();
             }}
           />
-        </div>
+        </footer>
       </div>
     </Modal>
   );
-}
-
-function getDataSourceModalStyles(theme: GrafanaTheme2) {
-  return {
-    modal: css`
-      width: 80%;
-      height: 80%;
-      max-width: 1200px;
-      max-height: 900px;
-
-      ${theme.breakpoints.down('md')} {
-        width: 100%;
-      }
-    `,
-    modalContent: css`
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-
-      ${theme.breakpoints.down('md')} {
-        flex-direction: column;
-      }
-    `,
-    leftColumn: css`
-      display: flex;
-      flex-direction: column;
-      width: 50%;
-      height: 100%;
-      padding-right: ${theme.spacing(4)};
-      border-right: 1px solid ${theme.colors.border.weak};
-
-      ${theme.breakpoints.down('md')} {
-        width: 100%;
-        border-right: 0;
-        padding-right: 0;
-        flex: 1;
-        overflow-y: auto;
-      }
-    `,
-    rightColumn: css`
-      display: flex;
-      flex-direction: column;
-      width: 50%;
-      height: 100%;
-      justify-items: space-evenly;
-      align-items: stretch;
-      padding-left: ${theme.spacing(4)};
-
-      ${theme.breakpoints.down('md')} {
-        width: 100%;
-        padding-left: 0;
-        flex: 0;
-      }
-    `,
-    builtInDataSources: css`
-      flex: 1 1;
-      margin-bottom: ${theme.spacing(4)};
-
-      ${theme.breakpoints.down('md')} {
-        flex: 0;
-      }
-    `,
-    builtInDataSourcesList: css`
-      ${theme.breakpoints.down('md')} {
-        display: none;
-        margin-bottom: 0;
-      }
-
-      margin-bottom: ${theme.spacing(4)};
-    `,
-    appendBuiltInDataSourcesList: css`
-      ${theme.breakpoints.up('md')} {
-        display: none;
-      }
-    `,
-    newDSSection: css`
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-    `,
-    newDSDescription: css`
-      flex: 1 0;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      color: ${theme.colors.text.secondary};
-    `,
-    searchInput: css`
-      width: 100%;
-      min-height: 32px;
-      margin-bottom: ${theme.spacing(1)};
-    `,
-  };
 }

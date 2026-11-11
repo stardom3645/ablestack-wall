@@ -1,12 +1,25 @@
 import { CSSObject } from '@emotion/react';
-import { createContext } from 'react';
+import { createContext, type ReactElement } from 'react';
+
+import type { LegendProps, VizLegendItem } from '../VizLegend/types';
 
 import { VizPresentation } from './VizPresentation';
 
 /** Configuration is read only by TimeSeriesPanel; effective styling never leaks into other panel types. */
 export interface TimeSeriesPresentation extends VizPresentation {
+  renderLegend?: (props: LegendProps) => ReactElement;
+  legendAutoMinWidth?: number;
+  renderLegendItem?: (props: TimeSeriesLegendItemProps) => ReactElement;
   palette: string[];
   lineWidth: number;
+  refinedInteractions?: boolean;
+  focusAlpha?: number;
+  markerStrokeWidth?: number;
+  tooltipMaxHeight?: number;
+  tooltipMinHeight?: number;
+  tooltipVisibleRows?: number;
+  tooltipOffset?: number;
+  tooltipViewportMargin?: number;
   linePixelAlign: boolean;
   fillOpacity: number;
   pointSize: number;
@@ -34,6 +47,11 @@ export interface TimeSeriesPresentation extends VizPresentation {
   tooltipHeaderBackground: string;
 }
 
+export type TimeSeriesLegendItemProps = Pick<
+  LegendProps,
+  'displayMode' | 'onLabelClick' | 'onLabelMouseOver' | 'onLabelMouseOut' | 'readonly'
+> & { item: VizLegendItem };
+
 export const TimeSeriesStyleConfigContext = createContext<TimeSeriesPresentation | undefined>(undefined);
 export const TimeSeriesPresentationContext = createContext<TimeSeriesPresentation | undefined>(undefined);
 
@@ -42,8 +60,20 @@ export function timeSeriesPlotStyles(tokens: TimeSeriesPresentation): CSSObject 
     width: '100%',
     height: '100%',
     minWidth: 0,
-    '.u-cursor-x': { borderRightColor: tokens.crosshairColor, borderRightStyle: 'dashed' },
-    '.u-cursor-y': { borderBottomColor: tokens.crosshairColor, borderBottomStyle: 'dashed' },
+    '.u-cursor-x': {
+      borderRightColor: tokens.crosshairColor,
+      borderRightStyle: tokens.refinedInteractions ? 'solid' : 'dashed',
+      borderRightWidth: 1,
+    },
+    '.u-cursor-y': {
+      borderBottomColor: tokens.crosshairColor,
+      borderBottomStyle: tokens.refinedInteractions ? 'solid' : 'dashed',
+      borderBottomWidth: 1,
+    },
+    '.uplot[data-wall-cursor-follower="true"] .u-cursor-x': { borderRightStyle: 'dashed' },
+    '.uplot[data-wall-cursor-follower="true"] .u-cursor-y, .uplot[data-wall-cursor-follower="true"] .u-cursor-pt': {
+      display: 'none',
+    },
   };
 }
 
@@ -85,7 +115,16 @@ export function timeSeriesTooltipSurface(tokens: TimeSeriesPresentation, maxWidt
     lineHeight: tokens.tooltipLineHeight ? `${tokens.tooltipLineHeight}px` : undefined,
     fontVariantNumeric: 'tabular-nums',
     padding: 0,
-    maxWidth: maxWidth ?? tokens.tooltipMaxWidth,
+    ...(tokens.refinedInteractions
+      ? {
+          maxHeight: 'var(--wall-tooltip-available-height, calc(100dvh - 16px))',
+          opacity: 1,
+          transition: 'opacity var(--wall-motion-enter-duration) var(--wall-motion-enter-easing)',
+          '@starting-style': { opacity: 0 },
+          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+        }
+      : {}),
+    maxWidth: `min(${maxWidth ?? tokens.tooltipMaxWidth}px, calc(100vw - ${tokens.tooltipPadding * 2}px))`,
   };
 }
 

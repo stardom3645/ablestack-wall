@@ -12,7 +12,9 @@ import { Trans } from '../../utils/i18n';
 import { clearButtonStyles } from '../Button';
 import { CustomScrollbar } from '../CustomScrollbar/CustomScrollbar';
 import { Icon } from '../Icon/Icon';
+import { PortalPresentationContext } from '../Portal/PortalPresentationContext';
 
+import { EmbeddedSelectContext } from './EmbeddedSelectContext';
 import { getSelectStyles } from './getSelectStyles';
 import { ToggleAllState } from './types';
 
@@ -32,6 +34,21 @@ interface SelectMenuProps {
   };
 }
 
+/** Preserve react-select/react-window ownership while carrying opt-in motion through their own portals. */
+const SelectMenuSurface = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
+  const presentation = React.useContext(PortalPresentationContext);
+  const embedded = React.useContext(EmbeddedSelectContext);
+  return (
+    <div
+      {...props}
+      ref={ref}
+      data-wall-motion={presentation ? 'true' : undefined}
+      data-wall-embedded-select={embedded ? true : undefined}
+    />
+  );
+});
+SelectMenuSurface.displayName = 'SelectMenuSurface';
+
 export const SelectMenu = ({
   children,
   maxHeight,
@@ -47,7 +64,7 @@ export const SelectMenu = ({
   const optionsElement = components?.Option ?? SelectMenuOptions;
 
   return (
-    <div {...innerProps} className={styles.menu} style={{ maxHeight }} aria-label="Select options menu">
+    <SelectMenuSurface {...innerProps} className={styles.menu} style={{ maxHeight }} aria-label="Select options menu">
       <CustomScrollbar scrollRefCallback={innerRef} autoHide={false} autoHeightMax="inherit" hideHorizontalTrack>
         {toggleAllOptions && (
           <ToggleAllOption
@@ -59,7 +76,7 @@ export const SelectMenu = ({
         )}
         {children}
       </CustomScrollbar>
-    </div>
+    </SelectMenuSurface>
   );
 };
 
@@ -101,6 +118,7 @@ export const VirtualizedSelectMenu = ({
   focusedOption,
 }: VirtualSelectMenuProps<SelectableValue>) => {
   const theme = useTheme2();
+  const embedded = React.useContext(EmbeddedSelectContext);
   const styles = getSelectStyles(theme);
   const listRef = useRef<List>(null);
   const { toggleAllOptions, components } = selectProps;
@@ -174,11 +192,12 @@ export const VirtualizedSelectMenu = ({
 
   return (
     <List
+      outerElementType={SelectMenuSurface}
       outerRef={scrollRef}
       ref={listRef}
       className={styles.menu}
       height={heightEstimate}
-      width={widthEstimate}
+      width={embedded ? '100%' : widthEstimate}
       aria-label="Select options menu"
       itemCount={flattenedChildren.length}
       itemSize={VIRTUAL_LIST_ITEM_HEIGHT}
@@ -276,13 +295,18 @@ export const SelectMenuOptions = ({
       )}
       {...rest}
       data-testid={selectors.components.Select.option}
+      data-select-focused={isFocused || undefined}
       title={data.title}
     >
       {icon && <Icon name={icon} className={styles.optionIcon} />}
       {data.imgUrl && <img className={styles.optionImage} src={data.imgUrl} alt={data.label || String(data.value)} />}
       <div className={styles.optionBody}>
         <span>{renderOptionLabel ? renderOptionLabel(data) : children}</span>
-        {data.description && <div className={styles.optionDescription}>{data.description}</div>}
+        {data.description && (
+          <div className={styles.optionDescription} data-select-description>
+            {data.description}
+          </div>
+        )}
         {data.component && <data.component />}
       </div>
     </div>

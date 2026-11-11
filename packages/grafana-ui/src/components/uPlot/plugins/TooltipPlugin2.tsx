@@ -15,6 +15,7 @@ import { VizPresentationContext } from '../../VizPresentation/VizPresentation';
 import { UPlotConfigBuilder } from '../config/UPlotConfigBuilder';
 
 import { CloseButton } from './CloseButton';
+import { wallTooltipPosition, WallTooltipPlacement } from './wallTooltipPosition';
 
 export const DEFAULT_TOOLTIP_WIDTH = undefined;
 export const TOOLTIP_OFFSET = 10;
@@ -128,6 +129,11 @@ export const TooltipPlugin2 = ({
   const [{ plot, isHovering, isPinned, contents, style, dismiss }, setState] = useReducer(mergeState, null, initState);
 
   const sizeRef = useRef<TooltipContainerSize>();
+  const positionMeasured = useRef<() => void>();
+  const popupInteraction = useRef<{
+    enter: (focus: boolean) => void;
+    leave: (focus: boolean, next: EventTarget | null) => void;
+  }>();
   const styles = useStyles2(getStyles, maxWidth);
   const presentation = useContext(VizPresentationContext);
   const timeSeriesPresentation = useContext(TimeSeriesPresentationContext);
@@ -136,6 +142,8 @@ export const TooltipPlugin2 = ({
   renderRef.current = render;
 
   useLayoutEffect(() => {
+    const placement: WallTooltipPlacement = {};
+    let positionAfterMeasure: (() => void) | undefined;
     sizeRef.current = {
       width: 0,
       height: 0,
@@ -151,6 +159,11 @@ export const TooltipPlugin2 = ({
             size.height = entry.contentRect.height;
           }
         }
+        // Popup content (including pinned actions) is measured after its first paint.
+        // Reposition that same tooltip now, without waiting for another mouse move.
+        if (timeSeriesPresentation?.refinedInteractions) {
+          positionAfterMeasure?.();
+        }
       }),
     };
 
@@ -162,12 +175,24 @@ export const TooltipPlugin2 = ({
     let _someSeriesIdx = false;
     let _isPinned = isPinned;
     let _style = style;
+    let popupPointer = false;
+    let popupFocus = false;
+    let localPopup = false;
+    const holdsPopup = () => popupPointer || popupFocus;
+    const entersPopup = (u: uPlot) => {
+      const next = u.cursor.event?.relatedTarget;
+      return holdsPopup() || (localPopup && next instanceof Node && !!domRef.current?.contains(next));
+    };
 
     let plotVisible = false;
 
     const syncTooltip = syncMode === DashboardCursorSync.Tooltip;
 
-    if (syncMode !== DashboardCursorSync.Off && config.scales[0].props.isTime) {
+    if (
+      !timeSeriesPresentation?.refinedInteractions &&
+      syncMode !== DashboardCursorSync.Off &&
+      config.scales[0].props.isTime
+    ) {
       config.setCursor({
         sync: {
           key: syncScope,
@@ -177,6 +202,23 @@ export const TooltipPlugin2 = ({
     }
 
     const updateHovering = () => {
+      if (timeSeriesPresentation?.refinedInteractions) {
+        const { left = -10, top = -10, event } = _plot?.cursor ?? {};
+        const rect = _plot?.rect;
+        // A stale focused series is not a valid data hover after leaving the plot.
+        if (
+          !rect ||
+          !_someSeriesIdx ||
+          left < 0 ||
+          left > rect.width ||
+          top < 0 ||
+          top > rect.height ||
+          event?.type === 'mouseleave'
+        ) {
+          _isHovering = false;
+          return;
+        }
+      }
       if (viaSync) {
         _isHovering = plotVisible && _someSeriesIdx && syncTooltip;
       } else {
@@ -194,12 +236,28 @@ export const TooltipPlugin2 = ({
 
     let pendingRender = false;
     let pendingPinned = false;
+    let unrenderTimer: ReturnType<typeof setTimeout> | undefined;
+    let disposed = false;
 
     const scheduleRender = (setPinned = false) => {
+      if (disposed) {
+        return;
+      }
+      if (timeSeriesPresentation?.refinedInteractions && _isHovering && unrenderTimer != null) {
+        clearTimeout(unrenderTimer);
+        unrenderTimer = undefined;
+        pendingRender = false;
+      }
       if (!pendingRender) {
         // defer unrender for 100ms to reduce flickering in small gaps
-        if (!_isHovering) {
-          setTimeout(_render, 100);
+        if (
+          !_isHovering &&
+          (!timeSeriesPresentation?.refinedInteractions || (localPopup && _plot?.cursor.event?.type === 'mouseleave'))
+        ) {
+          unrenderTimer = setTimeout(() => {
+            unrenderTimer = undefined;
+            _render();
+          }, 100);
         } else {
           queueMicrotask(_render);
         }
@@ -221,11 +279,21 @@ export const TooltipPlugin2 = ({
     };
 
     const _render = () => {
+      if (disposed) {
+        return;
+      }
       pendingRender = false;
+      // Keep the last real sample and placement while reading/scrolling the popup.
+      // This is transient interaction, not the native click-to-pin cursor lock.
+      if (holdsPopup() && !_isPinned) {
+        return;
+      }
+      if (!_isHovering && !_isPinned) {
+        placement.xSide = undefined;
+        placement.ySide = undefined;
+      }
 
       if (pendingPinned) {
-        _style = { pointerEvents: _isPinned ? 'all' : 'none' };
-
         // @ts-ignore
         _plot!.cursor._lock = _isPinned;
 
@@ -239,6 +307,12 @@ export const TooltipPlugin2 = ({
 
         pendingPinned = false;
       }
+
+      localPopup = _isHovering && !viaSync;
+      _style = {
+        ..._style,
+        pointerEvents: _isPinned || (timeSeriesPresentation?.refinedInteractions && localPopup) ? 'auto' : 'none',
+      };
 
       let state: TooltipContainerState = {
         style: _style,
@@ -257,6 +331,11 @@ export const TooltipPlugin2 = ({
     };
 
     const dismiss = () => {
+      popupPointer = popupFocus = false;
+      localPopup = false;
+      clearTimeout(unrenderTimer);
+      unrenderTimer = undefined;
+      pendingRender = false;
       let prevIsPinned = _isPinned;
       _isPinned = false;
       _isHovering = false;
@@ -264,7 +343,41 @@ export const TooltipPlugin2 = ({
       scheduleRender(prevIsPinned);
     };
 
+    popupInteraction.current = {
+      enter: (focus) => {
+        if (!timeSeriesPresentation?.refinedInteractions || (!localPopup && !_isPinned)) {
+          return;
+        }
+        if (focus) {
+          popupFocus = true;
+        } else {
+          popupPointer = true;
+        }
+        clearTimeout(unrenderTimer);
+        unrenderTimer = undefined;
+        pendingRender = false;
+      },
+      leave: (focus, next) => {
+        if (next instanceof Node && domRef.current?.contains(next)) {
+          return;
+        }
+        if (focus) {
+          popupFocus = false;
+        } else {
+          // Pointer navigation wins over a previously focused scroll viewport.
+          // Otherwise the old source remains visible when hovering another plot.
+          popupPointer = popupFocus = false;
+        }
+        if (!holdsPopup() && !_isPinned) {
+          dismiss();
+        }
+      },
+    };
+
     config.addHook('init', (u) => {
+      if (disposed) {
+        return;
+      }
       setState({ plot: (_plot = u) });
 
       // detect shiftKey and mutate drag mode from x-only to y-only
@@ -327,6 +440,9 @@ export const TooltipPlugin2 = ({
     });
 
     config.addHook('setSelect', (u) => {
+      if (disposed) {
+        return;
+      }
       const isXAxisHorizontal = u.scales.x.ori === 0;
 
       if (!viaSync && (clientZoom || queryZoom != null)) {
@@ -467,10 +583,13 @@ export const TooltipPlugin2 = ({
     }
 
     config.addHook('setData', (u) => {
+      if (disposed) {
+        return;
+      }
       yZoomed = false;
       yDrag = false;
 
-      if (_isPinned) {
+      if (_isPinned || holdsPopup()) {
         dismiss();
       }
     });
@@ -479,15 +598,30 @@ export const TooltipPlugin2 = ({
     // e.g. to highlight the hovered/closest series
     // TODO: we only need this for multi/all mode?
     config.addHook('setSeries', (u, seriesIdx) => {
+      if (disposed) {
+        return;
+      }
+      if (timeSeriesPresentation?.refinedInteractions && entersPopup(u)) {
+        return;
+      }
+      const wasHovering = _isHovering;
       closestSeriesIdx = seriesIdx;
 
       viaSync = u.cursor.event == null;
       updateHovering();
-      scheduleRender();
+      if (_isHovering || wasHovering) {
+        scheduleRender();
+      }
     });
 
     // fires on data value hovers/unhovers
     config.addHook('setLegend', (u) => {
+      if (disposed) {
+        return;
+      }
+      if (timeSeriesPresentation?.refinedInteractions && entersPopup(u)) {
+        return;
+      }
       seriesIdxs = _plot?.cursor!.idxs!.slice()!;
       _someSeriesIdx = seriesIdxs.some((v, i) => i > 0 && v != null);
 
@@ -505,7 +639,7 @@ export const TooltipPlugin2 = ({
     let winHgt = 0;
 
     const updateWinSize = () => {
-      _isHovering && !_isPinned && dismiss();
+      (_isHovering || holdsPopup()) && !_isPinned && dismiss();
 
       winWid = window.innerWidth - scrollbarWidth;
       winHgt = window.innerHeight - scrollbarWidth;
@@ -520,8 +654,21 @@ export const TooltipPlugin2 = ({
     config.addHook('ready', updatePlotVisible);
 
     // fires on mousemoves
-    config.addHook('setCursor', (u) => {
+    const positionTooltip = (u: uPlot) => {
+      if (disposed) {
+        return;
+      }
+      if (timeSeriesPresentation?.refinedInteractions && entersPopup(u)) {
+        return;
+      }
       viaSync = u.cursor.event == null;
+      if (timeSeriesPresentation?.refinedInteractions) {
+        const wasHovering = _isHovering;
+        updateHovering();
+        if (wasHovering && !_isHovering && !_isPinned) {
+          scheduleRender();
+        }
+      }
 
       if (!_isHovering) {
         return;
@@ -536,6 +683,44 @@ export const TooltipPlugin2 = ({
         let transform = '';
 
         let { width, height } = sizeRef.current!;
+        if (timeSeriesPresentation?.refinedInteractions) {
+          const margin = timeSeriesPresentation.tooltipViewportMargin ?? 8;
+          const t = timeSeriesPresentation;
+          const line = t.tooltipLineHeight ?? t.tooltipFontSize * 1.5;
+          const hoverHeight =
+            (line + t.tooltipRowGap * 2) * (t.tooltipVisibleRows ?? 3) +
+            line +
+            t.tooltipPadding * 2 +
+            t.tooltipRowGap +
+            2;
+          const capacity = `${Math.max(0, Math.min(_isPinned ? (t.tooltipMaxHeight ?? 240) : hoverHeight, winHgt - margin * 2))}px`;
+          if (domRef.current && domRef.current.style.getPropertyValue('--wall-tooltip-available-height') !== capacity) {
+            domRef.current.style.setProperty('--wall-tooltip-available-height', capacity);
+            // Only a capacity change needs a fresh layout read; cursor moves reuse the measurement.
+            const measured = domRef.current.getBoundingClientRect();
+            width = sizeRef.current!.width = measured.width;
+            height = sizeRef.current!.height = measured.height;
+          }
+          const position = wallTooltipPosition(
+            clientX,
+            clientY,
+            width,
+            height,
+            u.rect,
+            { width: winWid, height: winHgt },
+            timeSeriesPresentation.tooltipOffset ?? TOOLTIP_OFFSET,
+            timeSeriesPresentation.tooltipViewportMargin ?? 8,
+            placement
+          );
+          transform = `translate(${position.x}px, ${position.y}px)`;
+          if (domRef.current) {
+            domRef.current.style.transform = transform;
+          } else {
+            _style.transform = transform;
+            scheduleRender();
+          }
+          return;
+        }
 
         width += TOOLTIP_OFFSET;
         height += TOOLTIP_OFFSET;
@@ -582,17 +767,29 @@ export const TooltipPlugin2 = ({
           scheduleRender();
         }
       }
-    });
+    };
+    config.addHook('setCursor', positionTooltip);
+    positionAfterMeasure = () => {
+      if (_plot) {
+        positionTooltip(_plot);
+      }
+    };
+    positionMeasured.current = positionAfterMeasure;
 
     const onscroll = (e: Event) => {
       updatePlotVisible();
-      _isHovering && e.target instanceof Node && e.target.contains(_plot!.root) && dismiss();
+      (_isHovering || holdsPopup()) && e.target instanceof Node && e.target.contains(_plot!.root) && dismiss();
     };
 
     window.addEventListener('resize', updateWinSize);
     window.addEventListener('scroll', onscroll, true);
 
     return () => {
+      disposed = true;
+      clearTimeout(unrenderTimer);
+      positionMeasured.current = undefined;
+      popupInteraction.current = undefined;
+      sizeRef.current?.observer.disconnect();
       window.removeEventListener('resize', updateWinSize);
       window.removeEventListener('scroll', onscroll, true);
 
@@ -613,6 +810,12 @@ export const TooltipPlugin2 = ({
       const { width, height } = domRef.current.getBoundingClientRect();
       size.width = width;
       size.height = height;
+
+      if (timeSeriesPresentation?.refinedInteractions) {
+        // Measure and position before paint, without redispatching a hover/sync event.
+        positionMeasured.current?.();
+        return;
+      }
 
       let event = plot!.cursor.event;
 
@@ -652,11 +855,12 @@ export const TooltipPlugin2 = ({
       size.width = 0;
       size.height = 0;
     }
-  }, [isHovering]);
+  }, [isHovering, isPinned]);
 
   if (plot && isHovering) {
     return createPortal(
       <div
+        data-wall-motion={timeSeriesPresentation?.refinedInteractions ? 'true' : undefined}
         data-viz-presentation={
           timeSeriesPresentation ? 'wall-timeseries-tooltip' : presentation ? 'wall-tooltip' : undefined
         }
@@ -680,7 +884,25 @@ export const TooltipPlugin2 = ({
         style={style}
         aria-live="polite"
         aria-atomic="true"
+        role={timeSeriesPresentation?.refinedInteractions ? 'group' : undefined}
+        tabIndex={timeSeriesPresentation?.refinedInteractions ? -1 : undefined}
         ref={domRef}
+        onPointerEnter={() => popupInteraction.current?.enter(false)}
+        onPointerLeave={(event) => popupInteraction.current?.leave(false, event.relatedTarget)}
+        onFocusCapture={() => popupInteraction.current?.enter(true)}
+        onBlurCapture={(event) => popupInteraction.current?.leave(true, event.relatedTarget)}
+        onWheel={timeSeriesPresentation?.refinedInteractions ? (event) => event.stopPropagation() : undefined}
+        onPointerDown={timeSeriesPresentation?.refinedInteractions ? (event) => event.stopPropagation() : undefined}
+        onKeyDown={
+          timeSeriesPresentation?.refinedInteractions
+            ? (event) => {
+                if (event.key === 'Escape') {
+                  event.stopPropagation();
+                  dismiss();
+                }
+              }
+            : undefined
+        }
       >
         {isPinned && <CloseButton onClick={dismiss} />}
         {contents}

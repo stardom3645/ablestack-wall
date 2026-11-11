@@ -11,6 +11,8 @@ import { PromQuery } from '../../types';
 // props as the sync-component.
 export type Props = {
   initialValue: string;
+  /** Opt-in editor geometry; does not replace the native model or completion providers. */
+  minimumHeight?: number;
   languageProvider: PromQlLanguageProvider;
   history: Array<HistoryItem<PromQuery>>;
   placeholder: string;

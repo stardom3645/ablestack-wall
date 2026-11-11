@@ -1,6 +1,6 @@
 // Library
 import { cx } from '@emotion/css';
-import { CSSProperties, PureComponent, ReactNode } from 'react';
+import { ContextType, CSSProperties, PureComponent, ReactNode } from 'react';
 import * as React from 'react';
 import tinycolor from 'tinycolor2';
 
@@ -27,6 +27,7 @@ import { Themeable2 } from '../../types';
 import { calculateFontSize, measureText } from '../../utils/measureText';
 import { clearButtonStyles } from '../Button';
 import { FormattedValueDisplay } from '../FormattedValueDisplay/FormattedValueDisplay';
+import { MeterAppearance, VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 const MIN_VALUE_HEIGHT = 18;
 const MAX_VALUE_HEIGHT = 50;
@@ -36,6 +37,7 @@ const VALUE_LINE_HEIGHT = 1;
 const VALUE_LEFT_PADDING = 10;
 
 export interface Props extends Themeable2 {
+  wallAppearance?: MeterAppearance;
   height: number;
   width: number;
   field: FieldConfig;
@@ -55,6 +57,8 @@ export interface Props extends Themeable2 {
 }
 
 export class BarGauge extends PureComponent<Props> {
+  static contextType = VizPresentationContext;
+  declare context: ContextType<typeof VizPresentationContext>;
   static defaultProps: Partial<Props> = {
     lcdCellWidth: 12,
     value: {
@@ -77,8 +81,32 @@ export class BarGauge extends PureComponent<Props> {
 
   render() {
     const { onClick, className, theme } = this.props;
+    // Continuous color schemes retain their native renderer; Wall also presents LCD.
+    if (this.context?.renderBarGauge && !getFieldColorMode(this.props.field.color?.mode).isContinuous) {
+      const content = this.context.renderBarGauge(this.props);
+      return onClick ? (
+        <button
+          type="button"
+          className={cx(clearButtonStyles(theme), className)}
+          style={{ width: '100%', height: '100%' }}
+          onClick={onClick}
+        >
+          {content}
+        </button>
+      ) : (
+        <div className={className} style={{ width: '100%', height: '100%' }}>
+          {content}
+        </div>
+      );
+    }
     const { title } = this.props.value;
     const styles = getTitleStyles(this.props);
+    if (this.context) {
+      styles.wrapper.fontFamily = this.context.fontFamily;
+      styles.wrapper.fontVariantNumeric = 'tabular-nums';
+      styles.title.fontWeight = this.context.labelFontWeight;
+      styles.title.color = this.context.muted;
+    }
 
     if (onClick) {
       return (
@@ -117,6 +145,14 @@ export class BarGauge extends PureComponent<Props> {
     const { value, showUnfilled, valueDisplayMode } = this.props;
 
     const styles = getBasicAndGradientStyles(this.props);
+    if (this.context) {
+      styles.emptyBar.background = this.context.track;
+      styles.emptyBar.borderRadius = this.context.radius / 2;
+      styles.bar.borderRadius = this.context.radius / 2;
+      styles.value.fontFamily = this.context.fontFamily;
+      styles.value.fontVariantNumeric = 'tabular-nums';
+      styles.value.fontWeight = this.context.labelFontWeight;
+    }
 
     return (
       <div style={styles.wrapper}>

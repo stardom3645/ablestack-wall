@@ -1,6 +1,7 @@
 import { SelectableValue } from '@grafana/data';
 import { TableCellBackgroundDisplayMode, TableColoredBackgroundCellOptions } from '@grafana/schema';
 import { Field, RadioButtonGroup, Switch, Label, Badge } from '@grafana/ui';
+import { useWallOptionText } from 'app/features/wall-modern/editor/optionText';
 
 import { TableCellEditorProps } from '../TableCellOptionEditor';
 
@@ -13,6 +14,7 @@ export const ColorBackgroundCellOptionsEditor = ({
   cellOptions,
   onChange,
 }: TableCellEditorProps<TableColoredBackgroundCellOptions>) => {
+  const text = useWallOptionText();
   // Set the display mode on change
   const onCellOptionsChange = (v: TableCellBackgroundDisplayMode) => {
     cellOptions.mode = v;
@@ -32,24 +34,24 @@ export const ColorBackgroundCellOptionsEditor = ({
   };
 
   const label = (
-    <Label description="If selected text will be wrapped to the width of text in the configured column">
-      {'Wrap text '}
+    <Label description={text('If selected text will be wrapped to the width of text in the configured column')}>
+      {text('Wrap text')}
       <Badge text="Alpha" color="blue" style={{ fontSize: '11px', marginLeft: '5px', lineHeight: '1.2' }} />
     </Label>
   );
 
   return (
     <>
-      <Field label="Background display mode">
+      <Field label={text('Background display mode')}>
         <RadioButtonGroup
           value={cellOptions?.mode ?? TableCellBackgroundDisplayMode.Gradient}
           onChange={onCellOptionsChange}
-          options={colorBackgroundOpts}
+          options={colorBackgroundOpts.map((option) => ({ ...option, label: text(option.label) }))}
         />
       </Field>
       <Field
-        label="Apply to entire row"
-        description="If selected the entire row will be colored as this cell would be."
+        label={text('Apply to entire row')}
+        description={text('If selected the entire row will be colored as this cell would be.')}
       >
         <Switch value={cellOptions.applyToRow} onChange={onColorRowChange} />
       </Field>

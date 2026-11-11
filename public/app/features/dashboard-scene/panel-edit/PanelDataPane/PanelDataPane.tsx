@@ -18,6 +18,7 @@ import { contextSrv } from 'app/core/core';
 import { getRulesPermissions } from 'app/features/alerting/unified/utils/access-control';
 import { GRAFANA_RULES_SOURCE_NAME } from 'app/features/alerting/unified/utils/datasource';
 import { WallEditorDataTabs, WallPanelEditorContext } from 'app/features/wall-modern/editor/WallPanelEditor';
+import { WallQueryWorkspace } from 'app/features/wall-modern/editor/WallQueryWorkspace';
 
 import { PanelDataAlertingTab } from './PanelDataAlertingTab';
 import { PanelDataQueriesTab } from './PanelDataQueriesTab';
@@ -80,6 +81,10 @@ function PanelDataPaneRendered({ model }: SceneComponentProps<PanelDataPane>) {
   }
 
   const currentTab = tabs.find((t) => t.tabId === tab);
+
+  if (wallEditor && tabs.some((item) => item instanceof PanelDataQueriesTab)) {
+    return <WallQueryWorkspace pane={model} />;
+  }
 
   if (wallEditor) {
     return (

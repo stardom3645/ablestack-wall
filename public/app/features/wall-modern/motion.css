@@ -1,16 +1,28 @@
-/* Representative dashboard motion contract. Portaled Base UI popups carry the same scope. */
-.wall-modern[data-wall-typography='storage-vm'] {
-  --wall-motion-feedback-duration: 120ms;
-  --wall-motion-enter-duration: 160ms;
-  --wall-motion-exit-duration: 100ms;
+/* Wall UI motion contract. Portaled Base UI popups carry the same scope. */
+.wall-modern,
+[data-wall-motion='true'] {
+  --wall-motion-feedback-duration: 150ms;
+  --wall-motion-tab-duration: 180ms;
+  --wall-motion-accordion-open-duration: 250ms;
+  --wall-motion-accordion-close-duration: 250ms;
+  --wall-motion-dialog-duration: 280ms;
+  --wall-motion-enter-duration: 170ms;
+  --wall-motion-exit-duration: 150ms;
+  --wall-motion-navigation-duration: 250ms;
+  --wall-motion-navigation-content-duration: 150ms;
+  --wall-motion-navigation-reveal-delay: 50ms;
   --wall-motion-layout-duration: 200ms;
   --wall-motion-grid-duration: 180ms;
   --wall-motion-settle-duration: 140ms;
+  --wall-motion-footprint-duration: 280ms;
+  --wall-motion-footprint-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
   --wall-motion-grid-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --wall-motion-feedback-easing: cubic-bezier(0.2, 0, 0, 1);
+  --wall-motion-feedback-easing: cubic-bezier(0, 0, 0.2, 1);
+  --wall-motion-expand-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --wall-motion-enter-easing: cubic-bezier(0, 0, 0.2, 1);
+  --wall-motion-exit-easing: cubic-bezier(0.5, 0, 1, 1);
   --wall-motion-layout-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --wall-motion-popup-offset: 3px;
-  --wall-motion-popup-scale: 0.985;
   --wall-layout-move-duration: var(--wall-motion-grid-duration);
   --wall-layout-move-easing: var(--wall-motion-grid-easing);
 }
@@ -30,7 +42,8 @@
 .wall-dashboard-workspace .wall-panel-actions-item {
   transition:
     background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
-    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    opacity var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
 }
 .wall-dashboard-workspace .wall-workspace-panel {
   transition:
@@ -39,36 +52,64 @@
 }
 
 /* Base UI owns mount/unmount, focus return and popup placement. Only its visual states animate. */
-.wall-panel-actions-menu[data-wall-typography='storage-vm'],
-.wall-toolbar-popover[data-wall-typography='storage-vm'] {
+.wall-panel-actions-menu,
+:is(.wall-toolbar-popover, .wall-management-menu, .wall-menu) {
+  --wall-popup-start-x: 0px;
+  --wall-popup-start-y: calc(-1 * var(--wall-motion-popup-offset));
   transform-origin: var(--transform-origin);
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   transition:
-    opacity var(--wall-motion-enter-duration) var(--wall-motion-feedback-easing),
-    transform var(--wall-motion-enter-duration) var(--wall-motion-layout-easing);
+    opacity var(--wall-motion-enter-duration) var(--wall-motion-enter-easing),
+    transform var(--wall-motion-enter-duration) var(--wall-motion-enter-easing);
 }
-.wall-panel-actions-menu[data-wall-typography='storage-vm'][data-starting-style],
-.wall-toolbar-popover[data-wall-typography='storage-vm'][data-starting-style] {
-  opacity: 0;
-  transform: translateY(calc(-1 * var(--wall-motion-popup-offset))) scale(var(--wall-motion-popup-scale));
+.wall-modern:is(.wall-panel-actions-menu, .wall-toolbar-popover, .wall-management-menu, .wall-menu)[data-side='top'] {
+  --wall-popup-start-y: var(--wall-motion-popup-offset);
 }
-.wall-panel-actions-menu[data-wall-typography='storage-vm'][data-ending-style],
-.wall-toolbar-popover[data-wall-typography='storage-vm'][data-ending-style] {
+.wall-modern:is(.wall-panel-actions-menu, .wall-toolbar-popover, .wall-management-menu, .wall-menu)[data-side='right'] {
+  --wall-popup-start-x: calc(-1 * var(--wall-motion-popup-offset));
+  --wall-popup-start-y: 0px;
+}
+.wall-modern:is(.wall-panel-actions-menu, .wall-toolbar-popover, .wall-management-menu, .wall-menu)[data-side='left'] {
+  --wall-popup-start-x: var(--wall-motion-popup-offset);
+  --wall-popup-start-y: 0px;
+}
+.wall-nav-tooltip {
+  opacity: 1;
+  transition: opacity var(--wall-motion-enter-duration) var(--wall-motion-feedback-easing);
+}
+.wall-nav-tooltip:is([data-starting-style], [data-ending-style]) {
   opacity: 0;
-  /* Exit without spatial travel; preserve submenu alignment and focus-return timing. */
-  transform: translateY(0) scale(1);
+}
+.wall-panel-actions-menu:is([data-starting-style], [data-ending-style]),
+:is(.wall-toolbar-popover, .wall-management-menu, .wall-menu):is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  transform: translate(var(--wall-popup-start-x), var(--wall-popup-start-y));
+}
+.wall-panel-actions-menu[data-ending-style],
+:is(.wall-toolbar-popover, .wall-management-menu, .wall-menu)[data-ending-style] {
+  pointer-events: none;
   transition-duration: var(--wall-motion-exit-duration);
+  transition-timing-function: var(--wall-motion-exit-easing);
 }
-.wall-panel-actions-menu[data-wall-typography='storage-vm'] .wall-panel-actions-item {
+.wall-panel-actions-menu .wall-panel-actions-item {
   transition:
     background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
-    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    opacity var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
 }
 
 /* Native Grid height follows settled geometry. Never animate first measurement or the grabbed tile. */
 .wall-dashboard-workspace .wall-kpi-layout > .react-grid-layout {
   transition: none;
+}
+/* Border and clipped ink follow as one box, without a detached fill at the old
+   size. The panel, pointer and logical target never wait for this decoration. */
+.wall-dashboard-workspace .wall-layout-footprint-preview[data-wall-footprint-preview='destination'] {
+  transition:
+    transform var(--wall-motion-footprint-duration) var(--wall-motion-footprint-easing),
+    width var(--wall-motion-footprint-duration) var(--wall-motion-footprint-easing),
+    height var(--wall-motion-footprint-duration) var(--wall-motion-footprint-easing);
 }
 .wall-dashboard-workspace .wall-kpi-layout > .react-grid-layout--enable-move-animations {
   transition: height var(--wall-motion-layout-duration) var(--wall-motion-layout-easing);
@@ -87,4 +128,168 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Height is measured by Base UI, including interrupted transitions. Padding lives inside. */
+.wall-modern .wall-collapsible-panel {
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition: height var(--wall-motion-accordion-open-duration) var(--wall-motion-expand-easing);
+  overflow-anchor: none;
+}
+.wall-modern .wall-collapsible-panel[data-starting-style],
+.wall-modern .wall-collapsible-panel[data-ending-style] {
+  height: 0;
+}
+.wall-modern .wall-collapsible-panel[data-ending-style],
+.wall-modern .wall-collapsible-panel[data-closed] {
+  transition-duration: var(--wall-motion-accordion-close-duration);
+}
+.wall-modern .wall-collapsible-panel > .wall-collapsible-content {
+  min-height: 0;
+}
+.wall-modern
+  :is(
+    .wall-option-group-heading,
+    .wall-option-group-trigger,
+    .wall-option-custom-trigger,
+    .wall-setting-section-heading,
+    .wall-work-section-heading,
+    .wall-prom-options-trigger,
+    .wall-transform-select,
+    .wall-nav-group-trigger
+  )
+  > svg:last-child {
+  transition: transform var(--wall-motion-accordion-open-duration) var(--wall-motion-expand-easing);
+}
+.wall-modern
+  :is(.wall-setting-section-heading, .wall-work-section-heading, .wall-nav-group-trigger):not([data-panel-open])
+  > svg:last-child {
+  transition-duration: var(--wall-motion-accordion-close-duration);
+}
+.wall-modern
+  :is(
+    .wall-option-group-heading,
+    .wall-option-group-trigger,
+    .wall-option-custom-trigger,
+    .wall-setting-section-heading,
+    .wall-work-section-heading,
+    .wall-prom-options-trigger,
+    .wall-transform-select,
+    .wall-nav-group-trigger
+  )[data-panel-open]
+  > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.wall-modern .wall-button,
+.wall-modern nav a,
+.wall-modern :is(.wall-ui-tabs-trigger, .wall-option-choice-item, [role='menuitem']) {
+  transition:
+    background-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    border-color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    color var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing),
+    opacity var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+.wall-modern :focus-visible {
+  outline-offset: 2px;
+}
+.wall-modern .wall-ui-tabs-list {
+  position: relative;
+  isolation: isolate;
+}
+.wall-modern .wall-ui-tabs-trigger {
+  z-index: 1;
+}
+.wall-tabs-indicator {
+  pointer-events: none;
+  position: absolute;
+  left: var(--active-tab-left);
+  top: var(--active-tab-top);
+  width: var(--active-tab-width);
+  height: var(--active-tab-height);
+  border-radius: var(--wall-radius);
+  background: var(--wall-soft);
+  transition:
+    left var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing),
+    top var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing),
+    width var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing),
+    height var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing);
+}
+.wall-modern .wall-ui-tabs-line .wall-tabs-indicator {
+  top: auto;
+  bottom: 0;
+  height: 2px;
+  background: var(--wall-primary);
+}
+.wall-modern .wall-ui-tabs-list:has(> .wall-tabs-indicator) .wall-ui-tabs-trigger[aria-selected='true'] {
+  background: transparent;
+  box-shadow: none;
+}
+.wall-modern .wall-ui-tabs-line .wall-ui-tabs-trigger::after {
+  display: none;
+}
+.wall-modern .wall-ui-tabs-content:not([hidden]) {
+  animation: wall-content-enter var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing);
+}
+@keyframes wall-content-enter {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.wall-modern.wall-studio-dialog {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--wall-motion-dialog-duration) var(--wall-motion-feedback-easing),
+    translate var(--wall-motion-dialog-duration) var(--wall-motion-layout-easing);
+}
+.wall-modern.wall-studio-dialog:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  translate: 0 var(--wall-motion-popup-offset);
+}
+.wall-dialog-backdrop {
+  opacity: 1;
+  transition: opacity var(--wall-motion-dialog-duration) var(--wall-motion-feedback-easing);
+}
+.wall-dialog-backdrop:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+}
+.wall-modern :is(.wall-document-savebar, .wall-document-actions) {
+  animation: wall-content-enter var(--wall-motion-enter-duration) var(--wall-motion-feedback-easing);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-modern,
+  .wall-modern *,
+  .wall-dialog-backdrop {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Native controls retain their own exit/unmount contracts; only decorate their entrance. */
+[data-wall-motion='true'][aria-label='Select options menu'],
+[data-wall-motion='true'] [aria-label='Select options menu'] {
+  animation: wall-content-enter var(--wall-motion-enter-duration) var(--wall-motion-feedback-easing);
+}
+[data-wall-motion='true'] [role='dialog'] {
+  animation: wall-content-enter var(--wall-motion-dialog-duration) var(--wall-motion-feedback-easing);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-wall-motion='true'],
+  [data-wall-motion='true'] * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.wall-modern :is(.wall-studio-inspector, .wall-studio-properties, .wall-settings-scroll, .wall-query-workspace) {
+  overflow-anchor: none;
+}
+.wall-modern .wall-settings-content > :first-child {
+  animation: wall-content-enter var(--wall-motion-tab-duration) var(--wall-motion-feedback-easing);
 }

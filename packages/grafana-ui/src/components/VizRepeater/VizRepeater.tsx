@@ -1,12 +1,15 @@
 import { clamp } from 'lodash';
-import { PureComponent, CSSProperties } from 'react';
+import { PureComponent, CSSProperties, ContextType } from 'react';
 import * as React from 'react';
 
 import { VizOrientation } from '@grafana/data';
 
 import { calculateGridDimensions } from '../../utils/squares';
+import { PanelScrollArea, panelScrollTokens } from '../PanelScrollArea/PanelScrollArea';
+import { VizPresentationContext } from '../VizPresentation/VizPresentation';
 
 interface Props<V, D> {
+  getGridDimensions?: (values: V[], width: number, height: number, spacing: number) => VizRepeaterGrid | undefined;
   /**
    * Optionally precalculate dimensions to support consistent behavior between repeated
    * values.  Two typical patterns are:
@@ -31,9 +34,12 @@ interface Props<V, D> {
   minVizWidth?: number;
   minVizHeight?: number;
   maxVizHeight?: number;
+  /** Opt-in readout grid: retain legible cells and scroll rather than crushing values. */
+  gridItemMinSize?: { width: number; height: number };
 }
 
 export interface VizRepeaterRenderValueProps<V, D = {}> {
+  layout?: 'inline';
   value: V;
   width: number;
   height: number;
@@ -43,6 +49,16 @@ export interface VizRepeaterRenderValueProps<V, D = {}> {
    * Total number of values being shown in repeater
    */
   count: number;
+}
+
+export interface VizRepeaterGrid {
+  width: number;
+  height: number;
+  widthOnLastRow: number;
+  xCount: number;
+  yCount: number;
+  spacing?: number;
+  layout?: 'inline';
 }
 
 interface DefaultProps {
@@ -56,6 +72,9 @@ interface State<V> {
 }
 
 export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D>, State<V>> {
+  static contextType = VizPresentationContext;
+  declare context: ContextType<typeof VizPresentationContext>;
+
   static defaultProps: DefaultProps = {
     itemSpacing: 8,
   };
@@ -93,7 +112,29 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
     const { renderValue, height, width, itemSpacing, getAlignmentFactors, orientation } = this.props;
 
     const { values } = this.state;
-    const grid = calculateGridDimensions(width, height, itemSpacing, values.length);
+    if (!values.length) {
+      return null;
+    }
+    const minimum = this.props.gridItemMinSize;
+    const gridWidth = minimum ? Math.max(1, width - panelScrollTokens.clearance) : width;
+    const capacity = minimum
+      ? Math.max(1, Math.min(values.length, Math.floor((gridWidth + itemSpacing) / (minimum.width + itemSpacing))))
+      : 0;
+    const rows = capacity ? Math.ceil(values.length / capacity) : 0;
+    // Balance four fields as 2×2 instead of leaving a lone value on a 3+1 row.
+    const columns = rows ? Math.ceil(values.length / rows) : 0;
+    const grid: VizRepeaterGrid =
+      this.props.getGridDimensions?.(values, width, height, itemSpacing) ??
+      (minimum
+        ? {
+            width: Math.max(1, (gridWidth - (columns - 1) * itemSpacing) / columns),
+            height: Math.max(values.length === 1 ? 0 : minimum.height, (height - (rows - 1) * itemSpacing) / rows),
+            xCount: columns,
+            yCount: rows,
+            widthOnLastRow: Math.max(1, (gridWidth - (columns - 1) * itemSpacing) / columns),
+          }
+        : calculateGridDimensions(width, height, itemSpacing, values.length));
+    const spacing = grid.spacing ?? itemSpacing;
     const alignmentFactors = getAlignmentFactors ? getAlignmentFactors(values, grid.width, grid.height) : ({} as D);
 
     let xGrid = 0;
@@ -107,8 +148,8 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
       const itemWidth = isLastRow ? grid.widthOnLastRow : grid.width;
       const itemHeight = grid.height;
 
-      const xPos = xGrid * itemWidth + itemSpacing * xGrid;
-      const yPos = yGrid * itemHeight + itemSpacing * yGrid;
+      const xPos = xGrid * itemWidth + spacing * xGrid;
+      const yPos = yGrid * itemHeight + spacing * yGrid;
 
       const itemStyles: CSSProperties = {
         position: 'absolute',
@@ -127,6 +168,7 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
             alignmentFactors,
             orientation,
             count: values.length,
+            layout: grid.layout,
           })}
         </div>
       );
@@ -139,7 +181,20 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
       }
     }
 
-    return <div style={{ position: 'relative' }}>{items}</div>;
+    const content = (
+      <div
+        style={{ position: 'relative', height: minimum ? grid.yCount * (grid.height + spacing) - spacing : undefined }}
+      >
+        {items}
+      </div>
+    );
+    return minimum ? (
+      <PanelScrollArea aria-label="수치 항목 목록" style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+        {content}
+      </PanelScrollArea>
+    ) : (
+      content
+    );
   }
 
   render() {
@@ -163,6 +218,7 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
 
     const itemStyles: React.CSSProperties = {
       display: 'flex',
+      flexShrink: this.props.gridItemMinSize ? 0 : undefined,
     };
 
     const repeaterStyle: React.CSSProperties = {
@@ -182,8 +238,16 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
         repeaterStyle.height = `${height}px`;
         repeaterStyle.overflowX = 'hidden';
         itemStyles.marginBottom = `${itemSpacing}px`;
-        vizWidth = width;
-        vizHeight = clamp(defaultVizHeight, minVizHeight ?? 0, maxVizHeight ?? defaultVizHeight);
+        vizWidth =
+          this.context && !(this.props.gridItemMinSize && values.length === 1)
+            ? Math.max(1, width - panelScrollTokens.clearance)
+            : width;
+        vizHeight = clamp(
+          defaultVizHeight,
+          this.props.gridItemMinSize && values.length === 1 ? Math.min(height, minVizHeight ?? 0) : (minVizHeight ?? 0),
+          maxVizHeight ??
+            (this.props.gridItemMinSize ? Math.max(defaultVizHeight, minVizHeight ?? 0) : defaultVizHeight)
+        );
         break;
       case VizOrientation.Vertical:
         repeaterStyle.flexDirection = 'row';
@@ -199,8 +263,9 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
 
     const alignmentFactors = getAlignmentFactors ? getAlignmentFactors(values, vizWidth, vizHeight) : ({} as D);
 
+    const Viewport = this.context ? PanelScrollArea : 'div';
     return (
-      <div style={repeaterStyle}>
+      <Viewport style={repeaterStyle} aria-label={this.context ? '시각화 항목 목록' : undefined}>
         {values.map((value, index) => {
           return (
             <div key={index} style={getItemStylesForIndex(itemStyles, index, values.length)}>
@@ -215,7 +280,7 @@ export class VizRepeater<V, D = {}> extends PureComponent<PropsWithDefaults<V, D
             </div>
           );
         })}
-      </div>
+      </Viewport>
     );
   }
 }

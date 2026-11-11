@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import { cloneDeep } from 'lodash';
 import { PureComponent } from 'react';
 import { Subscription } from 'rxjs';
 
@@ -8,6 +9,8 @@ import { config } from '@grafana/runtime';
 import { Button, ClipboardButton, JSONFormatter, LoadingPlaceholder, Stack } from '@grafana/ui';
 import { Trans } from 'app/core/internationalization';
 import { backendSrv } from 'app/core/services/backend_srv';
+import { WallQueryInspection } from 'app/features/wall-modern/editor/WallQueryInspection';
+import { inspectorExchange, InspectorExchange } from 'app/features/wall-modern/editor/inspectorModel';
 
 import { getPanelInspectorStyles2 } from './styles';
 
@@ -19,12 +22,15 @@ interface ExecutedQueryInfo {
 }
 
 interface Props {
+  wall?: boolean;
+  acceptResponse?: (requestId?: string) => boolean;
   instanceId?: string; // Must match the prefix of the requestId of the query being inspected. For updating only one instance of the inspector in case of multiple instances, ie Explore split view
   data: PanelData;
   onRefreshQuery: () => void;
 }
 
 interface State {
+  exchanges: InspectorExchange[];
   allNodesExpanded: boolean | null;
   isMocking: boolean;
   mockedResponse: string;
@@ -34,11 +40,13 @@ interface State {
 
 export class QueryInspector extends PureComponent<Props, State> {
   private formattedJson?: {};
+  private pendingExchanges: InspectorExchange[] = [];
   private subs = new Subscription();
 
   constructor(props: Props) {
     super(props);
     this.state = {
+      exchanges: [],
       executedQueries: [],
       allNodesExpanded: null,
       isMocking: false,
@@ -48,6 +56,7 @@ export class QueryInspector extends PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    this.updateQueryList();
     this.subs.add(
       backendSrv.getInspectorStream().subscribe({
         next: (response) => {
@@ -55,8 +64,18 @@ export class QueryInspector extends PureComponent<Props, State> {
           if (this.props.instanceId && response?.requestId) {
             update = response.requestId.startsWith(this.props.instanceId);
           }
-          if (update) {
-            return this.onDataSourceResponse(response.response);
+          if (update && this.props.wall) {
+            if (!response.response.config?.hideFromInspector) {
+              // Backend stream fires before PanelData receives the new request ID.
+              // Buffer only masked projections; match them after the native result update.
+              this.pendingExchanges = [
+                ...this.pendingExchanges,
+                inspectorExchange(response.response, response.requestId),
+              ].slice(-32);
+              this.flushExchanges();
+            }
+          } else if (update) {
+            return this.onDataSourceResponse(response.response, response.requestId);
           }
         },
       })
@@ -66,6 +85,7 @@ export class QueryInspector extends PureComponent<Props, State> {
   componentDidUpdate(oldProps: Props) {
     if (this.props.data !== oldProps.data) {
       this.updateQueryList();
+      this.flushExchanges();
     }
   }
 
@@ -92,7 +112,7 @@ export class QueryInspector extends PureComponent<Props, State> {
           } else {
             last = {
               refId,
-              frames: 0,
+              frames: 1,
               rows: frame.length,
               query,
             };
@@ -105,17 +125,35 @@ export class QueryInspector extends PureComponent<Props, State> {
     this.setState({ executedQueries });
   }
 
+  private flushExchanges() {
+    const accepted = this.pendingExchanges.filter((exchange) => this.props.acceptResponse?.(exchange.requestId));
+    if (!accepted.length) {
+      return;
+    }
+    this.pendingExchanges = [];
+    this.setState(({ exchanges }) => ({
+      exchanges: [
+        ...exchanges.filter(
+          (item) =>
+            this.props.acceptResponse?.(item.requestId) && !accepted.some((next) => next.requestId === item.requestId)
+        ),
+        ...accepted,
+      ],
+    }));
+  }
+
   componentWillUnmount() {
+    this.pendingExchanges = [];
     this.subs.unsubscribe();
   }
 
-  onDataSourceResponse(response: any) {
+  onDataSourceResponse(response: any, requestId?: string) {
     // ignore silent requests
     if (response.config?.hideFromInspector) {
       return;
     }
 
-    response = { ...response }; // clone - dont modify the response
+    response = cloneDeep(response); // Nested request config must never be mutated by inspection.
 
     if (response.headers) {
       delete response.headers;
@@ -205,9 +243,20 @@ export class QueryInspector extends PureComponent<Props, State> {
           return (
             <Stack key={info.refId} gap={1} direction="column">
               <div>
-                <span className={styles.refId}>{info.refId}:</span>
-                {info.frames > 1 && <span>{info.frames} frames, </span>}
-                <span>{info.rows} rows</span>
+                <span className={styles.refId}>
+                  {info.refId}
+                  <Trans i18nKey="wall.query-inspector.text-05a79f06">:</Trans>
+                </span>
+                {info.frames > 1 && (
+                  <span>
+                    {info.frames}
+                    <Trans i18nKey="wall.query-inspector.text-67be1f00"> frames, </Trans>
+                  </span>
+                )}
+                <span>
+                  {info.rows}
+                  <Trans i18nKey="wall.query-inspector.text-6c30d261"> rows</Trans>
+                </span>
               </div>
               <pre>{info.query}</pre>
             </Stack>
@@ -218,6 +267,19 @@ export class QueryInspector extends PureComponent<Props, State> {
   }
 
   render() {
+    if (this.props.wall) {
+      return (
+        <WallQueryInspection
+          exchanges={this.state.exchanges}
+          executed={this.state.executedQueries}
+          loading={this.props.data.state === LoadingState.Loading}
+          onRefresh={() => {
+            this.setState({ exchanges: [] });
+            this.props.onRefreshQuery();
+          }}
+        />
+      );
+    }
     const { allNodesExpanded, executedQueries, response } = this.state;
     const { onRefreshQuery, data } = this.props;
     const openNodes = this.getNrOfOpenNodes();
@@ -228,7 +290,9 @@ export class QueryInspector extends PureComponent<Props, State> {
     return (
       <div className={styles.wrap}>
         <div aria-label={selectors.components.PanelInspector.Query.content}>
-          <h3 className={styles.heading}>Query inspector</h3>
+          <h3 className={styles.heading}>
+            <Trans i18nKey="wall.query-inspector.text-f87c6468">Query inspector</Trans>
+          </h3>
           <p className="small muted">
             <Trans i18nKey="inspector.query.description">
               Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a

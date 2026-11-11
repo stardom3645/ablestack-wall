@@ -1,16 +1,20 @@
 import { css, cx } from '@emotion/css';
+import { Database } from 'lucide-react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
+import { config } from '@grafana/runtime';
 import { SceneComponentProps, VizPanel } from '@grafana/scenes';
 import { Button, Spinner, ToolbarButton, useStyles2 } from '@grafana/ui';
 import { AppChromeUpdate } from 'app/core/components/AppChrome/AppChromeUpdate';
+import { t } from 'app/core/internationalization';
 import {
   WallEditorOptions,
   WallEditorPreview,
   WallPanelEditorFrame,
 } from 'app/features/wall-modern/editor/WallPanelEditor';
 import { WallPanelStudio } from 'app/features/wall-modern/editor/WallPanelStudio';
+import { WallQueryResultStatus } from 'app/features/wall-modern/editor/WallQueryParts';
 import { WallManagementActions } from 'app/features/wall-modern/management/WallManagement';
 import { STORAGE_VM_DASHBOARD_UID } from 'app/features/wall-modern/statPresentation';
 import { WallDashboardToolbar } from 'app/features/wall-modern/toolbar/WallDashboardToolbar';
@@ -21,6 +25,8 @@ import { NavToolbarActions } from '../scene/NavToolbarActions';
 import { UnlinkModal } from '../scene/UnlinkModal';
 import { getDashboardSceneFor, getLibraryPanelBehavior } from '../utils/utils';
 
+import { PanelDataPane } from './PanelDataPane/PanelDataPane';
+import { PanelDataQueriesTab } from './PanelDataPane/PanelDataQueriesTab';
 import { PanelEditor } from './PanelEditor';
 import { SaveLibraryVizPanelModal } from './SaveLibraryVizPanelModal';
 import { useSnappingSplitter } from './splitter/useSnappingSplitter';
@@ -28,7 +34,8 @@ import { useSnappingSplitter } from './splitter/useSnappingSplitter';
 export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>) {
   const dashboard = getDashboardSceneFor(model);
   const { optionsPane, isDirty } = model.useState();
-  const { title } = model.getPanel().useState();
+  const { title: dashboardTitle } = dashboard.useState();
+  const { title, pluginId } = model.getPanel().useState();
   // Shared editor for every regular dashboard. Query/model/permission ownership stays native.
   const wallEditor = !dashboard.state.meta.isSnapshot && !dashboard.state.meta.dashboardNotFound;
   const styles = useStyles2(getStyles);
@@ -51,6 +58,8 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
         <WallPanelEditorFrame
           enabled
           title={title}
+          dashboardTitle={dashboardTitle}
+          visualizationName={model.getPanel().getPlugin()?.meta.name ?? pluginId}
           dirty={isDirty}
           actions={
             <WallManagementActions
@@ -122,7 +131,8 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
 function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
   const dashboard = getDashboardSceneFor(model);
   const { controls, wallModern } = dashboard.useState();
-  const { dataPane, optionsPane, tableView, showLibraryPanelSaveModal, showLibraryPanelUnlinkModal } = model.useState();
+  const { dataPane, optionsPane, tableView, showLibraryPanelSaveModal, showLibraryPanelUnlinkModal, isNewPanel } =
+    model.useState();
   const panel = model.getPanel();
   const libraryPanel = getLibraryPanelBehavior(panel);
   return (
@@ -130,13 +140,14 @@ function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
       <WallPanelStudio
         key={`${dashboard.state.uid ?? 'new'}:${model.getPanelId()}`}
         initialData={dataPane?.state.tab === 'transformations'}
+        isNewPanel={isNewPanel}
+        preferenceKey={`wall:panel-editor:surface:v1:${config.bootData.user.orgId}:${config.bootData.user.id}`}
+        resultStatus={dataPane && <PreviewResult pane={dataPane} />}
         controls={
-          controls &&
-          (controls instanceof DashboardControls ? (
-            <WallDashboardToolbar dashboard={dashboard} controls={controls} analysisOnly />
-          ) : (
-            <controls.Component model={controls} />
-          ))
+          <div className="wall-preview-context">
+            {dataPane && <PreviewDataSource pane={dataPane} />}
+            {controls && <WallDashboardToolbar dashboard={dashboard} controls={controls} analysisOnly />}
+          </div>
         }
         preview={
           <WallEditorPreview
@@ -145,6 +156,7 @@ function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
             onToggleTableView={model.onToggleTableView}
           >
             <OverviewPanelPresentation
+              pluginId={panel.state.pluginId}
               id={
                 dashboard.state.uid === STORAGE_VM_DASHBOARD_UID
                   ? (wallModern?.panelSources?.[model.getPanelId()] ?? model.getPanelId())
@@ -177,6 +189,32 @@ function WallPanelStudioRenderer({ model }: SceneComponentProps<PanelEditor>) {
   );
 }
 
+function PreviewResult({ pane }: { pane: PanelDataPane }) {
+  const { tabs } = pane.useState();
+  const queries = tabs.find((tab): tab is PanelDataQueriesTab => tab instanceof PanelDataQueriesTab);
+  return queries ? <PreviewQueryResult model={queries} /> : null;
+}
+function PreviewQueryResult({ model }: { model: PanelDataQueriesTab }) {
+  const { data } = model.queryRunner.useState();
+  return <WallQueryResultStatus data={data} />;
+}
+
+/** Read-only source identity; the one native datasource selector remains in the query workspace. */
+function PreviewDataSource({ pane }: { pane: PanelDataPane }) {
+  const { tabs } = pane.useState();
+  const queries = tabs.find((tab): tab is PanelDataQueriesTab => tab instanceof PanelDataQueriesTab);
+  return queries ? <PreviewDataSourceName model={queries} /> : null;
+}
+function PreviewDataSourceName({ model }: { model: PanelDataQueriesTab }) {
+  const { dsSettings } = model.useState();
+  return dsSettings ? (
+    <span className="wall-preview-source" title={`${t('wall.editor.datasource', '데이터 소스')}: ${dsSettings.name}`}>
+      <Database size={14} aria-hidden="true" />
+      <span>{dsSettings.name}</span>
+    </span>
+  ) : null;
+}
+
 function VizAndDataPane({ model }: SceneComponentProps<PanelEditor>) {
   const dashboard = getDashboardSceneFor(model);
   const { dataPane, showLibraryPanelSaveModal, showLibraryPanelUnlinkModal, tableView } = model.useState();
@@ -205,7 +243,7 @@ function VizAndDataPane({ model }: SceneComponentProps<PanelEditor>) {
     <div className={cx(styles.pageContainer, controls && styles.pageContainerWithControls)}>
       {controls && (
         <div className={styles.controlsWrapper}>
-          {dashboard.state.uid === STORAGE_VM_DASHBOARD_UID && controls instanceof DashboardControls ? (
+          {controls instanceof DashboardControls ? (
             <WallDashboardToolbar dashboard={dashboard} controls={controls} analysisOnly />
           ) : (
             <controls.Component model={controls} />

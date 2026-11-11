@@ -14,8 +14,9 @@ import {
   FieldConfigSource,
   DataFrame,
 } from '@grafana/data';
-import { fieldMatchersUI, useStyles2, ValuePicker } from '@grafana/ui';
+import { fieldMatchersUI, useStyles2 } from '@grafana/ui';
 import { getDataLinksVariableSuggestions } from 'app/features/panel/panellinks/link_srv';
+import { WallOptionValuePicker } from 'app/features/wall-modern/editor/WallOptionValuePicker';
 
 import { DynamicConfigValueEditor } from './DynamicConfigValueEditor';
 import { OptionsPaneCategoryDescriptor } from './OptionsPaneCategoryDescriptor';
@@ -211,7 +212,7 @@ export function getFieldOverrideCategories(
           skipField: true,
           render: function renderAddPropertyButton() {
             return (
-              <ValuePicker
+              <WallOptionValuePicker
                 key="Add override property"
                 label="Add override property"
                 variant="secondary"
@@ -237,7 +238,7 @@ export function getFieldOverrideCategories(
       customRender: function renderAddButton() {
         return (
           <AddOverrideButtonContainer key="Add override">
-            <ValuePicker
+            <WallOptionValuePicker
               icon="plus"
               label="Add field override"
               variant="secondary"

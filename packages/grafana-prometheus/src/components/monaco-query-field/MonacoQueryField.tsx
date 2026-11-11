@@ -113,6 +113,12 @@ const MonacoQueryField = (props: Props) => {
   const onBlurRef = useLatest(onBlur);
   const onChangeRef = useLatest(onChange);
 
+  const minimumHeight = useLatest(props.minimumHeight ?? 0);
+  const resizeEditor = useRef<(() => void) | undefined>();
+  useEffect(() => {
+    resizeEditor.current?.();
+  }, [props.minimumHeight]);
+
   const autocompleteDisposeFun = useRef<(() => void) | null>(null);
 
   const theme = useTheme2();
@@ -122,6 +128,7 @@ const MonacoQueryField = (props: Props) => {
     // when we unmount, we unregister the autocomplete-function, if it was registered
     return () => {
       autocompleteDisposeFun.current?.();
+      resizeEditor.current = undefined;
     };
   }, []);
 
@@ -189,7 +196,7 @@ const MonacoQueryField = (props: Props) => {
           const updateElementHeight = () => {
             const containerDiv = containerRef.current;
             if (containerDiv !== null) {
-              const pixelHeight = editor.getContentHeight();
+              const pixelHeight = Math.max(editor.getContentHeight(), minimumHeight.current);
               containerDiv.style.height = `${pixelHeight + EDITOR_HEIGHT_OFFSET}px`;
               containerDiv.style.width = '100%';
               const pixelWidth = containerDiv.clientWidth;
@@ -197,6 +204,7 @@ const MonacoQueryField = (props: Props) => {
             }
           };
 
+          resizeEditor.current = updateElementHeight;
           editor.onDidContentSizeChange(updateElementHeight);
           updateElementHeight();
 

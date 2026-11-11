@@ -1,7 +1,6 @@
-import { GripVertical } from 'lucide-react';
+import { GripHorizontal } from 'lucide-react';
 import {
   ComponentType,
-  CSSProperties,
   MouseEvent as ReactMouseEvent,
   ReactNode,
   Ref,
@@ -15,11 +14,13 @@ import { flushSync } from 'react-dom';
 import GridLayout, { ItemCallback, ReactGridLayoutProps } from 'react-grid-layout';
 
 import { locationService } from '@grafana/runtime';
+import { Trans } from 'app/core/internationalization';
 
 import { wallSurfaceTokens } from '../surfaceTokens';
 import { Button } from '../ui';
 
 import { LayoutFootprint, LayoutFootprintHandle } from './LayoutFootprint';
+import { LayoutGridGuide } from './LayoutGridGuide';
 import { useLayoutHistory } from './LayoutHistoryContext';
 import { PanelActionsProvider } from './PanelActionDock';
 import { usePanelClipboard } from './PanelClipboardContext';
@@ -36,9 +37,12 @@ import {
   selectionBounds,
   interactionRowStep,
   panelAlignmentGuides,
+  resizeReflowOrigin,
+  ResizeReflow,
 } from './layoutMovement';
 import { WorkspacePanel, selectedWorkspaceTab } from './model';
-import { panelPixelRect } from './panelGeometry';
+import { panelColumnPitch, panelPixelRect, panelRowAnchors } from './panelGeometry';
+import { captureResizePointer, holdResizeCursor } from './resizePointer';
 import { reconcileWallLayout } from './wallDocument';
 
 import 'react-grid-layout/css/styles.css';
@@ -47,12 +51,18 @@ import './kpiLayout.css';
 
 // The installed Grid typings use a legacy React class declaration. Keep its engine/props,
 // adapting only the React-facing declaration to this app's React types.
-const SharedGridLayout = GridLayout as unknown as ComponentType<
-  Omit<ReactGridLayoutProps, 'children' | 'resizeHandle'> & {
-    children: ReactNode;
-    resizeHandle: ReactNode | ((axis: string, ref: Ref<HTMLSpanElement>) => ReactNode);
-  }
->;
+type SharedGridProps = Omit<ReactGridLayoutProps, 'children' | 'resizeHandle'> & {
+  children: ReactNode;
+  resizeHandle: ReactNode | ((axis: string, ref: Ref<HTMLSpanElement>) => ReactNode);
+};
+function isGridComponent(value: unknown): value is ComponentType<SharedGridProps> {
+  return typeof value === 'function';
+}
+// Check the CommonJS boundary once without changing the constructor or native engine.
+if (!isGridComponent(GridLayout)) {
+  throw new Error('Expected the native grid component');
+}
+const SharedGridLayout: ComponentType<SharedGridProps> = GridLayout;
 
 function pointerPosition(event: MouseEvent | TouchEvent) {
   return 'touches' in event ? (event.touches[0] ?? event.changedTouches[0]) : event;
@@ -107,8 +117,14 @@ export function PanelLayoutGrid<T>({
   }>();
   const pendingGesture = useRef<() => void>();
   const frameInput = useRef<() => void>();
+  const resizePointer = useRef<() => void>();
+  const resizeCursor = useRef<() => void>();
   const footprint = useRef<LayoutFootprintHandle>(null);
   const replaying = useRef(false);
+  const resizeReflow = useRef<ResizeReflow>();
+  useEffect(() => {
+    resizeReflow.current = undefined;
+  }, [storageKey]);
   const suppressSelectionClick = useRef(false);
   const abortGesture = useRef<() => void>();
   const gesture = useRef<{
@@ -118,6 +134,8 @@ export function PanelLayoutGrid<T>({
     touch: boolean;
     kind: 'move' | 'resize';
     origin: KpiPosition[];
+    reflowOrigin?: KpiPosition[];
+    rowAnchors: number[];
     members: string[];
     footprint?: KpiPosition;
     resized?: KpiPosition;
@@ -180,6 +198,8 @@ export function PanelLayoutGrid<T>({
     () => () => {
       pendingGesture.current?.();
       frameInput.current?.();
+      resizePointer.current?.();
+      resizeCursor.current?.();
     },
     []
   );
@@ -193,6 +213,8 @@ export function PanelLayoutGrid<T>({
     const abort = () => {
       pendingGesture.current?.();
       frameInput.current?.();
+      resizePointer.current?.();
+      resizeCursor.current?.();
       frameInput.current = undefined;
       if (!gesture.current) {
         return;
@@ -322,7 +344,8 @@ export function PanelLayoutGrid<T>({
     if (readOnly || replaying.current || event.button !== 0) {
       return;
     }
-    const handle = (event.target as HTMLElement).closest<HTMLElement>('.wall-kpi-move,.wall-kpi-resize');
+    const handle =
+      event.target instanceof Element ? event.target.closest<HTMLElement>('.wall-kpi-move,.wall-kpi-resize') : null;
     if (!handle || handle.closest('.wall-kpi-pilot') !== container.current) {
       return;
     }
@@ -384,6 +407,10 @@ export function PanelLayoutGrid<T>({
       const members = selection.begin(item.i);
       const rect = container.current.getBoundingClientRect();
       const nodes = new Map<string, HTMLElement>();
+      if (kind === 'resize') {
+        resizeCursor.current?.();
+        resizeCursor.current = holdResizeCursor(target.closest<HTMLElement>('.wall-kpi-resize')!);
+      }
       for (const id of kind === 'resize' ? [item.i] : members) {
         const node = container.current.querySelector<HTMLElement>(`[data-wall-layout-item="${id}"]`);
         if (node) {
@@ -404,6 +431,8 @@ export function PanelLayoutGrid<T>({
         left: rect.left,
         top: rect.top,
         origin: items.map(({ i, x, y, w, h }) => ({ i, x, y, w, h })),
+        reflowOrigin: kind === 'resize' ? resizeReflowOrigin(items, item.i, resizeReflow.current) : undefined,
+        rowAnchors: panelRowAnchors(items, saved, initialLayout),
       };
       frameInput.current?.();
       if (!('touches' in event)) {
@@ -429,7 +458,7 @@ export function PanelLayoutGrid<T>({
       x: point.clientX - current.x + current.left - rect.left,
       y: point.clientY - current.y + current.top - rect.top,
     };
-    const geometry = { width, gap: gapX, rowPitch };
+    const geometry = { width, gap: gapX, rowPitch, rowAnchors: current.rowAnchors };
     const source = current.origin.find((entry) => entry.i === item.i)!;
     const snapSource =
       current.members.length > 1
@@ -483,7 +512,7 @@ export function PanelLayoutGrid<T>({
       current.origin,
       source,
       delta,
-      { width, gap: gapX, gapY, rowPitch },
+      { width, gap: gapX, gapY, rowPitch, rowAnchors: current.rowAnchors },
       Boolean(current.west),
       item,
       current.resized
@@ -491,7 +520,7 @@ export function PanelLayoutGrid<T>({
     const preview =
       current.preview && current.resized && sameKpiLayout([current.resized], [snapped])
         ? current.preview
-        : panelResizePreview(current.origin, snapped, Boolean(current.west));
+        : panelResizePreview(current.reflowOrigin ?? current.origin, snapped, Boolean(current.west));
     current.resized = snapped;
     current.preview = preview;
     // react-resizable reports the handle node, unlike native Drag's tile node.
@@ -545,7 +574,7 @@ export function PanelLayoutGrid<T>({
         panelAlignmentGuides(
           position,
           items.filter((entry) => !current.members.includes(entry.i)),
-          (width + gapX) / 48,
+          panelColumnPitch(width, gapX),
           rowPitch,
           gapX,
           gapY
@@ -564,6 +593,8 @@ export function PanelLayoutGrid<T>({
   const stop: ItemCallback = (items, _old, item, placeholder, _event, node) => {
     frameInput.current?.();
     frameInput.current = undefined;
+    resizePointer.current?.();
+    resizeCursor.current?.();
     const released =
       gesture.current?.releaseRects ??
       [...(gesture.current?.nodes.values() ?? [])].map((node) => ({ node, rect: node.getBoundingClientRect() }));
@@ -599,6 +630,15 @@ export function PanelLayoutGrid<T>({
           });
         }
         updateDraft(valid);
+        if (gesture.current.kind === 'resize') {
+          resizeReflow.current = {
+            id: item.i,
+            origin: gesture.current.reflowOrigin ?? gesture.current.origin,
+            result: valid,
+          };
+        } else {
+          resizeReflow.current = undefined;
+        }
         if (storageKey) {
           history?.record(storageKey, gesture.current.origin, valid, saved);
         }
@@ -704,7 +744,7 @@ export function PanelLayoutGrid<T>({
                       : '드래그하여 이동'
                   }
                 >
-                  <GripVertical size={14} />
+                  <GripHorizontal size={wallSurfaceTokens.moveGripSize} />
                 </Button>
               )
             }
@@ -728,7 +768,7 @@ export function PanelLayoutGrid<T>({
             maxH: kpiGrid.maxHeight,
           }),
           isResizable: !readOnly && selection.selected.length < 2,
-          resizeHandles: readOnly || selection.selected.length > 1 ? [] : ['se' as const],
+          resizeHandles: readOnly || selection.selected.length > 1 ? [] : ['se' as const, 'sw' as const],
           isDraggable: !readOnly,
         })),
     [draft, bounds, panels, width, readOnly, selection.selected.length]
@@ -743,6 +783,16 @@ export function PanelLayoutGrid<T>({
       aria-label={`${label} 패널 작업 영역`}
       tabIndex={selectionEnabled ? 0 : undefined} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex -- Focus scopes panel-selection shortcuts without stealing input/browser shortcuts.
       onMouseDownCapture={deferMouseGesture}
+      onPointerDownCapture={(event) => {
+        if (readOnly || event.button !== 0 || event.pointerType === 'touch') {
+          return;
+        }
+        const handle = event.target instanceof Element ? event.target.closest<HTMLElement>('.wall-kpi-resize') : null;
+        if (handle?.closest('.wall-kpi-pilot') === container.current) {
+          resizePointer.current?.();
+          resizePointer.current = captureResizePointer(handle, event.pointerId, () => abortGesture.current?.());
+        }
+      }}
       onClickCapture={(event) => {
         if (suppressSelectionClick.current) {
           suppressSelectionClick.current = false;
@@ -765,12 +815,15 @@ export function PanelLayoutGrid<T>({
       )}
       {!persistence && storageKey && dirty && !active && (
         <div className="wall-kpi-layout-toolbar" role="group" aria-label={`${label} 배치 변경 저장`}>
-          <span>{label} 배치 변경 · 이 브라우저에만 저장</span>
+          <span>
+            {label}
+            <Trans i18nKey="wall.panel-layout-grid.text-44847c8c"> 배치 변경 · 이 브라우저에만 저장</Trans>
+          </span>
           <Button size="sm" variant="ghost" onClick={cancel}>
-            취소
+            <Trans i18nKey="wall.panel-layout-grid.text-19b2d19b">취소</Trans>
           </Button>
           <Button size="sm" onClick={save}>
-            배치 저장
+            <Trans i18nKey="wall.panel-layout-grid.text-c7e13fab">배치 저장</Trans>
           </Button>
         </div>
       )}
@@ -786,16 +839,22 @@ export function PanelLayoutGrid<T>({
         <div
           className="wall-kpi-layout"
           data-interacting={Boolean(active)}
-          style={
-            {
-              width,
-              '--wall-kpi-gutter': `${gapX}px`,
-              '--wall-kpi-gutter-y': `${gapY}px`,
-              '--wall-kpi-grid-step': `${(width + gapX) / kpiGrid.columns}px`,
-              '--wall-layout-grid-row': `${interactionRowStep(rowPitch) * rowPitch}px`,
-            } as CSSProperties
-          }
+          style={{
+            width,
+            '--wall-kpi-gutter': `${gapX}px`,
+            '--wall-kpi-gutter-y': `${gapY}px`,
+            '--wall-kpi-grid-step': `${panelColumnPitch(width, gapX)}px`,
+            '--wall-layout-grid-row': `${interactionRowStep(rowPitch) * rowPitch}px`,
+          }}
         >
+          <LayoutGridGuide
+            width={width}
+            rowPitch={rowPitch}
+            rowStep={interactionRowStep(rowPitch)}
+            rowAnchors={gesture.current?.rowAnchors ?? panelRowAnchors(draft, saved, initialLayout)}
+            gapX={gapX}
+            gapY={gapY}
+          />
           {/* Use zero engine margin and inset gutters: installed Grid calcXY subtracts margin
               even with containerPadding=0, which otherwise shifts a drag by one cell. */}
           <SharedGridLayout

@@ -150,3 +150,27 @@ it('keeps native duplicate and delete callbacks distinct and extracts danger to 
   await userEvent.click(await screen.findByRole('menuitem', { name: '삭제' }));
   expect(remove).toHaveBeenCalledTimes(1);
 });
+
+it('uses an explicit kiosk policy on ordinary dashboards without a Wall editing context', async () => {
+  const menu = new VizPanelMenu({
+    items: [
+      { text: '보기', iconClassName: 'eye', href: '/view' },
+      { text: '편집', iconClassName: 'edit', href: '/edit' },
+      {
+        text: '추가 작업',
+        iconClassName: 'cube',
+        subMenu: [{ text: '공유', iconClassName: 'share-alt', onClick: jest.fn() }],
+      },
+      { text: '검사', iconClassName: 'info-circle', subMenu: [{ text: '쿼리', onClick: jest.fn() }] },
+    ],
+  });
+  const panel = new VizPanel({ title: '공통 패널', pluginId: 'timeseries', menu });
+  render(<WallPanelActions panel={panel} policy={{ kiosk: true, readOnly: true }} />);
+  await userEvent.click(screen.getByRole('button', { name: '공통 패널 추가 작업' }));
+  expect(await screen.findByRole('menuitem', { name: '보기' })).toBeInTheDocument();
+  expect(screen.queryByRole('menuitem', { name: '편집' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('menuitem', { name: '검사' })).not.toBeInTheDocument();
+  // Share remains a native action in More, never silently removed by the UI policy.
+  await userEvent.click(screen.getByRole('menuitem', { name: '추가 작업' }));
+  expect(await screen.findByRole('menuitem', { name: '공유' })).toBeInTheDocument();
+});

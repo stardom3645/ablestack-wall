@@ -5,13 +5,14 @@ import { BarGaugeSizing, VizOrientation } from '@grafana/schema';
 import { DataLinksContextMenu, Gauge, VizRepeater, VizRepeaterRenderValueProps } from '@grafana/ui';
 import { DataLinksContextMenuApi } from '@grafana/ui/src/components/DataLinks/DataLinksContextMenu';
 import { config } from 'app/core/config';
+import { meterAppearance, WallMeterOptions } from 'app/features/wall-modern/panels/meterPresentation';
 import { WallPanelContent } from 'app/features/wall-modern/visualizations/WallPanelContent';
 
 import { clearNameForSingleSeries } from '../bargauge/BarGaugePanel';
 
 import { defaultOptions, Options } from './panelcfg.gen';
 
-export class GaugePanel extends PureComponent<PanelProps<Options>> {
+export class GaugePanel extends PureComponent<PanelProps<Options & WallMeterOptions>> {
   renderComponent = (
     valueProps: VizRepeaterRenderValueProps<FieldDisplay>,
     menuProps: DataLinksContextMenuApi
@@ -23,6 +24,7 @@ export class GaugePanel extends PureComponent<PanelProps<Options>> {
 
     return (
       <Gauge
+        wallAppearance={meterAppearance(value, fieldConfig, this.props.data.series, options)}
         value={clearNameForSingleSeries(count, fieldConfig.defaults, display)}
         width={width}
         height={height}

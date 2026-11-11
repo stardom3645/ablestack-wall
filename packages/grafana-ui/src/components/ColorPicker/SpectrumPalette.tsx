@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { RgbaStringColorPicker } from 'react-colorful';
 import { useThrottleFn } from 'react-use';
 import tinycolor from 'tinycolor2';
@@ -13,13 +13,20 @@ import ColorInput from './ColorInput';
 export interface SpectrumPaletteProps {
   color: string;
   onChange: (color: string) => void;
+  notifyOnMount?: boolean;
 }
 
-const SpectrumPalette = ({ color, onChange }: SpectrumPaletteProps) => {
+const SpectrumPalette = ({ color, onChange, notifyOnMount = true }: SpectrumPaletteProps) => {
   const [currentColor, setColor] = useState(color);
+  const initialColor = useRef(color);
+  const changed = useRef(notifyOnMount);
 
   useThrottleFn(
     (c) => {
+      if (!changed.current && c === initialColor.current) {
+        return;
+      }
+      changed.current = true;
       onChange(colorManipulator.asHexString(theme.visualization.getColorByName(c)));
     },
     500,

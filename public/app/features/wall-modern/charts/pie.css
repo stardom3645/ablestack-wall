@@ -1,0 +1,175 @@
+.wall-pie {
+  color: var(--wall-pie-text);
+  font-family: var(--wall-type-family);
+  font-size: var(--wall-type-legend-size);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  position: relative;
+}
+.wall-pie-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  position: relative;
+}
+.wall-pie-slice {
+  cursor: pointer;
+  outline: none;
+  transition: opacity var(--wall-motion-feedback-duration) var(--wall-motion-feedback-easing);
+}
+.wall-pie-slice[data-dimmed] {
+  opacity: 0.3;
+}
+.wall-pie-slice:focus-visible path {
+  stroke: var(--wall-pie-text);
+  stroke-width: 2;
+}
+.wall-pie-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  text-align: center;
+}
+.wall-pie-center > .wall-pie-center-caption {
+  color: var(--wall-pie-muted);
+  font-size: var(--wall-type-caption-size);
+  line-height: var(--wall-type-caption-line);
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wall-pie-center small {
+  font-size: var(--wall-type-unit-size);
+  color: var(--wall-pie-muted);
+  padding-left: 3px;
+  font-weight: var(--wall-type-unit-weight);
+}
+.wall-pie-legend {
+  min-width: 0;
+  padding: 0 var(--wall-pie-gap);
+}
+.wall-pie-legend-row,
+.wall-pie-legend-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--wall-pie-gap);
+  min-height: var(--wall-pie-row);
+  border-radius: 4px;
+}
+.wall-pie-legend-heading {
+  color: var(--wall-pie-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-pie-legend-heading > :first-child {
+  flex: 1;
+}
+.wall-pie-legend-heading > :last-child {
+  width: 24px;
+}
+.wall-pie-legend-heading > span:not(:first-child):not(:last-child) {
+  width: 64px;
+  text-align: right;
+}
+.wall-pie-legend-row:hover,
+.wall-pie-legend-row:focus-within,
+.wall-pie-legend-row[data-active] {
+  background: var(--wall-pie-soft);
+}
+.wall-pie-legend-row[data-hidden] .wall-pie-legend-name {
+  opacity: 0.45;
+}
+.wall-pie-legend-name {
+  appearance: none;
+  background: none;
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  padding: 4px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wall-pie-legend-name i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+.wall-pie-legend-name span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+.wall-pie-legend-value {
+  text-align: right;
+  white-space: nowrap;
+  min-width: 64px;
+}
+.wall-pie .wall-pie-more {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  padding: 0;
+  color: var(--wall-pie-muted);
+  opacity: 0;
+}
+.wall-pie-legend-row:hover .wall-pie-more,
+.wall-pie-legend-row:focus-within .wall-pie-more {
+  opacity: 1;
+}
+.wall-pie-legend-name:focus-visible {
+  outline: 2px solid var(--wall-pie-text);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+.wall-pie-notice {
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wall-pie-gap);
+  padding: var(--wall-pie-gap);
+  font-size: var(--wall-type-control-size);
+}
+.wall-pie-notice span,
+.wall-pie-unit-warning {
+  color: var(--wall-pie-muted);
+  font-size: var(--wall-type-caption-size);
+}
+.wall-pie-unit-warning {
+  position: absolute;
+  bottom: 0;
+  background: var(--wall-pie-surface);
+}
+.wall-pie-menu-value {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px 8px;
+  font-size: var(--wall-type-control-size);
+  font-variant-numeric: tabular-nums;
+}
+.wall-pie-menu-value span {
+  color: var(--wall-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-pie-slice {
+    transition: none;
+  }
+}
+/* The pointer tooltip is the full-name reading surface; only legend rows are ellipsized. */
+.wall-pie-tooltip [data-wall-chart-tooltip] [role='listitem'] > div > div:first-child > div:last-child {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

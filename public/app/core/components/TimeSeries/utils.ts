@@ -100,7 +100,21 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{
       points: {
         size: (u, seriesIndex) =>
           Math.max(timeSeriesPresentation.hoverPointSize, u.series[seriesIndex].points?.size ?? 0),
-        width: timeSeriesPresentation.lineWidth,
+        width: timeSeriesPresentation.markerStrokeWidth ?? timeSeriesPresentation.lineWidth,
+        stroke: timeSeriesPresentation.surface,
+        fill: (u, si) => {
+          const stroke = (u.series[si].points as { _stroke?: unknown })._stroke;
+          if (typeof stroke === 'string') {
+            return stroke;
+          }
+          const index = u.cursor.idxs?.[si];
+          const field = alignedFrame?.fields[si];
+          return index != null && field?.display
+            ? theme.visualization.getColorByName(
+                field.display(field.values[index]).color ?? timeSeriesPresentation.palette[0]
+              )
+            : timeSeriesPresentation.palette[0];
+        },
       },
     });
   }
@@ -481,16 +495,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{
           fauxData[0] = xData;
           fauxData[seriesIdx] = yData;
 
-          //eslint-disable-next-line
-          return defaultBuilder(
-            {
-              ...u,
-              _data: fauxData,
-            } as any,
-            seriesIdx,
-            0,
-            1
-          );
+          const fauxPlot = Object.assign({}, u, { _data: fauxData });
+          return defaultBuilder(fauxPlot, seriesIdx, 0, 1);
         };
       }
 
@@ -629,6 +635,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{
     },
     // vertical proximity / series focus behavior
     focus: {
+      ...(timeSeriesPresentation ? { alpha: timeSeriesPresentation.focusAlpha ?? 0.4 } : {}),
       prox: hoverProximity ?? DEFAULT_FOCUS_PROXIMITY,
     },
   };

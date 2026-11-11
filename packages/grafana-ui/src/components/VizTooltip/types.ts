@@ -1,3 +1,4 @@
+import type { FormattedValue } from '@grafana/data';
 import { LineStyle } from '@grafana/schema';
 
 export enum ColorIndicator {
@@ -22,6 +23,10 @@ export enum ColorPlacement {
 export interface VizTooltipItem {
   label: string;
   value: string;
+  formattedValue?: FormattedValue;
+  /** Native source indices, opt-in for time-series tooltip presentation only. */
+  fieldIndex?: number;
+  dataIndex?: number;
   color?: string;
   colorIndicator?: ColorIndicator;
   colorPlacement?: ColorPlacement;

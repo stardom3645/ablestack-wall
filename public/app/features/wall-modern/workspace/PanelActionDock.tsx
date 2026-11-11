@@ -7,7 +7,12 @@ const PanelControlsContext = createContext<PanelControls>({});
 
 /** Supply native actions from the Grid without coupling the panel/query subtree to layout state. */
 export function PanelActionsProvider({ children, move, actions }: PanelControls & { children: ReactNode }) {
-  return <PanelControlsContext.Provider value={{ move, actions }}>{children}</PanelControlsContext.Provider>;
+  const inherited = useContext(PanelControlsContext);
+  return (
+    <PanelControlsContext.Provider value={{ move: move ?? inherited.move, actions: actions ?? inherited.actions }}>
+      {children}
+    </PanelControlsContext.Provider>
+  );
 }
 
 /** The same reserved header slots serve native charts, compact data rows and text sections. */

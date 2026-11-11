@@ -79,7 +79,8 @@ export const getContentItems = (
   seriesIdx: number | null | undefined,
   mode: TooltipDisplayMode,
   sortOrder: SortOrder,
-  fieldFilter = (field: Field) => true
+  fieldFilter = (field: Field) => true,
+  includeFormattedValue = false
 ): VizTooltipItem[] => {
   let rows: VizTooltipItem[] = [];
 
@@ -142,6 +143,7 @@ export const getContentItems = (
     rows.push({
       label: field.state?.displayName ?? field.name,
       value: formattedValueToString(display),
+      ...(includeFormattedValue ? { formattedValue: display, fieldIndex: i, dataIndex: dataIdx } : {}),
       color: display.color ?? FALLBACK_COLOR,
       colorIndicator,
       colorPlacement,

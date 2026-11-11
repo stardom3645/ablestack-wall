@@ -1,29 +1,53 @@
 import { GrafanaTheme2 } from '@grafana/data';
 import { TimeSeriesPresentation } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 
-import { STORAGE_VM_DASHBOARD_UID } from './statPresentation';
+import { wallApplicationTokens } from './applicationTokens';
+import { renderWallSeriesLegend } from './charts/WallSeriesLegend';
+import { renderWallSeriesLegendItem } from './charts/WallSeriesLegendItem';
+import { wallTimeSeriesPalette, wallSeriesPalette } from './colorSystem';
+import { isWallDashboardPanelRoute } from './model';
 import { wallSurfaceTokens } from './surfaceTokens';
 import { wallTypography } from './typography';
 import { wallVisualization } from './visualization';
 
 /** Wall's time-series design settings live here, independently of saved dashboard options. */
-export function wallTimeSeriesTokens(theme: GrafanaTheme2): TimeSeriesPresentation {
+export function wallTimeSeriesTokens(theme: GrafanaTheme2, refined = true): TimeSeriesPresentation {
+  const surface = theme.isDark ? wallApplicationTokens.dark : wallApplicationTokens.light;
   return {
     ...wallVisualization(theme, wallTypography.family),
-    palette: theme.isDark
-      ? ['#7ca2ff', '#42cbb1', '#b394f6', '#f0b766', '#ef88a9', '#66b8e3', '#a6b5cc', '#b2cb74']
-      : ['#3c63e6', '#0d8879', '#8250df', '#b36816', '#ce4072', '#147eaf', '#5f6f88', '#6a7e30'],
-    lineWidth: 2,
+    refinedInteractions: refined,
+    palette: refined ? wallTimeSeriesPalette(theme) : wallSeriesPalette(theme),
+    renderLegend: renderWallSeriesLegend,
+    legendAutoMinWidth: 900,
+    renderLegendItem: renderWallSeriesLegendItem,
+    surface: surface.surface,
+    text: surface.text,
+    muted: surface.muted,
+    border: surface.border,
+    shadow: surface.shadow,
+    lineWidth: refined ? 2 : 1.75,
+    focusAlpha: refined ? 0.4 : undefined,
+    markerStrokeWidth: refined ? 1.5 : undefined,
+    tooltipMaxHeight: refined ? 240 : undefined,
+    tooltipVisibleRows: refined ? 3 : undefined,
+    tooltipOffset: refined ? 12 : undefined,
+    tooltipViewportMargin: refined ? 8 : undefined,
     linePixelAlign: false,
-    fillOpacity: 9,
+    fillOpacity: refined ? 6 : 9,
     pointSize: 3,
     hoverPointSize: 6,
     axisFontSize: wallTypography.roles.axis.size,
     axisFontWeight: wallTypography.roles.axis.weight,
     axisGap: 7,
     plotPaddingRight: wallTypography.roles.axis.size * 2,
-    grid: theme.isDark ? 'rgba(160,175,196,0.13)' : 'rgba(113,128,153,0.12)',
-    gridDash: [3, 4],
+    grid: refined
+      ? theme.isDark
+        ? 'rgba(160,175,196,0.12)'
+        : 'rgba(113,128,153,0.10)'
+      : theme.isDark
+        ? 'rgba(160,175,196,0.13)'
+        : 'rgba(113,128,153,0.12)',
+    gridDash: [],
     crosshairColor: theme.isDark ? '#7b8ba4' : '#a7b4ca',
     legendFontSize: wallTypography.roles.legend.size,
     legendFontWeight: wallTypography.roles.legend.weight,
@@ -35,20 +59,13 @@ export function wallTimeSeriesTokens(theme: GrafanaTheme2): TimeSeriesPresentati
     legendGap: 12,
     legendCellPadding: '4px 8px',
     tooltipFontSize: wallTypography.roles.tooltip.size,
-    tooltipPadding: wallSurfaceTokens.padding,
-    tooltipRowGap: 8,
+    tooltipPadding: refined ? wallSurfaceTokens.compactPadding : wallSurfaceTokens.cardGap,
+    tooltipRowGap: wallSurfaceTokens.controlGap,
     tooltipValueWeight: wallTypography.roles.panel.weight,
-    tooltipMaxWidth: 480,
-    tooltipHeaderBackground: theme.isDark ? '#223045' : '#f8faff',
+    tooltipMaxWidth: refined ? 320 : 400,
+    tooltipHeaderBackground: surface.soft,
     radius: wallSurfaceTokens.radius,
   };
 }
 
-export function isWallTimeSeriesRoute(pathname: string, search = '') {
-  const params = new URLSearchParams(search);
-  return (
-    /^\/d\/[^/]+(?:\/[^/]+)?\/?$/.test(pathname) &&
-    pathname.split('/')[2] === STORAGE_VM_DASHBOARD_UID &&
-    !['editPanel', 'editview'].some((key) => params.has(key))
-  );
-}
+export const isWallTimeSeriesRoute = isWallDashboardPanelRoute;

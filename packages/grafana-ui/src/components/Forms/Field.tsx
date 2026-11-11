@@ -6,6 +6,7 @@ import { GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2 } from '../../themes';
 import { getChildId } from '../../utils/reactUtils';
+import { Switch } from '../Switch/Switch';
 
 import { FieldValidationMessage } from './FieldValidationMessage';
 import { Label } from './Label';
@@ -74,7 +75,11 @@ export const Field = React.forwardRef<HTMLDivElement, FieldProps>(
 
     const childProps = deleteUndefinedProps({ invalid, disabled, loading });
     return (
-      <div className={cx(styles.field, horizontal && styles.fieldHorizontal, className)} {...otherProps}>
+      <div
+        className={cx(styles.field, horizontal && styles.fieldHorizontal, className)}
+        data-field-control={children.type === Switch ? 'switch' : undefined}
+        {...otherProps}
+      >
         {labelElement}
         <div>
           <div ref={ref}>{React.cloneElement(children, childProps)}</div>

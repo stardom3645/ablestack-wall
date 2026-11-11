@@ -13,15 +13,18 @@ export const wallTypography = {
     control: { size: 12, weight: 500, line: 18, tracking: 0 },
     kpi: { size: 36, weight: 700, line: 42, tracking: -1 },
     gauge: { size: 25, weight: 700, line: 30, tracking: -0.5 },
+    compactMetric: { size: 22, weight: 600, line: 26, tracking: -0.3 },
     unit: { size: 13, weight: 500, line: 18, tracking: 0 },
     status: { size: 14, weight: 600, line: 20, tracking: 0 },
     axis: { size: 11, weight: 400, line: 16, tracking: 0 },
     legend: { size: 11, weight: 500, line: 16, tracking: 0 },
     tooltip: { size: 12, weight: 500, line: 18, tracking: 0 },
+    navigation: { size: 14, weight: 500, line: 20, tracking: 0 },
+    navigationCaption: { size: 12, weight: 500, line: 18, tracking: 0 },
   },
 } as const;
 
-export const wallTypographyVariables = Object.fromEntries([
+export const wallTypographyVariables: CSSProperties = Object.fromEntries([
   ['--wall-type-family', wallTypography.family],
   ...Object.entries(wallTypography.roles).flatMap(([role, value]) => [
     [`--wall-type-${role}-size`, `${value.size}px`],
@@ -29,7 +32,27 @@ export const wallTypographyVariables = Object.fromEntries([
     [`--wall-type-${role}-line`, `${value.line}px`],
     [`--wall-type-${role}-tracking`, `${value.tracking}px`],
   ]),
-]) as CSSProperties;
+]);
+
+/** Editors and their portals use the same unscaled font faces as the rest of Wall. */
+export const wallEditorFontFamily = wallTypography.family;
+export const wallEditorTypography = {
+  heading: { size: 15, weight: 550, line: 22 },
+  title: { size: 13, weight: 500, line: 20 },
+  label: { size: 13, weight: 450, line: 20 },
+  body: { size: 13, weight: 400, line: 20 },
+  control: { size: 13, weight: 400, line: 20 },
+  caption: { size: 12, weight: 400, line: 18 },
+} as const;
+
+export const wallEditorTypographyVariables: CSSProperties = Object.fromEntries([
+  ['--wall-editor-font-family', wallEditorFontFamily],
+  ...Object.entries(wallEditorTypography).flatMap(([role, value]) => [
+    [`--wall-editor-type-${role}-size`, `${value.size}px`],
+    [`--wall-editor-type-${role}-weight`, value.weight],
+    [`--wall-editor-type-${role}-line`, `${value.line}px`],
+  ]),
+]);
 
 export const WallTypographyContext = createContext(false);
 export const WallFontStatusContext = createContext('disabled');

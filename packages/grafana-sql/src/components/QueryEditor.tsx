@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAsync } from 'react-use';
 
-import { QueryEditorProps } from '@grafana/data';
+import { LoadingState, QueryEditorProps } from '@grafana/data';
 import { EditorMode } from '@grafana/experimental';
 import { Space } from '@grafana/ui';
 
+import type { WallCodeQueryPresentation } from '../../../../public/app/features/wall-modern/editor/EditorPresentationContext';
 import { SqlDatasource } from '../datasource/SqlDatasource';
 import { applyQueryDefaults } from '../defaults';
 import { SQLQuery, QueryRowFilter, SQLOptions } from '../types';
@@ -15,6 +16,7 @@ import { RawEditor } from './query-editor-raw/RawEditor';
 import { VisualEditor } from './visual-query-builder/VisualEditor';
 
 interface SqlQueryEditorProps extends QueryEditorProps<SqlDatasource, SQLQuery, SQLOptions> {
+  wallPresentation?: WallCodeQueryPresentation;
   queryHeaderProps?: Pick<QueryHeaderProps, 'dialect'>;
 }
 
@@ -25,6 +27,8 @@ export function SqlQueryEditor({
   onRunQuery,
   range,
   queryHeaderProps,
+  wallPresentation,
+  data,
 }: SqlQueryEditorProps) {
   const [isQueryRunnable, setIsQueryRunnable] = useState(true);
   const db = datasource.getDB();
@@ -85,6 +89,40 @@ export function SqlQueryEditor({
 
   if (loading || error) {
     return null;
+  }
+
+  if (wallPresentation) {
+    return (
+      <div className="wall-prom-code-workspace">
+        <RawEditor
+          db={db}
+          query={queryWithDefaults}
+          queryToValidate={queryToValidate}
+          onChange={onQueryChange}
+          onRunQuery={onRunQuery}
+          onValidate={setIsQueryRunnable}
+          range={range}
+          codeHeight={wallPresentation.codeHeight}
+        />
+        {wallPresentation.actions(onRunQuery, data?.state === LoadingState.Loading)}
+        {wallPresentation.options(
+          <>
+            <QueryHeader
+              db={db}
+              preconfiguredDataset={preconfiguredDatabase}
+              onChange={onQueryHeaderChange}
+              onRunQuery={onRunQuery}
+              onQueryRowChange={setQueryRowFilter}
+              queryRowFilter={queryRowFilter}
+              query={queryWithDefaults}
+              isQueryRunnable={isQueryRunnable}
+              dialect={dialect}
+              codeOnly
+            />
+          </>
+        )}
+      </div>
+    );
   }
 
   return (

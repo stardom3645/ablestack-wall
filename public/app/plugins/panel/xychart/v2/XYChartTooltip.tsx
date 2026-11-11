@@ -1,12 +1,14 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 
 import { DataFrame, InterpolateFunction } from '@grafana/data';
 import { alpha } from '@grafana/data/src/themes/colorManipulator';
+import { TimeSeriesPresentationContext } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import { VizTooltipContent } from '@grafana/ui/src/components/VizTooltip/VizTooltipContent';
 import { VizTooltipFooter } from '@grafana/ui/src/components/VizTooltip/VizTooltipFooter';
 import { VizTooltipHeader } from '@grafana/ui/src/components/VizTooltip/VizTooltipHeader';
 import { VizTooltipWrapper } from '@grafana/ui/src/components/VizTooltip/VizTooltipWrapper';
 import { ColorIndicator, VizTooltipItem } from '@grafana/ui/src/components/VizTooltip/types';
+import { WallTimeSeriesTooltip } from 'app/features/wall-modern/charts/WallTimeSeriesTooltip';
 
 import { getDataLinks, getFieldActions } from '../../status-history/utils';
 
@@ -21,6 +23,7 @@ export interface Props {
   data: DataFrame[];
   xySeries: XYSeries[];
   replaceVariables: InterpolateFunction;
+  getPointColor?: (series: number, row: number) => string | undefined;
 }
 
 function stripSeriesName(fieldName: string, seriesName: string) {
@@ -31,10 +34,23 @@ function stripSeriesName(fieldName: string, seriesName: string) {
   return fieldName;
 }
 
-export const XYChartTooltip = ({ dataIdxs, seriesIdx, data, xySeries, dismiss, isPinned, replaceVariables }: Props) => {
-  const rowIndex = dataIdxs.find((idx) => idx !== null)!;
+export const XYChartTooltip = ({
+  dataIdxs,
+  seriesIdx,
+  data,
+  xySeries,
+  dismiss,
+  isPinned,
+  replaceVariables,
+  getPointColor,
+}: Props) => {
+  const presentation = useContext(TimeSeriesPresentationContext);
+  const rowIndex = seriesIdx != null ? (dataIdxs[seriesIdx] ?? dataIdxs.find((idx) => idx !== null)) : undefined;
 
   const series = xySeries[seriesIdx! - 1];
+  if (!series || rowIndex == null || rowIndex < 0 || rowIndex >= series.y.field.values.length) {
+    return null;
+  }
   const xField = series.x.field;
   const yField = series.y.field;
 
@@ -54,7 +70,13 @@ export const XYChartTooltip = ({ dataIdxs, seriesIdx, data, xySeries, dismiss, i
   const headerItem: VizTooltipItem = {
     label,
     value: '',
-    color: alpha(seriesColor ?? '#fff', 0.5),
+    color: alpha(
+      getPointColor?.(seriesIdx! - 1, rowIndex) ??
+        colorField?.display?.(colorField.values[rowIndex]).color ??
+        seriesColor ??
+        '#fff',
+      presentation ? 1 : 0.5
+    ),
     colorIndicator: ColorIndicator.marker_md,
   };
 
@@ -84,12 +106,14 @@ export const XYChartTooltip = ({ dataIdxs, seriesIdx, data, xySeries, dismiss, i
     });
   }
 
-  series._rest.forEach((field) => {
-    contentItems.push({
-      label: stripSeriesName(field.state?.displayName ?? field.name, label),
-      value: fmt(field, field.values[rowIndex]),
+  series._rest
+    .filter((field) => !presentation || !field.config.custom?.hideFrom?.tooltip)
+    .forEach((field) => {
+      contentItems.push({
+        label: stripSeriesName(field.state?.displayName ?? field.name, label),
+        value: fmt(field, field.values[rowIndex]),
+      });
     });
-  });
 
   let footer: ReactNode;
 
@@ -101,6 +125,19 @@ export const XYChartTooltip = ({ dataIdxs, seriesIdx, data, xySeries, dismiss, i
     footer = <VizTooltipFooter dataLinks={links} actions={actions} />;
   }
 
+  if (presentation) {
+    return (
+      <WallTimeSeriesTooltip
+        header={headerItem}
+        timestamp={null}
+        items={contentItems}
+        isPinned={isPinned}
+        scrollable
+        footer={footer}
+        tokens={presentation}
+      />
+    );
+  }
   return (
     <VizTooltipWrapper>
       <VizTooltipHeader item={headerItem} isPinned={isPinned} />

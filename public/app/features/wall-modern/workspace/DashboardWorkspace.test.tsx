@@ -143,11 +143,11 @@ it('uses actual Base UI tab panels and mounts only the selected section, includi
   expect(screen.queryByTestId('native-224')).not.toBeInTheDocument();
 });
 
-it('validates tab URL values and scopes renderer selection to the selected UID', () => {
+it('validates tab URL values and supports general UIDs while respecting an explicit legacy route', () => {
   expect(selectedWorkspaceTab('?from=now-6h&wallTab=network&var-scvm=node')).toBe('network');
   expect(selectedWorkspaceTab('?wallTab=devices')).toBe('devices');
   expect(selectedWorkspaceTab('?wallTab=unsupported')).toBe('overview');
   expect(usesStorageWorkspaceRenderer(STORAGE_VM_DASHBOARD_UID, false)).toBe(true);
   expect(usesStorageWorkspaceRenderer(STORAGE_VM_DASHBOARD_UID, true)).toBe(false);
-  expect(usesStorageWorkspaceRenderer('fec03giqwtw5cf', false)).toBe(false);
+  expect(usesStorageWorkspaceRenderer('fec03giqwtw5cf', false)).toBe(true);
 });

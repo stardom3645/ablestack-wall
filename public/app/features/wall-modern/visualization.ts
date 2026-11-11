@@ -1,6 +1,8 @@
 import { GrafanaTheme2 } from '@grafana/data';
 import { VizPresentation } from '@grafana/ui/src/components/VizPresentation/VizPresentation';
 
+import { renderWallGauge } from './panels/WallGauge';
+import { renderWallMeterBar } from './panels/WallMeterBar';
 import { wallSurfaceTokens } from './surfaceTokens';
 import { wallTypography } from './typography';
 
@@ -8,6 +10,11 @@ import { wallTypography } from './typography';
 export function wallVisualization(theme: GrafanaTheme2, fontFamily?: string): VizPresentation {
   return {
     fontFamily: fontFamily ?? "Inter, Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif",
+    renderGauge: fontFamily ? renderWallGauge : undefined,
+    renderBarGauge: fontFamily ? renderWallMeterBar : undefined,
+    bodyFontSize: wallTypography.roles.body.size,
+    captionFontSize: wallTypography.roles.caption.size,
+    labelFontWeight: wallTypography.roles.control.weight,
     ...(fontFamily
       ? { gaugeValueMaxSize: wallTypography.roles.gauge.size, gaugeLabelSize: wallTypography.roles.panel.size }
       : {}),

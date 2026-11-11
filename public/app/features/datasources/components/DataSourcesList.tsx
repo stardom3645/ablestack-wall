@@ -1,10 +1,9 @@
-import { css } from '@emotion/css';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom-v5-compat';
 
-import { DataSourceSettings, GrafanaTheme2 } from '@grafana/data';
+import { DataSourceSettings } from '@grafana/data';
 import { config } from '@grafana/runtime';
-import { EmptyState, LinkButton, TextLink, useStyles2 } from '@grafana/ui';
+import { EmptyState, LinkButton, TextLink } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
 import { Trans, t } from 'app/core/internationalization';
 import { StoreState, AccessControlAction, useSelector } from 'app/types';
@@ -15,6 +14,8 @@ import { trackDataSourcesListViewed } from '../tracking';
 
 import { DataSourcesListCard } from './DataSourcesListCard';
 import { DataSourcesListHeader } from './DataSourcesListHeader';
+
+import './dataSources.css';
 
 export function DataSourcesList() {
   const { isLoading } = useLoadDataSources();
@@ -54,7 +55,6 @@ export function DataSourcesListView({
   hasWriteRights,
   hasExploreRights,
 }: ViewProps) {
-  const styles = useStyles2(getStyles);
   const location = useLocation();
 
   useEffect(() => {
@@ -107,26 +107,21 @@ export function DataSourcesListView({
   };
 
   return (
-    <>
+    <div className="wall-datasource-management">
       {/* List Header */}
       <DataSourcesListHeader />
 
+      <div className="wall-datasource-list-label">
+        <Trans i18nKey="wall.data-sources-list.text-291e2bba">연결된 데이터 소스 · </Trans>
+        {dataSources.length}
+        <Trans i18nKey="wall.data-sources-list.text-11600c9a">개</Trans>
+      </div>
       {/* List */}
       {dataSources.length === 0 && !isLoading ? (
         <EmptyState variant="not-found" message={t('data-sources.empty-state.message', 'No data sources found')} />
       ) : (
-        <ul className={styles.list}>{getDataSourcesList()}</ul>
+        <ul className="wall-datasource-list">{getDataSourcesList()}</ul>
       )}
-    </>
+    </div>
   );
 }
-
-const getStyles = (theme: GrafanaTheme2) => {
-  return {
-    list: css({
-      listStyle: 'none',
-      display: 'grid',
-      // gap: '8px', Add back when legacy support for old Card interface is dropped
-    }),
-  };
-};

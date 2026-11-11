@@ -109,11 +109,17 @@ const MonacoQueryField = ({
   placeholder,
   onChange,
   timeRange,
+  minimumHeight,
 }: Props) => {
   const id = uuidv4();
   // we need only one instance of `overrideServices` during the lifetime of the react component
   const overrideServicesRef = useRef(getOverrideServices());
   const containerRef = useRef<HTMLDivElement>(null);
+  const minimumHeightRef = useLatest(minimumHeight ?? 0);
+  const resizeEditor = useRef<(() => void) | undefined>();
+  useEffect(() => {
+    resizeEditor.current?.();
+  }, [minimumHeight]);
 
   const langProviderRef = useLatest(datasource.languageProvider);
   const historyRef = useLatest(history);
@@ -130,6 +136,7 @@ const MonacoQueryField = ({
     // when we unmount, we unregister the autocomplete-function, if it was registered
     return () => {
       autocompleteCleanupCallback.current?.();
+      resizeEditor.current = undefined;
     };
   }, []);
 
@@ -253,13 +260,14 @@ const MonacoQueryField = ({
           const handleResize = () => {
             const containerDiv = containerRef.current;
             if (containerDiv !== null) {
-              const pixelHeight = editor.getContentHeight();
+              const pixelHeight = Math.max(editor.getContentHeight(), minimumHeightRef.current);
               containerDiv.style.height = `${pixelHeight + EDITOR_HEIGHT_OFFSET}px`;
               const pixelWidth = containerDiv.clientWidth;
               editor.layout({ width: pixelWidth, height: pixelHeight });
             }
           };
 
+          resizeEditor.current = handleResize;
           editor.onDidContentSizeChange(handleResize);
           handleResize();
           // handle: shift + enter

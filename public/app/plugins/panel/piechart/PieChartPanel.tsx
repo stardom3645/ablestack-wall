@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import {
@@ -20,6 +20,8 @@ import {
   VizLegend,
   VizLegendItem,
 } from '@grafana/ui';
+import { WallPieChart } from 'app/features/wall-modern/charts/WallPieChart';
+import { WallTypographyContext } from 'app/features/wall-modern/typography';
 
 import { PieChart } from './PieChart';
 import { PieChartLegendOptions, PieChartLegendValues, Options } from './panelcfg.gen';
@@ -42,6 +44,7 @@ export function PieChartPanel(props: Props) {
   const { data, timeZone, fieldConfig, replaceVariables, width, height, options, id } = props;
 
   const theme = useTheme2();
+  const wall = useContext(WallTypographyContext);
   const highlightedTitle = useSliceHighlightState();
   const fieldDisplayValues = getFieldDisplayValues({
     fieldConfig,
@@ -54,6 +57,19 @@ export function PieChartPanel(props: Props) {
 
   if (!hasFrames(fieldDisplayValues)) {
     return <PanelDataErrorView panelId={id} fieldConfig={fieldConfig} data={data} />;
+  }
+
+  if (wall) {
+    return (
+      <WallPieChart
+        values={fieldDisplayValues}
+        fieldConfig={fieldConfig}
+        options={options}
+        width={width}
+        height={height}
+        highlightedTitle={highlightedTitle}
+      />
+    );
   }
 
   return (

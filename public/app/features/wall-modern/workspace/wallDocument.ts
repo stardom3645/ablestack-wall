@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 
-import { KpiPosition } from './kpiLayout';
+import { KpiPosition, sameKpiLayout } from './kpiLayout';
 
 /** Wall presentation metadata. Native 24-column gridPos and panel configuration stay untouched. */
 export interface WallDocument {
@@ -10,15 +10,24 @@ export interface WallDocument {
   texts: Record<string, { title: string; description: string }>;
 }
 export function wallDocument(value: unknown): WallDocument | undefined {
-  const doc = value as WallDocument | undefined;
-  return doc?.version === 1 &&
-    doc.layouts &&
-    typeof doc.layouts === 'object' &&
-    doc.texts &&
-    typeof doc.texts === 'object'
-    ? doc
-    : undefined;
+  return isWallDocument(value) ? value : undefined;
 }
+// Validate the native envelope here; individual regions retain their existing layout validation.
+function isWallDocument(value: unknown): value is WallDocument {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'version' in value &&
+    value.version === 1 &&
+    'layouts' in value &&
+    Boolean(value.layouts) &&
+    typeof value.layouts === 'object' &&
+    'texts' in value &&
+    Boolean(value.texts) &&
+    typeof value.texts === 'object'
+  );
+}
+
 export const wallRegionKey = (key: string) => key.replace(/^wall-modern:kpi-layout:v1:[^:]+:[^:]+:[^:]+/, '') || 'kpi';
 
 /** Native removal must also remove the deleted ID's presentation, never its neighbours. */
@@ -40,9 +49,12 @@ export function removeWallPanel(document: WallDocument, id: number): WallDocumen
 
 /** Empty transactions / Undo to the saved baseline must not manufacture metadata dirtiness. */
 export function normalizeWallDocument(next: WallDocument, saved: WallDocument | undefined, defaults: WallDocument) {
-  const layoutsChanged = Object.entries(next.layouts).some(
-    ([key, value]) => !isEqual(value, saved?.layouts[key] ?? defaults.layouts[key])
-  );
+  const layoutsChanged = Object.entries(next.layouts).some(([key, value]) => {
+    const baseline = saved?.layouts[key] ?? defaults.layouts[key];
+    // RGL item order and transient flags are not persisted geometry. Match the
+    // Grid's own dirty/Undo comparison rather than comparing native objects.
+    return !baseline || !sameKpiLayout(value, baseline);
+  });
   const textsChanged = Object.entries(next.texts).some(
     ([key, value]) => !isEqual(value, saved?.texts[key] ?? defaults.texts[key])
   );

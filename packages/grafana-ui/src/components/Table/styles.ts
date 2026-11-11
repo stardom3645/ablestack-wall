@@ -1,15 +1,25 @@
 import { css } from '@emotion/css';
+import { useContext } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { TableCellHeight } from '@grafana/schema';
 
-export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCellHeight) {
-  const borderColor = theme.colors.border.weak;
+import { VizPresentationContext } from '../VizPresentation/VizPresentation';
+
+import type { TablePresentation } from './TablePresentation';
+
+export function useTableStyles(
+  theme: GrafanaTheme2,
+  cellHeightOption: TableCellHeight,
+  wall?: TablePresentation['styles']
+) {
+  const presentation = useContext(VizPresentationContext);
+  const borderColor = wall?.divider ?? presentation?.grid ?? theme.colors.border.weak;
   const resizerColor = theme.colors.primary.border;
   const cellPadding = 6;
   const cellHeight = getCellHeight(theme, cellHeightOption, cellPadding);
   const rowHeight = cellHeight + 2;
-  const headerHeight = 28;
+  const headerHeight = wall ? rowHeight : 28;
 
   const buildCellContainerStyle = (
     color?: string,
@@ -23,6 +33,12 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
     rowExpanded?: boolean
   ) => {
     return css({
+      ...(wall
+        ? {
+            fontVariantNumeric: 'tabular-nums',
+            ':focus-visible': { outline: `2px solid ${wall.focus}`, outlineOffset: -2 },
+          }
+        : {}),
       label: overflowOnHover ? 'cellContainerOverflow' : 'cellContainerNoOverflow',
       padding: `${cellPadding}px`,
       width: '100%',
@@ -42,7 +58,7 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
         : {}),
 
       alignItems: 'center',
-      borderRight: `1px solid ${borderColor}`,
+      borderRight: presentation ? 'none' : `1px solid ${borderColor}`,
 
       color: rowStyled ? 'inherit' : (color ?? undefined),
       background: rowStyled ? undefined : (background ?? undefined),
@@ -53,14 +69,20 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       },
 
       '&:hover': {
-        overflow: overflowOnHover && !textWrapped ? 'visible' : undefined,
-        width: textShouldWrap || !overflowOnHover ? 'auto' : 'auto !important',
-        height: (textShouldWrap || overflowOnHover) && !textWrapped ? 'auto !important' : `${rowHeight - 1}px`,
+        overflow: !wall && overflowOnHover && !textWrapped ? 'visible' : undefined,
+        width: wall ? undefined : textShouldWrap || !overflowOnHover ? 'auto' : 'auto !important',
+        height: wall
+          ? undefined
+          : (textShouldWrap || overflowOnHover) && !textWrapped
+            ? 'auto !important'
+            : `${rowHeight - 1}px`,
         minHeight: `${rowHeight - 1}px`,
         wordBreak: textShouldWrap ? 'break-word' : undefined,
-        whiteSpace: textShouldWrap && overflowOnHover ? 'normal' : 'nowrap',
-        boxShadow: overflowOnHover ? `0 0 2px ${theme.colors.primary.main}` : undefined,
-        background: rowStyled ? 'inherit' : (backgroundHover ?? theme.colors.background.primary),
+        whiteSpace: wall && textWrapped ? undefined : !wall && textShouldWrap && overflowOnHover ? 'normal' : 'nowrap',
+        boxShadow: !wall && overflowOnHover ? `0 0 2px ${theme.colors.primary.main}` : undefined,
+        background: rowStyled
+          ? 'inherit'
+          : (backgroundHover ?? wall?.hover ?? presentation?.surface ?? theme.colors.background.primary),
         zIndex: 1,
         '.cellActions': {
           color: '#FFF',
@@ -107,12 +129,18 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
 
   return {
     theme,
+    fontSize: wall?.bodySize ?? theme.typography.fontSize,
+    fontFamily: wall?.fontFamily ?? theme.typography.body.fontFamily,
     cellHeight,
     buildCellContainerStyle,
     cellPadding,
     cellHeightInner: cellHeight - cellPadding * 2,
     rowHeight,
     table: css({
+      fontFamily: wall?.fontFamily ?? presentation?.fontFamily,
+      fontSize: wall?.bodySize ?? presentation?.bodyFontSize,
+      color: wall?.text ?? presentation?.text,
+      fontVariantNumeric: wall || presentation ? 'tabular-nums' : undefined,
       height: '100%',
       width: '100%',
       overflow: 'auto',
@@ -121,6 +149,9 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
     }),
     thead: css({
       label: 'thead',
+      background: wall?.header ?? presentation?.track,
+      color: wall?.muted ?? presentation?.muted,
+      fontSize: wall?.headerSize ?? presentation?.captionFontSize,
       height: `${headerHeight}px`,
       overflowY: 'auto',
       overflowX: 'hidden',
@@ -140,18 +171,28 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
     }),
     headerCell: css({
       height: '100%',
-      padding: `0 ${cellPadding}px`,
+      padding: wall ? `0 ${cellPadding + wall.resizeHandleWidth}px 0 ${cellPadding}px` : `0 ${cellPadding}px`,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       display: 'flex',
       alignItems: 'center',
-      fontWeight: theme.typography.fontWeightMedium,
+      fontWeight: wall?.headerWeight ?? presentation?.labelFontWeight ?? theme.typography.fontWeightMedium,
 
+      ...(wall ? { '&:hover [role=separator], &:focus-within [role=separator]': { opacity: 1 } } : {}),
       '&:last-child': {
         borderRight: 'none',
       },
     }),
     headerCellLabel: css({
+      ...(wall
+        ? {
+            flex: '1 1 auto',
+            minWidth: 0,
+            justifyContent: 'inherit',
+            color: wall.text,
+            '> div': { overflow: 'hidden', textOverflow: 'ellipsis' },
+          }
+        : {}),
       border: 'none',
       padding: 0,
       background: 'inherit',
@@ -159,14 +200,14 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-      fontWeight: theme.typography.fontWeightMedium,
+      fontWeight: wall?.headerWeight ?? presentation?.labelFontWeight ?? theme.typography.fontWeightMedium,
       display: 'flex',
       alignItems: 'center',
       marginRight: theme.spacing(0.5),
 
       '&:hover': {
-        textDecoration: 'underline',
-        color: theme.colors.text.link,
+        textDecoration: wall ? 'none' : 'underline',
+        color: wall?.text ?? theme.colors.text.link,
       },
     }),
     cellContainerText: buildCellContainerStyle(undefined, undefined, undefined, true, true),
@@ -191,7 +232,7 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       userSelect: 'text',
       whiteSpace: 'nowrap',
       color: theme.colors.text.link,
-      fontWeight: theme.typography.fontWeightMedium,
+      fontWeight: wall?.headerWeight ?? presentation?.labelFontWeight ?? theme.typography.fontWeightMedium,
       paddingRight: theme.spacing(1.5),
       '&:hover': {
         textDecoration: 'underline',
@@ -204,7 +245,7 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       textOverflow: 'ellipsis',
       userSelect: 'text',
       whiteSpace: 'nowrap',
-      fontWeight: theme.typography.fontWeightMedium,
+      fontWeight: wall?.headerWeight ?? presentation?.labelFontWeight ?? theme.typography.fontWeightMedium,
       textDecoration: 'underline',
     }),
     imageCellLink: css({
@@ -251,7 +292,7 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       borderBottom: `1px solid ${borderColor}`,
 
       '&:hover': {
-        backgroundColor: theme.components.table.rowHoverBackground,
+        backgroundColor: wall?.hover ?? presentation?.track ?? theme.components.table.rowHoverBackground,
       },
 
       '&:last-child': {
@@ -265,21 +306,35 @@ export function useTableStyles(theme: GrafanaTheme2, cellHeightOption: TableCell
       label: 'resizeHandle',
       cursor: 'col-resize !important',
       display: 'inline-block',
-      background: resizerColor,
+      background: wall ? 'transparent' : resizerColor,
       opacity: 0,
       [theme.transitions.handleMotion('no-preference', 'reduce')]: {
         transition: 'opacity 0.2s ease-in-out',
       },
-      width: '8px',
+      width: wall?.resizeHandleWidth ?? 8,
       height: '100%',
       position: 'absolute',
-      right: '-4px',
+      right: wall ? 0 : '-4px',
       borderRadius: theme.shape.radius.default,
       top: 0,
       touchAction: 'none',
 
+      ...(wall
+        ? {
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: '20%',
+              bottom: '20%',
+              width: 1,
+              left: 3,
+              background: wall.divider,
+            },
+          }
+        : {}),
       '&:hover': {
         opacity: 1,
+        ...(wall ? { '&::after': { background: resizerColor } } : {}),
       },
     }),
     typeIcon: css({

@@ -46,6 +46,7 @@ import { mergePanels, PanelMergeInfo } from '../utils/panelMerge';
 import { DashboardMigrator } from './DashboardMigrator';
 import { explicitlyControlledMigrationPanels, PanelModel } from './PanelModel';
 import { TimeModel } from './TimeModel';
+import { DEFAULT_DASHBOARD_CURSOR_SYNC } from './dashboardDefaults';
 import { deleteScopeVars, isOnTheSameGridRow } from './utils';
 
 export interface CloneOptions {
@@ -141,7 +142,7 @@ export class DashboardModel implements TimeModel {
     this.timezone = data.timezone ?? '';
     this.weekStart = data.weekStart ?? '';
     this.editable = data.editable !== false;
-    this.graphTooltip = data.graphTooltip || 0;
+    this.graphTooltip = data.graphTooltip ?? DEFAULT_DASHBOARD_CURSOR_SYNC;
     this.time = data.time ?? { from: 'now-6h', to: 'now' };
     this.timepicker = data.timepicker ?? {};
     this.liveNow = data.liveNow;
@@ -165,6 +166,11 @@ export class DashboardModel implements TimeModel {
 
     this.initMeta(meta);
     this.updateSchema(data);
+    // The pre-v14 migration assigns Off even when no hover preference existed.
+    // Preserve its explicit legacy boolean, but use Wall's default when unspecified.
+    if (data.graphTooltip == null && !('sharedCrosshair' in data)) {
+      this.graphTooltip = DEFAULT_DASHBOARD_CURSOR_SYNC;
+    }
 
     this.addBuiltInAnnotationQuery();
     this.sortPanelsByGridPos();

@@ -1,9 +1,13 @@
 import { css } from '@emotion/css';
 import * as React from 'react';
+import { useContext } from 'react';
 
 import { GrafanaTheme2, dateTimeFormat, systemDateFormats, textUtil } from '@grafana/data';
 import { HorizontalGroup, IconButton, Tag, usePanelContext, useStyles2 } from '@grafana/ui';
+import { TimeSeriesPresentationContext } from '@grafana/ui/src/components/VizPresentation/TimeSeriesPresentation';
 import alertDef from 'app/features/alerting/state/alertDef';
+import { WallAnnotationDetails } from 'app/features/wall-modern/charts/WallAnnotationDetails';
+import { useWallEditing } from 'app/features/wall-modern/workspace/WallEditContext';
 
 interface Props {
   annoVals: Record<string, any[]>;
@@ -15,6 +19,8 @@ interface Props {
 const retFalse = () => false;
 
 export const AnnotationTooltip2 = ({ annoVals, annoIdx, timeZone, onEdit }: Props) => {
+  const presentation = useContext(TimeSeriesPresentationContext);
+  const editing = useWallEditing();
   const annoId = annoVals.id?.[annoIdx];
 
   const styles = useStyles2(getStyles);
@@ -31,7 +37,9 @@ export const AnnotationTooltip2 = ({ annoVals, annoIdx, timeZone, onEdit }: Prop
       timeZone,
     });
 
-  let time = timeFormatter(annoVals.time[annoIdx]);
+  const start = timeFormatter(annoVals.time[annoIdx]);
+  const end = annoVals.isRegion?.[annoIdx] ? timeFormatter(annoVals.timeEnd[annoIdx]) : undefined;
+  let time = start;
   let text = annoVals.text?.[annoIdx] ?? '';
 
   if (annoVals.isRegion?.[annoIdx]) {
@@ -57,6 +65,23 @@ export const AnnotationTooltip2 = ({ annoVals, annoIdx, timeZone, onEdit }: Prop
     alertText = annoVals.data?.[annoIdx] ? alertDef.getAlertAnnotationText(annoVals.data[annoIdx]) : '';
   } else if (annoVals.title?.[annoIdx]) {
     text = annoVals.title[annoIdx] + (text ? `<br />${text}` : '');
+  }
+
+  if (presentation) {
+    return (
+      <WallAnnotationDetails
+        start={start}
+        end={end}
+        html={text}
+        alertText={alertText}
+        avatar={avatar}
+        state={state}
+        tags={annoVals.tags?.[annoIdx] ?? []}
+        tokens={presentation}
+        onEdit={canEdit && !editing?.kiosk ? onEdit : undefined}
+        onDelete={canDelete && !editing?.kiosk ? () => onAnnotationDelete!(annoId) : undefined}
+      />
+    );
   }
 
   return (

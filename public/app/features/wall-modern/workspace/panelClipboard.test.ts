@@ -307,3 +307,19 @@ it('undoes and redoes panel insertions with the same IDs, restoring the exact sa
   expect(scene.state.wallModern?.layouts[target.key].map((item) => item.y)).toEqual([30, 87, 144]);
   expect(scene.state.isDirty).toBe(true);
 });
+
+it('pastes and replays a generic dashboard root grid without requiring storage VM Row IDs', () => {
+  const { scene, source, target } = setup();
+  const manager = scene.state.body as DefaultGridLayoutManager;
+  source.clearParent();
+  manager.state.grid.setState({ children: [source] });
+  scene.setState({ uid: 'general-dashboard' });
+  scene.setInitialSaveModel(transformSceneToSaveModel(scene));
+  target.key = 'wall-modern:kpi-layout:v1:general-dashboard:1:1:row:0:tab:overview';
+  const history = createLayoutHistory();
+  const copied = copyPanelSettings(scene, source.state.body, target.positions());
+  const id = pastePanelWithHistory(scene, copied, target, undefined, history);
+  expect(id).toBeDefined();
+  expect(manager.getVizPanels()).toHaveLength(2);
+  expect(transformSceneToSaveModel(scene).wallModern).toBeDefined();
+});

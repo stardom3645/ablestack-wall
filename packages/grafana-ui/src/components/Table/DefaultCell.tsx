@@ -1,5 +1,5 @@
 import { cx } from '@emotion/css';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import * as React from 'react';
 
 import { DisplayValue, formattedValueToString } from '@grafana/data';
@@ -12,6 +12,7 @@ import { DataLinksContextMenu } from '../DataLinks/DataLinksContextMenu';
 
 import { CellActions } from './CellActions';
 import { TableCellInspectorMode } from './TableCellInspector';
+import { TablePresentationContext } from './TablePresentation';
 import { TableStyles } from './styles';
 import { TableCellProps, CustomCellRendererProps, TableCellOptions } from './types';
 import { getCellColors, getCellOptions } from './utils';
@@ -19,6 +20,7 @@ import { getCellColors, getCellOptions } from './utils';
 export const DefaultCell = (props: TableCellProps) => {
   const { field, cell, tableStyles, row, cellProps, frame, rowStyled, rowExpanded, textWrapped, height, actions } =
     props;
+  const presentation = useContext(TablePresentationContext);
   const inspectEnabled = Boolean(field.config.custom?.inspect);
   const displayValue = field.display!(cell.value);
 
@@ -51,6 +53,7 @@ export const DefaultCell = (props: TableCellProps) => {
     }
   }
 
+  const content = presentation?.renderValue?.(props, value) ?? value;
   const isStringValue = typeof value === 'string';
 
   // Text should wrap when the content length is less than or equal to the length of an OG tweet and it contains whitespace
@@ -104,18 +107,18 @@ export const DefaultCell = (props: TableCellProps) => {
                   className={cx(clearButtonStyle, getLinkStyle(tableStyles, cellOptions, api.targetClassName))}
                   onClick={api.openMenu}
                 >
-                  {value}
+                  {content}
                 </button>
               );
             } else {
-              return <div className={getLinkStyle(tableStyles, cellOptions, api.targetClassName)}>{value}</div>;
+              return <div className={getLinkStyle(tableStyles, cellOptions, api.targetClassName)}>{content}</div>;
             }
           }}
         </DataLinksContextMenu>
       ) : isStringValue ? (
-        `${value}`
+        content
       ) : (
-        <div className={tableStyles.cellText}>{value}</div>
+        <div className={tableStyles.cellText}>{content}</div>
       )}
 
       {hover && showActions && (

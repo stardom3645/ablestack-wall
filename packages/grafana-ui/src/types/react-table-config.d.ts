@@ -48,6 +48,8 @@ import type {
   UseSortByState,
 } from 'react-table';
 
+import type { Field } from '@grafana/data';
+
 declare module 'react-table' {
   export interface TableOptions<D extends Record<string, unknown>>
     extends UseExpandedOptions<D>,
@@ -97,7 +99,10 @@ declare module 'react-table' {
     extends UseGlobalFiltersColumnOptions<D>,
       UseGroupByColumnOptions<D>,
       UseResizeColumnsColumnOptions<D>,
-      UseSortByColumnOptions<D> {}
+      UseSortByColumnOptions<D> {
+    /** Native Grafana column metadata; group/expander columns may not have a field. */
+    field?: Field;
+  }
 
   export interface ColumnInstance<D extends Record<string, unknown> = Record<string, unknown>>
     extends UseFiltersColumnProps<D>,

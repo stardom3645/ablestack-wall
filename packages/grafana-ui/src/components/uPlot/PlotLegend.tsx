@@ -44,7 +44,7 @@ export const PlotLegend = memo(
     const theme = useTheme2();
     const legendItems = config
       .getSeries()
-      .map<VizLegendItem | undefined>((s) => {
+      .map<(VizLegendItem & { getSortValue: (key: string) => number | undefined }) | undefined>((s) => {
         const seriesConfig = s.props;
         const fieldIndex = seriesConfig.dataFrameFieldIndex;
         const axisPlacement = config.getAxisPlacement(s.props.scaleKey);
@@ -65,6 +65,8 @@ export const PlotLegend = memo(
 
         return {
           disabled: !(seriesConfig.show ?? true),
+          data: { field, frame: data[fieldIndex.frameIndex] },
+          getSortValue: (key: string) => getDisplayValuesForCalcs([key], field, theme)[0]?.numeric,
           fieldIndex,
           color: seriesColor,
           label,
@@ -74,7 +76,7 @@ export const PlotLegend = memo(
           lineStyle: seriesConfig.lineStyle,
         };
       })
-      .filter((i): i is VizLegendItem => i !== undefined);
+      .filter((i): i is VizLegendItem & { getSortValue: (key: string) => number | undefined } => i !== undefined);
 
     return (
       <VizLayout.Legend placement={placement} {...vizLayoutLegendProps}>

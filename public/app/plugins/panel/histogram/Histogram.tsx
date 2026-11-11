@@ -12,7 +12,7 @@ import {
 } from '@grafana/data';
 import {
   histogramBucketSizes,
-  histogramFrameBucketMaxFieldName,
+  isHistogramFrameBucketMaxFieldName,
 } from '@grafana/data/src/transformations/transformers/histogram';
 import { VizLegendOptions, ScaleDistribution, AxisPlacement, ScaleDirection, ScaleOrientation } from '@grafana/schema';
 import {
@@ -24,7 +24,14 @@ import {
   measureText,
   UPLOT_AXIS_FONT_SIZE,
 } from '@grafana/ui';
-import { getStackingGroups, preparePlotData2 } from '@grafana/ui/src/components/uPlot/utils';
+import { DEFAULT_PLOT_CONFIG, getStackingGroups, preparePlotData2 } from '@grafana/ui/src/components/uPlot/utils';
+import {
+  AnalyticAppearance,
+  AnalyticInteraction,
+  analyticAxis,
+  analyticTextMeasure,
+  binIndex,
+} from 'app/features/wall-modern/charts/analytic';
 
 import { defaultFieldConfig, FieldConfig, Options } from './panelcfg.gen';
 
@@ -46,6 +53,8 @@ export interface HistogramProps extends Themeable2 {
   structureRev?: number; // a number that will change when the frames[] structure changes
   legend: VizLegendOptions;
   rawSeries?: DataFrame[];
+  appearance?: AnalyticAppearance;
+  interaction?: AnalyticInteraction;
   children?: (builder: UPlotConfigBuilder, frame: DataFrame, xMinOnlyFrame: DataFrame) => React.ReactNode;
 }
 
@@ -57,13 +66,21 @@ export function getBucketSize(frame: DataFrame) {
 }
 
 export function getBucketSize1(frame: DataFrame) {
+  if (frame.length < 2) {
+    return getBucketSize(frame);
+  }
   // assumes BucketMin is fields[0] and BucktMax is fields[1]
   return frame.fields[0].type === FieldType.string
     ? 1
     : roundDecimals(frame.fields[1].values[1] - frame.fields[0].values[1], 9);
 }
 
-const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
+const prepConfig = (
+  frame: DataFrame,
+  theme: GrafanaTheme2,
+  appearance?: AnalyticAppearance,
+  interaction?: AnalyticInteraction
+) => {
   // todo: scan all values in BucketMin and BucketMax fields to assert if uniform bucketSize
 
   // since this is x axis range, this should ideally come from xMin or xMax fields, not a count field
@@ -71,6 +88,11 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
   let { min: xScaleMin, max: xScaleMax } = frame.fields[2].config;
 
   let builder = new UPlotConfigBuilder();
+  if (appearance) {
+    const padding = DEFAULT_PLOT_CONFIG.padding!;
+    // Keep the final bin boundary label inside the canvas, including single-bin panels.
+    builder.setPadding([padding[0], appearance.plotPaddingRight ?? padding[1], padding[2], padding[3]]);
+  }
 
   let isOrdinalX = frame.fields[0].type === FieldType.string;
 
@@ -129,9 +151,19 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
 
           // isOrdinalX is when we have classic histograms, which are LE, ordinal X, and already have 0 dummy bucket prepended
           // else we have calculated histograms which are GE and cardinal+linear X, and have no next dummy bucket appended
-          wantedMin = incrRoundUp(wantedMin, bucketSize);
+          // Wall zoom includes the bins touched by the selection. Rounding both ends
+          // inward can invert a range wholly inside one bin and leave a blank chart.
+          const origin = appearance && !isOrdinalX ? u.data[0][0] : 0;
+          wantedMin =
+            appearance && !isOrdinalX && xScaleMin == null
+              ? origin + incrRoundDn(wantedMin - origin, bucketSize)
+              : incrRoundUp(wantedMin, bucketSize);
           wantedMax =
-            !isOrdinalX && wantedMax === fullRangeMax ? wantedMax + bucketSize : incrRoundDn(wantedMax, bucketSize);
+            !isOrdinalX && wantedMax === fullRangeMax
+              ? wantedMax + bucketSize
+              : appearance && !isOrdinalX && xScaleMax == null
+                ? origin + incrRoundUp(wantedMax - origin, bucketSize)
+                : incrRoundDn(wantedMax, bucketSize);
 
           return [wantedMin, wantedMax];
         },
@@ -152,6 +184,7 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
   };
 
   builder.addAxis({
+    ...analyticAxis(appearance),
     scaleKey: 'x',
     isTime: false,
     placement: AxisPlacement.Bottom,
@@ -163,7 +196,11 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
           const tickLabels = splits.map(xAxisFormatter);
 
           const maxWidth = tickLabels.reduce(
-            (curMax, label) => Math.max(measureText(label, UPLOT_AXIS_FONT_SIZE).width, curMax),
+            (curMax, label) =>
+              Math.max(
+                appearance ? analyticTextMeasure(label) : measureText(label, UPLOT_AXIS_FONT_SIZE).width,
+                curMax
+              ),
             0
           );
 
@@ -187,6 +224,7 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
   let dispY = countField.display;
 
   builder.addAxis({
+    ...analyticAxis(appearance),
     scaleKey: 'y',
     isTime: false,
     placement: AxisPlacement.Left,
@@ -205,13 +243,45 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
       x: true,
       y: false,
       setScale: true,
+      ...(appearance ? { dist: appearance.gestureIntent } : {}),
     },
   });
 
   let stackingGroups = getStackingGroups(xMinOnlyFrame(frame));
   builder.setStackingGroups(stackingGroups);
+  if (appearance) {
+    builder.setCursor({
+      dataIdx: (u, seriesIdx, closestIdx, value) => {
+        const row = isOrdinalX ? closestIdx : binIndex(frame, value);
+        return row < 0 ? null : row;
+      },
+      focus: {
+        prox: 30,
+        dist: (u, seriesIdx, row, valPos, curPos) => {
+          if (!frame.fields[seriesIdx + 1]?.values[row]) {
+            return Infinity;
+          }
+          const group = stackingGroups.find((g) => g.series.includes(seriesIdx));
+          const before = group?.series
+            .slice(0, group.series.indexOf(seriesIdx))
+            .filter((i) => u.series[i].show)
+            .pop();
+          const base = before == null ? 0 : u.data[before][row];
+          const basePos = u.valToPos(base ?? 0, 'y');
+          return curPos >= Math.min(basePos, valPos) && curPos <= Math.max(basePos, valPos)
+            ? 0
+            : Math.abs(curPos - valPos);
+        },
+      },
+    });
+  }
 
-  let pathBuilder = uPlot.paths.bars!({ align: 1, size: [1, Infinity] });
+  let pathBuilder = uPlot.paths.bars!({
+    align: 1,
+    size: [1, Infinity],
+    // A fixed separator must not make a wide bin look like a smaller value range.
+    gap: appearance && frame.length > 1 ? appearance.binGap : 0,
+  });
 
   let seriesIndex = 0;
 
@@ -253,6 +323,45 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
     });
   }
 
+  if (appearance && interaction) {
+    builder.addHook('ready', (u) => interaction.ready(u));
+    builder.addHook('destroy', () => interaction.ready(null));
+    let dispose = () => {};
+    builder.addHook('ready', (u) => {
+      const context = (event: MouseEvent) => {
+        const rect = u.over.getBoundingClientRect();
+        const row = binIndex(frame, u.posToVal(event.clientX - rect.left, 'x'));
+        if (row >= 0) {
+          event.preventDefault();
+          event.stopPropagation();
+          interaction.pick({ sidx: 0, didx: row }, event);
+          u.redraw(false);
+        }
+      };
+      u.over.addEventListener('contextmenu', context);
+      dispose = () => u.over.removeEventListener('contextmenu', context);
+    });
+    builder.addHook('destroy', () => dispose());
+    builder.addHook('draw', (u) => {
+      const selected = interaction.selected();
+      if (!selected || selected.didx >= frame.length) {
+        return;
+      }
+      const row = selected.didx;
+      const min = frame.fields[0].type === FieldType.string ? row : frame.fields[0].values[row];
+      const max = frame.fields[0].type === FieldType.string ? row + 1 : frame.fields[1].values[row];
+      const x = u.valToPos(min, 'x', true),
+        right = u.valToPos(max, 'x', true);
+      u.ctx.save();
+      u.ctx.beginPath();
+      u.ctx.rect(u.bbox.left, u.bbox.top, u.bbox.width, u.bbox.height);
+      u.ctx.clip();
+      u.ctx.strokeStyle = appearance.text;
+      u.ctx.lineWidth = appearance.selectionStroke * uPlot.pxRatio;
+      u.ctx.strokeRect(x, u.bbox.top, right - x, u.bbox.height);
+      u.ctx.restore();
+    });
+  }
   return builder;
 };
 
@@ -260,7 +369,7 @@ const prepConfig = (frame: DataFrame, theme: GrafanaTheme2) => {
 // by removing the x bucket max field to make sure stacking group series idxs match up
 const xMinOnlyFrame = (frame: DataFrame) => ({
   ...frame,
-  fields: frame.fields.filter((f) => f.name !== histogramFrameBucketMaxFieldName),
+  fields: frame.fields.filter((f) => !isHistogramFrameBucketMaxFieldName(f.name)),
 });
 
 const preparePlotData = (builder: UPlotConfigBuilder, xMinOnlyFrame: DataFrame) => {
@@ -295,9 +404,14 @@ export class Histogram extends React.Component<HistogramProps, State> {
   prepState(props: HistogramProps, withConfig = true): State {
     const { alignedFrame } = props;
 
-    const config = withConfig ? prepConfig(alignedFrame, this.props.theme) : this.state.config!;
+    const config = withConfig
+      ? prepConfig(alignedFrame, props.theme, props.appearance, props.interaction)
+      : this.state.config!;
     const xMinOnly = xMinOnlyFrame(alignedFrame);
-    const alignedData = preparePlotData(config, xMinOnly);
+    const renderFrame = props.appearance
+      ? { ...xMinOnly, fields: xMinOnly.fields.map((field) => ({ ...field, values: [...field.values] })) }
+      : xMinOnly;
+    const alignedData = preparePlotData(config, renderFrame);
 
     return {
       alignedFrame,
@@ -322,7 +436,7 @@ export class Histogram extends React.Component<HistogramProps, State> {
   componentDidUpdate(prevProps: HistogramProps) {
     const { structureRev, alignedFrame, bucketSize, bucketCount } = this.props;
 
-    if (alignedFrame !== prevProps.alignedFrame) {
+    if (alignedFrame !== prevProps.alignedFrame || this.props.appearance !== prevProps.appearance) {
       const shouldReconfig =
         this.state.config == null ||
         bucketCount !== prevProps.bucketCount ||
@@ -330,7 +444,8 @@ export class Histogram extends React.Component<HistogramProps, State> {
         this.props.options !== prevProps.options ||
         this.state.config === undefined ||
         structureRev !== prevProps.structureRev ||
-        !structureRev;
+        !structureRev ||
+        this.props.appearance !== prevProps.appearance;
 
       const newState = this.prepState(this.props, shouldReconfig);
 
