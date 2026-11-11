@@ -1,10 +1,12 @@
 import { css } from '@emotion/css';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { GrafanaTheme2, LinkTarget } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { Icon, IconName, useStyles2 } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
+
+import { loadWallReleaseVersion } from './wallRelease';
 
 export interface FooterLink {
   target: LinkTarget;
@@ -95,6 +97,17 @@ export interface Props {
 export const Footer = memo(({ customLinks, hideEdition }: Props) => {
   const links = customLinks || getFooterLinks();
   const styles = useStyles2(getStyles);
+  const [releaseVersion, setReleaseVersion] = useState<string>();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadWallReleaseVersion(config.appSubUrl, controller.signal).then((version) => {
+      if (!controller.signal.aborted) {
+        setReleaseVersion(version);
+      }
+    });
+    return () => controller.abort();
+  }, []);
 
   return (
     <footer className={styles.footer}>
@@ -106,7 +119,8 @@ export const Footer = memo(({ customLinks, hideEdition }: Props) => {
             </li>
           ))}
         </ul>
-        <ul className={styles.list}>Copyright (c) 2021-2024, ABLECLOUD.Co.Ltd ABLESTACK Diplo v4.0.0</ul>
+        <div>2021-2026 ABLECLOUD Inc. All Rights Reserved.</div>
+        <div>{releaseVersion ? `ABLESTACK ${releaseVersion}` : 'ABLESTACK Wall'}</div>
       </div>
     </footer>
   );
