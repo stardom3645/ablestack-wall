@@ -2506,3 +2506,17 @@ REF174의 승인 레이아웃/40vw/Toolbar·Sidebar 비율·기존 기능을 유
 ## REF-178 — 커밋 전 규칙 정합성 (2026-11-11)
 
 사용자 요청에 따라 Betterer 기준을 완화하거나 신규 위반을 baseline에 추가하지 않고 수정한다. JSX 문구는 기존 public Trans 또는 grafana-ui/utils/i18n의 Trans를 사용하며 기본 한글 문구를 유지한다. Wall CSS custom property는 React CSSProperties의 --wall-\* 전용 declaration으로 명시하고 기존 tokens/DOM 스타일 값은 보존한다. 범례 Hover 이벤트는 실제 HTMLElement를 표현하고 native Grid/JSON/Inspector boundary는 실제 구조 확인·명시 타입으로 처리한다. 새 UI/데이터·쿼리·저장 모델은 추가하지 않는다. 테스트 mock도 any 대신 실제 prop/event/uPlot 타입을 사용한다. 전역 기존 TypeScript 부채는 별도이며 이번 정리는 커밋 가능 범위로 제한한다.
+
+## REF-179 — 로그인 Footer의 배포 릴리스 표시 (2026-11-11)
+
+| 항목                      | 적용 내용                                                                                                                                                                                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 근거/참조                 | 사용자 승인: Mold `config.json.buildVersion` 기반 표시, 실패 기본값 `ABLESTACK Wall`. 외부 디자인 참조 없음.                                                                                                                                                   |
+| 컴포넌트 원본/버전/import | 이 브랜치의 기존 native `public/app/core/components/Footer/Footer.tsx`, React `useEffect/useState`, `./wallRelease`의 `loadWallReleaseVersion`. 새 shadcn/Base UI primitive 없음.                                                                              |
+| 적용 화면                 | 기존 공통 Footer(로그인 포함). 저작권 `2021-2026 ABLECLOUD Inc. All Rights Reserved.`와 제품 버전을 두 줄로 표시.                                                                                                                                              |
+| 데이터 계약               | `${config.appSubUrl}/public/ablestack-release.json`의 `version`. `cache:no-store`, unmount abort. 기본값 null, 누락/오류/잘못된 버전은 `ABLESTACK Wall`. Grafana buildInfo와 독립.                                                                             |
+| CSS만 수정한 부분         | 없음. 기존 Footer typography/색/반응형/링크 스타일 유지. 텍스트 두 줄의 HTML만 div로 변경.                                                                                                                                                                     |
+| 적용 브랜치/범위          | 사용자 요청에 따라 `diplo-260908` 별도 worktree와 `codex/wall-modern-lite` 양쪽에 동일 Footer 소스 적용. monitor/cockpit-plugin/운영/백엔드/포트 변경 없음. 후속 파일 생성 계약은 `docs/WALL_RELEASE_BRANDING.md`.                                             |
+| 검증                      | Footer/로더 Jest 2 suites·11 tests 및 변경 TS/TSX ESLint 통과. production 설정 로컬 빌드 완료. 실제 데스크톱의 별도 로그인 검증 탭에서 기본 문구와 v4.7.5-20261110 주입 표시/12px computed font를 확인하고 JSON 기본값을 원복. 기존 사용자 탭은 갱신하지 않음. |
+
+추가 검증 한계: LoginPage 기존 테스트까지 포함한 실행은 번역 리소스 XHR의 jsdom AggregateError로 실패했으며 Footer 전용 테스트와 구분한다. 개발 webpack 설정에서 번역 초기화 오류가 발생해 production 설정 빌드로 로컬 preview를 복구했다. 3317 health와 대시보드 HTTP 200을 확인했다. 3318 fixture는 기존 launchd가 참조하는 `/tmp/wall-modern-lite-runtime/metrics-fixture.py`가 없어 응답하지 않으며 이번 로그인 변경 범위에서 수정하지 않았다.
