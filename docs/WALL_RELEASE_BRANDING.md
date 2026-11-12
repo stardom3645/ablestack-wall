@@ -2,7 +2,7 @@
 
 Wall Footer는 Grafana 내부 buildInfo와 별도로 `${appSubUrl}/public/ablestack-release.json`을 읽는다.
 기본 파일은 `{"version": null}`이며 누락/HTTP 실패/잘못된 JSON/유효하지 않은 버전은 `ABLESTACK Wall`로 표시한다.
-저작권은 `2021-2026 ABLECLOUD Inc. All Rights Reserved.`로 표시한다.
+저작권은 `2021-{브라우저 현재 연도} ABLECLOUD Inc. All Rights Reserved.`로 표시한다. 브라우저의 로컬 Date.getFullYear()를 렌더 시 읽으므로 외부 통신 없이 동작한다. 열린 화면의 연도는 새로고침/재렌더 시 갱신하며 자정 타이머를 추가하지 않는다. 배포 JSON과 제품 버전에는 영향을 주지 않는다.
 
 ## 배포 계약
 
