@@ -2520,3 +2520,17 @@ REF174의 승인 레이아웃/40vw/Toolbar·Sidebar 비율·기존 기능을 유
 | 검증                      | Footer/로더 Jest 2 suites·11 tests 및 변경 TS/TSX ESLint 통과. production 설정 로컬 빌드 완료. 실제 데스크톱의 별도 로그인 검증 탭에서 기본 문구와 v4.7.5-20261110 주입 표시/12px computed font를 확인하고 JSON 기본값을 원복. 기존 사용자 탭은 갱신하지 않음. |
 
 추가 검증 한계: LoginPage 기존 테스트까지 포함한 실행은 번역 리소스 XHR의 jsdom AggregateError로 실패했으며 Footer 전용 테스트와 구분한다. 개발 webpack 설정에서 번역 초기화 오류가 발생해 production 설정 빌드로 로컬 preview를 복구했다. 3317 health와 대시보드 HTTP 200을 확인했다. 3318 fixture는 기존 launchd가 참조하는 `/tmp/wall-modern-lite-runtime/metrics-fixture.py`가 없어 응답하지 않으며 이번 로그인 변경 범위에서 수정하지 않았다.
+
+## REF-180 — Wall–Netdive UUID 관계 탐색 (2026-11-12)
+
+| 항목              | 적용 내용                                                                                                                                                                                                                                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 근거/참조         | 사용자 VM 중심 4-B 1차 요청, Netdive UI `3e4c9d4`의 `ExternalObjectNavigation.ts`와 Analyzer `1a20064f`, 기존 Wall DashboardLink/QueryVariable·포털 설정 조사. 외부 디자인 모방 없음                                                                                                                                      |
+| 원본/버전/import  | Grafana 11.4.0-pre, `@grafana/scenes` 5.20.3의 QueryVariable/SceneTimeRange, 기존 `getLinkSrv`·`getBackendSrv`·`getDataSourceSrv`. `../components/ui/popover` → 실제 `@base-ui/react/popover` 1.0.0, `../ui` → 기존 로컬 shadcn 방식 Button/실제 Base UI Button. 기존 `PrimaryItem`/Tooltip 재사용. 새 UI 라이브러리 없음 |
+| 적용 화면         | 공통 Dashboard Toolbar에 검증 가능한 UUID 변수일 때만 VM 관계 탐색 컨트롤 1개. 기존 일반 링크/Panel·Data Link/Query/48열/테마는 유지. 현재 Rail에 Netdive가 없음을 확인해 유효한 중앙 설정이 있을 때만 일반 진입 1개 제공                                                                                                 |
+| URL/식별          | 기존 Netdive Dashboard Link base 재사용, 선택적 정적 `public/ablestack-netdive.json` 중앙 설정. 추정 hostname/IP·포트 기본값 없음. 실제 org·UUID·시간·dashboard만 v1 계약으로 전달. org 값은 권한 증명이 아님                                                                                                             |
+| CSS만 수정한 부분 | 없음. 기존 Popover/Button/Navigation 토큰·Typography·Motion 그대로 사용. React 동작과 native link/proxy 연결만 추가                                                                                                                                                                                                       |
+| 검증              | 실제 Prometheus 123건 → 현재 Netdive 122 유일/1 중복. VM 새 탭 1-hop/상세, All/invalid/missing/중복 차단, refresh/일반 진입 확인. Jest 42→55 통과/신규 실패0, ESLint 통과, production frontend build 통과(기존 크기 경고2). 전체 TS는 동일 조건 기존208진단/신규0으로 여전히 실패                                         |
+| 보존/한계         | 원본 dashboard47·datasource7·alert_rule57·org1 레코드 hash 동일. 별도 DB·쿠키·정적 자산 QA만 사용/종료. 현재 Analyzer API 미배포 안내 확인으로 이번 역방향 왕복 미완료. Host/Kubernetes/경보 자동 연결·실제 인증/경보 발송·로그 스트림 지원을 추가하지 않음                                                               |
+
+상세 계약·배포 준비·롤백·Netdive 전달 사항은 `docs/WALL_NETDIVE_INTEGRATION.md`, 측정 요약은 `docs/measurements/wall-netdive-vm-2026-11-12.json`이다. 운영 DB·대시보드 배포·서비스 재시작 및 기존 프로토콜·포트 전환은 수행하지 않았다.
