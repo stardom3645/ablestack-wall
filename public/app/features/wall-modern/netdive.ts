@@ -118,7 +118,7 @@ export function selectedVM(variables: VMVariable[]): VMSelection | undefined {
   }
   const matcher = `uuid="${uuid}"`;
   const query = selector.endsWith('}')
-    ? `${selector.slice(0, -1)}${selector.endsWith('{}') ? '' : ','}${matcher}}`
+    ? `${selector.slice(0, -1)}${/[{,]\s*}$/.test(selector) ? '' : ','}${matcher}}`
     : `${selector}{${matcher}}`;
   return {
     uuid,

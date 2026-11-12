@@ -93,6 +93,19 @@ it('blocks ambiguous UUID variables, pending/error values, All/multi selection a
   ).toBeTruthy();
 });
 
+it.each([
+  ['{}', `{uuid="${uuid}"}`],
+  ['{ }', `{ uuid="${uuid}"}`],
+  ['{\t}', `{\tuuid="${uuid}"}`],
+  ['{domain="vm-a" }', `{domain="vm-a" ,uuid="${uuid}"}`],
+  ['{domain="vm-a", }', `{domain="vm-a", uuid="${uuid}"}`],
+  ['{domain=~"vm-a,vm-b"}', `{domain=~"vm-a,vm-b",uuid="${uuid}"}`],
+])('preserves valid selector %s when adding the UUID matcher', (selector, expected) => {
+  expect(selectedVM([{ ...variable, query: `label_values(libvirt_domain_info_meta${selector},uuid)` }])?.selector).toBe(
+    `libvirt_domain_info_meta${expected}`
+  );
+});
+
 it('checks actual current metric UUID/domain/exporter identity and refuses missing, duplicates and mismatches', () => {
   expect(metricIdentity(response([metric]), uuid, metric.domain)).toEqual({});
   expect(metricIdentity(response([metric, { ...metric, instance: 'agent-b' }]), uuid).reason).toBeTruthy();
