@@ -10,6 +10,7 @@ import {
   CircleHelp,
   Cpu,
   Folder,
+  Network,
   LayoutGrid,
   Search,
   ScrollText,
@@ -36,6 +37,7 @@ import { dashboardNavigationHref, navigationContext, navigationItems, type Navig
 import { wallSurfaceVariables } from './surfaceTokens';
 import { wallTypographyVariables } from './typography';
 import { Button } from './ui';
+import { useNetdiveURL } from './useNetdiveURL';
 
 const icons = {
   all: LayoutGrid,
@@ -118,6 +120,7 @@ export function WallNavigation({
 }) {
   const theme = useTheme2();
   const management = isWallManagementRoute(pathname);
+  const netdiveURL = useNetdiveURL();
   const activeAdmin = activeManagementHref(managementGroups, pathname);
   const adminHref = managementGroups[0]?.items[0]?.href;
   const isLibrary = pathname.startsWith('/dashboards');
@@ -215,6 +218,7 @@ export function WallNavigation({
               ))}
           </div>
           <div className="wall-primary-rail-bottom">
+            {netdiveURL && <PrimaryItem to={netdiveURL} external label="Netdive" icon={Network} />}
             {adminHref && (
               <PrimaryItem
                 to={adminHref}

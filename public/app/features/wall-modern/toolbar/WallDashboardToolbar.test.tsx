@@ -23,6 +23,8 @@ import { STORAGE_VM_DASHBOARD_UID } from '../statPresentation';
 import { retainedToolbarLinks, WallDashboardToolbar } from './WallDashboardToolbar';
 import { variableSelection, variableSelectionSummary } from './WallVariableControl';
 
+jest.mock('../useNetdiveURL', () => ({ useNetdiveURL: () => undefined }));
+
 jest.mock('app/features/dashboard-scene/utils/utils', () => ({
   ...jest.requireActual('app/features/dashboard-scene/utils/utils'),
   activateInActiveParents: jest.fn(), // Browser QA covers the real Scene/timer activation lifecycle.

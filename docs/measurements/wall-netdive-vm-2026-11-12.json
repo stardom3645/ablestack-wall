@@ -1,0 +1,140 @@
+{
+  "date": "2026-11-12",
+  "wallBaseline": "db802e4218",
+  "branch": "codex/wall-netdive-vm",
+  "netdiveContract": {
+    "ui": "3e4c9d4",
+    "analyzer": "1a20064f"
+  },
+  "versions": {
+    "grafana": "11.4.0-pre",
+    "scenes": "5.20.3",
+    "baseUI": "1.0.0"
+  },
+  "changes": {
+    "backend": false,
+    "protocolOrPorts": false,
+    "productionDeployed": false,
+    "originalDBChanged": false,
+    "dashboardJSONDeployed": false,
+    "sourceDashboardPanelsQueriesModified": false,
+    "monitorPulledOrModified": false
+  },
+  "identity": {
+    "entry": {
+      "state": {
+        "state": "ready",
+        "message": "외부 객체 링크로 진입했습니다. 관계는 현재 수집 기준입니다."
+      },
+      "hops": 1,
+      "nodes": 3
+    },
+    "metricSeries": 123,
+    "graphVMs": 183,
+    "counts": {
+      "unique": 122,
+      "ambiguous": 1,
+      "missing": 0,
+      "metricAmbiguous": 0
+    }
+  },
+  "negativeCases": {
+    "allBlocked": true,
+    "graphDuplicateBlocked": {
+      "state": "ambiguous",
+      "explorer": false,
+      "selected": 0
+    },
+    "invalidBlocked": true,
+    "missingBlocked": true
+  },
+  "context": {
+    "generalEntry": {
+      "external": false,
+      "explorer": false
+    },
+    "legacyNameDashboard": {
+      "vmAction": false,
+      "generalEntries": 2
+    },
+    "refresh": {
+      "sameAnchor": true,
+      "hops": 1
+    },
+    "reverseCurrentServer": "backend-api-not-deployed"
+  },
+  "validation": {
+    "tests": {
+      "baselineSuites": 5,
+      "baselinePassed": 42,
+      "afterSuites": 7,
+      "afterPassed": 55,
+      "newFailures": 0,
+      "fullGrafanaSuiteRun": false
+    },
+    "typescript": {
+      "baselineErrors": 208,
+      "afterErrors": 208,
+      "newDiagnostics": [],
+      "removedDiagnostics": [],
+      "normalization": "same worktree/dependencies; source restored and byte-verified; shared source path prefixes and union member ordering normalized"
+    },
+    "eslint": "pass",
+    "productionFrontend": "pass; two asset/entrypoint size warnings",
+    "newBackendBinaryBuilt": false
+  },
+  "originalRecords": {
+    "before": {
+      "dashboard": {
+        "rows": 47,
+        "sha256": "ac4276500204d0b40f9846e49d2e0ce649a8edbb68bb8cfa9ce9e93da934b0de"
+      },
+      "data_source": {
+        "rows": 7,
+        "sha256": "f3dbe9df03aedb0b7142a7cfb39d12f4f425dd04091834e0672aa2d300496903"
+      },
+      "alert_rule": {
+        "rows": 57,
+        "sha256": "cc0d50336612a416d7c450e64561b696e2ce4b9a16db3be48906d8f538718d5c"
+      },
+      "org": {
+        "rows": 1,
+        "sha256": "e9984287ee06f7888c3c428c2cf4b5e83923ea2ea20d04ab5ce6dbc66b1edbb1"
+      }
+    },
+    "after": {
+      "dashboard": {
+        "rows": 47,
+        "sha256": "ac4276500204d0b40f9846e49d2e0ce649a8edbb68bb8cfa9ce9e93da934b0de"
+      },
+      "data_source": {
+        "rows": 7,
+        "sha256": "f3dbe9df03aedb0b7142a7cfb39d12f4f425dd04091834e0672aa2d300496903"
+      },
+      "alert_rule": {
+        "rows": 57,
+        "sha256": "cc0d50336612a416d7c450e64561b696e2ce4b9a16db3be48906d8f538718d5c"
+      },
+      "org": {
+        "rows": 1,
+        "sha256": "e9984287ee06f7888c3c428c2cf4b5e83923ea2ea20d04ab5ce6dbc66b1edbb1"
+      }
+    }
+  },
+  "qa": {
+    "database": "read-only SQLite backup of original active runtime; QA-only changes",
+    "alertEvaluationAndSending": false,
+    "binary": "existing native 11.4.0-pre, 4dad0b48a235a8904be829c91fe0dd086a0a94a3",
+    "frontend": "fresh production build from task worktree",
+    "browser": "ego TaskSpace 52 finished, no retained pages",
+    "processes": "own QA and Netdive receiver stopped"
+  },
+  "limits": [
+    "Wall current metric uniqueness does not guarantee Netdive graph uniqueness; final graph resolution remains Netdive responsibility",
+    "Actual current Analyzer navigation API not deployed; reverse navigation blocked with clear update message",
+    "Existing Wall certificate trust/validity and protected org catalog authentication remain prerequisites",
+    "SQL/name/IP dashboards are not automatically connected",
+    "Host/Kubernetes/alerts investigated only; no automatic linking",
+    "No claim of actual alert delivery, log streaming, OAuth/SSO or full production role coverage"
+  ]
+}

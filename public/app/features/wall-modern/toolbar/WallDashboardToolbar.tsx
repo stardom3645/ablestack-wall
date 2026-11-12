@@ -40,6 +40,7 @@ import { Button } from '../ui';
 import { canAdjustKpiLayout } from '../workspace/kpiLayout';
 
 import { WallLayoutHistoryControls } from './WallLayoutHistoryControls';
+import { WallNetdiveVMControl } from './WallNetdiveVMControl';
 import { WallScopeControl } from './WallScopeControl';
 import { WallTimeRangeControl } from './WallTimeRangeControl';
 
@@ -180,6 +181,7 @@ export function WallDashboardToolbar({
       {!analysisOnly && (
         <div className="wall-toolbar-secondary" role="group" aria-label="대시보드 작업">
           {canAdjustLayout && <WallLayoutHistoryControls />}
+          {!hideLinksControls && <WallNetdiveVMControl dashboard={dashboard} />}
           {!hideLinksControls && netdive && anchor && (
             <Button
               render={

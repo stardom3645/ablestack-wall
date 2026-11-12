@@ -7,8 +7,20 @@ import { locationService } from '@grafana/runtime';
 import type { DashboardSearchItem } from '../search/types';
 
 import { WallNavigation } from './WallNavigation';
+import { useNetdiveURL } from './useNetdiveURL';
 
 jest.mock('./assets/ablestack-mark.png', () => 'wall-mark.png');
+jest.mock('./useNetdiveURL', () => ({ useNetdiveURL: jest.fn() }));
+
+it('adds one general Netdive entry only with explicit configuration, using the existing primary item', () => {
+  jest.mocked(useNetdiveURL).mockReturnValue('http://netdive.test:8082/ui_v2/');
+  const { rerender } = render(ui());
+  expect(screen.getAllByRole('link', { name: 'Netdive' })).toHaveLength(1);
+  expect(screen.getByRole('link', { name: 'Netdive' })).toHaveAttribute('target', '_blank');
+  jest.mocked(useNetdiveURL).mockReturnValue(undefined);
+  rerender(ui());
+  expect(screen.queryByRole('link', { name: 'Netdive' })).not.toBeInTheDocument();
+});
 const vm: DashboardSearchItem = {
   uid: 'vm',
   title: '가상머신 상세',
