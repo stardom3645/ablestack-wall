@@ -10,15 +10,21 @@ beforeEach(() => {
   fetchMock.mockReset();
 });
 
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 afterAll(() => {
   global.fetch = originalFetch;
 });
 
-it('renders the deployed product version with the approved copyright', async () => {
+it('uses the browser year for copyright independently of the deployed version', async () => {
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date('2027-06-15T12:00:00'));
   fetchMock.mockResolvedValue({ ok: true, json: async () => ({ version: 'v4.7.5-20261110' }) });
   render(<Footer />);
   expect(await screen.findByText('ABLESTACK v4.7.5-20261110')).toBeInTheDocument();
-  expect(screen.getByText('2021-2026 ABLECLOUD Inc. All Rights Reserved.')).toBeInTheDocument();
+  expect(screen.getByText('2021-2027 ABLECLOUD Inc. All Rights Reserved.')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Documentation' })).toBeInTheDocument();
 });
 

@@ -87,3 +87,33 @@ Netdive에는 v1 계약 유지, graph 중복 최종 차단 유지, API 배포/�
 이번 변경은 code/config 준비이며 운영 반영은 별도 승인 후 진행한다. 새 frontend artifact와 실제 Netdive URL의 정적 설정을 함께 준비한다. 기존 UUID query dashboard는 JSON 수정 없이 지원하며 이름/SQL 기반 dashboard에는 기능을 강제하지 않는다. 객체 진입에는 Netdive UI가 필요하고 역방향은 Analyzer API와 Wall 신뢰/권한 조건까지 충족해야 한다.
 
 배포 전에는 현재 frontend artifact·설정 파일을 보관하고 별도 계정/조직에서 일반 진입·UUID·중복·권한·시간을 확인한다. UI는 기존 artifact로 되돌리고 새 정적 설정을 제거/복원하면 롤백된다. 기존 사용자 대시보드·메뉴 링크·DB schema는 변경하지 않았으므로 DB 되돌리기는 필요하지 않다. 운영 서비스 재시작·대시보드 배포는 이 작업에서 수행하지 않았다.
+
+## 2026-11-12 — Wall 전담 독립 안정화 검증
+
+기준 브랜치는 `codex/wall-modern-lite`, HEAD `337b786b7c`이며 `aa15fe8d31`과 Footer 커밋 `db802e4218`을 포함한다. 기존 Footer 관련 미커밋 6개 파일은 보존했다. 공통 Git `core.worktree`가 별도 branding worktree를 가리키므로 검토 명령에는 실제 Git 디렉터리/작업 경로를 명시했다. 이번 작업에서는 Git 설정, 복구된 3334 네트워크 설정, 운영 서비스 및 다른 저장소를 변경하지 않았다.
+
+### 확인된 결함과 최소 수정
+
+`selectedVM`이 정상 PromQL selector `{ }`, `{\t}`, `{domain="vm-a", }` 뒤에 UUID matcher를 추가할 때 불필요한 쉼표를 붙였다. 추가한 6개 회귀 사례 중 수정 전 3개가 실패했다. `netdive.ts`의 쉼표 필요 조건 하나만 수정하여 공백으로 끝나는 빈/후행 쉼표 selector를 인식하고 나머지 원문과 정적 조건을 유지한다. 저장된 쿼리/변수/대시보드 JSON, URL 규격 및 시각화는 변경하지 않는다.
+
+### 독립 재검증
+
+- Jest 9 suites / 73 tests 통과: 신규 selector 회귀 6개, 기존 native LinkSrv/DashboardLinks/AlertLabels, Footer 12 tests 포함.
+- Production 프런트엔드 빌드 통과, 기존 자산/entrypoint 크기 경고 2개. 새 backend 빌드나 현재 3334 UI 반영은 하지 않았다.
+- Netdive 관련 TS/TSX ESLint 및 Betterer 통과. 같은 소스 복사본/의존성에서 수정 전후 전체 TypeScript 208개 진단으로 동일하며 신규 0개이다. 전체 TypeScript 통과나 전체 Grafana 릴리스 검증으로 표현하지 않는다.
+- 별도 loopback QA 3342 / DB 복사본 / 고유 쿠키 / 새 정적 자산으로 확인했다. QA 경보 평가/발송은 비활성화했다. 기존 3334 바이너리/프로세스/설정은 유지했다.
+- 실제 UUID의 Wall 확인 쿼리, 새 탭, Netdive ready / 1-hop / 3개 객체, 동일 객체 상세 및 실제 시간/org/dashboard 문맥을 확인했다. 공백 selector도 실제 proxy query에 `{ uuid=…}`로 전달되어 성공했다.
+- 전체/다중 선택은 Wall에서 링크를 차단했다. UUID 변수가 없는 일반 대시보드에는 VM 컨트롤이 없다. 실제 그래프 중복/실제 미존재 UUID/잘못된 UUID는 각각 ambiguous/not-found/invalid이며 Explorer를 열지 않았다.
+- 중앙 설정이 있을 때 Rail 일반 진입은 1개이고 객체 문맥 없이 열린다. 설정 파일이 없는 QA reload에서는 Rail 0개, 기존 Dashboard Link와 VM 관계 탐색은 유지된다. 사용자 링크도 원래 href를 보존한다.
+
+### 배포 전 데이터 범위 및 Netdive 의존성
+
+현재 3334 Prometheus의 VM 메타데이터 54개는 현재 Netdive 그래프에서 모두 not-found였다. 기존 Netdive QA가 사용한 다른 실제 Prometheus는 123개 중 122개 ready / 1개 ambiguous였다. 운영 설정을 자동 변경하거나 이름/IP로 대체하지 않았다. 성공한 1-hop 검증은 후자의 실제 데이터를 사용하는 격리 QA 결과이며 현재 3334 전체 VM의 운영 연동 성공을 의미하지 않는다.
+
+Netdive UI `3e4c9d4`의 수신 소스와 Wall URL 계약은 일치한다. Analyzer `1a20064f`에는 이후 별도의 CA 신뢰 관련 미커밋 수정이 존재하므로 최종 배포 리비전과 API 가용성을 Netdive 담당자가 확정해야 한다. `wallOrg`는 인증 수단이 아니고 기존 Grafana proxy 권한과 Netdive 세션/RBAC를 유지한다. 보호된 Wall 조직의 역방향 인증 위임, 역할별 SSO/OAuth 및 실제 경보 발송은 이번 검증에 포함하지 않는다. Host/Kubernetes/경보 자동 연결은 추가하지 않았다.
+
+상세 측정은 기존 측정 파일의 `stabilization` 항목에 기록한다. 실제 VM UUID/호스트 및 화면 원본은 저장소 밖 검증 디렉터리에 보관하고 커밋하지 않는다.
+
+추가 실제 확인: 현재 Netdive 개발 UI의 기존 세션으로 `GET /api/wall/navigation`을 호출한 결과 HTTP 404였다. 정방향 VM 진입은 ready/1-hop/3개 객체로 유지됐다. 역방향 API 배포와 CA 신뢰 변경의 최종 반영은 Netdive 담당 확인 사항이며 Wall에서 우회 API나 새로운 URL 규격을 추가하지 않았다.
+
+Scope clarification: graph matching and reverse API HTTP 404 were checked against the local Netdive development UI at `127.0.0.1:8082` and its development Analyzer proxy. They are not measurements of the operational CCVM Netdive. The original 3334 PID/config, dashboard47/datasource7/alert_rule57/org1 record hashes, pending Footer work and Git index/config remain unchanged. Only our isolated QA and browser task were stopped. No commit, push or deployment was performed.

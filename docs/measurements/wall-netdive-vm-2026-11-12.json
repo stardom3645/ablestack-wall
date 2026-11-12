@@ -136,5 +136,84 @@
     "SQL/name/IP dashboards are not automatically connected",
     "Host/Kubernetes/alerts investigated only; no automatic linking",
     "No claim of actual alert delivery, log streaming, OAuth/SSO or full production role coverage"
-  ]
+  ],
+  "stabilization": {
+    "date": "2026-11-12",
+    "baseline": "337b786b7c",
+    "branch": "codex/wall-modern-lite",
+    "fix": "Preserve whitespace-only and trailing-comma selectors when appending VM UUID matcher",
+    "regressionBefore": {
+      "failed": 3,
+      "passed": 10
+    },
+    "tests": {
+      "suites": 9,
+      "passed": 73,
+      "eslint": "pass",
+      "betterer": "pass",
+      "production": "pass; two existing size warnings",
+      "typescript": {
+        "before": 208,
+        "after": 208,
+        "new": 0
+      }
+    },
+    "browser": {
+      "newTab": true,
+      "sameObject": true,
+      "hops": 1,
+      "nodes": 3,
+      "whitespaceSelector": true,
+      "allBlocked": true,
+      "multiBlocked": true,
+      "noUUIDControl": false,
+      "receiverStates": ["ambiguous", "not-found", "invalid"],
+      "errorExplorerOpened": false,
+      "optionalRailConfigured": 1,
+      "optionalRailMissing": 0,
+      "dashboardLinkFallback": true,
+      "existingUserLinkPreserved": true
+    },
+    "dataScopes": {
+      "current3334": {
+        "series": 54,
+        "notFound": 54
+      },
+      "actualQAMetrics": {
+        "series": 123,
+        "ready": 122,
+        "ambiguous": 1
+      },
+      "comparedGraph": "Local Netdive development UI 127.0.0.1:8082 and development Analyzer proxy; not operational CCVM Netdive"
+    },
+    "scope": {
+      "isolatedQA": true,
+      "original3334Restarted": false,
+      "networkSettingsChanged": false,
+      "operatingDBChanged": false,
+      "otherRepositoriesModified": false,
+      "newWallUIAppliedTo3334": false
+    },
+    "limits": [
+      "Protected organization reverse authentication delegation not verified",
+      "Live role-by-role SSO/OAuth and actual alert delivery not tested",
+      "Current 3334 and Netdive metric collections refer to different VM populations",
+      "Analyzer has separate pending CA trust changes; final deployed revision/API availability needs confirmation"
+    ],
+    "reverseCurrentAPI": {
+      "status": 404,
+      "forwardState": "ready",
+      "hops": 1,
+      "nodes": 3,
+      "endpointScope": "Local Netdive development UI proxy"
+    },
+    "preservation": {
+      "original3334PIDAndConfigUnchanged": true,
+      "originalMonitoredRecordsUnchanged": true,
+      "existingFooterWorkPreserved": true,
+      "gitIndexAndConfigUnchanged": true,
+      "isolatedQAStopped": true,
+      "noCommitOrPush": true
+    }
+  }
 }

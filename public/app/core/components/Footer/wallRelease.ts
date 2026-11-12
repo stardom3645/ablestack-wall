@@ -14,8 +14,10 @@ export async function loadWallReleaseVersion(appSubUrl = '', signal?: AbortSigna
       return undefined;
     }
     const version = release.version;
-    // Accept release suffixes without rendering arbitrary deployment content as a product version.
-    return typeof version === 'string' && /^v\d+\.\d+\.\d+(?:-[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*)?$/.test(version)
+    // Preserve modern and legacy Mold releases (e.g. V4.0-4.0.15) without inventing a version.
+    return typeof version === 'string' &&
+      version.trim() === version &&
+      /^(?:[vV]\d+\.\d+\.\d+(?:-[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*)?|[vV]\d+\.\d+-\d+\.\d+\.\d+)$/.test(version)
       ? version
       : undefined;
   } catch {

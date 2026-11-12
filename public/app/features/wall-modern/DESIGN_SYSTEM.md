@@ -2519,6 +2519,8 @@ REF174의 승인 레이아웃/40vw/Toolbar·Sidebar 비율·기존 기능을 유
 | 적용 브랜치/범위          | 사용자 요청에 따라 `diplo-260908` 별도 worktree와 `codex/wall-modern-lite` 양쪽에 동일 Footer 소스 적용. monitor/cockpit-plugin/운영/백엔드/포트 변경 없음. 후속 파일 생성 계약은 `docs/WALL_RELEASE_BRANDING.md`.                                             |
 | 검증                      | Footer/로더 Jest 2 suites·11 tests 및 변경 TS/TSX ESLint 통과. production 설정 로컬 빌드 완료. 실제 데스크톱의 별도 로그인 검증 탭에서 기본 문구와 v4.7.5-20261110 주입 표시/12px computed font를 확인하고 JSON 기본값을 원복. 기존 사용자 탭은 갱신하지 않음. |
 
+2026-11-12 호환 수정: 실제 CCVM의 Mold `buildVersion=V4.0-4.0.15`를 확인하여 로더와 monitor에 기존 두 자리 버전 형식을 허용했다. 원문 대소문자/값을 보존하고 trim/버전 추측 변환은 하지 않는다. 기존 현대식 버전도 유지하며 공백/개행 값은 거부한다. Footer 12 tests와 monitor 6 tests를 통과했다. CSS/레이아웃/엔진 버전은 변경하지 않았으며 실제 CCVM 화면 반영은 별도다.
+
 추가 검증 한계: LoginPage 기존 테스트까지 포함한 실행은 번역 리소스 XHR의 jsdom AggregateError로 실패했으며 Footer 전용 테스트와 구분한다. 개발 webpack 설정에서 번역 초기화 오류가 발생해 production 설정 빌드로 로컬 preview를 복구했다. 3317 health와 대시보드 HTTP 200을 확인했다. 3318 fixture는 기존 launchd가 참조하는 `/tmp/wall-modern-lite-runtime/metrics-fixture.py`가 없어 응답하지 않으며 이번 로그인 변경 범위에서 수정하지 않았다.
 
 ## REF-180 — Wall–Netdive UUID 관계 탐색 (2026-11-12)
@@ -2534,3 +2536,13 @@ REF174의 승인 레이아웃/40vw/Toolbar·Sidebar 비율·기존 기능을 유
 | 보존/한계         | 원본 dashboard47·datasource7·alert_rule57·org1 레코드 hash 동일. 별도 DB·쿠키·정적 자산 QA만 사용/종료. 현재 Analyzer API 미배포 안내 확인으로 이번 역방향 왕복 미완료. Host/Kubernetes/경보 자동 연결·실제 인증/경보 발송·로그 스트림 지원을 추가하지 않음                                                               |
 
 상세 계약·배포 준비·롤백·Netdive 전달 사항은 `docs/WALL_NETDIVE_INTEGRATION.md`, 측정 요약은 `docs/measurements/wall-netdive-vm-2026-11-12.json`이다. 운영 DB·대시보드 배포·서비스 재시작 및 기존 프로토콜·포트 전환은 수행하지 않았다.
+
+2026-11-12 REF-179 후속: 사용자 승인에 따라 저작권 끝 연도를 브라우저 로컬 `new Date().getFullYear()`로 표시한다. 2021 시작 연도/회사명/제품 릴리스 파일/기존 Footer 컴포넌트 및 CSS는 유지한다. 새로고침/재렌더 시 현재 연도를 읽으며 연도 변경 타이머는 추가하지 않는다. 기존 Footer 테스트의 브라우저 시간을 2027로 고정하여 `2021-2027` 표시와 제품 버전 독립성을 검증한다.
+
+REF-179 브라우저 연도 검증 결과: diplo-260908 커밋93a8d4f094의 production 프런트 빌드와 Footer12tests 통과. 별도 빌드 VM의 임시 preview(기존 backend5cd43cc4, 임시 DB/플러그인 경로)와 별도 Ego 탭에서 실제 브라우저2026 → 2021-2026 표시 확인. 2027은 Jest의 고정 시계 fixture로 검증하여 실제 시간과 구분한다. 사용 중인 로컬/CCVM 탭은 갱신하지 않았고 임시 preview는 종료했다. 로컬3317 health/dashboard HTTP200, 기존3318 fixture는 미응답이며 변경하지 않았다. CCVM용 새 패키지는 public/build만 교체하며 기존 버전JSON/monitor/DB를 보존한다.
+
+## REF-181 — Netdive selector 최소 안정화 및 독립 검증 (2026-11-12)
+
+REF-180의 기존 공통 Toolbar/Popover/Button/PrimaryItem, Grafana 11.4.0-pre 및 Scenes 5.20.3 경로를 그대로 유지한다. 참조 계약은 Netdive UI `3e4c9d4`/Analyzer `1a20064f`의 실제 소스이며, 새로운 UI primitive/import/CSS/디자인 토큰은 추가하지 않는다. `netdive.ts`의 UUID matcher 구분자 조건 하나와 `netdive.test.ts`의 6개 회귀 사례만 수정하여 공백 또는 후행 쉼표가 있는 정상 selector를 보존한다. native 링크/권한/proxy, 사용자 설정/JSON, Footer의 기존 별도 변경과 복구된 실행 환경은 유지한다.
+
+별도 QA에서 실제 VM 새 탭/동일 객체/1-hop/전체·다중 차단/중복·미존재·invalid 차단/선택적 Rail/기존 링크 fallback을 확인했다. 9 suites73tests, ESLint/Betterer/production frontend 빌드는 통과했고 TypeScript는 전후 기존208진단/신규0이다. 실제 3334 VM54개와 현재 Netdive 그래프는 매칭되지 않으며, 122유일/1중복 및 1-hop 성공은 별도 실제 Prometheus를 쓰는 QA 범위다. 다른 저장소 코드/운영 DB·서비스·대시보드·현재3334 자산·네트워크 설정은 변경하지 않는다. 세부 결과와 배포 전 의존성은 `docs/WALL_NETDIVE_INTEGRATION.md`의 독립 안정화 절과 기존 측정 JSON의 `stabilization`을 따른다.

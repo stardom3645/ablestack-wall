@@ -2,7 +2,7 @@
 
 Wall Footer는 Grafana 내부 buildInfo와 별도로 `${appSubUrl}/public/ablestack-release.json`을 읽는다.
 기본 파일은 `{"version": null}`이며 누락/HTTP 실패/잘못된 JSON/유효하지 않은 버전은 `ABLESTACK Wall`로 표시한다.
-저작권은 `2021-2026 ABLECLOUD Inc. All Rights Reserved.`로 표시한다.
+저작권은 `2021-{브라우저 현재 연도} ABLECLOUD Inc. All Rights Reserved.`로 표시한다. 브라우저의 로컬 Date.getFullYear()를 렌더 시 읽으므로 외부 통신 없이 동작한다. 열린 화면의 연도는 새로고침/재렌더 시 갱신하며 자정 타이머를 추가하지 않는다. 배포 JSON과 제품 버전에는 영향을 주지 않는다.
 
 ## 배포 계약
 
@@ -16,7 +16,7 @@ CCVM의 Wall 설치 경로가 기존 구성과 같다면 대상 파일은 다음
 }
 ```
 
-버전은 `v숫자.숫자.숫자` 및 선택적인 영숫자 릴리스 suffix를 허용한다.
+버전은 v/V 접두사의 `숫자.숫자.숫자` 및 선택적인 영숫자 릴리스 suffix와 기존 Mold의 `V4.0-4.0.15` 형식을 허용한다. 기존 값의 대소문자/숫자를 원문 그대로 보존하며 새 릴리스 번호로 추측 변환하지 않는다.
 정상 파일을 읽으면 두 번째 줄에 `ABLESTACK v4.7.5-20261110`을 표시한다.
 Footer가 mount될 때 `cache: no-store`로 조회하고 언마운트 시 요청을 취소한다.
 파일 교체 후 페이지 새로고침으로 반영하며 JS 재빌드나 서비스 재시작은 필요 없다.

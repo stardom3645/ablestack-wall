@@ -1490,3 +1490,10 @@ SQL 테스트에서 native DatasetSelector를 Code 진입 시 새로 렌더하�
 
 - 최초 commit은 frontend-betterer의 신규255건으로 차단됐다. 사용자 요청으로 훅 우회/기준 완화 없이 번역 JSX/타입 단언·명시 any를 정리했다. 기존 Trans와 한글 기본 문구, 실제 이벤트/prop/native API 계약을 사용한다. Inspector 마스킹·저장 모델·운영 환경은 유지한다.
 - 이후 사용자가 추가 정리 범위를 커밋 가능 선으로 제한했다. 전역 타입 부채 정리/새 기능은 진행하지 않는다. 변경 후 전체84suites780tests·snapshot1 통과(기존1skip), Python9tests 통과. Betterer baseline 변화는 실제 제거된 이전 위반의 감소분만 허용하며 신규 위반을 등록하지 않는다.
+
+## 2026-11-12 — Netdive VM 연동 독립 안정화
+
+- codex/wall-modern-lite의 aa15fe8d31/337b786b7c 검토. 기존 Footer 미커밋 보존, core.worktree 오지정은 변경하지 않고 실제 경로를 명시했다.
+- 공백 빈 selector/후행 쉼표에 UUID를 붙일 때 쉼표가 중복되는 문제만 수정. 신규6사례 중 수정 전3실패, 수정 후 전체 관련9suites73tests 통과. Production/ESLint/Betterer 통과, TypeScript208→208·신규0.
+- 별도 DB/쿠키/3342/새 frontend QA에서 실제 UUID→Netdive 동일 객체1-hop3nodes, 공백selector 실제조회, All/multi/noUUID·중복/미존재/invalid, optional Rail1/없을때0·기존 Dashboard Link fallback 확인. Netdive 저장소는 읽기만 했다.
+- 현재3334 metrics54는 Netdive에서 미존재, 다른 실제 QA metrics123은122유일/1중복으로 범위를 구분했다. 현재3334 서비스·네트워크/운영 DB/대시보드/원래 사용자 탭은 변경하지 않았다. 후속 기록은 docs/WALL_NETDIVE_INTEGRATION.md와 DESIGN_SYSTEM.md REF181 및 기존 측정 JSON stabilization을 따른다.

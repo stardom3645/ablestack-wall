@@ -45,3 +45,10 @@ it('uses default branding when the file is missing, invalid JSON, or unreachable
   fetchMock.mockRejectedValue(new TypeError('Network error'));
   expect(await loadWallReleaseVersion()).toBeUndefined();
 });
+
+it('preserves the legacy Mold version from an installed CCVM', async () => {
+  fetchMock.mockResolvedValue({ ok: true, json: async () => ({ version: 'V4.0-4.0.15' }) });
+  expect(await loadWallReleaseVersion()).toBe('V4.0-4.0.15');
+  fetchMock.mockResolvedValue({ ok: true, json: async () => ({ version: 'v4.7.5\n' }) });
+  expect(await loadWallReleaseVersion()).toBeUndefined();
+});

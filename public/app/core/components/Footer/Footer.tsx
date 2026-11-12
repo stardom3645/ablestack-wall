@@ -119,7 +119,11 @@ export const Footer = memo(({ customLinks, hideEdition }: Props) => {
             </li>
           ))}
         </ul>
-        <div>2021-2026 ABLECLOUD Inc. All Rights Reserved.</div>
+        <div>
+          {t('footer.copyright', '2021-{{year}} ABLECLOUD Inc. All Rights Reserved.', {
+            year: new Date().getFullYear(),
+          })}
+        </div>
         <div>{releaseVersion ? `ABLESTACK ${releaseVersion}` : 'ABLESTACK Wall'}</div>
       </div>
     </footer>
