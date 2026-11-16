@@ -82,10 +82,10 @@ describe('ServiceAccountsListPage tests', () => {
     });
     expect(screen.getByText(/Data source scavenger/)).toBeInTheDocument();
     expect(screen.getByText(/sa-data-source-scavenger/)).toBeInTheDocument();
-    expect(screen.getByText(/Editor/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Data source scavenger 권한: Editor' })).toBeInTheDocument();
   });
 
-  it('Should display enable button for disabled account', () => {
+  it('Should display enable action for disabled account', async () => {
     setup({
       serviceAccounts: [
         {
@@ -94,10 +94,11 @@ describe('ServiceAccountsListPage tests', () => {
         },
       ],
     });
-    expect(screen.getByRole('button', { name: 'Enable' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Data source scavenger 서비스 계정 작업' }));
+    expect(await screen.findByRole('menuitem', { name: '활성화' })).toBeInTheDocument();
   });
 
-  it('Should display Add token button for account without tokens', () => {
+  it('Should display Add token action for account without tokens', async () => {
     setup({
       serviceAccounts: [
         {
@@ -106,8 +107,9 @@ describe('ServiceAccountsListPage tests', () => {
         },
       ],
     });
-    expect(screen.getByRole('button', { name: 'Add token' })).toBeInTheDocument();
-    expect(screen.getByText(/No tokens/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Data source scavenger 서비스 계정 작업' }));
+    expect(await screen.findByRole('menuitem', { name: '토큰 추가' })).toBeInTheDocument();
+    expect(screen.getByText('토큰 0개')).toBeInTheDocument();
   });
 
   it('Should update service account role', async () => {
@@ -118,8 +120,8 @@ describe('ServiceAccountsListPage tests', () => {
     });
 
     const user = userEvent.setup();
-    await user.click(screen.getByText('Editor'));
-    await user.click(screen.getByText('Admin'));
+    await user.click(screen.getByRole('button', { name: 'Data source scavenger 권한: Editor' }));
+    await user.click(await screen.findByRole('menuitemradio', { name: /관리자/ }));
 
     expect(updateServiceAccountMock).toHaveBeenCalledWith({
       ...getDefaultServiceAccount(),
@@ -135,7 +137,8 @@ describe('ServiceAccountsListPage tests', () => {
     });
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: /Disable/ }));
+    await user.click(screen.getByRole('button', { name: 'Data source scavenger 서비스 계정 작업' }));
+    await user.click(await screen.findByRole('menuitem', { name: '비활성화' }));
     await user.click(screen.getByRole('button', { name: 'Disable service account' }));
 
     expect(updateServiceAccountMock).toHaveBeenCalledWith({
@@ -152,8 +155,9 @@ describe('ServiceAccountsListPage tests', () => {
     });
 
     const user = userEvent.setup();
-    await user.click(screen.getByLabelText(`Delete service account ${getDefaultServiceAccount().name}`));
-    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: 'Data source scavenger 서비스 계정 작업' }));
+    await user.click(await screen.findByRole('menuitem', { name: '서비스 계정 삭제' }));
+    await user.click(screen.getByRole('button', { name: '삭제' }));
 
     expect(deleteServiceAccountMock).toHaveBeenCalledWith(42);
   });

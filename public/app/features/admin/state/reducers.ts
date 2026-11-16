@@ -156,6 +156,7 @@ export const userListAdminSlice = createSlice({
         ...state,
         ...rest,
         totalPages,
+        totalCount,
         perPage,
         showPaging: totalPages > 1,
         isLoading: false,

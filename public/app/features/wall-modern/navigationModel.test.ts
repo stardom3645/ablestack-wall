@@ -20,6 +20,8 @@ it('resolves direct/reloaded dashboard, explicit exploration and library scopes 
   expect(navigationContext('/dashboards', '?category=logs', [host])).toBe('logs');
   expect(navigationContext('/dashboards', '?starred&category=hosts', [host])).toBe('favorites');
   expect(navigationContext('/d/not-in-search/view', '', [])).toBe('all');
+  expect(navigationContext('/alerting/list', '', [])).toBe('alerts');
+  expect(navigationContext('/alerting/grafana/abc/view', '', [])).toBe('alerts');
 });
 it('includes every item in all scope and filters category/folder/favorites/search without mutating data', () => {
   const items = [host, { ...unknown, isStarred: false }];

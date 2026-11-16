@@ -14,6 +14,7 @@ describe('usersReducer', () => {
           ...initialState,
           users: getMockUsers(1),
           isLoading: true,
+          totalCount: 1,
         });
     });
   });

@@ -4,8 +4,9 @@ import { HTMLAttributes } from 'react';
 import { DataSourceSettings as DataSourceSettingsType, GrafanaTheme2 } from '@grafana/data';
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors';
 import { TestingStatus, config } from '@grafana/runtime';
-import { AlertVariant, Alert, useTheme2, Link, useStyles2 } from '@grafana/ui';
+import { AlertVariant, useTheme2, Link, useStyles2 } from '@grafana/ui';
 import { Trans } from 'app/core/internationalization';
+import { WallNotice } from 'app/features/wall-modern/WallNotice';
 import { safeQueryError } from 'app/features/wall-modern/panels/safeQueryError';
 
 import { contextSrv } from '../../../core/core';
@@ -31,8 +32,6 @@ const getStyles = (theme: GrafanaTheme2, hasTitle: boolean) => {
     content: css({
       color: theme.colors.text.secondary,
       paddingTop: hasTitle ? theme.spacing(1) : 0,
-      maxHeight: '50vh',
-      overflowY: 'auto',
     }),
     disabled: css({
       pointerEvents: 'none',
@@ -102,20 +101,21 @@ export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource,
 
   if (message) {
     return (
-      <div
-        className={cx('wall-datasource-test-result', styles.container)}
-        aria-live={severity === 'error' ? 'assertive' : 'polite'}
-      >
-        <h3>
-          {saveFailed
-            ? '설정 저장 실패'
-            : severity === 'success'
-              ? '연결 성공'
-              : severity === 'error'
-                ? '연결 실패'
-                : '연결 확인'}
-        </h3>
-        <Alert severity={severity} title={message} data-testid={e2eSelectors.pages.DataSource.alert}>
+      <div className={cx('wall-datasource-test-result', styles.container)}>
+        <WallNotice
+          severity={severity}
+          title={
+            saveFailed
+              ? '설정 저장 실패'
+              : severity === 'success'
+                ? '연결 성공'
+                : severity === 'error'
+                  ? '연결 실패'
+                  : '연결 확인'
+          }
+          data-testid={e2eSelectors.pages.DataSource.alert}
+        >
+          <p>{message}</p>
           {testingStatus?.details && (
             <>
               {detailsMessage ? safeQueryError(String(detailsMessage)) : null}
@@ -137,7 +137,7 @@ export function DataSourceTestingStatus({ testingStatus, exploreUrl, dataSource,
               ) : null}
             </>
           )}
-        </Alert>
+        </WallNotice>
       </div>
     );
   }

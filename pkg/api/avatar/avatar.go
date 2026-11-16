@@ -109,6 +109,8 @@ func (a *AvatarCacheServer) Handler(ctx *contextmodel.ReqContext) {
 
 	avatar := a.GetAvatarForHash(a.cfg, hash)
 
+	// Expose the existing Gravatar classification without changing image data or its URL.
+	ctx.Resp.Header().Set("X-Wall-Avatar-Custom", strconv.FormatBool(avatar.GetIsCustom()))
 	ctx.Resp.Header().Set("Content-Type", "image/jpeg")
 
 	if !a.cfg.EnableGzip {

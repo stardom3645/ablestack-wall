@@ -28,6 +28,8 @@ const setup = (propOverrides?: object) => {
     searchQuery: '',
     page: 1,
     totalPages: 1,
+    totalCount: undefined,
+    sort: undefined,
     perPage: 30,
     externalUserMngInfo: '',
     fetchInvitees: jest.fn(),

@@ -289,6 +289,17 @@
   width: var(--wall-snap-width) !important;
   height: var(--wall-snap-height) !important;
 }
+/* Connect only the solver's existing grid stops on the compositor. No raw
+   pointer interpolation, overshoot or changes to snap/collision coordinates. */
+.wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-wall-magnet='move'] {
+  transition: transform var(--wall-motion-drag-duration, 64ms) var(--wall-motion-grid-easing) !important;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-kpi-layout[data-interacting='true'] .wall-kpi-layout-item[data-wall-magnet='move'] {
+    transition: none !important;
+  }
+}
 .wall-layout-alignment-guide {
   position: absolute;
   pointer-events: none;

@@ -1,13 +1,13 @@
-import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { OrgRole } from '@grafana/data';
-import { ConfirmModal, FilterInput, LinkButton, RadioButtonGroup, InlineField, EmptyState, Box } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
+import { ConfirmModal, FilterInput, LinkButton, EmptyState } from '@grafana/ui';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/core';
-import { Trans, t } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
+import { WallChoice } from 'app/features/wall-modern/management/WallChoice';
 import { StoreState, ServiceAccountDTO, AccessControlAction, ServiceAccountStateFilter } from 'app/types';
 
 import { ServiceAccountTable } from './ServiceAccountTable';
@@ -163,33 +163,13 @@ export const ServiceAccountsListPageUnconnected = ({
     setCurrentServiceAccount(null);
   };
 
-  const docsLink = (
-    <a
-      className="external-link"
-      href="https://grafana.com/docs/grafana/latest/administration/service-accounts/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      documentation.
-    </a>
-  );
-  const subTitle = (
-    <span>
-      <Trans
-        i18nKey="ablestack-wall.administration.service-and-access.service-accounts-tokens"
-        defaults="Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our {{ docsLink }}"
-        components={[docsLink]}
-      />
-    </span>
-  );
-
   return (
-    <Page
+    <WallAdminPage
       navId="serviceaccounts"
-      subTitle={subTitle}
+      description="자동화와 외부 애플리케이션이 Wall API를 사용하도록 계정과 토큰을 관리합니다."
       actions={
         <>
-          {!noServiceAccountsCreated && contextSrv.hasPermission(AccessControlAction.ServiceAccountsCreate) && (
+          {contextSrv.hasPermission(AccessControlAction.ServiceAccountsCreate) && (
             <LinkButton href="org/serviceaccounts/create" variant="primary">
               {t('ablestack-wall.administration.service-and-access.add-service-account', 'Add service account')}
             </LinkButton>
@@ -197,26 +177,25 @@ export const ServiceAccountsListPageUnconnected = ({
         </>
       }
     >
-      <Page.Contents>
+      <div>
         <div className="page-action-bar">
-          <InlineField grow>
-            <FilterInput
-              placeholder={t(
-                'ablestack-wall.administration.service-and-access.search-bar-service-account-by-name',
-                'Search service account by name'
-              )}
-              value={query}
-              onChange={onQueryChange}
-              width={50}
-            />
-          </InlineField>
-          <Box marginBottom={1}>
-            <RadioButtonGroup
-              options={availableFilters}
-              onChange={onStateFilterChange}
-              value={serviceAccountStateFilter}
-            />
-          </Box>
+          <FilterInput
+            aria-label="서비스 계정 검색"
+            placeholder="이름으로 서비스 계정 검색"
+            value={query}
+            onChange={onQueryChange}
+          />
+          <WallChoice
+            label="서비스 계정 상태"
+            value={serviceAccountStateFilter}
+            options={availableFilters}
+            onChange={(value) => {
+              const selected = availableFilters.find((filter) => filter.value === value);
+              if (selected) {
+                onStateFilterChange(selected.value);
+              }
+            }}
+          />
         </div>
         {!isLoading && !noServiceAccountsCreated && serviceAccounts.length === 0 && (
           <EmptyState
@@ -225,23 +204,8 @@ export const ServiceAccountsListPageUnconnected = ({
           />
         )}
         {!isLoading && noServiceAccountsCreated && (
-          <EmptyState
-            variant="call-to-action"
-            button={
-              <LinkButton
-                disabled={!contextSrv.hasPermission(AccessControlAction.ServiceAccountsCreate)}
-                href="org/serviceaccounts/create"
-                icon="key-skeleton-alt"
-                size="lg"
-              >
-                <Trans i18nKey="service-accounts.empty-state.button-title">Add service account</Trans>
-              </LinkButton>
-            }
-            message={t('service-accounts.empty-state.title', "You haven't created any service accounts yet")}
-          >
-            <Trans i18nKey="service-accounts.empty-state.more-info">
-              Remember, you can provide specific permissions for API access to other applications
-            </Trans>
+          <EmptyState variant="not-found" message="서비스 계정이 없습니다.">
+            <Trans i18nKey="wall.enterprise.text-c537b379">API 접근이 필요한 경우 서비스 계정을 추가하세요.</Trans>
           </EmptyState>
         )}
 
@@ -265,16 +229,9 @@ export const ServiceAccountsListPageUnconnected = ({
           <>
             <ConfirmModal
               isOpen={isRemoveModalOpen}
-              body={`Are you sure you want to delete '${currentServiceAccount.name}'${
-                !!currentServiceAccount.tokens
-                  ? ` and ${currentServiceAccount.tokens} accompanying ${pluralize(
-                      'token',
-                      currentServiceAccount.tokens
-                    )}`
-                  : ''
-              }?`}
-              confirmText="Delete"
-              title="Delete service account"
+              body={`${currentServiceAccount.name} 서비스 계정과 연결된 토큰 ${currentServiceAccount.tokens ?? 0}개를 삭제합니다. 이 계정의 API 접근이 중단됩니다.`}
+              confirmText="삭제"
+              title="서비스 계정 삭제"
               onConfirm={onServiceAccountRemove}
               onDismiss={onRemoveModalClose}
             />
@@ -286,7 +243,7 @@ export const ServiceAccountsListPageUnconnected = ({
               )}
               body={t(
                 'ablestack-wall.administration.service-and-access.confirm-disable',
-                "Are you sure you want to disable '${currentServiceAccount.name}'?"
+                `서비스 계정 ${currentServiceAccount.name}을 비활성화하면 이 계정의 토큰을 사용할 수 없습니다.`
               )}
               confirmText={t(
                 'ablestack-wall.administration.service-and-access.disable-service-account',
@@ -304,8 +261,8 @@ export const ServiceAccountsListPageUnconnected = ({
             />
           </>
         )}
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 };
 

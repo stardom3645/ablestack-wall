@@ -1,6 +1,6 @@
 /* Native management pages retain their forms, actions and access checks. */
 .wall-management-nav .wall-nav-section {
-  padding-top: 16px;
+  padding-top: 0;
 }
 .wall-management-nav .wall-nav-group-trigger {
   justify-content: space-between;

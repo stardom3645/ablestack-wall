@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { useParams } from 'react-router-dom-v5-compat';
 
-import { getTimeZone, NavModelItem } from '@grafana/data';
-import { Button, ConfirmModal, IconButton, Stack } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
+import { getTimeZone } from '@grafana/data';
+import { ConfirmModal } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
-import { t } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
+import { Button } from 'app/features/wall-modern/ui';
 import { AccessControlAction, ApiKey, ServiceAccountDTO, StoreState } from 'app/types';
 
 import { ServiceAccountPermissions } from './ServiceAccountPermissions';
@@ -81,15 +82,6 @@ export const ServiceAccountPageUnconnected = ({
     serviceAccount!
   );
 
-  const pageNav: NavModelItem = {
-    text: serviceAccount.name,
-    img: serviceAccount.avatarUrl,
-    subTitle: t(
-      'ablestack-wall.administration.service-and-access.manage-service-account-settings',
-      'Manage settings for an individual service account.'
-    ),
-  };
-
   useEffect(() => {
     loadServiceAccount(serviceAccountId);
     loadServiceAccountTokens(serviceAccountId);
@@ -137,70 +129,59 @@ export const ServiceAccountPageUnconnected = ({
   };
 
   return (
-    <Page navId="serviceaccounts" pageNav={pageNav}>
-      <Page.Contents isLoading={isLoading}>
-        <div>
-          {serviceAccount && !serviceAccount.isExternal && (
-            <Stack gap={2} height="auto" justifyContent="flex-end">
-              <Button
-                type={'button'}
-                variant="destructive"
-                onClick={showDeleteServiceAccountModal(true)}
-                disabled={!contextSrv.hasPermission(AccessControlAction.ServiceAccountsDelete)}
-              >
-                {t('ablestack-wall.administration.service-and-access.delete-service-account', 'Delete service account')}
-              </Button>
-              {serviceAccount.isDisabled ? (
-                <Button
-                  type={'button'}
-                  variant="secondary"
-                  onClick={handleServiceAccountEnable}
-                  disabled={!ableToWrite}
-                >
-                  {t(
-                    'ablestack-wall.administration.service-and-access.enable-service-account',
-                    'Enable service account'
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  type={'button'}
-                  variant="secondary"
-                  onClick={showDisableServiceAccountModal(true)}
-                  disabled={!ableToWrite}
-                >
-                  {t(
-                    'ablestack-wall.administration.service-and-access.disable-service-account',
-                    'Disable service account'
-                  )}
-                </Button>
-              )}
-            </Stack>
-          )}
-          {serviceAccount && serviceAccount.isExternal && (
-            <Stack gap={2} height="auto" justifyContent="flex-end">
-              <IconButton
-                disabled={true}
-                name="lock"
-                size="md"
-                tooltip={`This is a managed service account and cannot be modified.`}
-              />
-            </Stack>
-          )}
+    <WallAdminPage
+      navId="serviceaccounts"
+      title={serviceAccount.name}
+      isLoading={isLoading}
+      description="서비스 계정의 권한, 상태 및 API 토큰을 관리합니다."
+      context={
+        serviceAccount.id && !isLoading ? (
+          <>
+            <span>{serviceAccount.isDisabled ? '사용 중지' : '사용 가능'}</span>
+            {serviceAccount.isExternal && (
+              <span>
+                <Trans i18nKey="wall.enterprise.text-076ad705">외부에서 관리됨</Trans>
+              </span>
+            )}
+          </>
+        ) : undefined
+      }
+    >
+      <div aria-busy={isLoading}>
+        <section className="wall-admin-section">
+          <header>
+            <h2>
+              <Trans i18nKey="wall.enterprise.text-ddd297db">계정 정보</Trans>
+            </h2>
+            <p>
+              <Trans i18nKey="wall.enterprise.text-c629013f">이름과 기본 역할을 확인하고 관리합니다.</Trans>
+            </p>
+          </header>
           {serviceAccount && (
             <ServiceAccountProfile serviceAccount={serviceAccount} timeZone={timezone} onChange={onProfileChange} />
           )}
-          <Stack justifyContent="space-between" height="auto">
-            <h3>{t('ablestack-wall.common.tokens', 'Tokens')}</h3>
+        </section>
+        <section className="wall-admin-section">
+          <header className="wall-admin-section-heading">
+            <div>
+              <h2>
+                <Trans i18nKey="wall.enterprise.text-066199f3">API 토큰</Trans>
+              </h2>
+              <p>
+                <Trans i18nKey="wall.enterprise.text-5580449f">
+                  자동화와 외부 애플리케이션에서 사용하는 접근 토큰입니다.
+                </Trans>
+              </p>
+            </div>
             {!serviceAccount.isExternal && (
-              <Button onClick={() => setIsTokenModalOpen(true)} disabled={tokenActionsDisabled}>
+              <Button variant="outline" onClick={() => setIsTokenModalOpen(true)} disabled={tokenActionsDisabled}>
                 {t(
                   'ablestack-wall.administration.service-and-access.add-service-account-token',
                   'Add service account token'
                 )}
               </Button>
             )}
-          </Stack>
+          </header>
           {tokens && (
             <ServiceAccountTokensTable
               tokens={tokens}
@@ -209,10 +190,61 @@ export const ServiceAccountPageUnconnected = ({
               tokenActionsDisabled={tokenActionsDisabled}
             />
           )}
-          {!serviceAccount.isExternal && canReadPermissions && (
+        </section>
+        {!serviceAccount.isExternal && canReadPermissions && (
+          <section className="wall-admin-section">
+            <header>
+              <h2>
+                <Trans i18nKey="wall.enterprise.text-0df08157">계정 접근 권한</Trans>
+              </h2>
+              <p>
+                <Trans i18nKey="wall.enterprise.text-03d09892">
+                  이 서비스 계정을 관리할 수 있는 사용자와 역할입니다.
+                </Trans>
+              </p>
+            </header>
             <ServiceAccountPermissions serviceAccount={serviceAccount} />
-          )}
-        </div>
+          </section>
+        )}
+        {serviceAccount && !serviceAccount.isExternal && (
+          <section className="wall-admin-section wall-admin-danger-zone">
+            <header>
+              <h2>
+                <Trans i18nKey="wall.enterprise.text-01574b26">계정 상태 및 삭제</Trans>
+              </h2>
+              <p>
+                <Trans i18nKey="wall.enterprise.text-85487b69">
+                  비활성화하면 토큰을 사용할 수 없습니다. 삭제한 계정과 토큰은 복구할 수 없습니다.
+                </Trans>
+              </p>
+            </header>
+            <div className="wall-admin-actions">
+              {serviceAccount.isDisabled ? (
+                <Button variant="outline" onClick={handleServiceAccountEnable} disabled={!ableToWrite}>
+                  {t(
+                    'ablestack-wall.administration.service-and-access.enable-service-account',
+                    'Enable service account'
+                  )}
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={showDisableServiceAccountModal(true)} disabled={!ableToWrite}>
+                  {t(
+                    'ablestack-wall.administration.service-and-access.disable-service-account',
+                    'Disable service account'
+                  )}
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                className="wall-admin-danger"
+                onClick={showDeleteServiceAccountModal(true)}
+                disabled={!contextSrv.hasPermission(AccessControlAction.ServiceAccountsDelete)}
+              >
+                {t('ablestack-wall.administration.service-and-access.delete-service-account', 'Delete service account')}
+              </Button>
+            </div>
+          </section>
+        )}
 
         <ConfirmModal
           isOpen={isDeleteModalOpen}
@@ -234,10 +266,7 @@ export const ServiceAccountPageUnconnected = ({
             'ablestack-wall.administration.service-and-access.disable-service-account',
             'Disable service account'
           )}
-          body={t(
-            'ablestack-wall.administration.service-and-access.confirm-delete-service-account',
-            'Are you sure you want to delete this service account?'
-          )}
+          body={`서비스 계정 ${serviceAccount.name}을 비활성화하면 이 계정의 토큰을 사용할 수 없습니다.`}
           confirmText={t(
             'ablestack-wall.administration.service-and-access.disable-service-account',
             'Disable service account'
@@ -252,8 +281,8 @@ export const ServiceAccountPageUnconnected = ({
           onCreateToken={onCreateToken}
           onClose={onTokenModalClose}
         />
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 };
 

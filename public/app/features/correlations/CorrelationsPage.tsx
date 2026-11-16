@@ -16,12 +16,10 @@ import {
   type CellProps,
   type SortByFn,
   Pagination,
-  Icon,
 } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/core';
-import { useNavModel } from 'app/core/hooks/useNavModel';
 import { Trans, t } from 'app/core/internationalization';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction } from 'app/types';
 
 import { AddCorrelationForm } from './Forms/AddCorrelationForm';
@@ -31,7 +29,7 @@ import type { Correlation, RemoveCorrelationParams } from './types';
 import { CorrelationData, useCorrelations } from './useCorrelations';
 
 const sortDatasource: SortByFn<CorrelationData> = (a, b, column) =>
-  a.values[column].name.localeCompare(b.values[column].name);
+  (a.values[column]?.name ?? '').localeCompare(b.values[column]?.name ?? '');
 
 const isCorrelationsReadOnly = (correlation: CorrelationData) => correlation.provisioned;
 
@@ -41,7 +39,6 @@ const loaderWrapper = css`
 `;
 
 export default function CorrelationsPage() {
-  const navModel = useNavModel('correlations');
   const [isAdding, setIsAddingValue] = useState(false);
   const page = useRef(1);
 
@@ -100,13 +97,16 @@ export default function CorrelationsPage() {
     }: CellProps<CorrelationData, void>) => {
       return (
         !provisioned && (
-          <DeleteButton
-            aria-label={t('correlations.list.delete', 'delete correlation')}
-            onConfirm={() =>
-              handleDelete({ sourceUID, uid }, page.current > 1 && index === 0 && data?.correlations.length === 1)
-            }
-            closeOnConfirm
-          />
+          <span className="wall-correlation-delete">
+            {' '}
+            <DeleteButton
+              aria-label={t('correlations.list.delete', 'delete correlation')}
+              onConfirm={() =>
+                handleDelete({ sourceUID, uid }, page.current > 1 && index === 0 && data?.correlations.length === 1)
+              }
+              closeOnConfirm
+            />
+          </span>
         )
       );
     },
@@ -131,7 +131,12 @@ export default function CorrelationsPage() {
       {
         id: 'target',
         header: t('correlations.list.target', 'Target'),
-        cell: DataSourceCell,
+        cell: (props: CellProps<CorrelationData, DataSourceInstanceSettings>) =>
+          props.row.original.type === 'external' ? (
+            <Trans i18nKey="wall.correlations.external-target">외부 URL</Trans>
+          ) : (
+            <DataSourceCell {...props} />
+          ),
         sortType: sortDatasource,
       },
       { id: 'label', header: t('correlations.list.label', 'Label'), sortType: 'alphanumeric' },
@@ -154,26 +159,13 @@ export default function CorrelationsPage() {
   );
 
   return (
-    <Page
-      navModel={navModel}
-      subTitle={
-        <>
-          <Trans i18nKey="correlations.sub-title">
-            Define how data living in different data sources relates to each other. Read more in the{' '}
-            <a
-              href="https://grafana.com/docs/grafana/next/administration/correlations/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              documentation
-              <Icon name="external-link-alt" />
-            </a>
-          </Trans>
-        </>
-      }
+    <WallAdminPage
+      navId="correlations"
+      wide
+      description="데이터 소스 사이의 연결 규칙을 정의해 관련 데이터로 이동할 수 있도록 합니다."
       actions={addButton}
     >
-      <Page.Contents>
+      <div>
         <div>
           {!data && get.loading && (
             <div className={loaderWrapper}>
@@ -218,18 +210,20 @@ export default function CorrelationsPage() {
                 data={data.correlations}
                 getRowId={(correlation) => `${correlation.source.uid}-${correlation.uid}`}
               />
-              <Pagination
-                currentPage={page.current}
-                numberOfPages={Math.ceil(data.totalCount / data.limit)}
-                onNavigate={(toPage: number) => {
-                  fetchCorrelations({ page: (page.current = toPage) });
-                }}
-              />
+              {data.totalCount > data.limit && (
+                <Pagination
+                  currentPage={page.current}
+                  numberOfPages={Math.ceil(data.totalCount / data.limit)}
+                  onNavigate={(toPage: number) => {
+                    fetchCorrelations({ page: (page.current = toPage) });
+                  }}
+                />
+              )}
             </>
           )}
         </div>
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 }
 

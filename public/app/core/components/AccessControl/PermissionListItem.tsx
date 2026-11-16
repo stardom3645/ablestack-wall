@@ -1,11 +1,17 @@
 import { css } from '@emotion/css';
+import { LockKeyhole, Trash2 } from 'lucide-react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { Box, Button, Icon, Select, Tooltip, useStyles2 } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
+import { UserIdentity } from 'app/features/admin/Users/WallUsers';
+import { WallChoice } from 'app/features/wall-modern/management/WallChoice';
+import { Button as WallButton } from 'app/features/wall-modern/ui';
 
 import { ResourcePermission } from './types';
 
 interface Props {
+  wallPresentation?: boolean;
   item: ResourcePermission;
   permissionLevels: string[];
   canSet: boolean;
@@ -13,9 +19,64 @@ interface Props {
   onChange: (item: ResourcePermission, permission: string) => void;
 }
 
-export const PermissionListItem = ({ item, permissionLevels, canSet, onRemove, onChange }: Props) => {
+export const PermissionListItem = ({ item, permissionLevels, canSet, onRemove, onChange, wallPresentation }: Props) => {
   const styles = useStyles2(getStyles);
 
+  if (wallPresentation) {
+    const name = getName(item) ?? '';
+    return (
+      <li className="wall-permission-row">
+        <div className="wall-permission-identity">
+          <UserIdentity login={name} avatarUrl={item.userAvatarUrl ?? item.teamAvatarUrl} />
+          {item.isInherited && (
+            <small>
+              <Trans i18nKey="wall.enterprise.text-1b23a65c">폴더에서 상속됨</Trans>
+            </small>
+          )}
+        </div>
+        <WallChoice
+          value={item.permission}
+          options={permissionLevels.map((value) => ({ value, label: value }))}
+          label={`${name} 접근 권한: ${item.permission}`}
+          disabled={!canSet || !item.isManaged}
+          onChange={(permission) => onChange(item, permission)}
+        />
+        <Tooltip
+          content={
+            <>
+              {item.warning && <Box marginBottom={1}>{item.warning}</Box>}
+              {getPermissionInfo(item)}
+            </>
+          }
+        >
+          <WallButton
+            variant="ghost"
+            size="icon"
+            className={item.warning ? styles.warning : undefined}
+            aria-label={`${name} 권한 상세`}
+          >
+            <Icon name={item.warning ? 'exclamation-triangle' : 'info-circle'} />
+          </WallButton>
+        </Tooltip>
+        {item.isManaged ? (
+          <WallButton
+            size="icon"
+            variant="ghost"
+            className="wall-admin-danger"
+            disabled={!canSet}
+            onClick={() => onRemove(item)}
+            aria-label={`Remove permission for ${name}`}
+          >
+            <Trash2 size={15} aria-hidden="true" />
+          </WallButton>
+        ) : (
+          <span title={item.isInherited ? '상속된 권한' : '프로비저닝된 권한'}>
+            <LockKeyhole size={15} aria-label="잠긴 권한" />
+          </span>
+        )}
+      </li>
+    );
+  }
   return (
     <tr>
       <td>{getAvatar(item)}</td>

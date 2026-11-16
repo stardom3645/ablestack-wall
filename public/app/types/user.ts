@@ -84,6 +84,7 @@ export interface UsersState {
   page: number;
   perPage: number;
   totalPages: number;
+  totalCount?: number;
   sort?: string;
 }
 
@@ -127,6 +128,7 @@ export interface UserListAdminState {
   perPage: number;
   page: number;
   totalPages: number;
+  totalCount?: number;
   showPaging: boolean;
   filters: UserFilter[];
   isLoading: boolean;

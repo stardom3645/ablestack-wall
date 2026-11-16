@@ -31,7 +31,7 @@ export const Search = ({ onChange, value }: Props) => {
   const styles = useStyles2(getStyles, chromeHeaderHeight ?? 0);
 
   return (
-    <div className={styles.searchContainer}>
+    <div className={`${styles.searchContainer} wall-connection-search`}>
       <Input
         value={value}
         onChange={onChange}

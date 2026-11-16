@@ -87,7 +87,7 @@ describe('ServiceAccountPage tests', () => {
     });
     expect(screen.getAllByText(/Data source scavenger/)).toHaveLength(2);
     expect(screen.getByText(/^sa-data-source-scavenger$/)).toBeInTheDocument();
-    expect(screen.getByText(/Editor/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Data source scavenger 권한: Editor/)).toBeInTheDocument();
   });
 
   it('Should display enable button for disabled account', () => {
@@ -130,7 +130,7 @@ describe('ServiceAccountPage tests', () => {
         },
       ],
     });
-    expect(screen.getByText(/Expired/)).toBeInTheDocument();
+    expect(screen.getByText('만료됨')).toBeInTheDocument();
   });
 
   it('Should call API with proper params when edit service account info', async () => {
@@ -141,10 +141,10 @@ describe('ServiceAccountPage tests', () => {
     });
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: '편집' }));
     await userEvent.clear(screen.getByLabelText('Name'));
     await userEvent.type(screen.getByLabelText('Name'), 'Foo bar');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(screen.getByRole('button', { name: '저장' }));
 
     expect(updateServiceAccountMock).toHaveBeenCalledWith({
       ...getDefaultServiceAccount(),
@@ -162,8 +162,15 @@ describe('ServiceAccountPage tests', () => {
 
     const user = userEvent.setup();
     await userEvent.click(screen.getByLabelText(/Delete service account token/));
-    await user.click(screen.getByRole('button', { name: /^Delete$/ }));
+    await user.click(screen.getByRole('button', { name: '삭제' }));
 
     expect(deleteServiceAccountTokenMock).toHaveBeenCalledWith(42, 142);
   });
+});
+
+it('withholds status and destructive actions while the existing service account load is pending', () => {
+  setup({ serviceAccount: getDefaultServiceAccount(), isLoading: true });
+  expect(screen.getByText('불러오는 중')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Delete service account' })).not.toBeInTheDocument();
+  expect(screen.queryByText('사용 가능')).not.toBeInTheDocument();
 });

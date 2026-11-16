@@ -1,0 +1,235 @@
+/* Approved Quiet Toolbar: application chrome only; panel renderers and data tokens are untouched. */
+.wall-shell {
+  --wall-quiet-text: var(--wall-app-text);
+}
+.wall-shell .wall-nav-item.is-current,
+.wall-shell .wall-secondary-item.is-current {
+  background: var(--wall-app-active);
+  color: var(--wall-app-text);
+  font-weight: 500;
+}
+.wall-shell .wall-nav-item,
+.wall-shell .wall-secondary-item {
+  font-weight: 400;
+}
+.wall-shell .wall-nav-item.is-current {
+  box-shadow: inset 2px 0 var(--wall-app-border);
+}
+.wall-modern .wall-dashboard-toolbar-region {
+  background: var(--wall-app-surface);
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--wall-app-border);
+}
+.wall-dashboard-toolbar {
+  flex-wrap: nowrap;
+  gap: 10px;
+  color: var(--wall-app-text);
+}
+.wall-toolbar-document {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+  flex: 0 1 270px;
+}
+.wall-toolbar-document h1 {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-family: inherit;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--wall-app-text);
+}
+.wall-toolbar-primary {
+  flex: 1 1 420px;
+  gap: 10px;
+}
+.wall-toolbar-secondary {
+  flex-shrink: 0;
+}
+.wall-toolbar-variables {
+  flex: 1 1 130px;
+  min-width: 80px;
+}
+.wall-dashboard-toolbar .wall-button {
+  font-weight: 400;
+  color: var(--wall-app-text);
+}
+.wall-dashboard-toolbar .wall-toolbar-control {
+  background: var(--wall-app-surface);
+  border-color: var(--wall-app-border);
+}
+.wall-dashboard-toolbar .wall-toolbar-time-trigger {
+  min-width: 130px;
+}
+.wall-dashboard-toolbar :focus-visible {
+  outline-color: var(--wall-app-text);
+}
+.wall-toolbar-popover,
+.wall-time-range-popover,
+.wall-variable-popover,
+.wall-scope-popover {
+  --wall-primary: #45454f;
+  --wall-primary-soft: #fafafd;
+  --wall-focus: #777781;
+  box-shadow: 0 3px 12px rgb(35 35 50 / 6%);
+  border-color: var(--wall-border);
+  font-weight: 400;
+}
+.wall-toolbar-popover[data-wall-theme='dark'],
+[data-wall-theme='dark'] .wall-time-range-popover {
+  --wall-primary: #e2e2ea;
+  --wall-primary-soft: #292b31;
+}
+.wall-time-presets .wall-time-preset[aria-pressed='true'] {
+  color: var(--wall-text);
+  background: transparent;
+  box-shadow: inset 2px 0 var(--wall-border);
+}
+.wall-timeframe-footer .wall-button,
+.wall-variable-icon {
+  color: var(--wall-muted);
+}
+.wall-time-expression {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wall-border);
+  margin-bottom: 8px;
+}
+.wall-time-expression input {
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+  background: var(--wall-surface);
+  color: var(--wall-text);
+  border: 1px solid var(--wall-border);
+  border-radius: 6px;
+  padding: 0 8px;
+  font: inherit;
+}
+.wall-time-expression input:focus-visible {
+  outline: 1px solid var(--wall-text);
+  outline-offset: 2px;
+}
+.wall-time-input-error {
+  color: var(--wall-danger, #c33d50);
+  font-size: 12px;
+}
+.wall-dashboard-workspace > .wall-ui-tabs > .wall-ui-tabs-list {
+  background: transparent;
+  border-bottom: 1px solid var(--wall-app-border);
+  border-radius: 0;
+  gap: 12px;
+}
+.wall-dashboard-workspace > .wall-ui-tabs > .wall-ui-tabs-list > .wall-ui-tabs-trigger {
+  background: transparent;
+  color: var(--wall-app-muted);
+  font-weight: 400;
+  box-shadow: none;
+}
+.wall-dashboard-workspace > .wall-ui-tabs > .wall-ui-tabs-list > .wall-ui-tabs-trigger[aria-selected='true'] {
+  color: var(--wall-app-text);
+  background: transparent;
+  box-shadow: inset 0 -2px var(--wall-app-text);
+}
+.wall-dashboard-workspace > .wall-ui-tabs > .wall-ui-tabs-list > .wall-tabs-indicator {
+  display: none;
+}
+.wall-dashboard-share-modal {
+  color: var(--wall-text);
+  font-family: var(--wall-font-family, inherit);
+}
+.wall-dashboard-share-modal button,
+.wall-dashboard-share-modal input {
+  font-weight: 400;
+}
+.wall-dashboard-share-modal [role='tab'][aria-selected='true'] {
+  color: var(--wall-text);
+  background: var(--wall-soft);
+}
+.wall-dashboard-share-modal [role='switch'][aria-checked='true'] {
+  background: var(--wall-muted);
+}
+.wall-dashboard-share-link .wall-share-intro {
+  display: none;
+}
+.wall-dashboard-share-link fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wall-dashboard-share-link .wall-share-url-field {
+  order: -1;
+  margin-bottom: 18px;
+}
+@media (max-width: 1250px) {
+  .wall-dashboard-toolbar {
+    flex-wrap: wrap;
+  }
+  .wall-toolbar-document {
+    flex: 1 1 220px;
+  }
+  .wall-toolbar-primary {
+    flex: 1 1 580px;
+    order: 2;
+  }
+}
+@media (max-width: 700px) {
+  .wall-toolbar-document h1 {
+    font-size: 16px;
+  }
+  .wall-toolbar-primary {
+    flex-wrap: wrap;
+  }
+  .wall-toolbar-query {
+    flex-wrap: wrap;
+  }
+  .wall-time-expression {
+    gap: 5px;
+  }
+}
+
+/* Keep dashboard sharing on the existing native form and handlers. */
+.wall-modern.wall-modal.wall-dashboard-share-modal {
+  width: min(600px, calc(100vw - 32px));
+}
+.wall-dashboard-share-modal .wall-modal-heading h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
+.wall-dashboard-share-link fieldset > div:not(.wall-share-url-field) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--wall-border);
+  margin-bottom: 0;
+}
+.wall-dashboard-share-link fieldset > div:not(.wall-share-url-field) > div:first-child {
+  margin: 0;
+}
+.wall-dashboard-share-link input[type='checkbox']:checked + label {
+  background: var(--wall-muted);
+  border-color: var(--wall-muted);
+}
+.wall-dashboard-share-link input[type='checkbox']:focus-visible + label {
+  outline-color: var(--wall-text);
+}
+.wall-dashboard-workspace > .wall-ui-tabs > .wall-ui-tabs-list .wall-ui-tabs-trigger[aria-selected='true'] {
+  box-shadow: inset 0 -2px var(--wall-app-text);
+}
+.wall-shell .wall-secondary-item.is-current {
+  box-shadow: inset 2px 0 var(--wall-app-border);
+}
+@media (max-width: 600px) {
+  .wall-dashboard-share-link fieldset > div:not(.wall-share-url-field) {
+    gap: 8px;
+  }
+}

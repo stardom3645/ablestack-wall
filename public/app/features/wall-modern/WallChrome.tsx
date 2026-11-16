@@ -1,6 +1,6 @@
 import { Menu } from '@base-ui/react/menu';
 import { Bell, ChevronDown, Moon, PanelLeftClose, PanelLeftOpen, Search, Sun, X } from 'lucide-react';
-import { useMemo, useState, type PropsWithChildren, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type PropsWithChildren, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { useLocalStorage } from 'react-use';
 
@@ -30,6 +30,7 @@ import {
   useWallTypographyFonts,
 } from './typography';
 import { Button } from './ui';
+import { useNavigationLayout } from './useNavigationLayout';
 import { WallDashboardContext, useWallDashboardSource } from './useWallDashboards';
 import './typography.css';
 import { wallVisualization } from './visualization';
@@ -38,6 +39,7 @@ import './modern.css';
 import './motion.css';
 import './application.css';
 import './managementNavigation.css';
+import './quietToolbar.css';
 
 const wallPortalMotion = {};
 
@@ -69,7 +71,13 @@ export function WallChrome({
   );
   const navigate = useNavigate();
   const navIndex = useSelector((state) => state.navIndex);
-  const [collapsed, setCollapsed] = useLocalStorage('wall:sidebar:collapsed', false);
+  const [manualCollapsed, setManualCollapsed] = useLocalStorage('wall:sidebar:collapsed', false);
+  const { collapsed, compact, setCollapsed } = useNavigationLayout(Boolean(manualCollapsed), setManualCollapsed);
+  const navigationToggle = useRef<HTMLButtonElement>(null);
+  const collapseNavigation = () => {
+    setCollapsed(true);
+    navigationToggle.current?.focus();
+  };
   const [search, setSearch] = useState('');
   const dashboards = source.items.filter((item) => item.type === 'dash-db');
   const isLibrary = location.pathname.startsWith('/dashboards');
@@ -115,8 +123,10 @@ export function WallChrome({
                   pathname={location.pathname}
                   search={location.search}
                   loading={source.loading}
-                  collapsed={Boolean(collapsed)}
+                  collapsed={collapsed}
+                  compact={compact}
                   onExpand={() => setCollapsed(false)}
+                  onCollapse={collapseNavigation}
                   alertHref={
                     canAlert ? locationUtil.stripBaseFromUrl(navIndex['alerting'].url || '/alerting/list') : undefined
                   }
@@ -125,12 +135,13 @@ export function WallChrome({
                 <div className="wall-workspace">
                   <header className="wall-topbar" aria-label="글로벌 도구 모음">
                     <Button
+                      ref={navigationToggle}
                       variant="ghost"
                       size="icon"
                       className="wall-navigation-toggle"
                       aria-label={collapsed ? '사이드바 펼치기' : '사이드바 접기'}
                       aria-expanded={!collapsed}
-                      aria-controls="wall-secondary-nav"
+                      aria-controls="wall-sidebar"
                       onClick={() => setCollapsed(!collapsed)}
                     >
                       {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}

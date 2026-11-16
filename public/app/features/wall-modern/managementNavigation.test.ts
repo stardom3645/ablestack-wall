@@ -18,12 +18,12 @@ const tree: NavIndex = {
 };
 it('restores cfg and connections without inventing server-admin or enterprise destinations', () => {
   const groups = managementNavigation(tree);
-  expect(groups.map((g) => g.id)).toEqual(['data', 'access', 'system']);
+  expect(groups.map((g) => g.id)).toEqual(['data', 'system', 'advanced']);
   expect(groups.flatMap((g) => g.items).map((i) => i.href)).toEqual([
     '/connections/datasources',
     '/plugins',
-    '/org/teams',
     '/org',
+    '/org/teams',
   ]);
   expect(JSON.stringify(groups)).not.toContain('/admin/orgs');
   expect(activeManagementHref(groups, '/org/teams/edit/123')).toBe('/org/teams');
@@ -51,4 +51,30 @@ it('does not manufacture management access for a filtered empty tree', () => {
   expect(managementNavigation({ home: { text: 'Home', url: '/' } })).toEqual([]);
   expect(isWallManagementRoute('/d/admin/stats')).toBe(false);
   expect(isWallManagementRoute('/connections/datasources/edit/abc')).toBe(true);
+});
+
+it('moves only existing team and correlation links to advanced without expanding permissions', () => {
+  const groups = managementNavigation({
+    connections: {
+      text: 'Connections',
+      children: [{ id: 'correlations', text: 'Correlations', url: '/datasources/correlations' }],
+    },
+    cfg: tree.cfg,
+  });
+  expect(groups.find((group) => group.id === 'advanced')?.items.map((item) => item.href)).toEqual([
+    '/datasources/correlations',
+    '/org/teams',
+  ]);
+  expect(
+    groups
+      .filter((group) => group.id !== 'advanced')
+      .flatMap((group) => group.items)
+      .map((item) => item.href)
+  ).not.toContain('/org/teams');
+  const hiddenTeam = { id: 'teams', text: 'Teams', url: '/org/teams', hideFromMenu: true };
+  expect(
+    managementNavigation({
+      cfg: { text: 'Admin', children: [hiddenTeam] },
+    }).some((group) => group.id === 'advanced')
+  ).toBe(false);
 });

@@ -1,11 +1,12 @@
 import { css } from '@emotion/css';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { AppEvents, GrafanaTheme2 } from '@grafana/data';
-import { useStyles2, Stack } from '@grafana/ui';
+import { useStyles2 } from '@grafana/ui';
 import { notifyApp, hideAppNotification } from 'app/core/actions';
 import appEvents from 'app/core/app_events';
 import { selectVisible } from 'app/core/reducers/appNotification';
+import { wallApplicationTokens } from 'app/features/wall-modern/applicationTokens';
 import { useSelector, useDispatch } from 'app/types';
 
 import {
@@ -29,23 +30,21 @@ export function AppNotificationList() {
     appEvents.on(AppEvents.alertInfo, (payload) => dispatch(notifyApp(createInfoNotification(...payload))));
   }, [dispatch]);
 
-  const onClearAppNotification = (id: string) => {
-    dispatch(hideAppNotification(id));
-  };
+  const onClearAppNotification = useCallback((id: string) => dispatch(hideAppNotification(id)), [dispatch]);
+
+  if (!appNotifications.length) {
+    return null;
+  }
 
   return (
     <div className={styles.wrapper}>
-      <Stack direction="column">
-        {appNotifications.map((appNotification, index) => {
-          return (
-            <AppNotificationItem
-              key={`${appNotification.id}-${index}`}
-              appNotification={appNotification}
-              onClearNotification={onClearAppNotification}
-            />
-          );
-        })}
-      </Stack>
+      {appNotifications.map((appNotification) => (
+        <AppNotificationItem
+          key={appNotification.id}
+          appNotification={appNotification}
+          onClearNotification={onClearAppNotification}
+        />
+      ))}
     </div>
   );
 }
@@ -55,11 +54,18 @@ function getStyles(theme: GrafanaTheme2) {
     wrapper: css({
       label: 'app-notifications-list',
       zIndex: theme.zIndex.portal,
-      minWidth: 400,
-      maxWidth: 600,
+      display: 'grid',
+      gap: wallApplicationTokens.gap,
+      width: `min(420px, calc(100vw - ${wallApplicationTokens.gap * 4}px))`,
+      minWidth: 0,
+      maxHeight: `calc(100dvh - ${wallApplicationTokens.header + wallApplicationTokens.gap * 4}px)`,
+      overflowY: 'auto',
+      scrollbarWidth: 'thin',
       position: 'fixed',
-      right: 6,
-      top: 88,
+      right: wallApplicationTokens.gap * 2,
+      top: wallApplicationTokens.header + wallApplicationTokens.gap * 2,
+      padding: wallApplicationTokens.gap,
+      margin: -wallApplicationTokens.gap,
     }),
   };
 }

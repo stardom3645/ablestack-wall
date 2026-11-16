@@ -1,5 +1,7 @@
 # ABLESTACK Wall 작업 지침
 
+- 새 브랜치나 브랜치를 수반하는 worktree는 사용자에게 먼저 확인받은 경우에만 만든다. 기본 개발·완료 변경 통합은 기존 `codex/wall-modern-lite`에서 진행하며 다른 로컬 작업과 index를 보존한다.
+
 - Grafana=Wall, CloudStack=Mold, Skydive=Netdive, Ceph=Glue이다.
 - ccvm/scvm 템플릿 패키징 시 cockpit-plugin은 최신 소스로 유지하지만, ablestack-monitor는 git pull하지 않고 수동 관리한다.
 - 사용자가 명시적으로 재개하기 전에는 HTTPS 중앙 배포 및 443/19100 등 새 포트 전환을 다른 작업에 포함하지 않는다. 현재 프로토콜·포트·배포 방식을 유지한다.

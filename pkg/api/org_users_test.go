@@ -21,6 +21,7 @@ import (
 	"github.com/grafana/grafana/pkg/login/social/socialtest"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
 	"github.com/grafana/grafana/pkg/services/accesscontrol/actest"
+	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/login/authinfotest"
@@ -725,5 +726,35 @@ func TestDeleteOrgUsersAPIEndpoint_AccessControl(t *testing.T) {
 			assert.Equal(t, tt.expectedCode, res.StatusCode)
 			require.NoError(t, res.Body.Close())
 		})
+	}
+}
+
+func TestWallOwnOrgMembership(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		requestUser int64
+		requestOrg  int64
+		targetUser  int64
+		targetOrg   int64
+		want        bool
+	}{
+		{"same user and organization", 7, 3, 7, 3, true},
+		{"different organization", 7, 3, 7, 4, false},
+		{"different user", 7, 3, 8, 3, false},
+		{"anonymous is not a user", 0, 3, 0, 3, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := &contextmodel.ReqContext{SignedInUser: &user.SignedInUser{UserID: tc.requestUser, OrgID: tc.requestOrg, OrgRole: org.RoleAdmin}}
+			assert.Equal(t, tc.want, ownOrgMembership(c, tc.targetOrg, tc.targetUser))
+		})
+	}
+}
+
+func TestWallBlocksSelfDemotionBeforeMutation(t *testing.T) {
+	hs := &HTTPServer{}
+	for _, role := range []org.RoleType{org.RoleViewer, org.RoleEditor} {
+		c := &contextmodel.ReqContext{SignedInUser: &user.SignedInUser{UserID: 7, OrgID: 3, OrgRole: org.RoleAdmin}}
+		result := hs.updateOrgUserHelper(c, org.UpdateOrgUserCommand{UserID: 7, OrgID: 3, Role: role})
+		assert.Equal(t, http.StatusForbidden, result.Status())
 	}
 }

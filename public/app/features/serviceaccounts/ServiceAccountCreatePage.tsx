@@ -3,14 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Input, Field, FieldSet } from '@grafana/ui';
 import { Form } from 'app/core/components/Form/Form';
-import { Page } from 'app/core/components/Page/Page';
 import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
 import { fetchRoleOptions, updateUserRoles } from 'app/core/components/RolePicker/api';
 import { contextSrv } from 'app/core/core';
 import { t } from 'app/core/internationalization';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction, OrgRole, Role, ServiceAccountCreateApiResponse, ServiceAccountDTO } from 'app/types';
 
-import { OrgRolePicker } from '../admin/OrgRolePicker';
+import { WallUserRolePicker } from '../admin/Users/WallUsers';
 
 export interface Props {}
 
@@ -100,13 +100,12 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
   };
 
   return (
-    <Page
+    <WallAdminPage
       navId="serviceaccounts"
-      pageNav={{
-        text: t('ablestack-wall.administration.service-and-access.create-service-account', 'reate service account'),
-      }}
+      title="서비스 계정 추가"
+      description="API 접근용 계정을 생성합니다. 토큰은 계정을 만든 후 발급할 수 있습니다."
     >
-      <Page.Contents>
+      <div className="wall-admin-form">
         <Form onSubmit={onSubmit} validateOn="onSubmit">
           {({ register, errors }) => {
             return (
@@ -134,7 +133,12 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
                         maxWidth="100%"
                       />
                     ) : (
-                      <OrgRolePicker aria-label="Role" value={serviceAccount.role} onChange={onRoleChange} />
+                      <WallUserRolePicker
+                        login="새 서비스 계정"
+                        value={serviceAccount.role}
+                        onChange={onRoleChange}
+                        disabled={false}
+                      />
                     )}
                   </Field>
                 </FieldSet>
@@ -143,8 +147,8 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
             );
           }}
         </Form>
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 };
 

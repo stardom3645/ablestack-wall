@@ -1,46 +1,35 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import OrgProfile, { Props } from './OrgProfile';
+import OrgProfile from './OrgProfile';
 
-jest.mock('app/core/core', () => {
-  return {
-    contextSrv: {
-      hasPermission: () => true,
-    },
-  };
+jest.mock('app/core/core', () => ({ contextSrv: { hasPermission: () => true } }));
+
+it('shows success only after the real save resolves and prevents a duplicate submission', async () => {
+  let finish: () => void = () => {};
+  const save = jest.fn(
+    () =>
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      })
+  );
+  render(<OrgProfile orgName="Wall QA" onSubmit={save} />);
+  await userEvent.click(screen.getByRole('button', { name: '조직 이름 저장' }));
+  await waitFor(() => expect(save).toHaveBeenCalledWith('Wall QA'));
+  expect(screen.getByRole('button', { name: '저장 중…' })).toBeDisabled();
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  await act(async () => finish());
+  expect(await screen.findByRole('status')).toHaveTextContent('조직 이름을 저장했습니다.');
+  expect(save).toHaveBeenCalledTimes(1);
 });
 
-describe('OrgProfile', () => {
-  const props: Props = {
-    orgName: 'Main org',
-    onSubmit: jest.fn(),
-  };
-
-  it('should render without crashing', () => {
-    expect(() => render(<OrgProfile {...props} />)).not.toThrow();
-  });
-
-  it('should show the current org name', () => {
-    render(<OrgProfile {...props} />);
-
-    const orgNameInput = screen.getByLabelText('Organization name');
-
-    expect(orgNameInput).toHaveValue('Main org');
-  });
-
-  it('can update the current org name', async () => {
-    render(<OrgProfile {...props} />);
-
-    const orgNameInput = screen.getByLabelText('Organization name');
-    const submitButton = screen.getByRole('button', { name: 'Update organization name' });
-
-    expect(orgNameInput).toHaveValue('Main org');
-
-    await userEvent.clear(orgNameInput);
-    await userEvent.type(orgNameInput, 'New org name');
-    await userEvent.click(submitButton);
-
-    expect(props.onSubmit).toHaveBeenCalledWith('New org name');
-  });
+it('reports the backend error and leaves the entered name available for retry', async () => {
+  const save = jest.fn().mockRejectedValue(new Error('QA save rejected'));
+  render(<OrgProfile orgName="Wall QA" onSubmit={save} />);
+  await userEvent.clear(screen.getByRole('textbox'));
+  await userEvent.type(screen.getByRole('textbox'), 'Updated QA');
+  await userEvent.click(screen.getByRole('button', { name: '조직 이름 저장' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('QA save rejected');
+  expect(screen.getByRole('textbox')).toHaveValue('Updated QA');
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });

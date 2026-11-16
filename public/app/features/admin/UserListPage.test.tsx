@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ReactNode } from 'react';
 
 import { selectors as e2eSelectors } from '@grafana/e2e-selectors/src';
 import { GrafanaBootConfig } from '@grafana/runtime/src';
@@ -19,10 +20,20 @@ jest.mock('@grafana/runtime', () => ({
 }));
 
 jest.mock('./UserListAdminPage', () => ({
-  UserListAdminPageContent: () => <div data-testid={selectors.UserListAdminPage.container} />,
+  UserListAdminPageContent: ({ navigation }: { navigation?: ReactNode }) => (
+    <>
+      {navigation}
+      <div data-testid={selectors.UserListAdminPage.container} />
+    </>
+  ),
 }));
 jest.mock('../users/UsersListPage', () => ({
-  UsersListPageContent: () => <div data-testid={selectors.UsersListPage.container} />,
+  UsersListPageContent: ({ navigation }: { navigation?: ReactNode }) => (
+    <>
+      {navigation}
+      <div data-testid={selectors.UsersListPage.container} />
+    </>
+  ),
 }));
 jest.mock('./UserListPublicDashboardPage/UserListPublicDashboardPage', () => ({
   UserListPublicDashboardPage: () => <div data-testid={selectors.UsersListPublicDashboardsPage.container} />,

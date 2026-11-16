@@ -6,6 +6,7 @@ import { Modal, ModalTabsHeader, TabContent } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
 import { t } from 'app/core/internationalization';
 import { isPublicDashboardsEnabled } from 'app/features/dashboard/components/ShareModal/SharePublicDashboard/SharePublicDashboardUtils';
+import { isWallModernRoute } from 'app/features/wall-modern/model';
 
 import { getTrackingSource } from '../../dashboard/components/ShareModal/utils';
 import { DashboardInteractions } from '../utils/interactions';
@@ -129,7 +130,14 @@ function SharePanelModalRenderer({ model }: SceneComponentProps<ShareModal>) {
   const currentTab = tabs.find((t) => t.tabId === activeTab);
 
   return (
-    <Modal isOpen={true} title={header} onDismiss={model.onDismiss}>
+    <Modal
+      className={
+        !panelRef && isWallModernRoute(location.pathname, location.search) ? 'wall-dashboard-share-modal' : undefined
+      }
+      isOpen={true}
+      title={header}
+      onDismiss={model.onDismiss}
+    >
       <TabContent>{currentTab && <currentTab.Component model={currentTab} />}</TabContent>
     </Modal>
   );

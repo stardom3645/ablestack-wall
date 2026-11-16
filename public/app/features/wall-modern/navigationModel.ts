@@ -25,6 +25,9 @@ export function navigationContext(
   if (isNavigationContext(explicit)) {
     return explicit;
   }
+  if (/^\/alerting(\/|$)/.test(pathname)) {
+    return 'alerts';
+  }
   const dashboard = dashboards.find((item) => item.uid === pathname.split('/')[2]);
   return dashboard ? categoryOf(dashboard) : 'all';
 }

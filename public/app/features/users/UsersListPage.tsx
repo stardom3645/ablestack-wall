@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, ReactNode } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { renderMarkdown } from '@grafana/data';
@@ -8,6 +8,7 @@ import { contextSrv } from 'app/core/core';
 import { OrgUser, OrgRole, StoreState } from 'app/types';
 
 import { OrgUsersTable } from '../admin/Users/OrgUsersTable';
+import { WallUsersRegion, UsersWorkspace, UsersPageFrame } from '../admin/Users/WallUsers';
 import InviteesTable from '../invites/InviteesTable';
 import { fetchInvitees } from '../invites/state/actions';
 import { selectInvitesMatchingQuery } from '../invites/state/selectors';
@@ -23,6 +24,8 @@ function mapStateToProps(state: StoreState) {
     searchQuery: getUsersSearchQuery(state.users),
     page: state.users.page,
     totalPages: state.users.totalPages,
+    totalCount: state.users.totalCount,
+    sort: state.users.sort,
     perPage: state.users.perPage,
     invitees: selectInvitesMatchingQuery(state.invites, searchQuery),
     externalUserMngInfo: state.users.externalUserMngInfo,
@@ -42,7 +45,7 @@ const mapDispatchToProps = {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export type Props = ConnectedProps<typeof connector>;
+export type Props = ConnectedProps<typeof connector> & { navigation?: ReactNode };
 
 export interface State {
   showInvites: boolean;
@@ -50,8 +53,12 @@ export interface State {
 
 export const UsersListPageUnconnected = ({
   users,
+  navigation,
   page,
   totalPages,
+  totalCount,
+  perPage,
+  sort,
   invitees,
   externalUserMngInfo,
   isLoading,
@@ -71,19 +78,20 @@ export const UsersListPageUnconnected = ({
     fetchInvitees();
   }, [fetchInvitees, loadUsers]);
 
-  const onRoleChange = (role: OrgRole, user: OrgUser) => {
-    updateUser({ ...user, role: role });
-  };
+  const onRoleChange = useCallback(
+    (role: OrgRole, user: OrgUser) => {
+      updateUser({ ...user, role: role });
+    },
+    [updateUser]
+  );
 
-  const onRemoveUser = (user: OrgUser) => removeUser(user.userId);
+  const onRemoveUser = useCallback((user: OrgUser) => removeUser(user.userId), [removeUser]);
 
-  const onShowInvites = () => {
-    setShowInvites(!showInvites);
-  };
+  const onShowInvites = useCallback(() => setShowInvites((value) => !value), []);
 
-  const onUserRolesChange = () => {
+  const onUserRolesChange = useCallback(() => {
     loadUsers();
-  };
+  }, [loadUsers]);
 
   const renderTable = () => {
     if (showInvites) {
@@ -91,6 +99,7 @@ export const UsersListPageUnconnected = ({
     } else {
       return (
         <OrgUsersTable
+          wallPresentation
           users={users}
           orgId={contextSrv.user.orgId}
           rolesLoading={rolesLoading}
@@ -101,20 +110,34 @@ export const UsersListPageUnconnected = ({
           changePage={changePage}
           page={page}
           totalPages={totalPages}
+          totalCount={totalCount}
+          perPage={perPage}
         />
       );
     }
   };
 
   return (
-    <Page.Contents isLoading={!isLoading}>
-      <UsersActionBar onShowInvites={onShowInvites} showInvites={showInvites} />
-      {externalUserMngInfoHtml && (
-        <Alert severity="info" title="">
-          <div dangerouslySetInnerHTML={{ __html: externalUserMngInfoHtml }} />
-        </Alert>
-      )}
-      {isLoading && renderTable()}
+    <Page.Contents isLoading={totalCount === undefined && !isLoading}>
+      <WallUsersRegion>
+        <UsersWorkspace>
+          <UsersActionBar
+            navigation={navigation}
+            onShowInvites={onShowInvites}
+            showInvites={showInvites}
+            totalCount={totalCount}
+            visibleInvitesCount={invitees.length}
+            sort={sort}
+            onSort={changeSort}
+          />
+          {externalUserMngInfoHtml && (
+            <Alert severity="info" title="">
+              <div dangerouslySetInnerHTML={{ __html: externalUserMngInfoHtml }} />
+            </Alert>
+          )}
+          {isLoading && renderTable()}
+        </UsersWorkspace>
+      </WallUsersRegion>
     </Page.Contents>
   );
 };
@@ -123,8 +146,8 @@ export const UsersListPageContent = connector(UsersListPageUnconnected);
 
 export default function UsersListPage() {
   return (
-    <Page navId="users">
+    <UsersPageFrame navId="users">
       <UsersListPageContent />
-    </Page>
+    </UsersPageFrame>
   );
 }

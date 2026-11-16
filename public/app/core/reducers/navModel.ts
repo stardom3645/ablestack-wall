@@ -113,17 +113,17 @@ export const navIndexReducer = (state: NavIndex = initialState, action: AnyActio
   } else if (updateConfigurationSubtitle.match(action)) {
     const subTitle = `Organization: ${action.payload}`;
 
-    return {
-      ...state,
-      cfg: { ...state.cfg, subTitle },
-      datasources: getItemWithNewSubTitle(state.datasources, subTitle),
-      correlations: getItemWithNewSubTitle(state.correlations, subTitle),
-      users: getItemWithNewSubTitle(state.users, subTitle),
-      teams: getItemWithNewSubTitle(state.teams, subTitle),
-      plugins: getItemWithNewSubTitle(state.plugins, subTitle),
-      'org-settings': getItemWithNewSubTitle(state['org-settings'], subTitle),
-      apikeys: getItemWithNewSubTitle(state.apikeys, subTitle),
-    };
+    const next = { ...state };
+    if (state.cfg) {
+      next.cfg = { ...state.cfg, subTitle };
+    }
+    // Modern navigation and RBAC may omit legacy pages. Do not create missing or unauthorized entries.
+    for (const id of ['datasources', 'correlations', 'users', 'teams', 'plugins', 'org-settings', 'apikeys']) {
+      if (state[id]) {
+        next[id] = getItemWithNewSubTitle(state[id], subTitle);
+      }
+    }
+    return next;
   } else if (removeNavIndex.match(action)) {
     delete state[action.payload];
   }

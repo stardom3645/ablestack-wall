@@ -17,6 +17,7 @@ import { UsersListPageContent } from '../users/UsersListPage';
 import { UserListAdminPageContent } from './UserListAdminPage';
 import { UserListAnonymousDevicesPageContent } from './UserListAnonymousPage';
 import { UserListPublicDashboardPage } from './UserListPublicDashboardPage/UserListPublicDashboardPage';
+import { UsersPageFrame } from './Users/WallUsers';
 
 enum TabView {
   ADMIN = 'admin',
@@ -64,45 +65,57 @@ export default function UserListPage() {
 
   const showAdminAndOrgTabs = hasAccessToOrgUsers && hasAccessToAdminUsers;
 
-  return (
-    <Page navId={'global-users'}>
-      {showAdminAndOrgTabs ? (
-        <TabsBar className={styles.tabsMargin}>
-          <Tab
-            label={t('ablestack-wall.administration.service-and-access.all-user', 'All users')}
-            active={view === TabView.ADMIN}
-            onChangeTab={() => setView(TabView.ADMIN)}
-            data-testid={selectors.tabs.allUsers}
-          />
-          <Tab
-            label={t('ablestack-wall.administration.service-and-access.organization-users', 'Organization users')}
-            active={view === TabView.ORG}
-            onChangeTab={() => setView(TabView.ORG)}
-            data-testid={selectors.tabs.orgUsers}
-          />
-          {config.anonymousEnabled && (
-            <Tab
-              label="Anonymous devices"
-              active={view === TabView.ANON}
-              onChangeTab={() => setView(TabView.ANON)}
-              data-testid={selectors.tabs.anonUserDevices}
-            />
-          )}
-          {isEmailSharingEnabled() && <PublicDashboardsTab view={view} setView={setView} />}
-        </TabsBar>
-      ) : (
-        isEmailSharingEnabled() && (
-          <TabsBar className={styles.tabsMargin}>
-            <Tab
-              label="Users"
-              active={view === TabView.ORG}
-              onChangeTab={() => setView(TabView.ORG)}
-              data-testid={selectors.tabs.users}
-            />
-            <PublicDashboardsTab view={view} setView={setView} />
-          </TabsBar>
-        )
+  const navigation = showAdminAndOrgTabs ? (
+    <TabsBar className={styles.tabsMargin}>
+      <Tab
+        label={t('ablestack-wall.administration.service-and-access.all-user', 'All users')}
+        active={view === TabView.ADMIN}
+        onChangeTab={() => setView(TabView.ADMIN)}
+        data-testid={selectors.tabs.allUsers}
+      />
+      <Tab
+        label={t('ablestack-wall.administration.service-and-access.organization-users', 'Organization users')}
+        active={view === TabView.ORG}
+        onChangeTab={() => setView(TabView.ORG)}
+        data-testid={selectors.tabs.orgUsers}
+      />
+      {config.anonymousEnabled && (
+        <Tab
+          label="Anonymous devices"
+          active={view === TabView.ANON}
+          onChangeTab={() => setView(TabView.ANON)}
+          data-testid={selectors.tabs.anonUserDevices}
+        />
       )}
+      {isEmailSharingEnabled() && <PublicDashboardsTab view={view} setView={setView} />}
+    </TabsBar>
+  ) : (
+    isEmailSharingEnabled() && (
+      <TabsBar className={styles.tabsMargin}>
+        <Tab
+          label="Users"
+          active={view === TabView.ORG}
+          onChangeTab={() => setView(TabView.ORG)}
+          data-testid={selectors.tabs.users}
+        />
+        <PublicDashboardsTab view={view} setView={setView} />
+      </TabsBar>
+    )
+  );
+  if (view === TabView.ADMIN || view === TabView.ORG || view === null) {
+    return (
+      <UsersPageFrame>
+        {view === TabView.ADMIN ? (
+          <UserListAdminPageContent navigation={navigation} />
+        ) : (
+          <UsersListPageContent navigation={navigation} />
+        )}
+      </UsersPageFrame>
+    );
+  }
+  return (
+    <Page navId={'global-users'} pageNav={{ text: t('wall.users.title', '사용자 관리') }}>
+      {navigation}
       {view ? TAB_PAGE_MAP[view] : <UsersListPageContent />}
     </Page>
   );

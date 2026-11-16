@@ -2,24 +2,24 @@ import type { CSSProperties } from 'react';
 
 /** Application chrome only. Visualization colors/thresholds and panel geometry stay independent. */
 export const wallApplicationTokens = {
-  sidebar: 236,
+  sidebar: 264,
   secondary: 224,
   rail: 64,
-  header: 60,
+  header: 52,
   control: 36,
   gap: 8,
   gutter: 24,
   light: {
-    background: '#f7f7f8',
+    background: '#fafafd',
     surface: '#ffffff',
     soft: '#f3f4f5',
     elevated: '#ffffff',
-    text: '#202329',
+    text: '#45454f',
     muted: '#646970',
-    border: '#dfe1e5',
-    hover: '#eceef1',
-    active: '#edf4ff',
-    primary: '#1677ff',
+    border: '#e6e6ec',
+    hover: '#f6f6f9',
+    active: '#fafafd',
+    primary: '#45454f',
     shadow: '0 6px 20px rgb(24 27 33 / 10%)',
   },
   dark: {
@@ -31,8 +31,8 @@ export const wallApplicationTokens = {
     muted: '#adb2bd',
     border: '#414650',
     hover: '#333842',
-    active: '#263b57',
-    primary: '#80b4ff',
+    active: '#292b31',
+    primary: '#e2e2ea',
     shadow: '0 6px 20px rgb(0 0 0 / 24%)',
   },
 } as const;

@@ -254,7 +254,7 @@ func TestIntegrationOrgUserDataAccess(t *testing.T) {
 		t.Skip("skipping integration test")
 	}
 
-	ss := db.InitTestDB(t)
+	ss, cfg := db.InitTestDBWithCfg(t)
 	orgUserStore := sqlStore{
 		db:      ss,
 		dialect: ss.GetDialect(),
@@ -312,21 +312,19 @@ func TestIntegrationOrgUserDataAccess(t *testing.T) {
 	// })
 
 	t.Run("Update org users", func(t *testing.T) {
-		_, err := orgUserStore.InsertOrgUser(context.Background(), &org.OrgUser{
-			ID:      1,
-			OrgID:   1,
-			UserID:  1,
-			Created: time.Now(),
-			Updated: time.Now(),
+		_, usrSvc := createOrgAndUserSvc(t, ss, cfg)
+		account, err := usrSvc.Create(context.Background(), &user.CreateUserCommand{
+			Login: "org-admin", SkipOrgSetup: true,
 		})
 		require.NoError(t, err)
-
-		cmd := &org.UpdateOrgUserCommand{
-			Role:   org.RoleAdmin,
-			UserID: 1,
-			OrgID:  1,
-		}
-		err = orgUserStore.UpdateOrgUser(context.Background(), cmd)
+		_, err = orgUserStore.InsertOrgUser(context.Background(), &org.OrgUser{
+			ID: 1, OrgID: 1, UserID: account.ID,
+			Created: time.Now(), Updated: time.Now(),
+		})
+		require.NoError(t, err)
+		err = orgUserStore.UpdateOrgUser(context.Background(), &org.UpdateOrgUserCommand{
+			Role: org.RoleAdmin, UserID: account.ID, OrgID: 1,
+		})
 		require.NoError(t, err)
 	})
 	t.Run("GetOrgUsers and UpdateOrgUsers", func(t *testing.T) {
@@ -872,14 +870,18 @@ func TestIntegration_SQLStore_RemoveOrgUser(t *testing.T) {
 	require.NoError(t, err)
 
 	// create org and admin
-	_, err = usrSvc.Create(context.Background(), &user.CreateUserCommand{
-		Login: "admin",
-		OrgID: o.ID,
+	admin, err := usrSvc.Create(context.Background(), &user.CreateUserCommand{
+		Login:        "admin",
+		SkipOrgSetup: true,
 	})
 	require.NoError(t, err)
 
+	// The organization must have a real, enabled human administrator rather than
+	// only CreateWithMember's synthetic user ID zero membership.
+	require.NoError(t, orgUserStore.AddOrgUser(context.Background(), &org.AddOrgUserCommand{OrgID: o.ID, UserID: admin.ID, Role: org.RoleAdmin}))
+
 	// create a user with no org
-	_, err = usrSvc.Create(context.Background(), &user.CreateUserCommand{
+	member, err := usrSvc.Create(context.Background(), &user.CreateUserCommand{
 		Login:        "user",
 		OrgID:        1,
 		SkipOrgSetup: true,
@@ -889,15 +891,15 @@ func TestIntegration_SQLStore_RemoveOrgUser(t *testing.T) {
 	// assign the user to the org
 	err = orgUserStore.AddOrgUser(context.Background(), &org.AddOrgUserCommand{
 		Role:   "Viewer",
-		OrgID:  1,
-		UserID: 2,
+		OrgID:  o.ID,
+		UserID: member.ID,
 	})
 	require.NoError(t, err)
 
 	// remove the user org
 	err = orgUserStore.RemoveOrgUser(context.Background(), &org.RemoveOrgUserCommand{
-		UserID:                   2,
-		OrgID:                    1,
+		UserID:                   member.ID,
+		OrgID:                    o.ID,
 		ShouldDeleteOrphanedUser: false,
 	})
 	require.NoError(t, err)

@@ -1,4 +1,3 @@
-import { GripHorizontal } from 'lucide-react';
 import {
   ComponentType,
   MouseEvent as ReactMouseEvent,
@@ -24,9 +23,10 @@ import { LayoutGridGuide } from './LayoutGridGuide';
 import { useLayoutHistory } from './LayoutHistoryContext';
 import { PanelActionsProvider } from './PanelActionDock';
 import { usePanelClipboard } from './PanelClipboardContext';
+import { PanelMoveGrip } from './PanelMoveGrip';
 import { PanelSelectionControls, usePanelSelection } from './PanelSelection';
 import { useWallEditing } from './WallEditContext';
-import { cancelPanelSettle, frameMouseInput, GestureRects, settlePanels } from './gestureMotion';
+import { cancelPanelSettle, finishPanelMove, frameMouseInput, GestureRects, settlePanels } from './gestureMotion';
 import { kpiGrid, KpiPosition, sameKpiLayout } from './kpiLayout';
 import {
   panelGroupMovePreview,
@@ -438,6 +438,7 @@ export function PanelLayoutGrid<T>({
       if (!('touches' in event)) {
         frameInput.current = frameMouseInput(container.current.ownerDocument, () => {
           if (gesture.current) {
+            finishPanelMove(gesture.current.nodes.values());
             gesture.current.releaseRects = [...gesture.current.nodes.values()].map((node) => ({
               node,
               rect: node.getBoundingClientRect(),
@@ -595,6 +596,9 @@ export function PanelLayoutGrid<T>({
     frameInput.current = undefined;
     resizePointer.current?.();
     resizeCursor.current?.();
+    if (gesture.current?.kind === 'move') {
+      finishPanelMove(gesture.current.nodes.values());
+    }
     const released =
       gesture.current?.releaseRects ??
       [...(gesture.current?.nodes.values() ?? [])].map((node) => ({ node, rect: node.getBoundingClientRect() }));
@@ -744,7 +748,7 @@ export function PanelLayoutGrid<T>({
                       : '드래그하여 이동'
                   }
                 >
-                  <GripHorizontal size={wallSurfaceTokens.moveGripSize} />
+                  <PanelMoveGrip />
                 </Button>
               )
             }

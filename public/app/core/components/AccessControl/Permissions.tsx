@@ -30,6 +30,7 @@ type ResourceId = string | number;
 type Type = 'users' | 'teams' | 'serviceAccounts' | 'builtInRoles';
 
 export type Props = {
+  wallPresentation?: boolean;
   title?: string;
   buttonLabel?: string;
   emptyLabel?: string;
@@ -42,6 +43,7 @@ export type Props = {
 };
 
 export const Permissions = ({
+  wallPresentation = false,
   title = t('access-control.permissions.title', 'Permissions'),
   buttonLabel = t('access-control.permissions.add-label', 'Add a permission'),
   emptyLabel = t('access-control.permissions.no-permissions', 'There are no permissions'),
@@ -161,7 +163,7 @@ export const Permissions = ({
 
   return (
     <>
-      <div>
+      <div className={wallPresentation ? 'wall-resource-permissions' : undefined}>
         {canSetPermissions && resource === 'folders' && (
           <>
             <Trans i18nKey="access-control.permissions.permissions-change-warning">
@@ -184,6 +186,7 @@ export const Permissions = ({
           </Box>
         )}
         <PermissionList
+          wallPresentation={wallPresentation}
           title={titleRole}
           items={builtInRoles}
           compareKey={'builtInRole'}
@@ -193,6 +196,7 @@ export const Permissions = ({
           canSet={canSetPermissions}
         />
         <PermissionList
+          wallPresentation={wallPresentation}
           title={titleUser}
           items={users}
           compareKey={'userLogin'}
@@ -202,6 +206,7 @@ export const Permissions = ({
           canSet={canSetPermissions}
         />
         <PermissionList
+          wallPresentation={wallPresentation}
           title={titleServiceAccount}
           items={serviceAccounts}
           compareKey={'userLogin'}
@@ -211,6 +216,7 @@ export const Permissions = ({
           canSet={canSetPermissions}
         />
         <PermissionList
+          wallPresentation={wallPresentation}
           title={titleTeam}
           items={teams}
           compareKey={'team'}

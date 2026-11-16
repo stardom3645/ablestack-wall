@@ -397,7 +397,7 @@ describe('Browse list of plugins', () => {
 
       // The radio input for the filters should be disabled
       const { getByRole } = renderBrowse('/plugins', [], stateOverride);
-      await waitFor(() => expect(getByRole('radio', { name: 'Installed' })).toBeDisabled());
+      await waitFor(() => expect(getByRole('radio', { name: '설치됨' })).toBeDisabled());
     });
   });
 });

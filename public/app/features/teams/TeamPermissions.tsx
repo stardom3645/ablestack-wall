@@ -17,6 +17,7 @@ const TeamPermissions = (props: TeamPermissionsProps) => {
 
   return (
     <Permissions
+      wallPresentation
       title=""
       addPermissionTitle={t('ablestack-wall.administration.service-and-access.add-member', 'Add member')}
       buttonLabel={t('ablestack-wall.administration.service-and-access.add-member', 'Add member')}

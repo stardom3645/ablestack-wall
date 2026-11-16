@@ -3,20 +3,26 @@ import { useEffect, useState } from 'react';
 import { timeout } from 'rxjs/operators';
 
 import { getBackendSrv, getDataSourceSrv } from '@grafana/runtime';
-import { QueryVariable, sceneGraph } from '@grafana/scenes';
+import { QueryVariable, SceneObject, SceneQueryRunner, sceneGraph } from '@grafana/scenes';
 import { Trans } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
 import type { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
 import { getLinkSrv } from 'app/features/panel/panellinks/link_srv';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { dashboardNetdiveBase, metricIdentity, selectedVM, vmRelationshipLink } from '../netdive';
+import {
+  dashboardNetdiveBase,
+  metricVMIdentity,
+  selectedVMQuery,
+  vmRelationshipLink,
+  VMIdentityQuery,
+} from '../netdive';
 import { Button } from '../ui';
-import { useNetdiveURL } from '../useNetdiveURL';
+import { useNetdiveConfiguration } from '../useNetdiveURL';
 
 /** One dashboard context action. Native panel/data/user links and models stay untouched. */
 export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene }) {
-  const configuredURL = useNetdiveURL();
+  const { url: configuredURL, loaded: configurationLoaded, allowDashboardFallback } = useNetdiveConfiguration();
   const { links, uid } = dashboard.useState();
   const { variables } = sceneGraph.getVariables(dashboard).useState();
   const time = sceneGraph.getTimeRange(dashboard).useState().value;
@@ -27,15 +33,33 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
     );
     return () => subscriptions.forEach((subscription) => subscription.unsubscribe());
   }, [variables]);
-  const selection = selectedVM(
+  const queries: VMIdentityQuery[] = [];
+  const collect = (object: SceneObject) => {
+    if (object instanceof SceneQueryRunner) {
+      queries.push(
+        ...object.state.queries.map((query) => ({
+          expr: query.expr,
+          hide: query.hide,
+          datasource: query.datasource ?? object.state.datasource,
+        }))
+      );
+    }
+    object.forEachChild(collect);
+  };
+  collect(dashboard.state.body);
+  const selection = selectedVMQuery(
     variables
       .filter((variable): variable is QueryVariable => variable instanceof QueryVariable)
-      .map((variable) => variable.state)
+      .map((variable) => variable.state),
+    queries
   );
-  const base = dashboardNetdiveBase(links ?? [], configuredURL);
+  const base =
+    configurationLoaded && (configuredURL || allowDashboardFallback !== false)
+      ? dashboardNetdiveBase(links ?? [], configuredURL)
+      : undefined;
   const [open, setOpen] = useState(false),
     [retry, setRetry] = useState(0);
-  const [verified, setVerified] = useState<string>(),
+  const [verified, setVerified] = useState<{ key: string; uuid: string }>(),
     [reason, setReason] = useState('');
   const [checking, setChecking] = useState(false);
   const source = selection?.datasource ? getDataSourceSrv().getInstanceSettings(selection.datasource) : undefined;
@@ -49,7 +73,7 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
     setVerified(undefined);
     setReason('');
     setChecking(false);
-    if (!open || !base || !uuid || !selector || selection?.reason) {
+    if (!open || !base || !selector || (!uuid && !domain) || selection?.reason) {
       return;
     }
     if (!Number.isSafeInteger(orgID) || orgID <= 0) {
@@ -57,7 +81,7 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
       return;
     }
     if (!sourceUID) {
-      setReason('UUID 변수의 Prometheus 데이터소스를 확인할 수 없습니다.');
+      setReason('VM 식별 쿼리의 Prometheus 데이터소스를 확인할 수 없습니다.');
       return;
     }
     let active = true;
@@ -76,9 +100,9 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
           if (!active) {
             return;
           }
-          const result = metricIdentity(response.data, uuid, domain);
+          const result = metricVMIdentity(response.data, { uuid, domain });
           setReason(result.reason ?? '');
-          setVerified(result.reason ? undefined : identityKey);
+          setVerified(result.uuid ? { key: identityKey, uuid: result.uuid } : undefined);
           setChecking(false);
         },
         error: () => {
@@ -97,8 +121,8 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
     return null;
   }
   const link =
-    verified === identityKey && base && uuid && uid
-      ? vmRelationshipLink(base, uuid, {
+    verified?.key === identityKey && base && uid
+      ? vmRelationshipLink(base, verified.uuid, {
           orgID,
           dashboardUID: uid,
           from: time.from.valueOf(),
@@ -106,14 +130,16 @@ export function WallNetdiveVMControl({ dashboard }: { dashboard: DashboardScene 
         })
       : undefined;
   const anchor = link ? getLinkSrv().getAnchorInfo(link) : undefined;
-  const message = !base
-    ? 'Netdive URL이 없거나 기존 링크와 설정이 일치하지 않습니다. 관리자에게 설정을 확인하세요.'
-    : selection.reason || reason || (!checking && !link ? 'Wall 조직·대시보드·시간 범위를 확인하세요.' : undefined);
+  const message = !configurationLoaded
+    ? 'Netdive 설정을 확인하고 있습니다.'
+    : !base
+      ? 'Netdive URL을 확인할 수 없습니다. 관리자에게 설정을 확인하세요.'
+      : selection.reason || reason || (!checking && !link ? 'Wall 조직·대시보드·시간 범위를 확인하세요.' : undefined);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger render={<Button variant="ghost" />} aria-label="Netdive 관계 탐색">
         <ExternalLink size={16} />
-        <Trans i18nKey="wall.netdive.vm-relationship">관계 탐색</Trans>
+        <Trans i18nKey="wall.netdive.object-topology">토폴로지 보기</Trans>
       </PopoverTrigger>
       <PopoverContent title="Netdive 관계 탐색" aria-label="Netdive VM 관계 탐색" className="wall-scope-popover">
         {checking ? (

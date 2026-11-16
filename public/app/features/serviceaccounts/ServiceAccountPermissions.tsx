@@ -16,6 +16,7 @@ export const ServiceAccountPermissions = (props: ServiceAccountPermissionsProps)
 
   return (
     <Permissions
+      wallPresentation
       title="Permissions"
       addPermissionTitle={t('ablestack-wall.administration.service-and-access.add-permission', 'Add permission')}
       buttonLabel={t('ablestack-wall.administration.service-and-access.add-permission', 'Add permission')}

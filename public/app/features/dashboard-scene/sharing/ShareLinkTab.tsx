@@ -155,8 +155,8 @@ function ShareLinkTabRenderer({ model }: SceneComponentProps<ShareLinkTab>) {
   const linkURLTranslation = t('share-modal.link.link-url', `Link URL`);
 
   return (
-    <>
-      <p>
+    <div className={!panel ? 'wall-dashboard-share-link' : undefined}>
+      <p className={!panel ? 'wall-share-intro' : undefined}>
         <Trans i18nKey="share-modal.link.info-text">
           Create a direct link to this dashboard or panel, customized with the options below.
         </Trans>
@@ -170,13 +170,18 @@ function ShareLinkTabRenderer({ model }: SceneComponentProps<ShareLinkTab>) {
           <Switch id="share-shorten-url" value={useShortUrl} onChange={model.onUrlShorten} />
         </Field>
 
-        <Field label={linkURLTranslation}>
+        <Field className={!panel ? 'wall-share-url-field' : undefined} label={linkURLTranslation}>
           <Input
             id="link-url-input"
             value={shareUrl}
             readOnly
             addonAfter={
-              <ClipboardButton icon="copy" variant="primary" getText={model.getShareUrl} onClipboardCopy={model.onCopy}>
+              <ClipboardButton
+                icon="copy"
+                variant={panel ? 'primary' : 'secondary'}
+                getText={model.getShareUrl}
+                onClipboardCopy={model.onCopy}
+              >
                 <Trans i18nKey="share-modal.link.copy-link-button">Copy</Trans>
               </ClipboardButton>
             }
@@ -226,7 +231,7 @@ function ShareLinkTabRenderer({ model }: SceneComponentProps<ShareLinkTab>) {
           </Trans>
         </Alert>
       )}
-    </>
+    </div>
   );
 }
 

@@ -3,15 +3,24 @@ import userEvent from '@testing-library/user-event';
 import { Subject } from 'rxjs';
 
 import { getBackendSrv, getDataSourceSrv, type FetchResponse } from '@grafana/runtime';
-import { QueryVariable, SceneTimeRange, SceneVariableSet } from '@grafana/scenes';
+import {
+  QueryVariable,
+  SceneTimeRange,
+  SceneVariableSet,
+  SceneGridLayout,
+  SceneGridItem,
+  SceneQueryRunner,
+  VizPanel,
+} from '@grafana/scenes';
 import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
+import { DefaultGridLayoutManager } from 'app/features/dashboard-scene/scene/layout-default/DefaultGridLayoutManager';
 
-import { useNetdiveURL } from '../useNetdiveURL';
+import { useNetdiveConfiguration } from '../useNetdiveURL';
 
 import { WallNetdiveVMControl } from './WallNetdiveVMControl';
 
-jest.mock('../useNetdiveURL', () => ({ useNetdiveURL: jest.fn() }));
+jest.mock('../useNetdiveURL', () => ({ useNetdiveConfiguration: jest.fn() }));
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
   getBackendSrv: jest.fn(),
@@ -29,7 +38,7 @@ const fetcher = jest.fn();
 beforeEach(() => {
   request = new Subject();
   fetcher.mockReset().mockImplementation(() => request);
-  jest.mocked(useNetdiveURL).mockReturnValue('http://netdive.test:8082/ui_v2/');
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ url: 'http://netdive.test:8082/ui_v2/', loaded: true });
   jest.mocked(getBackendSrv).mockReturnValue({ fetch: fetcher } as unknown as ReturnType<typeof getBackendSrv>);
   jest.mocked(getDataSourceSrv).mockReturnValue({
     getInstanceSettings: () => ({ uid: 'actual-prom', type: 'prometheus' }),
@@ -88,6 +97,64 @@ it('shows a clear All-selection state and does not infer an identity or request 
   expect(fetcher).not.toHaveBeenCalled();
 });
 
+it('waits for installation configuration and uses it over a legacy dashboard destination', async () => {
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: false });
+  const { dashboard, rerender } = setup();
+  act(() =>
+    dashboard.setState({
+      links: [
+        {
+          title: 'Netdive',
+          type: 'link',
+          url: 'https://legacy.test/',
+          targetBlank: true,
+          includeVars: false,
+          keepTime: false,
+          tags: [],
+          asDropdown: false,
+          icon: 'external link',
+          tooltip: '',
+        },
+      ],
+    })
+  );
+  await userEvent.click(screen.getByRole('button', { name: 'Netdive 관계 탐색' }));
+  expect(fetcher).not.toHaveBeenCalled();
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: true, url: 'https://installed.test/ui_v2/' });
+  rerender(<WallNetdiveVMControl dashboard={dashboard} />);
+  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+  emit();
+  const link = await screen.findByRole('link', { name: 'Netdive 관계 탐색 열기' });
+  expect(new URL(link.getAttribute('href')!).origin).toBe('https://installed.test');
+  expect(dashboard.state.links?.[0].url).toBe('https://legacy.test/');
+});
+
+it('never falls back to a legacy site when the configured destination could not be validated', async () => {
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: true, allowDashboardFallback: false });
+  const { dashboard } = setup();
+  act(() =>
+    dashboard.setState({
+      links: [
+        {
+          title: 'Netdive',
+          type: 'link',
+          url: 'https://legacy.test/',
+          targetBlank: true,
+          includeVars: false,
+          keepTime: false,
+          tags: [],
+          asDropdown: false,
+          icon: 'external link',
+          tooltip: '',
+        },
+      ],
+    })
+  );
+  await userEvent.click(screen.getByRole('button', { name: 'Netdive 관계 탐색' }));
+  expect(fetcher).not.toHaveBeenCalled();
+  expect(screen.queryByRole('link')).not.toBeInTheDocument();
+});
+
 it('blocks duplicate exporter identities and cancels stale verification after changing the selected VM', async () => {
   const { variable } = setup();
   await userEvent.click(screen.getByRole('button', { name: 'Netdive 관계 탐색' }));
@@ -118,4 +185,44 @@ it('does not add VM controls to name/IP/SQL dashboards', () => {
   setup('i-2-VM', 'SELECT instance_name FROM vm_instance');
   expect(screen.queryByRole('button', { name: 'Netdive 관계 탐색' })).not.toBeInTheDocument();
   expect(fetcher).not.toHaveBeenCalled();
+});
+
+it('verifies a SQL-selected domain through the dashboard identity metric before exposing a UUID link', async () => {
+  const variable = new QueryVariable({
+    name: 'machine',
+    query: 'SELECT instance_name FROM vm_instance',
+    value: 'i-2-VM',
+  });
+  const dashboard = new DashboardScene({
+    uid: 'sql-vm-dashboard',
+    title: 'VM',
+    $variables: new SceneVariableSet({ variables: [variable] }),
+    $timeRange: new SceneTimeRange({ from: 'now-1h', to: 'now' }),
+    body: new DefaultGridLayoutManager({
+      grid: new SceneGridLayout({
+        children: [
+          new SceneGridItem({
+            body: new VizPanel({
+              pluginId: 'stat',
+              title: 'Identity',
+              $data: new SceneQueryRunner({
+                datasource: { uid: 'actual-prom', type: 'prometheus' },
+                queries: [{ refId: 'A', expr: 'libvirt_domain_info_meta{domain="$machine"}' }],
+              }),
+            }),
+          }),
+        ],
+      }),
+    }),
+  });
+  render(<WallNetdiveVMControl dashboard={dashboard} />);
+  await userEvent.click(screen.getByRole('button', { name: 'Netdive 관계 탐색' }));
+  expect(fetcher).toHaveBeenCalledWith(
+    expect.objectContaining({ params: { query: 'libvirt_domain_info_meta{domain="i-2-VM"}' } })
+  );
+  expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  emit();
+  const link = await screen.findByRole('link', { name: 'Netdive 관계 탐색 열기' });
+  expect(new URL(link.getAttribute('href')!).searchParams.get('ndID')).toBe(uuid);
+  expect(new URL(link.getAttribute('href')!).searchParams.get('wallDashboard')).toBe('sql-vm-dashboard');
 });

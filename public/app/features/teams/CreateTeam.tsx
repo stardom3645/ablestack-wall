@@ -4,12 +4,12 @@ import { useForm } from 'react-hook-form';
 import { NavModelItem } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Field, Input, FieldSet } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
 import { TeamRolePicker } from 'app/core/components/RolePicker/TeamRolePicker';
 import { updateTeamRoles } from 'app/core/components/RolePicker/api';
 import { useRoleOptions } from 'app/core/components/RolePicker/hooks';
 import { contextSrv } from 'app/core/core';
 import { t } from 'app/core/internationalization';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction, Role, TeamDTO } from 'app/types';
 
 const pageNav: NavModelItem = {
@@ -50,8 +50,8 @@ export const CreateTeam = (): JSX.Element => {
   };
 
   return (
-    <Page navId="teams" pageNav={pageNav}>
-      <Page.Contents>
+    <WallAdminPage navId="teams" detailNav={pageNav} description={pageNav.subTitle}>
+      <div className="wall-admin-form">
         <form onSubmit={handleSubmit(createTeam)} style={{ maxWidth: '600px' }}>
           <FieldSet>
             <Field
@@ -90,8 +90,8 @@ export const CreateTeam = (): JSX.Element => {
             {t('ablestack-wall.common.create', 'Create')}
           </Button>
         </form>
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 };
 

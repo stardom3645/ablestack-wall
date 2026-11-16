@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/grafana/authlib/claims"
 	"github.com/grafana/grafana/pkg/api/dtos"
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
@@ -407,7 +408,19 @@ func (hs *HTTPServer) UpdateOrgUser(c *contextmodel.ReqContext) response.Respons
 	return hs.updateOrgUserHelper(c, cmd)
 }
 
+func ownOrgMembership(c *contextmodel.ReqContext, orgID, userID int64) bool {
+	if !c.SignedInUser.IsIdentityType(claims.TypeUser) || c.SignedInUser.GetOrgID() != orgID {
+		return false
+	}
+	id, err := c.SignedInUser.GetInternalID()
+	return err == nil && id > 0 && id == userID
+}
+
 func (hs *HTTPServer) updateOrgUserHelper(c *contextmodel.ReqContext, cmd org.UpdateOrgUserCommand) response.Response {
+	if ownOrgMembership(c, cmd.OrgID, cmd.UserID) && c.SignedInUser.GetOrgRole() == org.RoleAdmin && cmd.Role != org.RoleAdmin && cmd.Role.IsValid() {
+		return response.Error(http.StatusForbidden, "Cannot demote your own organization administrator role", nil)
+	}
+
 	if !cmd.Role.IsValid() {
 		return response.Error(http.StatusBadRequest, "Invalid role specified", nil)
 	}
@@ -467,6 +480,9 @@ func (hs *HTTPServer) RemoveOrgUserForCurrentOrg(c *contextmodel.ReqContext) res
 		return response.Error(http.StatusBadRequest, "userId is invalid", err)
 	}
 
+	if ownOrgMembership(c, c.SignedInUser.GetOrgID(), userId) {
+		return response.Error(http.StatusForbidden, "Cannot remove yourself from the current organization", nil)
+	}
 	return hs.removeOrgUserHelper(c.Req.Context(), &org.RemoveOrgUserCommand{
 		UserID:                   userId,
 		OrgID:                    c.SignedInUser.GetOrgID(),
@@ -495,6 +511,9 @@ func (hs *HTTPServer) RemoveOrgUser(c *contextmodel.ReqContext) response.Respons
 	orgId, err := strconv.ParseInt(web.Params(c.Req)[":orgId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "orgId is invalid", err)
+	}
+	if ownOrgMembership(c, orgId, userId) {
+		return response.Error(http.StatusForbidden, "Cannot remove yourself from the current organization", nil)
 	}
 	return hs.removeOrgUserHelper(c.Req.Context(), &org.RemoveOrgUserCommand{
 		UserID: userId,

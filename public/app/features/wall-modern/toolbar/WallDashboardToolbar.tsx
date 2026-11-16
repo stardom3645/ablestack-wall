@@ -2,7 +2,7 @@ import { Menu } from '@base-ui/react/menu';
 import {
   ChevronDown,
   ExternalLink,
-  Info,
+  MoreHorizontal,
   Settings,
   RefreshCw,
   Share2,
@@ -35,8 +35,10 @@ import { getLinkSrv } from 'app/features/panel/panellinks/link_srv';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+import { isNetdiveLauncher } from '../netdive';
 import { WallTypographyContext, wallTypographyVariables } from '../typography';
 import { Button } from '../ui';
+import { useNetdiveConfiguration } from '../useNetdiveURL';
 import { canAdjustKpiLayout } from '../workspace/kpiLayout';
 
 import { WallLayoutHistoryControls } from './WallLayoutHistoryControls';
@@ -61,6 +63,11 @@ export function WallDashboardToolbar({
   analysisOnly?: boolean;
 }) {
   const typography = useContext(WallTypographyContext);
+  const {
+    url: configuredNetdiveURL,
+    loaded: netdiveConfigurationLoaded,
+    allowDashboardFallback,
+  } = useNetdiveConfiguration();
   const { uid, links, meta, kioskMode } = dashboard.useState();
   const { timePicker, refreshPicker, hideTimeControls, hideVariableControls, hideLinksControls } = controls.useState();
   const { refresh, intervals, autoEnabled, autoValue } = refreshPicker.useState();
@@ -84,10 +91,12 @@ export function WallDashboardToolbar({
   const canShare = Boolean(uid && !meta.isSnapshot && !isPlaying);
   const canEdit = dashboard.canEditDashboard() && !isPlaying && !kioskMode;
   const canAdjustLayout = canAdjustKpiLayout(contextSrv.user, canEdit);
-  const visibleLinks = retainedToolbarLinks(links ?? []);
-  const netdive = visibleLinks.find(
-    (link) => link.type === 'link' && /netdive|skydive|넷다이브|스카이다이브|네트다이브/i.test(link.title)
+  const visibleLinks = retainedToolbarLinks(links ?? []).filter(
+    (link) =>
+      !isNetdiveLauncher(link) ||
+      (netdiveConfigurationLoaded && !configuredNetdiveURL && allowDashboardFallback !== false)
   );
+  const netdive = visibleLinks.find(isNetdiveLauncher);
   const remainingLinks = visibleLinks.filter((link) => link !== netdive);
   const anchor = netdive ? getLinkSrv().getAnchorInfo(netdive) : undefined;
   const openShare = () => {
@@ -102,6 +111,47 @@ export function WallDashboardToolbar({
       role="region"
       aria-label="대시보드 도구 모음"
     >
+      <div className="wall-toolbar-document">
+        {' '}
+        <Popover>
+          <PopoverTrigger
+            render={<Button className="wall-toolbar-control wall-toolbar-icon" size="icon" />}
+            aria-label="대시보드 작업"
+            title="대시보드 작업"
+          >
+            <MoreHorizontal size={16} />
+          </PopoverTrigger>
+          <PopoverContent aria-label="대시보드 정보" title="대시보드 정보" className="wall-scope-popover">
+            <div className="wall-scope-heading">{dashboard.state.title}</div>
+            <p className="wall-toolbar-help">
+              <Trans i18nKey="wall.wall-dashboard-toolbar.text-99396757">
+                선택한 객체와 시간 범위에 따라 기존 패널을 조회합니다.
+              </Trans>
+            </p>
+            {dashboard.state.description?.trim() && <p className="wall-toolbar-help">{dashboard.state.description}</p>}
+            {canEdit && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  dashboard.onEnterEditMode();
+                  dashboard.urlSync?.updateFromUrl({ editview: 'settings' });
+                  dashboard.onOpenSettings();
+                }}
+              >
+                <Settings size={15} />
+                <Trans i18nKey="wall.wall-dashboard-toolbar.text-25a90dcf">대시보드 설정</Trans>
+              </Button>
+            )}
+            {!hideTimeControls && (
+              <Button variant="ghost" size="sm" onClick={timePicker.onZoom}>
+                <ZoomOut size={15} />
+                <Trans i18nKey="wall.wall-dashboard-toolbar.text-531e4e96">시간 범위 축소</Trans>
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
+        <h1 title={dashboard.state.title}>{dashboard.state.title}</h1>
+      </div>
       <div className="wall-toolbar-primary" role="group" aria-label="분석 도구">
         {!hideVariableControls && <WallScopeControl controls={controls} />}
         <div className="wall-toolbar-query" role="group" aria-label="시간 및 갱신">
@@ -153,29 +203,6 @@ export function WallDashboardToolbar({
               </div>
             </>
           )}
-          <Popover>
-            <PopoverTrigger
-              render={<Button className="wall-toolbar-control wall-toolbar-icon" size="icon" />}
-              aria-label="대시보드 정보"
-              title="대시보드 정보"
-            >
-              <Info size={16} />
-            </PopoverTrigger>
-            <PopoverContent aria-label="대시보드 정보" title="대시보드 정보" className="wall-scope-popover">
-              <div className="wall-scope-heading">{dashboard.state.title}</div>
-              <p className="wall-toolbar-help">
-                <Trans i18nKey="wall.wall-dashboard-toolbar.text-99396757">
-                  선택한 객체와 시간 범위에 따라 기존 패널을 조회합니다.
-                </Trans>
-              </p>
-              {!hideTimeControls && (
-                <Button variant="ghost" size="sm" onClick={timePicker.onZoom}>
-                  <ZoomOut size={15} />
-                  <Trans i18nKey="wall.wall-dashboard-toolbar.text-531e4e96">시간 범위 축소</Trans>
-                </Button>
-              )}
-            </PopoverContent>
-          </Popover>
         </div>
       </div>
       {!analysisOnly && (
@@ -188,7 +215,7 @@ export function WallDashboardToolbar({
                 <a
                   href={sanitizeUrl(anchor.href)}
                   target={netdive.targetBlank ? '_blank' : undefined}
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   aria-label="Netdive"
                 />
               }
@@ -240,22 +267,11 @@ export function WallDashboardToolbar({
           )}
           {canEdit && (
             <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  dashboard.onEnterEditMode();
-                  dashboard.urlSync?.updateFromUrl({ editview: 'settings' });
-                  dashboard.onOpenSettings();
-                }}
-              >
-                <Settings size={15} />
-                <Trans i18nKey="wall.wall-dashboard-toolbar.text-25a90dcf">대시보드 설정</Trans>
-              </Button>
               <Menu.Root>
                 <Menu.Trigger
                   render={<Button variant="outline" size="icon" />}
-                  aria-label="대시보드 관리"
-                  title="대시보드 관리"
+                  aria-label="패널 작업"
+                  title="패널 작업"
                 >
                   <ChevronDown size={14} />
                 </Menu.Trigger>

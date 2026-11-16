@@ -45,6 +45,7 @@ const usersSlice = createSlice({
         perPage,
         page,
         totalPages,
+        totalCount,
       };
     },
     searchQueryChanged: (state, action: PayloadAction<string>): UsersState => {

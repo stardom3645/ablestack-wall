@@ -15,6 +15,8 @@ import {
   useStyles2,
 } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
+import { WallUsersRegion } from 'app/features/admin/Users/WallUsers';
+import 'app/features/wall-modern/management/admin.css';
 
 const EXPIRATION_OPTIONS = [
   { label: t('ablestack-wall.administration.service-and-access.no-expiration', 'No expiration'), value: false },
@@ -94,87 +96,91 @@ export const CreateTokenModal = ({ isOpen, token, serviceAccountLogin, onCreateT
 
   return (
     <Modal isOpen={isOpen} title={modalTitle} onDismiss={onCloseInternal} className={styles.modal}>
-      {!token ? (
-        <div>
-          <Field
-            label={t('ablestack-wall.common.display-name', 'Display name')}
-            description={t(
-              'ablestack-wall.administration.service-and-access.name-to-easily-identify-token',
-              'Name to easily identify the token'
-            )}
-            // for now this is required
-            // need to make this optional in backend as well
-            required={true}
-          >
-            <Input
-              name="tokenName"
-              value={newTokenName}
-              placeholder={defaultTokenName}
-              onChange={(e) => {
-                setNewTokenName(e.currentTarget.value);
-              }}
-            />
-          </Field>
-          <Field label={t('ablestack-wall.administration.service-and-access.expiration', 'Expiration')}>
-            <RadioButtonGroup
-              options={EXPIRATION_OPTIONS}
-              value={isWithExpirationDate}
-              onChange={setIsWithExpirationDate}
-              size="md"
-            />
-          </Field>
-          {isWithExpirationDate && (
-            <Field label={t('ablestack-wall.administration.service-and-access.expiration-date', 'Expiration date')}>
-              <DatePickerWithInput
-                onChange={onExpirationDateChange}
-                value={newTokenExpirationDate}
-                placeholder=""
-                minDate={tomorrow}
-                maxDate={maxExpirationDate}
-              />
-            </Field>
-          )}
-          <Modal.ButtonRow>
-            <Button onClick={onGenerateToken} disabled={isWithExpirationDate && !isExpirationDateValid}>
-              {t('ablestack-wall.administration.service-and-access.generate-token', 'Generate token')}
-            </Button>
-          </Modal.ButtonRow>
-        </div>
-      ) : (
-        <>
-          <Field
-            label={t('ablestack-wall.common.tokens', 'Tokens')}
-            description={t(
-              'ablestack-wall.administration.service-and-access.copy-token-warning',
-              'Copy the token now as you will not be able to see it again. Losing a token requires creating a new one.'
-            )}
-          >
-            <div className={styles.modalTokenRow}>
-              <Input name="tokenValue" value={token} readOnly />
-              <ClipboardButton
-                className={styles.modalCopyToClipboardButton}
-                variant="primary"
-                size="md"
-                icon="copy"
-                getText={() => token}
+      <WallUsersRegion>
+        <div className="wall-token-dialog">
+          {!token ? (
+            <div>
+              <Field
+                label={t('ablestack-wall.common.display-name', 'Display name')}
+                description={t(
+                  'ablestack-wall.administration.service-and-access.name-to-easily-identify-token',
+                  'Name to easily identify the token'
+                )}
+                // for now this is required
+                // need to make this optional in backend as well
+                required={true}
               >
-                {t('ablestack-wall.administration.service-and-access.copy-clipboard', 'Copy clipboard')}
-              </ClipboardButton>
-            </div>
-          </Field>
-          <Modal.ButtonRow>
-            <ClipboardButton variant="primary" getText={() => token} onClipboardCopy={onCloseInternal}>
-              {t(
-                'ablestack-wall.administration.service-and-access.copy-to-clipboard-and-close',
-                'Copy to clipboard and close'
+                <Input
+                  name="tokenName"
+                  value={newTokenName}
+                  placeholder={defaultTokenName}
+                  onChange={(e) => {
+                    setNewTokenName(e.currentTarget.value);
+                  }}
+                />
+              </Field>
+              <Field label={t('ablestack-wall.administration.service-and-access.expiration', 'Expiration')}>
+                <RadioButtonGroup
+                  options={EXPIRATION_OPTIONS}
+                  value={isWithExpirationDate}
+                  onChange={setIsWithExpirationDate}
+                  size="md"
+                />
+              </Field>
+              {isWithExpirationDate && (
+                <Field label={t('ablestack-wall.administration.service-and-access.expiration-date', 'Expiration date')}>
+                  <DatePickerWithInput
+                    onChange={onExpirationDateChange}
+                    value={newTokenExpirationDate}
+                    placeholder=""
+                    minDate={tomorrow}
+                    maxDate={maxExpirationDate}
+                  />
+                </Field>
               )}
-            </ClipboardButton>
-            <Button variant="secondary" onClick={onCloseInternal}>
-              {t('ablestack-wall.common.close', 'Close')}
-            </Button>
-          </Modal.ButtonRow>
-        </>
-      )}
+              <Modal.ButtonRow>
+                <Button onClick={onGenerateToken} disabled={isWithExpirationDate && !isExpirationDateValid}>
+                  {t('ablestack-wall.administration.service-and-access.generate-token', 'Generate token')}
+                </Button>
+              </Modal.ButtonRow>
+            </div>
+          ) : (
+            <>
+              <Field
+                label={t('ablestack-wall.common.tokens', 'Tokens')}
+                description={t(
+                  'ablestack-wall.administration.service-and-access.copy-token-warning',
+                  'Copy the token now as you will not be able to see it again. Losing a token requires creating a new one.'
+                )}
+              >
+                <div className={styles.modalTokenRow}>
+                  <Input name="tokenValue" value={token} readOnly />
+                  <ClipboardButton
+                    className={styles.modalCopyToClipboardButton}
+                    variant="primary"
+                    size="md"
+                    icon="copy"
+                    getText={() => token}
+                  >
+                    {t('ablestack-wall.administration.service-and-access.copy-clipboard', 'Copy clipboard')}
+                  </ClipboardButton>
+                </div>
+              </Field>
+              <Modal.ButtonRow>
+                <ClipboardButton variant="primary" getText={() => token} onClipboardCopy={onCloseInternal}>
+                  {t(
+                    'ablestack-wall.administration.service-and-access.copy-to-clipboard-and-close',
+                    'Copy to clipboard and close'
+                  )}
+                </ClipboardButton>
+                <Button variant="secondary" onClick={onCloseInternal}>
+                  {t('ablestack-wall.common.close', 'Close')}
+                </Button>
+              </Modal.ButtonRow>
+            </>
+          )}
+        </div>
+      </WallUsersRegion>
     </Modal>
   );
 };
@@ -190,6 +196,7 @@ const getStyles = (theme: GrafanaTheme2) => {
   return {
     modal: css({
       width: '550px',
+      maxWidth: 'calc(100vw - 32px)',
     }),
     modalTokenRow: css({
       display: 'flex',

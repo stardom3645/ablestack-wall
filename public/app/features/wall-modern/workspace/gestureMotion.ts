@@ -59,6 +59,26 @@ export function frameMouseInput(doc: Document, beforeRelease: () => void) {
 }
 
 export type GestureRects = Array<{ node: HTMLElement; rect: DOMRect }>;
+
+/** Resolve compositor-only grid-step motion before measuring the existing drop.
+ * Never finish a resize, a neighbour animation, or any chart/content animation. */
+export function finishPanelMove(nodes: Iterable<HTMLElement>) {
+  for (const node of nodes) {
+    if (node.dataset.wallMagnet !== 'move') {
+      continue;
+    }
+    for (const animation of node.getAnimations?.() ?? []) {
+      if (
+        'transitionProperty' in animation &&
+        animation.transitionProperty === 'transform' &&
+        animation.playState === 'running'
+      ) {
+        animation.finish();
+      }
+    }
+  }
+}
+
 const settling = new WeakMap<HTMLElement, Animation>();
 export function cancelPanelSettle(node: HTMLElement) {
   settling.get(node)?.cancel();

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom-v5-compat';
 
 import { config } from '@grafana/runtime';
-import { EmptyState, Grid } from '@grafana/ui';
+import { EmptyState } from '@grafana/ui';
 import { t } from 'app/core/internationalization';
 
 import { CatalogPlugin } from '../types';
@@ -22,10 +22,10 @@ export const PluginList = ({ plugins, isLoading }: Props) => {
   }
 
   return (
-    <Grid gap={3} {...{ minColumnWidth: 34 }} data-testid="plugin-list">
+    <div className="wall-plugin-list" data-testid="plugin-list">
       {isLoading
         ? new Array(50).fill(null).map((_, index) => <PluginListItem.Skeleton key={index} />)
         : plugins.map((plugin) => <PluginListItem key={plugin.id} plugin={plugin} pathName={pathName} />)}
-    </Grid>
+    </div>
   );
 };

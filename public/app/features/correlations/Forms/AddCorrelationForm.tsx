@@ -47,7 +47,7 @@ export const AddCorrelationForm = ({ onClose, onCreated }: Props) => {
   const defaultValues: Partial<FormDTO> = { type: 'query', config: { target: {}, field: '' } };
 
   return (
-    <PanelContainer className={styles.panelContainer}>
+    <PanelContainer className={`${styles.panelContainer} wall-correlation-form`}>
       <CloseButton onClick={onClose} />
       <CorrelationsFormContextProvider data={{ loading, readOnly: false, correlation: undefined }}>
         <Wizard<FormDTO>

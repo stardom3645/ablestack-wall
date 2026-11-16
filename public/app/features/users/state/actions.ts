@@ -1,5 +1,6 @@
 import { debounce } from 'lodash';
 
+import { unEscapeStringFromRegex } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { FetchDataArgs } from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
@@ -26,7 +27,7 @@ export function loadUsers(): ThunkResult<void> {
       const { perPage, page, searchQuery, sort } = getState().users;
       const users = await getBackendSrv().get(
         `/api/org/users/search`,
-        accessControlQueryParam({ perpage: perPage, page, query: searchQuery, sort })
+        accessControlQueryParam({ perpage: perPage, page, query: unEscapeStringFromRegex(searchQuery), sort })
       );
 
       if (

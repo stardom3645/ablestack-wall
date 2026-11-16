@@ -6,9 +6,18 @@ import { netdiveBase } from './netdive';
 
 // Optional public deployment configuration, following the existing release JSON pattern.
 // No hostname/port inference, credentials or new backend API. One read per page load.
-let pending: Promise<string | undefined> | undefined;
+interface NetdiveConfiguration {
+  url?: string;
+  loaded: boolean;
+  allowDashboardFallback?: boolean;
+}
+let pending: Promise<Omit<NetdiveConfiguration, 'loaded'>> | undefined;
 export function useNetdiveURL() {
-  const [url, setURL] = useState<string>();
+  return useNetdiveConfiguration().url;
+}
+
+export function useNetdiveConfiguration() {
+  const [state, setState] = useState<NetdiveConfiguration>({ loaded: false });
   useEffect(() => {
     let active = true;
     pending ??= Promise.resolve()
@@ -17,22 +26,24 @@ export function useNetdiveURL() {
       )
       .then(async (response) => {
         if (!response.ok) {
-          return;
+          return { allowDashboardFallback: response.status === 404 };
         }
         const data: unknown = await response.json();
-        return data && typeof data === 'object' && 'version' in data && data.version === 1 && 'netdiveURL' in data
-          ? netdiveBase(data.netdiveURL)
-          : undefined;
+        const url =
+          data && typeof data === 'object' && 'version' in data && data.version === 1 && 'netdiveURL' in data
+            ? netdiveBase(data.netdiveURL)
+            : undefined;
+        return { url, allowDashboardFallback: false };
       })
-      .catch(() => undefined);
+      .catch(() => ({ allowDashboardFallback: false }));
     pending.then((value) => {
       if (active) {
-        setURL(value);
+        setState({ ...value, loaded: true });
       }
     });
     return () => {
       active = false;
     };
   }, []);
-  return url;
+  return state;
 }

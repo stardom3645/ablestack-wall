@@ -6,6 +6,7 @@ import { GrafanaTheme2, NavModelItem } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { Alert, Box, Stack, TabContent, useStyles2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AppNotificationSeverity } from 'app/types';
 
 import { AngularDeprecationPluginNotice } from '../../angularDeprecation/AngularDeprecationPluginNotice';
@@ -76,7 +77,13 @@ export function PluginDetailsPage({
   const conditionalProps = !config.featureToggles.pluginsDetailsRightPanel ? { info: info } : {};
 
   return (
-    <Page navId={navId} pageNav={navModel} actions={actions} subTitle={subtitle} {...conditionalProps}>
+    <WallAdminPage
+      navId={navId}
+      detailNav={navModel}
+      actions={actions}
+      description={subtitle ?? navModel.subTitle}
+      {...conditionalProps}
+    >
       <Stack gap={4} justifyContent="space-between" direction={{ xs: 'column-reverse', sm: 'row' }}>
         <Page.Contents>
           <TabContent className={styles.tabContent}>
@@ -98,7 +105,7 @@ export function PluginDetailsPage({
         </Page.Contents>
         {config.featureToggles.pluginsDetailsRightPanel && <PluginDetailsRightPanel info={info} plugin={plugin} />}
       </Stack>
-    </Page>
+    </WallAdminPage>
   );
 }
 

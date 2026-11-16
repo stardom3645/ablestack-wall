@@ -140,7 +140,7 @@ function DashboardSceneContent({ model }: SceneComponentProps<DashboardScene>) {
                 </div>
               )}
               <div className={cx(styles.canvasContent)}>
-                {isWallModernRoute(location.pathname, location.search) && (
+                {!wallToolbar && isWallModernRoute(location.pathname, location.search) && (
                   <WallDashboardHeading title={model.state.title} description={model.state.description} />
                 )}
                 {body}

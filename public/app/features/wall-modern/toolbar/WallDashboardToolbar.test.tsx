@@ -19,11 +19,12 @@ import { DashboardDataLayerSet } from 'app/features/dashboard-scene/scene/Dashbo
 import { DashboardScene } from 'app/features/dashboard-scene/scene/DashboardScene';
 
 import { STORAGE_VM_DASHBOARD_UID } from '../statPresentation';
+import { useNetdiveConfiguration } from '../useNetdiveURL';
 
 import { retainedToolbarLinks, WallDashboardToolbar } from './WallDashboardToolbar';
 import { variableSelection, variableSelectionSummary } from './WallVariableControl';
 
-jest.mock('../useNetdiveURL', () => ({ useNetdiveURL: () => undefined }));
+jest.mock('../useNetdiveURL', () => ({ useNetdiveConfiguration: jest.fn(() => ({ loaded: true })) }));
 
 jest.mock('app/features/dashboard-scene/utils/utils', () => ({
   ...jest.requireActual('app/features/dashboard-scene/utils/utils'),
@@ -63,8 +64,18 @@ function setup(canEdit = true, object?: SceneVariable) {
   const edit = jest
     .spyOn(dashboard, 'onEnterEditMode')
     .mockImplementation(() => dashboard.setState({ isEditing: true }));
-  render(<WallDashboardToolbar dashboard={dashboard} controls={controls} />);
-  return { dashboard, controls, refresh, time, edit, refreshClick, intervalChange, user: userEvent.setup() };
+  const rendered = render(<WallDashboardToolbar dashboard={dashboard} controls={controls} />);
+  return {
+    ...rendered,
+    dashboard,
+    controls,
+    refresh,
+    time,
+    edit,
+    refreshClick,
+    intervalChange,
+    user: userEvent.setup(),
+  };
 }
 
 beforeEach(() => {
@@ -86,6 +97,7 @@ beforeEach(() => {
 it('opens native dashboard settings without a separate layout mode or changing the active tab', async () => {
   contextSrv.user.orgRole = OrgRole.Admin;
   const { user, edit, dashboard } = setup();
+  await user.click(screen.getByRole('button', { name: '대시보드 작업' }));
   await user.click(screen.getByRole('button', { name: '대시보드 설정' }));
   expect(edit).toHaveBeenCalledTimes(1);
   expect(locationService.getSearchObject()).toMatchObject({
@@ -110,10 +122,23 @@ it('renders one new toolbar with native Netdive destination/target and removes o
   ).toEqual(['Runbook', 'Netdive']);
 });
 
+it('uses the Rail as the only generic launcher when configured, preserving native contextual/user links', () => {
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: false });
+  const { dashboard, rerender } = setup();
+  const original = JSON.stringify(dashboard.state.links);
+  expect(screen.queryByRole('link', { name: 'Netdive' })).not.toBeInTheDocument();
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: true, url: 'https://installed.test/ui_v2/' });
+  rerender(<WallDashboardToolbar dashboard={dashboard} controls={dashboard.state.controls!} />);
+  expect(screen.queryByRole('link', { name: 'Netdive' })).not.toBeInTheDocument();
+  expect(JSON.stringify(dashboard.state.links)).toBe(original);
+  jest.mocked(useNetdiveConfiguration).mockReturnValue({ loaded: true });
+});
+
 it('delegates refresh/edit to existing Scene actions, and sharing preserves unrelated URL parameters', async () => {
   const { user, refreshClick, edit } = setup();
   await user.click(screen.getByRole('button', { name: '새로고침' }));
   expect(refreshClick).toHaveBeenCalledTimes(1);
+  await user.click(screen.getByRole('button', { name: '대시보드 작업' }));
   await user.click(screen.getByRole('button', { name: '대시보드 설정' }));
   expect(edit).toHaveBeenCalledTimes(1);
   await user.click(screen.getByRole('button', { name: '공유' }));
@@ -150,12 +175,13 @@ it('uses the original time parser and Scene time range when a preset is selected
   expect(locationService.getSearchObject()).toMatchObject({ wallTab: 'network', 'var-scvm': 'vm-a' });
 });
 
-it('keeps explicit hidden time/link/variable controls hidden while retaining actions', () => {
-  const { controls } = setup();
+it('keeps explicit hidden time/link/variable controls hidden while retaining actions', async () => {
+  const { controls, user } = setup();
   act(() => controls.setState({ hideTimeControls: true, hideLinksControls: true, hideVariableControls: true }));
   expect(screen.queryByRole('button', { name: '시간 범위 선택' })).not.toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'Netdive' })).not.toBeInTheDocument();
   expect(screen.queryByRole('group', { name: '대시보드 변수' })).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: '대시보드 작업' }));
   expect(screen.getByRole('button', { name: '대시보드 설정' })).toBeInTheDocument();
 });
 
@@ -246,6 +272,7 @@ it('uses a single shadcn trigger and the native selection callback, including re
     const overflowBefore = document.body.style.overflow;
     await user.click(screen.getByRole('button', { name: '자원: Alpha' }));
     expect(screen.getByRole('dialog', { name: '자원 선택' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveAttribute('aria-expanded', 'true');
     // The native list must live inside its host popup, without a second body portal/scroll lock.
     expect(screen.getByText('Beta', { exact: true }).closest('[role="dialog"]')).toBe(
       screen.getByRole('dialog', { name: '자원 선택' })
@@ -320,4 +347,19 @@ it('preserves native manual-all versus All semantics and resolves real option la
   expect(variableSelection(variable)).toEqual({ all: true, labels: ['전체'] });
   variable.setState({ value: '', text: '', options: [] });
   expect(variableSelectionSummary(variable)).toBe('미선택');
+});
+
+it('blocks invalid direct time input and applies valid native ranges without dropping URL context', async () => {
+  const { user, time } = setup();
+  const before = time.state.from;
+  await user.click(screen.getByRole('button', { name: '시간 범위 선택' }));
+  const from = screen.getByRole('textbox', { name: '시작 시간' });
+  await user.clear(from);
+  await user.click(screen.getByRole('button', { name: '적용' }));
+  expect(screen.getByRole('alert')).toBeInTheDocument();
+  expect(time.state.from).toBe(before);
+  await user.type(from, 'now-2h');
+  await user.click(screen.getByRole('button', { name: '적용' }));
+  expect(time.state.from).toBe('now-2h');
+  expect(locationService.getSearchObject()).toMatchObject({ wallTab: 'network', 'var-scvm': 'vm-a' });
 });

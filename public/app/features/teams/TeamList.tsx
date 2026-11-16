@@ -19,10 +19,10 @@ import {
   TextLink,
   useStyles2,
 } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
 import { fetchRoleOptions } from 'app/core/components/RolePicker/api';
 import { Trans, t } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction, Role, StoreState, Team } from 'app/types';
 
 import { TeamRolePicker } from '../../core/components/RolePicker/TeamRolePicker';
@@ -205,7 +205,8 @@ export const TeamList = ({
   );
 
   return (
-    <Page
+    <WallAdminPage
+      description="대시보드와 리소스 접근 권한을 함께 관리할 사용자 그룹을 구성합니다."
       navId="teams"
       actions={
         !noTeams ? (
@@ -215,7 +216,7 @@ export const TeamList = ({
         ) : undefined
       }
     >
-      <Page.Contents>
+      <div>
         {noTeams ? (
           <EmptyState
             variant="call-to-action"
@@ -262,8 +263,8 @@ export const TeamList = ({
             )}
           </>
         )}
-      </Page.Contents>
-    </Page>
+      </div>
+    </WallAdminPage>
   );
 };
 

@@ -1,11 +1,9 @@
-import { Page } from 'app/core/components/Page/Page';
 import { useDataSourceSettingsNav } from 'app/features/connections/hooks/useDataSourceSettingsNav';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 
 import { EditDataSource } from '../components/EditDataSource';
 import { EditDataSourceActions } from '../components/EditDataSourceActions';
 import { useDataSourceInfo } from '../components/useDataSourceInfo';
-
-import { DataSourceTitle } from './DataSourceTitle';
 
 export interface Props {
   uid: string;
@@ -21,17 +19,15 @@ export function DataSourceTabPage({ uid, pageId }: Props) {
   });
 
   return (
-    <Page
+    <WallAdminPage
       navId={navId}
-      pageNav={pageNav}
-      renderTitle={(title) => <DataSourceTitle title={title} />}
+      detailNav={pageNav}
+      description={pageNav.subTitle}
       info={info}
       actions={<EditDataSourceActions uid={uid} />}
     >
-      <Page.Contents>
-        <EditDataSource uid={uid} pageId={pageId} />
-      </Page.Contents>
-    </Page>
+      <EditDataSource uid={uid} pageId={pageId} />
+    </WallAdminPage>
   );
 }
 

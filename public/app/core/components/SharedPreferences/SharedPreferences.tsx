@@ -22,15 +22,17 @@ import { t, Trans } from 'app/core/internationalization';
 import { LANGUAGES, PSEUDO_LOCALE } from 'app/core/internationalization/constants';
 import { PreferencesService } from 'app/core/services/PreferencesService';
 import { changeTheme } from 'app/core/services/theme';
+import { getMessageFromError } from 'app/core/utils/errors';
 
 export interface Props {
+  wallPresentation?: boolean;
   resourceUri: string;
   disabled?: boolean;
   preferenceType: 'org' | 'team' | 'user';
   onConfirm?: () => Promise<boolean>;
 }
 
-export type State = UserPreferencesDTO;
+export type State = UserPreferencesDTO & { saving?: boolean; saveError?: string };
 
 function getLanguageOptions(): ComboboxOption[] {
   const languageOptions = LANGUAGES.map((v) => ({
@@ -101,12 +103,28 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
   onSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const confirmationResult = this.props.onConfirm ? await this.props.onConfirm() : true;
-
-    if (confirmationResult) {
-      const { homeDashboardUID, theme, timezone, weekStart, language, queryHistory, navbar } = this.state;
-      await this.service.update({ homeDashboardUID, theme, timezone, weekStart, language, queryHistory, navbar });
-      window.location.reload();
+    if (this.props.disabled || this.state.saving) {
+      return;
+    }
+    if (this.props.wallPresentation) {
+      this.setState({ saving: true, saveError: undefined });
+    }
+    try {
+      const confirmationResult = this.props.onConfirm ? await this.props.onConfirm() : true;
+      if (confirmationResult) {
+        const { homeDashboardUID, theme, timezone, weekStart, language, queryHistory, navbar } = this.state;
+        await this.service.update({ homeDashboardUID, theme, timezone, weekStart, language, queryHistory, navbar });
+        window.location.reload();
+      }
+    } catch (error) {
+      if (!this.props.wallPresentation) {
+        throw error;
+      }
+      this.setState({ saveError: getMessageFromError(error) });
+    } finally {
+      if (this.props.wallPresentation) {
+        this.setState({ saving: false });
+      }
     }
   };
 
@@ -147,15 +165,28 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
   render() {
     const { theme, timezone, weekStart, homeDashboardUID, language } = this.state;
-    const { disabled } = this.props;
+    const { disabled, wallPresentation } = this.props;
     const styles = getStyles();
     const languages = getLanguageOptions();
     const currentThemeOption = this.themeOptions.find((x) => x.value === theme) ?? this.themeOptions[0];
 
     return (
-      <form onSubmit={this.onSubmitForm} className={styles.form}>
-        <FieldSet label={<Trans i18nKey="shared-preferences.title">Preferences</Trans>} disabled={disabled}>
-          <Field label={t('shared-preferences.fields.theme-label', 'Interface theme')}>
+      <form
+        onSubmit={this.onSubmitForm}
+        className={wallPresentation ? `${styles.form} wall-preferences-form` : styles.form}
+      >
+        <FieldSet
+          label={<Trans i18nKey="shared-preferences.title">Preferences</Trans>}
+          disabled={disabled || this.state.saving}
+        >
+          <Field
+            label={t('shared-preferences.fields.theme-label', 'Interface theme')}
+            description={
+              wallPresentation
+                ? '기본값은 서버의 테마 설정을 따릅니다. 개인 설정은 조직 설정보다 우선합니다.'
+                : undefined
+            }
+          >
             <Combobox
               options={this.themeOptions}
               value={currentThemeOption.value}
@@ -172,6 +203,9 @@ export class SharedPreferences extends PureComponent<Props, State> {
                 </span>
               </Label>
             }
+            description={
+              wallPresentation ? '로그인 후 열리는 기본 대시보드입니다. 비워 두면 상위 기본값을 사용합니다.' : undefined
+            }
             data-testid="User preferences home dashboard drop down"
           >
             <DashboardPicker
@@ -186,6 +220,9 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
           <Field
             label={t('shared-dashboard.fields.timezone-label', 'Timezone')}
+            description={
+              wallPresentation ? '시간 표시의 기본 시간대입니다. 대시보드의 명시적인 설정은 유지됩니다.' : undefined
+            }
             data-testid={selectors.components.TimeZonePicker.containerV2}
           >
             <TimeZonePicker
@@ -198,6 +235,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
           <Field
             label={t('shared-preferences.fields.week-start-label', 'Week start')}
+            description={wallPresentation ? '달력에서 한 주가 시작되는 요일입니다.' : undefined}
             data-testid={selectors.components.WeekStartPicker.containerV2}
           >
             <WeekStartPicker
@@ -209,13 +247,18 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
           <Field
             label={
-              <Label htmlFor="locale-select">
-                <span className={styles.labelText}>
-                  <Trans i18nKey="shared-preferences.fields.locale-label">Language</Trans>
-                </span>
-                <FeatureBadge featureState={FeatureState.beta} />
-              </Label>
+              wallPresentation ? (
+                '언어'
+              ) : (
+                <Label htmlFor="locale-select">
+                  <span className={styles.labelText}>
+                    <Trans i18nKey="shared-preferences.fields.locale-label">Language</Trans>
+                  </span>
+                  <FeatureBadge featureState={FeatureState.beta} />
+                </Label>
+              )
             }
+            description={wallPresentation ? '언어 설정입니다. 개인 프로필에 지정한 언어가 우선합니다.' : undefined}
             data-testid="User preferences language drop down"
           >
             <Combobox
@@ -227,9 +270,21 @@ export class SharedPreferences extends PureComponent<Props, State> {
             />
           </Field>
         </FieldSet>
-        <Button type="submit" variant="primary" data-testid={selectors.components.UserProfile.preferencesSaveButton}>
-          <Trans i18nKey="common.save">Save</Trans>
-        </Button>
+        <div className={wallPresentation ? 'wall-admin-save-row' : undefined}>
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={disabled || this.state.saving}
+            data-testid={selectors.components.UserProfile.preferencesSaveButton}
+          >
+            {this.state.saving ? '저장 중…' : <Trans i18nKey="common.save">Save</Trans>}
+          </Button>
+          {wallPresentation && this.state.saveError && (
+            <span role="alert" className="wall-admin-danger">
+              {this.state.saveError}
+            </span>
+          )}
+        </div>
       </form>
     );
   }

@@ -6,8 +6,14 @@ import { getMockUsers } from '../../users/__mocks__/userMocks';
 
 import { OrgUsersTable, Props } from './OrgUsersTable';
 
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  getBackendSrv: () => ({ get: () => new Promise(() => {}) }),
+}));
+
 jest.mock('app/core/core', () => ({
   contextSrv: {
+    user: { id: 99, orgId: 1, orgRole: 'Admin' },
     hasPermission: () => true,
     hasPermissionInMetadata: () => true,
     licensedAccessControlEnabled: () => false,

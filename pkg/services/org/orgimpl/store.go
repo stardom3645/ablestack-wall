@@ -511,13 +511,15 @@ func (ss *sqlStore) UpdateOrgUser(ctx context.Context, cmd *org.UpdateOrgUserCom
 			return err
 		}
 
-		return validateOneAdminLeftInOrg(cmd.OrgID, sess)
+		return ss.validateOneAdminLeftInOrg(cmd.OrgID, sess)
 	})
 }
 
 // validate that there is an org admin user left
-func validateOneAdminLeftInOrg(orgID int64, sess *db.Session) error {
-	res, err := sess.Query("SELECT 1 from org_user WHERE org_id=? and role='Admin'", orgID)
+func (ss *sqlStore) validateOneAdminLeftInOrg(orgID int64, sess *db.Session) error {
+	// A disabled user or API-only service account cannot recover organization administration.
+	query := fmt.Sprintf("SELECT 1 FROM org_user ou INNER JOIN %s u ON u.id=ou.user_id WHERE ou.org_id=? AND ou.role='Admin' AND u.is_disabled=%s AND (u.is_service_account=%s OR u.is_service_account IS NULL)", ss.db.GetDialect().Quote("user"), ss.db.GetDialect().BooleanStr(false), ss.db.GetDialect().BooleanStr(false))
+	res, err := sess.Query(query, orgID)
 	if err != nil {
 		return err
 	}
@@ -696,7 +698,7 @@ func (ss *sqlStore) RemoveOrgUser(ctx context.Context, cmd *org.RemoveOrgUserCom
 		}
 
 		// validate that after delete, there is at least one user with admin role in org
-		if err := validateOneAdminLeftInOrg(cmd.OrgID, sess); err != nil {
+		if err := ss.validateOneAdminLeftInOrg(cmd.OrgID, sess); err != nil {
 			return err
 		}
 

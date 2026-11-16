@@ -1,7 +1,7 @@
 import { Label } from '@grafana/ui';
 import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
 import { contextSrv } from 'app/core/core';
-import { OrgRolePicker } from 'app/features/admin/OrgRolePicker';
+import { WallUserRolePicker } from 'app/features/admin/Users/WallUsers';
 import { AccessControlAction, OrgRole, Role, ServiceAccountDTO } from 'app/types';
 
 interface Props {
@@ -16,12 +16,12 @@ export const ServiceAccountRoleRow = ({ label, serviceAccount, roleOptions, onRo
   const canUpdateRole = contextSrv.hasPermissionInMetadata(AccessControlAction.ServiceAccountsWrite, serviceAccount);
 
   return (
-    <tr>
-      <td>
+    <div className="wall-service-profile-row">
+      <div>
         <Label htmlFor={inputId}>{label}</Label>
-      </td>
+      </div>
       {contextSrv.licensedAccessControlEnabled() ? (
-        <td colSpan={3}>
+        <div className="wall-service-profile-value">
           <UserRolePicker
             userId={serviceAccount.id}
             orgId={serviceAccount.orgId}
@@ -31,22 +31,29 @@ export const ServiceAccountRoleRow = ({ label, serviceAccount, roleOptions, onRo
             basicRoleDisabled={!canUpdateRole}
             disabled={serviceAccount.isExternal || serviceAccount.isDisabled}
           />
-        </td>
+        </div>
       ) : (
         <>
-          <td>
-            <OrgRolePicker
-              width={24}
-              inputId={inputId}
-              aria-label="Role"
+          <div>
+            <WallUserRolePicker
+              login={serviceAccount.name}
               value={serviceAccount.role}
-              disabled={serviceAccount.isExternal || serviceAccount.isDisabled}
+              disabled={!canUpdateRole || Boolean(serviceAccount.isExternal) || serviceAccount.isDisabled}
+              reason={
+                serviceAccount.isExternal
+                  ? '외부에서 관리됨'
+                  : serviceAccount.isDisabled
+                    ? '비활성화된 계정'
+                    : !canUpdateRole
+                      ? '변경 권한 없음'
+                      : undefined
+              }
               onChange={onRoleChange}
             />
-          </td>
-          <td colSpan={2}></td>
+          </div>
+          <div />
         </>
       )}
-    </tr>
+    </div>
   );
 };

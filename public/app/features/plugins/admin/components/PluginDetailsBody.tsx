@@ -45,7 +45,7 @@ export function PluginDetailsBody({ plugin, queryParams, pageId }: Props): JSX.E
   if (pageId === PluginTabIds.OVERVIEW) {
     return (
       <div
-        className={styles.readme}
+        className={`${styles.readme} wall-plugin-readme`}
         dangerouslySetInnerHTML={{
           __html: plugin.details?.readme ?? 'No plugin help or readme markdown file was found',
         }}

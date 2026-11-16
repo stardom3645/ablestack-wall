@@ -62,7 +62,7 @@ describe('PluginListItem', () => {
   };
 
   /** As Grid */
-  it('renders a card with link, image, name, orgName and badges', () => {
+  it('renders a compact item with official logo, name, description, author and badges', () => {
     render(<PluginListItem plugin={plugin} pathName="/plugins" />);
 
     expect(screen.getByRole('link')).toHaveAttribute('href', '/plugins/test-plugin');
@@ -71,7 +71,7 @@ describe('PluginListItem', () => {
     expect(logo).toHaveAttribute('src', plugin.info.logos.small);
 
     expect(screen.getByRole('heading', { name: /testing plugin/i })).toBeVisible();
-    expect(screen.getByText(`By ${plugin.orgName}`)).toBeVisible();
+    expect(screen.getByText(plugin.orgName)).toBeVisible();
     expect(screen.getByText(/signed/i)).toBeVisible();
     expect(screen.queryByLabelText(/icon/i)).not.toBeInTheDocument();
   });
@@ -80,21 +80,21 @@ describe('PluginListItem', () => {
     const datasourcePlugin = { ...plugin, type: PluginType.datasource };
     render(<PluginListItem plugin={datasourcePlugin} pathName="" />);
 
-    expect(screen.getByTitle(/datasource plugin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Test · datasource/)).toBeInTheDocument();
   });
 
   it('renders a panel plugin with correct icon', () => {
     const panelPlugin = { ...plugin, type: PluginType.panel };
     render(<PluginListItem plugin={panelPlugin} pathName="" />);
 
-    expect(screen.getByTitle(/panel plugin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Test · panel/)).toBeInTheDocument();
   });
 
   it('renders an app plugin with correct icon', () => {
     const appPlugin = { ...plugin, type: PluginType.app };
     render(<PluginListItem plugin={appPlugin} pathName="" />);
 
-    expect(screen.getByTitle(/app plugin/i)).toBeInTheDocument();
+    expect(screen.getByText(/Test · app/)).toBeInTheDocument();
   });
 
   it('renders a disabled plugin with a badge to indicate its error', () => {

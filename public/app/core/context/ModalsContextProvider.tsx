@@ -43,7 +43,11 @@ export function ModalsContextProvider(props: Props) {
       props: {
         ...state.props,
         isOpen: true,
-        onDismiss: hideModal,
+        onDismiss: () => {
+          const onDismiss = state.props.onDismiss;
+          hideModal();
+          onDismiss?.();
+        },
       },
       showModal,
       hideModal,

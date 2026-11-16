@@ -1,8 +1,10 @@
-import { css, cx } from '@emotion/css';
+import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
-import { dateTimeFormat, GrafanaTheme2, TimeZone } from '@grafana/data';
-import { DeleteButton, Icon, Tooltip, useStyles2, useTheme2 } from '@grafana/ui';
-import { t } from 'app/core/internationalization';
+import { dateTimeFormat, TimeZone } from '@grafana/data';
+import { ConfirmModal } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
+import { Button } from 'app/features/wall-modern/ui';
 import { ApiKey } from 'app/types';
 
 interface Props {
@@ -13,134 +15,75 @@ interface Props {
 }
 
 export const ServiceAccountTokensTable = ({ tokens, timeZone, tokenActionsDisabled, onDelete }: Props): JSX.Element => {
-  const theme = useTheme2();
-  const styles = getStyles(theme);
-
+  const [removing, setRemoving] = useState<ApiKey>();
+  const date = (value?: string) => (value ? dateTimeFormat(value, { timeZone }) : undefined);
   return (
-    <table className={cx(styles.section, 'filter-table')}>
-      <thead>
-        <tr>
-          <th>{t('ablestack-wall.common.name', 'Name')}</th>
-          <th>{t('ablestack-wall.common.expires', 'Expires')}</th>
-          <th>{t('ablestack-wall.common.created', 'Created')}</th>
-          <th>{t('ablestack-wall.common.last-used-at', 'Last used at')}</th>
-          <th />
-          <th />
-        </tr>
-      </thead>
-      <tbody>
-        {tokens.map((key) => {
-          return (
-            <tr key={key.id} className={styles.tableRow(key.hasExpired || key.isRevoked)}>
-              <td>{key.name}</td>
-              <td>
-                <TokenExpiration timeZone={timeZone} token={key} />
-              </td>
-              <td>{formatDate(timeZone, key.created)}</td>
-              <td>{formatLastUsedAtDate(timeZone, key.lastUsedAt)}</td>
-              <td className="width-1 text-center">{key.isRevoked && <TokenRevoked />}</td>
-              <td>
-                <DeleteButton
-                  aria-label={`Delete service account token ${key.name}`}
-                  size="sm"
-                  onConfirm={() => onDelete(key)}
-                  disabled={tokenActionsDisabled}
-                />
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <>
+      {tokens.length ? (
+        <ul className="wall-token-list" aria-label="API 토큰 목록">
+          {tokens.map((token) => (
+            <li key={token.id}>
+              <div className="wall-token-copy">
+                <strong title={token.name}>{token.name}</strong>
+                <dl>
+                  <div>
+                    <dt>
+                      <Trans i18nKey="wall.enterprise.text-36009eb0">만료</Trans>
+                    </dt>
+                    <dd className={token.hasExpired || token.isRevoked ? 'wall-admin-danger' : undefined}>
+                      {token.hasExpired ? '만료됨' : (date(token.expiration) ?? '만료 없음')}
+                      {token.isRevoked && (
+                        <span title="이 토큰이 공개되었습니다. 토큰을 교체하세요.">
+                          <Trans i18nKey="wall.enterprise.text-29c2af3a">· 폐기됨</Trans>
+                        </span>
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Trans i18nKey="wall.enterprise.text-d1a2d3a2">생성</Trans>
+                    </dt>
+                    <dd>{date(token.created) ?? '정보 없음'}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      <Trans i18nKey="wall.enterprise.text-8c72ac64">최근 사용</Trans>
+                    </dt>
+                    <dd>{date(token.lastUsedAt) ?? '사용 기록 없음'}</dd>
+                  </div>
+                </dl>
+              </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="wall-admin-danger"
+                aria-label={`Delete service account token ${token.name}`}
+                disabled={tokenActionsDisabled}
+                onClick={() => setRemoving(token)}
+              >
+                <Trash2 size={16} aria-hidden="true" />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="wall-admin-empty">
+          <Trans i18nKey="wall.enterprise.text-3e822e67">발급된 토큰이 없습니다.</Trans>
+        </p>
+      )}
+      <ConfirmModal
+        isOpen={Boolean(removing)}
+        title="API 토큰 삭제"
+        body={`토큰 ${removing?.name ?? ''}을 삭제하면 이 토큰을 사용하는 연결이 중단됩니다. 삭제한 토큰은 복구할 수 없습니다.`}
+        confirmText="삭제"
+        onDismiss={() => setRemoving(undefined)}
+        onConfirm={() => {
+          if (removing && !tokenActionsDisabled) {
+            onDelete(removing);
+          }
+          setRemoving(undefined);
+        }}
+      />
+    </>
   );
 };
-
-function formatLastUsedAtDate(timeZone: TimeZone, lastUsedAt?: string): string {
-  if (!lastUsedAt) {
-    return 'Never';
-  }
-  return dateTimeFormat(lastUsedAt, { timeZone });
-}
-
-function formatDate(timeZone: TimeZone, expiration?: string): string {
-  if (!expiration) {
-    return 'No expiration date';
-  }
-  return dateTimeFormat(expiration, { timeZone });
-}
-
-function formatSecondsLeftUntilExpiration(secondsUntilExpiration: number): string {
-  const days = Math.ceil(secondsUntilExpiration / (3600 * 24));
-  const daysFormat = days > 1 ? `${days} days` : `${days} day`;
-  return `Expires in ${daysFormat}`;
-}
-
-const TokenRevoked = () => {
-  const styles = useStyles2(getStyles);
-  return (
-    <span className={styles.hasExpired}>
-      Revoked
-      <span className={styles.tooltipContainer}>
-        <Tooltip content="This token has been publicly exposed. Please rotate this token">
-          <Icon name="exclamation-triangle" className={styles.toolTipIcon} />
-        </Tooltip>
-      </span>
-    </span>
-  );
-};
-
-interface TokenExpirationProps {
-  timeZone: TimeZone;
-  token: ApiKey;
-}
-
-const TokenExpiration = ({ timeZone, token }: TokenExpirationProps) => {
-  const styles = useStyles2(getStyles);
-  if (!token.expiration) {
-    return <span className={styles.neverExpire}>Never</span>;
-  }
-  if (token.secondsUntilExpiration) {
-    return (
-      <span className={styles.secondsUntilExpiration}>
-        {formatSecondsLeftUntilExpiration(token.secondsUntilExpiration)}
-      </span>
-    );
-  }
-  if (token.hasExpired) {
-    return (
-      <span className={styles.hasExpired}>
-        Expired
-        <span className={styles.tooltipContainer}>
-          <Tooltip content="This token has expired">
-            <Icon name="exclamation-triangle" className={styles.toolTipIcon} />
-          </Tooltip>
-        </span>
-      </span>
-    );
-  }
-  return <span>{formatDate(timeZone, token.expiration)}</span>;
-};
-
-const getStyles = (theme: GrafanaTheme2) => ({
-  tableRow: (hasExpired: boolean | undefined) => css`
-    color: ${hasExpired ? theme.colors.text.secondary : theme.colors.text.primary};
-  `,
-  tooltipContainer: css`
-    margin-left: ${theme.spacing(1)};
-  `,
-  toolTipIcon: css`
-    color: ${theme.colors.error.text};
-  `,
-  secondsUntilExpiration: css`
-    color: ${theme.colors.warning.text};
-  `,
-  hasExpired: css`
-    color: ${theme.colors.error.text};
-  `,
-  neverExpire: css`
-    color: ${theme.colors.text.secondary};
-  `,
-  section: css`
-    margin-bottom: ${theme.spacing(4)};
-  `,
-});

@@ -6,6 +6,7 @@ import { PermissionListItem } from './PermissionListItem';
 import { ResourcePermission } from './types';
 
 interface Props {
+  wallPresentation?: boolean;
   title: string;
   compareKey: 'builtInRole' | 'userLogin' | 'team';
   items: ResourcePermission[];
@@ -15,7 +16,16 @@ interface Props {
   onChange: (resourcePermission: ResourcePermission, permission: string) => void;
 }
 
-export const PermissionList = ({ title, items, compareKey, permissionLevels, canSet, onRemove, onChange }: Props) => {
+export const PermissionList = ({
+  title,
+  items,
+  compareKey,
+  permissionLevels,
+  canSet,
+  onRemove,
+  onChange,
+  wallPresentation,
+}: Props) => {
   const computed = useMemo(() => {
     const keep: { [key: string]: ResourcePermission } = {};
     for (let item of items) {
@@ -42,6 +52,26 @@ export const PermissionList = ({ title, items, compareKey, permissionLevels, can
     return null;
   }
 
+  if (wallPresentation) {
+    return (
+      <section className="wall-permission-group" aria-label={title}>
+        <h3>{title}</h3>
+        <ul>
+          {computed.map((item, index) => (
+            <PermissionListItem
+              key={`${index}-${item.userId}`}
+              wallPresentation
+              item={item}
+              onRemove={onRemove}
+              onChange={onChange}
+              canSet={canSet}
+              permissionLevels={permissionLevels}
+            />
+          ))}
+        </ul>
+      </section>
+    );
+  }
   return (
     <div>
       <table className="filter-table gf-form-group">

@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 
-import { dateTimeFormatTimeAgo } from '@grafana/data';
+import { dateTimeFormatTimeAgo, unEscapeStringFromRegex } from '@grafana/data';
 import { featureEnabled, getBackendSrv, isFetchError, locationService } from '@grafana/runtime';
 import { FetchDataArgs } from '@grafana/ui';
 import config from 'app/core/config';
@@ -297,7 +297,7 @@ export function fetchUsers(): ThunkResult<void> {
   return async (dispatch, getState) => {
     try {
       const { perPage, page, query, filters, sort } = getState().userListAdmin;
-      let url = `/api/users/search?perpage=${perPage}&page=${page}&query=${query}&${getFilters(filters)}`;
+      let url = `/api/users/search?perpage=${perPage}&page=${page}&query=${encodeURIComponent(unEscapeStringFromRegex(query))}&${getFilters(filters)}`;
       if (sort) {
         url += `&sort=${sort}`;
       }

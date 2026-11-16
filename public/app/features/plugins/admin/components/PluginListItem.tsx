@@ -3,10 +3,10 @@ import Skeleton from 'react-loading-skeleton';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { locationService, reportInteraction } from '@grafana/runtime';
-import { Badge, Icon, Stack, useStyles2 } from '@grafana/ui';
+import { Badge, Stack, useStyles2 } from '@grafana/ui';
 import { SkeletonComponent, attachSkeleton } from '@grafana/ui/src/unstable';
 
-import { CatalogPlugin, PluginIconName } from '../types';
+import { CatalogPlugin } from '../types';
 
 import { PluginListItemBadges } from './PluginListItemBadges';
 import { PluginLogo } from './PluginLogo';
@@ -19,23 +19,26 @@ type Props = {
 };
 
 function PluginListItemComponent({ plugin, pathName }: Props) {
-  const styles = useStyles2(getStyles);
-
   const reportUserClickInteraction = () => {
     if (locationService.getSearchObject()?.q) {
       reportInteraction('plugins_search_user_click', {});
     }
   };
   return (
-    <a href={`${pathName}/${plugin.id}`} className={cx(styles.container)} onClick={reportUserClickInteraction}>
-      <PluginLogo src={plugin.info.logos.small} className={styles.pluginLogo} height={LOGO_SIZE} alt="" />
-      <h2 className={cx(styles.name, 'plugin-name')}>{plugin.name}</h2>
-      <div className={cx(styles.content, 'plugin-content')}>
-        <p>By {plugin.orgName}</p>
-        <PluginListItemBadges plugin={plugin} />
-      </div>
-      <div className={styles.pluginType}>
-        {plugin.type && <Icon name={PluginIconName[plugin.type]} title={`${plugin.type} plugin`} />}
+    <a href={`${pathName}/${plugin.id}`} className="wall-plugin-item" onClick={reportUserClickInteraction}>
+      <span className="wall-plugin-logo">
+        <PluginLogo src={plugin.info.logos.small} height="28px" alt="" />
+      </span>
+      <div>
+        <h2>{plugin.name}</h2>
+        {plugin.description && <p title={plugin.description}>{plugin.description}</p>}
+        <p>
+          {plugin.orgName}
+          {plugin.type ? ` · ${plugin.type}` : ''}
+        </p>
+        <div className="wall-plugin-badges">
+          <PluginListItemBadges plugin={plugin} />
+        </div>
       </div>
     </a>
   );

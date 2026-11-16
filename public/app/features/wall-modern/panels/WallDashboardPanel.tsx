@@ -1,4 +1,4 @@
-import { AlertCircle, GripVertical } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { PropsWithChildren, SyntheticEvent, useContext, useMemo } from 'react';
 
 import { locationService } from '@grafana/runtime';
@@ -16,6 +16,7 @@ import { wallSurfaceTokens } from '../surfaceTokens';
 import { WallTypographyContext } from '../typography';
 import { Button } from '../ui';
 import { PanelActionsProvider, WallPanelHeader } from '../workspace/PanelActionDock';
+import { PanelMoveGrip } from '../workspace/PanelMoveGrip';
 import { WallPanelActions } from '../workspace/WallPanelActions';
 
 import { WallPanelState } from './WallPanelState';
@@ -57,7 +58,7 @@ function PresentedPanel({ panel, children }: PropsWithChildren<{ panel: VizPanel
             aria-label="패널 이동"
             title="패널 이동"
           >
-            <GripVertical size={15} aria-hidden="true" />
+            <PanelMoveGrip />
           </Button>
         ) : undefined
       }

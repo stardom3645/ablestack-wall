@@ -4,11 +4,11 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { useAsync } from 'react-use';
 
 import { featureEnabled } from '@grafana/runtime';
-import { Page } from 'app/core/components/Page/Page';
 import { UpgradeBox } from 'app/core/components/Upgrade/UpgradeBox';
 import config from 'app/core/config';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv } from 'app/core/services/context_srv';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction, StoreState, useDispatch, useSelector } from 'app/types';
 
 import TeamGroupSync, { TeamSyncUpgradeContent } from './TeamGroupSync';
@@ -104,9 +104,15 @@ const TeamPages = memo(() => {
   };
 
   return (
-    <Page navId="teams" pageNav={pageNav}>
-      <Page.Contents isLoading={isLoading}>{team && Object.keys(team).length !== 0 && renderPage()}</Page.Contents>
-    </Page>
+    <WallAdminPage
+      navId="teams"
+      detailNav={pageNav}
+      title={team?.name}
+      description={pageNav.subTitle}
+      isLoading={isLoading}
+    >
+      {team && Object.keys(team).length !== 0 && renderPage()}
+    </WallAdminPage>
   );
 });
 

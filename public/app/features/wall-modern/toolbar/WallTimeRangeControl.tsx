@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, Clock3, Globe } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, Clock3, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
@@ -50,6 +50,9 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
   const timeZone = timeRange.getTimeZone();
   const [open, setOpen] = useState(false);
   const [advanced, setAdvanced] = useState(false);
+  const [fromInput, setFromInput] = useState('');
+  const [toInput, setToInput] = useState('');
+  const [inputError, setInputError] = useState(false);
   const [history, setHistory] = useLocalStorage<TimeRange[]>(
     'grafana.dashboard.timepicker.history',
     [],
@@ -74,6 +77,13 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
         open={open}
         onOpenChange={(next) => {
           setOpen(next);
+          if (next) {
+            setFromInput(
+              typeof value.raw.from === 'string' ? value.raw.from : value.from.format('YYYY-MM-DD HH:mm:ss')
+            );
+            setToInput(typeof value.raw.to === 'string' ? value.raw.to : value.to.format('YYYY-MM-DD HH:mm:ss'));
+            setInputError(false);
+          }
           if (!next) {
             setAdvanced(false);
           }
@@ -116,23 +126,61 @@ export function WallTimeRangeControl({ model }: { model: SceneTimePicker }) {
             </>
           ) : (
             <>
-              <div className="wall-timeframe-heading">
-                <Trans i18nKey="wall.wall-time-range-control.text-aee3e701">시간 범위</Trans>
-              </div>
-              <button
-                className="wall-timeframe-summary"
-                onClick={() => setAdvanced(true)}
-                aria-label="직접 시간 범위 입력"
+              <form
+                className="wall-time-expression"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  try {
+                    const range = rangeUtil.convertRawToRange(
+                      { from: fromInput.trim(), to: toInput.trim() },
+                      timeZone,
+                      fiscalYearStartMonth
+                    );
+                    if (
+                      !fromInput.trim() ||
+                      !toInput.trim() ||
+                      !range.from.isValid() ||
+                      !range.to.isValid() ||
+                      range.from.valueOf() > range.to.valueOf()
+                    ) {
+                      setInputError(true);
+                      return;
+                    }
+                    setInputError(false);
+                    change(range);
+                  } catch {
+                    setInputError(true);
+                  }
+                }}
               >
-                <span>
-                  {typeof value.raw.from === 'string' ? value.raw.from : value.from.format('YYYY-MM-DD HH:mm')}
+                <input
+                  aria-label="시작 시간"
+                  value={fromInput}
+                  onChange={(event) => {
+                    setFromInput(event.target.value);
+                    setInputError(false);
+                  }}
+                />
+                <span aria-hidden="true">
+                  <Trans i18nKey="wall.time-range.to">→</Trans>
                 </span>
-                <span>
-                  <Trans i18nKey="wall.wall-time-range-control.text-213edd25">→</Trans>
-                </span>
-                <span>{typeof value.raw.to === 'string' ? value.raw.to : value.to.format('YYYY-MM-DD HH:mm')}</span>
-                <CalendarDays size={16} />
-              </button>
+                <input
+                  aria-label="종료 시간"
+                  value={toInput}
+                  onChange={(event) => {
+                    setToInput(event.target.value);
+                    setInputError(false);
+                  }}
+                />
+                <Button type="submit" variant="outline" size="sm">
+                  <Trans i18nKey="wall.time-range.apply">적용</Trans>
+                </Button>
+              </form>
+              {inputError && (
+                <p role="alert" className="wall-time-input-error">
+                  <Trans i18nKey="wall.time-range.invalid">유효한 시작·종료 시간을 입력하세요.</Trans>
+                </p>
+              )}
               <div className="wall-time-presets">
                 {compactTimePresets.map((option) => (
                   <Button

@@ -1,11 +1,10 @@
-import { css } from '@emotion/css';
 import { useState, useEffect } from 'react';
 
-import { dateTimeFormat, GrafanaTheme2, OrgRole, TimeZone } from '@grafana/data';
-import { Label, TextLink, useStyles2 } from '@grafana/ui';
+import { dateTimeFormat, OrgRole, TimeZone } from '@grafana/data';
+import { Label, TextLink } from '@grafana/ui';
 import { fetchRoleOptions } from 'app/core/components/RolePicker/api';
 import { contextSrv } from 'app/core/core';
-import { t } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
 import { AccessControlAction, Role, ServiceAccountDTO } from 'app/types';
 
 import { ServiceAccountProfileRow } from './ServiceAccountProfileRow';
@@ -18,7 +17,6 @@ interface Props {
 }
 
 export function ServiceAccountProfile({ serviceAccount, timeZone, onChange }: Props): JSX.Element {
-  const styles = useStyles2(getStyles);
   const ableToWrite = contextSrv.hasPermission(AccessControlAction.ServiceAccountsWrite);
   const [roles, setRoleOptions] = useState<Role[]>([]);
 
@@ -47,46 +45,39 @@ export function ServiceAccountProfile({ serviceAccount, timeZone, onChange }: Pr
   }, [serviceAccount.orgId]);
 
   return (
-    <div className={styles.section}>
-      <h3>{t('ablestack-wall.common.information', 'Information')}</h3>
-      <table className="filter-table">
-        <tbody>
-          <ServiceAccountProfileRow
-            label={t('ablestack-wall.common.name', 'Name')}
-            value={serviceAccount.name}
-            onChange={!serviceAccount.isExternal ? onNameChange : undefined}
-            disabled={!ableToWrite || serviceAccount.isDisabled}
-          />
-          <ServiceAccountProfileRow label="ID" value={serviceAccount.login} disabled={serviceAccount.isDisabled} />
-          <ServiceAccountRoleRow
-            label={t('ablestack-wall.common.roles', 'Roles')}
-            serviceAccount={serviceAccount}
-            onRoleChange={onRoleChange}
-            roleOptions={roles}
-          />
-          <ServiceAccountProfileRow
-            label={t('ablestack-wall.common.creation-date', 'Creation date')}
-            value={dateTimeFormat(serviceAccount.createdAt, { timeZone })}
-            disabled={serviceAccount.isDisabled}
-          />
-          {serviceAccount.isExternal && serviceAccount.requiredBy && (
-            <tr>
-              <td>
-                <Label>Used by</Label>
-              </td>
-              <td>
-                <TextLink href={`/plugins/${serviceAccount.requiredBy}`}>{serviceAccount.requiredBy}</TextLink>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div>
+      <div className="wall-service-profile" role="group" aria-label="서비스 계정 정보">
+        <ServiceAccountProfileRow
+          label={t('ablestack-wall.common.name', 'Name')}
+          value={serviceAccount.name}
+          onChange={!serviceAccount.isExternal ? onNameChange : undefined}
+          disabled={!ableToWrite || serviceAccount.isDisabled}
+        />
+        <ServiceAccountProfileRow label="ID" value={serviceAccount.login} disabled={serviceAccount.isDisabled} />
+        <ServiceAccountRoleRow
+          label={t('ablestack-wall.common.roles', 'Roles')}
+          serviceAccount={serviceAccount}
+          onRoleChange={onRoleChange}
+          roleOptions={roles}
+        />
+        <ServiceAccountProfileRow
+          label={t('ablestack-wall.common.creation-date', 'Creation date')}
+          value={dateTimeFormat(serviceAccount.createdAt, { timeZone })}
+          disabled={serviceAccount.isDisabled}
+        />
+        {serviceAccount.isExternal && serviceAccount.requiredBy && (
+          <div className="wall-service-profile-row">
+            <div>
+              <Label>
+                <Trans i18nKey="wall.enterprise.text-f5060abc">Used by</Trans>
+              </Label>
+            </div>
+            <div>
+              <TextLink href={`/plugins/${serviceAccount.requiredBy}`}>{serviceAccount.requiredBy}</TextLink>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-export const getStyles = (theme: GrafanaTheme2) => ({
-  section: css`
-    margin-bottom: ${theme.spacing(4)};
-  `,
-});

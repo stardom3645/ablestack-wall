@@ -1,12 +1,11 @@
 import { PureComponent } from 'react';
 import { ConnectedProps, connect } from 'react-redux';
 
-import { Stack } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
 import SharedPreferences from 'app/core/components/SharedPreferences/SharedPreferences';
 import { appEvents, contextSrv } from 'app/core/core';
-import { t } from 'app/core/internationalization';
+import { t, Trans } from 'app/core/internationalization';
 import { getNavModel } from 'app/core/selectors/navModel';
+import { WallAdminPage } from 'app/features/wall-modern/management/WallAdminPage';
 import { AccessControlAction, StoreState } from 'app/types';
 import { ShowConfirmModalEvent } from 'app/types/events';
 
@@ -21,9 +20,9 @@ export class OrgDetailsPage extends PureComponent<Props> {
     await this.props.loadOrganization();
   }
 
-  onUpdateOrganization = (orgName: string) => {
+  onUpdateOrganization = async (orgName: string) => {
     this.props.setOrganizationName(orgName);
-    this.props.updateOrganization();
+    await this.props.updateOrganization();
   };
 
   handleConfirm = () => {
@@ -46,30 +45,57 @@ export class OrgDetailsPage extends PureComponent<Props> {
   };
 
   render() {
-    const { navModel, organization } = this.props;
+    const { organization } = this.props;
     const isLoading = Object.keys(organization).length === 0;
     const canReadOrg = contextSrv.hasPermission(AccessControlAction.OrgsRead);
     const canReadPreferences = contextSrv.hasPermission(AccessControlAction.OrgsPreferencesRead);
     const canWritePreferences = contextSrv.hasPermission(AccessControlAction.OrgsPreferencesWrite);
 
     return (
-      <Page navModel={navModel}>
-        <Page.Contents isLoading={isLoading}>
-          {!isLoading && (
-            <Stack direction="column" gap={3}>
-              {canReadOrg && <OrgProfile onSubmit={this.onUpdateOrganization} orgName={organization.name} />}
-              {canReadPreferences && (
+      <WallAdminPage
+        navId="org-settings"
+        isLoading={isLoading}
+        description="조직에 적용되는 이름, 표시 및 시간 설정을 관리합니다. 개인 설정이 지정된 항목은 개인 설정이 우선합니다."
+      >
+        {!isLoading && (
+          <div>
+            {canReadOrg && (
+              <section className="wall-admin-section wall-settings-section">
+                <header>
+                  <h2>
+                    <Trans i18nKey="wall.admin.organization-info">조직 정보</Trans>
+                  </h2>
+                  <p>
+                    <Trans i18nKey="wall.admin.organization-name-help">현재 조직의 표시 이름을 설정합니다.</Trans>
+                  </p>
+                </header>
+                <OrgProfile onSubmit={this.onUpdateOrganization} orgName={organization.name} />
+              </section>
+            )}
+            {canReadPreferences && (
+              <section className="wall-admin-section wall-settings-section wall-admin-preferences">
+                <header>
+                  <h2>
+                    <Trans i18nKey="wall.admin.display-time">표시 및 시간 설정</Trans>
+                  </h2>
+                  <p>
+                    <Trans i18nKey="wall.admin.preferences-save-help">
+                      변경사항은 조직 환경 설정 저장 시 적용됩니다.
+                    </Trans>
+                  </p>
+                </header>
                 <SharedPreferences
+                  wallPresentation
                   resourceUri="org"
                   disabled={!canWritePreferences}
                   preferenceType="org"
                   onConfirm={this.handleConfirm}
                 />
-              )}
-            </Stack>
-          )}
-        </Page.Contents>
-      </Page>
+              </section>
+            )}
+          </div>
+        )}
+      </WallAdminPage>
     );
   }
 }

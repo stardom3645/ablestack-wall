@@ -14,6 +14,7 @@ import {
   userProfileLoadedAction,
   userSessionsLoadedAction,
   userListAdminReducer,
+  usersFetched,
   queryChanged,
   filterChanged,
 } from './reducers';
@@ -308,4 +309,14 @@ describe('User List Admin reducer', () => {
         });
     });
   });
+});
+
+it('retains the server total count rather than estimating it from returned users', () => {
+  const state = userListAdminReducer(
+    undefined,
+    usersFetched({ users: [getTestUser()], perPage: 50, page: 2, totalCount: 100 })
+  );
+  expect(state.totalCount).toBe(100);
+  expect(state.totalPages).toBe(2);
+  expect(state.users).toHaveLength(1);
 });

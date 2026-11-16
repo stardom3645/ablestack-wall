@@ -8,13 +8,13 @@ export interface ManagementGroup {
 export function isWallManagementRoute(path: string) {
   return /^\/(admin|org|plugins|datasources|connections)(\/|$)/.test(path);
 }
-const labels: Record<string, string> = {
+export const managementTitles: Record<string, string> = {
   'connections-datasources': '데이터 소스',
   datasources: '데이터 소스',
   plugins: '플러그인',
   'connections-add-new-connection': '연결 추가',
-  'global-users': '사용자',
-  users: '조직 사용자',
+  'global-users': '사용자 관리',
+  users: '사용자 관리',
   'global-orgs': '조직',
   teams: '팀',
   serviceaccounts: '서비스 계정',
@@ -32,6 +32,7 @@ export function managementNavigation(index: NavIndex): ManagementGroup[] {
     { id: 'data', label: '데이터 및 확장', items: [] },
     { id: 'access', label: '사용자 및 접근', items: [] },
     { id: 'system', label: '시스템 관리', items: [] },
+    { id: 'advanced', label: '고급', items: [] },
   ];
   const seen = new Set<string>();
   function visit(node: NavModelItem, category: number) {
@@ -58,7 +59,17 @@ export function managementNavigation(index: NavIndex): ManagementGroup[] {
       return;
     }
     seen.add(href);
-    groups[next].items.push({ id: key || href, label: labels[key] ?? node.text, href });
+    const primaryManagement = new Set([
+      '/connections/datasources',
+      '/plugins',
+      '/connections/add-new-connection',
+      '/admin/users',
+      '/org/users',
+      '/org/serviceaccounts',
+      '/org',
+    ]);
+    const target = primaryManagement.has(href) ? next : 3;
+    groups[target].items.push({ id: key || href, label: managementTitles[key] ?? node.text, href });
   }
   for (const key of ['connections', 'cfg', 'administration', 'admin']) {
     if (index[key]) {

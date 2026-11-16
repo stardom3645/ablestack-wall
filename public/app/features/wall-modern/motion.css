@@ -13,6 +13,7 @@
   --wall-motion-navigation-reveal-delay: 50ms;
   --wall-motion-layout-duration: 200ms;
   --wall-motion-grid-duration: 180ms;
+  --wall-motion-drag-duration: 64ms;
   --wall-motion-settle-duration: 140ms;
   --wall-motion-footprint-duration: 280ms;
   --wall-motion-footprint-easing: cubic-bezier(0.25, 0.1, 0.25, 1);

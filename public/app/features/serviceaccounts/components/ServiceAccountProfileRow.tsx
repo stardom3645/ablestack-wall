@@ -1,10 +1,8 @@
-import { css, cx } from '@emotion/css';
 import { useEffect, useRef, useState } from 'react';
-import * as React from 'react';
 
-import { GrafanaTheme2 } from '@grafana/data';
-import { ConfirmButton, Input, Label, LegacyInputStatus, useStyles2 } from '@grafana/ui';
-import { t } from 'app/core/internationalization';
+import { Input, Label } from '@grafana/ui';
+import { Trans } from 'app/core/internationalization';
+import { Button } from 'app/features/wall-modern/ui';
 
 interface Props {
   label: string;
@@ -15,94 +13,77 @@ interface Props {
 }
 
 export const ServiceAccountProfileRow = ({ label, value, inputType, disabled, onChange }: Props): JSX.Element => {
-  const inputElem = useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = useState(value);
-  const [isEditing, setIsEditing] = useState(false);
-  const styles = useStyles2(getStyles);
+  const input = useRef<HTMLInputElement>(null);
+  const [draft, setDraft] = useState(value ?? '');
+  const [editing, setEditing] = useState(false);
   const inputId = `${label}-input`;
-
   useEffect(() => {
-    if (isEditing) {
-      focusInput();
+    if (editing) {
+      input.current?.focus();
     }
-  }, [isEditing]);
-
-  const onEditClick = () => {
-    setIsEditing(true);
+  }, [editing]);
+  const cancel = () => {
+    setDraft(value ?? '');
+    setEditing(false);
   };
-
-  const onCancelClick = () => {
-    setIsEditing(false);
-    setInputValue(value || '');
-  };
-
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>, status?: LegacyInputStatus) => {
-    if (status === LegacyInputStatus.Invalid) {
-      return;
-    }
-    setInputValue(event.target.value);
-  };
-
-  const onInputBlur = (event: React.FocusEvent<HTMLInputElement>, status?: LegacyInputStatus) => {
-    if (status === LegacyInputStatus.Invalid) {
-      return;
-    }
-    setInputValue(event.target.value);
-  };
-
-  const focusInput = () => {
-    inputElem?.current?.focus();
-  };
-
-  const onSave = () => {
-    setIsEditing(false);
-    if (onChange) {
-      onChange(inputValue!);
+  const save = () => {
+    if (draft.trim()) {
+      onChange?.(draft);
+      setEditing(false);
     }
   };
-
   return (
-    <tr>
-      <td>
-        <Label htmlFor={inputId}>{label}</Label>
-      </td>
-      <td className="width-25" colSpan={2}>
-        {!disabled && isEditing ? (
+    <div className="wall-service-profile-row">
+      <div>
+        <Label htmlFor={editing ? inputId : undefined}>{label}</Label>
+      </div>
+      <div className="wall-service-profile-value">
+        {editing && !disabled ? (
           <Input
             id={inputId}
+            ref={input}
             type={inputType}
-            defaultValue={value}
-            onBlur={onInputBlur}
-            onChange={onInputChange}
-            ref={inputElem}
-            width={30}
+            value={draft}
+            onChange={(event) => setDraft(event.currentTarget.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                cancel();
+              }
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                save();
+              }
+            }}
           />
         ) : (
-          <span className={cx({ [styles.disabled]: disabled })}>{value}</span>
+          <span title={value}>{value}</span>
         )}
-      </td>
-      <td>
-        {onChange && (
-          <ConfirmButton
-            closeOnConfirm
-            confirmText={t('ablestack-wall.common.save', 'Save')}
-            onConfirm={onSave}
-            onClick={onEditClick}
-            onCancel={onCancelClick}
-            disabled={disabled}
-          >
-            Edit
-          </ConfirmButton>
-        )}
-      </td>
-    </tr>
+      </div>
+      <div className="wall-admin-actions">
+        {onChange &&
+          (editing ? (
+            <>
+              <Button size="sm" variant="default" onClick={save} disabled={disabled || !draft.trim()}>
+                <Trans i18nKey="wall.enterprise.text-1f1712ac">저장</Trans>
+              </Button>
+              <Button size="sm" variant="ghost" onClick={cancel}>
+                <Trans i18nKey="wall.enterprise.text-19b2d19b">취소</Trans>
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={disabled}
+              onClick={() => {
+                setDraft(value ?? '');
+                setEditing(true);
+              }}
+            >
+              <Trans i18nKey="wall.enterprise.text-d482e14b">편집</Trans>
+            </Button>
+          ))}
+      </div>
+    </div>
   );
-};
-
-const getStyles = (theme: GrafanaTheme2) => {
-  return {
-    disabled: css`
-      color: ${theme.colors.text.secondary};
-    `,
-  };
 };

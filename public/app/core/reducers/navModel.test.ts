@@ -83,3 +83,12 @@ describe('navModelReducer', () => {
     });
   });
 });
+
+it('updates organization context with partial modern navigation without inventing omitted pages', () => {
+  const settings = { id: 'org-settings', text: 'Organization settings' };
+  const initial = { 'org-settings': settings, profile: { id: 'profile', text: 'Profile' } };
+  const next = navIndexReducer(initial, updateConfigurationSubtitle('Wall QA'));
+  expect(Object.keys(next)).toEqual(['org-settings', 'profile']);
+  expect(next['org-settings'].parentItem?.subTitle).toBe('Organization: Wall QA');
+  expect(next.profile).toBe(initial.profile);
+});
