@@ -26,7 +26,7 @@ export default class PageActionBar extends PureComponent<Props> {
       linkButton,
       setSearchQuery,
       target,
-      placeholder = t("ablestack-wall.alert.search-by-name-or-type", "Search by name or type"),
+      placeholder = t('ablestack-wall.alert.search-by-name-or-type', 'Search by name or type'),
       sortPicker,
     } = this.props;
     const linkProps: Parameters<typeof LinkButton>[0] = { href: linkButton?.href, disabled: linkButton?.disabled };

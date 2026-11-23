@@ -42,7 +42,7 @@ export const SearchField = ({ value, onSearch }: Props) => {
           onSearch(e.currentTarget.value);
         }
       }}
-      placeholder={t("ablestack-wall.administration.plugins.search-grafana-plugins", "Search Grafana plugins")}
+      placeholder={t('ablestack-wall.administration.plugins.search-grafana-plugins', 'Search Grafana plugins')}
       onChange={(value) => {
         setQuery(value);
       }}

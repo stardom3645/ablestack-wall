@@ -124,9 +124,9 @@ By default, you can access the web server at `http://localhost:3000/`.
 
 Log in using the default credentials:
 
-| username | password |
-| -------- | -------- |
-| `admin`  | `admin`  |
+| username | password   |
+| -------- | ---------- |
+| `admin`  | `password` |
 
 When you log in for the first time, Grafana asks you to change your password.
 

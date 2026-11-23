@@ -48,7 +48,7 @@ export const MatcherFilter = ({ onFilterChange, defaultQueryString }: Props) => 
       label={
         <Label>
           <Stack gap={0.5} alignItems="center">
-            <span>{t("ablestack-wall.alert.search-by-label", "Search by label")}</span>
+            <span>{t('ablestack-wall.alert.search-by-label', 'Search by label')}</span>
             <Tooltip
               content={
                 <div>
@@ -71,7 +71,7 @@ export const MatcherFilter = ({ onFilterChange, defaultQueryString }: Props) => 
       }
     >
       <Input
-        placeholder={t("ablestack-wall.common.search", "Search")}
+        placeholder={t('ablestack-wall.common.search', 'Search')}
         value={filterQuery}
         onChange={(e) => setFilterQuery(e.currentTarget.value)}
         data-testid="search-query-input"

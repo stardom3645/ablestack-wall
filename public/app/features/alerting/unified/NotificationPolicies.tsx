@@ -4,6 +4,7 @@ import { useAsyncFn } from 'react-use';
 
 import { GrafanaTheme2, UrlQueryMap } from '@grafana/data';
 import { Alert, LoadingPlaceholder, Stack, Tab, TabContent, TabsBar, useStyles2, withErrorBoundary } from '@grafana/ui';
+import { useAppNotification } from 'app/core/copy/appNotification';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { t } from 'app/core/internationalization';
 import { useMuteTimings } from 'app/features/alerting/unified/components/mute-timings/useMuteTimings';
@@ -53,6 +54,7 @@ enum ActiveTab {
 const AmRoutes = () => {
   const dispatch = useDispatch();
   const styles = useStyles2(getStyles);
+  const appNotification = useAppNotification();
 
   const { useGetAlertmanagerAlertGroupsQuery } = alertmanagerApi;
 
@@ -176,11 +178,11 @@ const AmRoutes = () => {
         },
         oldConfig: result,
         alertManagerSourceName: selectedAlertmanager!,
-        successMessage: 'Updated notification policies',
       })
     )
       .unwrap()
       .then(() => {
+        appNotification.success('Updated notification policies');
         if (selectedAlertmanager) {
           refetchAlertGroups();
         }
@@ -222,7 +224,7 @@ const AmRoutes = () => {
       <GrafanaAlertmanagerDeliveryWarning currentAlertmanager={selectedAlertmanager} />
       <TabsBar>
         <Tab
-          label={t("ablestack-wall.alert.notification-policies", "Notification policies")}
+          label={t('ablestack-wall.alert.notification-policies', 'Notification policies')}
           active={policyTreeTabActive}
           onChangeTab={() => {
             setActiveTab(ActiveTab.NotificationPolicies);
@@ -230,7 +232,7 @@ const AmRoutes = () => {
           }}
         />
         <Tab
-          label={t("ablestack-wall.alert.mute-timings", "Mute Timings")}
+          label={t('ablestack-wall.alert.mute-timings', 'Mute Timings')}
           active={muteTimingsTabActive}
           counter={numberOfMuteTimings}
           onChangeTab={() => {

@@ -60,7 +60,7 @@ export const TemplatesTable = ({ alertManagerName, templates }: Props) => {
         <thead>
           <tr>
             <th></th>
-            <th>{t("ablestack-wall.common.template", "Template")}</th>
+            <th>{t('ablestack-wall.common.template', 'Template')}</th>
             <Authorize
               actions={[
                 AlertmanagerAction.CreateNotificationTemplate,
@@ -68,14 +68,14 @@ export const TemplatesTable = ({ alertManagerName, templates }: Props) => {
                 AlertmanagerAction.DeleteNotificationTemplate,
               ]}
             >
-              <th>{t("ablestack-wall.common.actions", "Actions")}</th>
+              <th>{t('ablestack-wall.common.actions', 'Actions')}</th>
             </Authorize>
           </tr>
         </thead>
         <tbody>
           {!templates.length && (
             <tr className={tableStyles.evenRow}>
-              <td colSpan={3}>{t("ablestack-wall.alert.no-templates-defined", "No templates defined.")}</td>
+              <td colSpan={3}>{t('ablestack-wall.alert.no-templates-defined', 'No templates defined.')}</td>
             </tr>
           )}
           {templates.map((notificationTemplate, idx) => (
@@ -170,7 +170,7 @@ function TemplateRow({ notificationTemplate, idx, alertManagerName, onDeleteClic
         <tr className={idx % 2 === 0 ? tableStyles.evenRow : undefined}>
           <td></td>
           <td colSpan={2}>
-            <DetailsField label={t("ablestack-wall.common.description", "Description")} horizontal={true}>
+            <DetailsField label={t('ablestack-wall.common.description', 'Description')} horizontal={true}>
               <TemplateEditor
                 width={'auto'}
                 height={'auto'}
