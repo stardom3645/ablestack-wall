@@ -612,7 +612,7 @@ Default is `admin`.
 
 ### admin_password
 
-The password of the default Grafana Admin. Set once on first-run. Default is `admin`.
+The password of the default Grafana Admin. Set once on first-run. Default is `password`.
 
 ### admin_email
 

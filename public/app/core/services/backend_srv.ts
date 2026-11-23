@@ -15,8 +15,15 @@ import {
 } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AppEvents, DataQueryErrorType, deprecationWarning } from '@grafana/data';
-import { BackendSrv as BackendService, BackendSrvRequest, config, FetchError, FetchResponse } from '@grafana/runtime';
+import { AppEvents, DataQueryErrorType, deprecationWarning, locationUtil } from '@grafana/data';
+import {
+  BackendSrv as BackendService,
+  BackendSrvRequest,
+  config,
+  FetchError,
+  FetchResponse,
+  locationService,
+} from '@grafana/runtime';
 import appEvents from 'app/core/app_events';
 import { getConfig } from 'app/core/config';
 import { getSessionExpiry, hasSessionExpiry } from 'app/core/utils/auth';
@@ -50,6 +57,7 @@ export interface FolderRequestOptions {
 }
 
 const GRAFANA_TRACEID_HEADER = 'grafana-trace-id';
+const DASHBOARD_ACCESS_DENIED_MESSAGE = 'Access denied to this dashboard';
 
 export interface InspectorStream {
   response: FetchResponse | FetchError;
@@ -323,6 +331,18 @@ export class BackendSrv implements BackendService {
     // If no message but got error string, copy to message prop
     if (err.data && !err.data.message && typeof err.data.error === 'string') {
       err.data.message = err.data.error;
+    }
+
+    if (
+      err.status === 403 &&
+      err.data.message === DASHBOARD_ACCESS_DENIED_MESSAGE &&
+      !this.dependencies.contextSrv.user.isSignedIn
+    ) {
+      // A dashboard can be visible only to signed-in users while anonymous access is enabled.
+      // Reload the current page with forceLogin so the auth middleware sends the browser to login
+      // and preserves the dashboard URL as the post-login destination.
+      err.isHandled = true;
+      window.location.href = locationUtil.getUrlForPartial(locationService.getLocation(), { forceLogin: 'true' });
     }
 
     // check if we should show an error alert
